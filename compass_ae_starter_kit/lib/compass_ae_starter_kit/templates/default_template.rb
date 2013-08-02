@@ -32,7 +32,7 @@ CompassAeStarterKit::FileSupport.patch_file 'Gemfile',
 CompassAeStarterKit::FileSupport.append_file 'Gemfile',
 "
 gem 'erp_base_erp_svcs', '3.1.5'
-gem 'erp_tech_svcs', '3.1.5'
+gem 'erp_tech_svcs', '3.1.7'
 gem 'compass_ae_sencha', '1.0.2'
 gem 'erp_app', '3.1.12'
 gem 'erp_forms', '3.1.0'
