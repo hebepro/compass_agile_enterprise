@@ -63,12 +63,12 @@ module ActionView
       if (tree.nil? or tree.empty?)
         []
       else
-        tree.collect{|child| "/#{child[:id]}"}.select{|p|!p.scan(full_path).empty?}
+        tree.collect{|child| child[:id]}.select{|p|!p.scan(full_path).empty?}
       end
     end
 
     def mtime(p, file_support)
-      p = p.sub(%r{^/}, '')
+      p = p.sub!(%r{^/}, '')
       ErpTechSvcs::FileSupport::S3Manager.new.bucket.objects[p].last_modified
     end
 
