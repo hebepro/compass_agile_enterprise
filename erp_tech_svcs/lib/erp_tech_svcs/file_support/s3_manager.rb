@@ -120,7 +120,7 @@ module ErpTechSvcs
       end
 
       def delete_file(path, options={})
-        is_directory = !path.match(/\/$/).nil?
+        is_directory = File.extname(path).blank?
         path = path.sub(%r{^/}, '')
         result = false
         message = nil
@@ -171,55 +171,55 @@ module ErpTechSvcs
       end
 
       def find_node(path, options={})
-        if options[:file_asset_holder]
-          super
-        else
-          #remove proceeding slash for s3
-          path.sub!(%r{^/}, '')
+        #remove proceeding slash for s3
+        path.sub!(%r{^/}, '')
 
-          parent = {:text => path.split('/').pop, :leaf => false, :id => path, :children => []}
+        parent = {:text => path.split('/').pop, :leaf => false, :id => path, :children => []}
 
-          tree = bucket.as_tree(:prefix => path)
-          tree.children.each do |node|
-            if node.leaf?
-              #ignore current path that comes as leaf from s3
-              next if node.key == path
+        tree = bucket.as_tree(:prefix => path)
+        tree.children.each do |node|
+          if node.leaf?
+            #ignore current path that comes as leaf from s3
+            next if node.key == path + '/'
 
-              parent[:children] << {
-                  :text => node.key.split('/').pop,
-                  :downloadPath => "/#{node.key}",
-                  :id => "/#{node.key}",
-                  :leaf => true
-              }
-            else
-              #must prefix all paths with / to be consistent with file system
-              parent[:children] << {
-                  :iconCls => "icon-content",
-                  :text => node.prefix.split('/').pop,
-                  :id => "/#{node.prefix}".chop,
-                  :leaf => false
-              }
+            leaf_hash = {
+                :text => node.key.split('/').pop,
+                :downloadPath => "/#{node.key}",
+                :id => "/#{node.key}",
+                :leaf => true
+            }
+
+            if options[:file_asset_holder]
+              files = options[:file_asset_holder].files
+
+              parent_directories =  leaf_hash[:id].split('/')
+              parent_directories.pop
+              parent_directory = parent_directories.join('/')
+
+              file = files.find { |file| file.directory == parent_directory and file.name == leaf_hash[:text] }
+              unless file.nil?
+                leaf_hash[:isSecured] = file.is_secured?
+                leaf_hash[:roles] = file.roles.collect { |r| r.internal_identifier }
+                leaf_hash[:iconCls] = 'icon-document_lock' if leaf_hash[:isSecured]
+                leaf_hash[:size] = file.data_file_size
+                leaf_hash[:width] = file.width
+                leaf_hash[:height] = file.height
+                leaf_hash[:url] = file.url
+              end
             end
 
+            parent[:children] << leaf_hash
+          else
+            parent[:children] << {
+                :iconCls => "icon-content",
+                :text => node.prefix.split('/').pop,
+                :id => "/#{node.prefix}".chop,
+                :leaf => false
+            }
           end
-
-          parent
         end
-      end
 
-      def insert_folders(file_asset_nodes)
-        file_asset_nodes.each do |child_asset_node|
-          node = find_node(File.join(self.root,child_asset_node[:id]))
-          unless node.nil?
-            folders = node[:children].select{|item| !item[:leaf]}
-            child_asset_node[:children] = [] if child_asset_node[:children].nil? && !folders.empty?
-            folders.each do |folder|
-              folder[:id].gsub!(self.root,'')
-              child_asset_node[:children] << folder unless child_asset_node[:children].collect{|child_node| child_node[:text] }.include?(folder[:text])
-            end
-            #insert_folders(child_asset_node[:children])
-          end
-        end unless file_asset_nodes.nil?
+        parent
       end
 
     end #S3Manager
