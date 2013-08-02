@@ -64,7 +64,7 @@ module ActionView
     end
 
     def mtime(p, file_support)
-      p = p.sub!(%r{^/}, '')
+      p = p.sub(%r{^/}, '')
       ErpTechSvcs::FileSupport::S3Manager.new.bucket.objects[p].last_modified
     end
 
