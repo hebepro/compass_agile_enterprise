@@ -171,36 +171,55 @@ module ErpTechSvcs
       end
 
       def find_node(path, options={})
-        #remove proceeding slash for s3
-        path.sub!(%r{^/}, '')
+        if options[:file_asset_holder]
+          super
+        else
+          #remove proceeding slash for s3
+          path.sub!(%r{^/}, '')
 
-        node_tree = []
+          parent = {:text => path.split('/').pop, :leaf => false, :id => path, :children => []}
 
-        tree = bucket.as_tree(:prefix => path)
-        tree.children.each do |node|
-          if node.leaf?
-            #ignore current path that comes as leaf from s3
-            next if node.key == path
+          tree = bucket.as_tree(:prefix => path)
+          tree.children.each do |node|
+            if node.leaf?
+              #ignore current path that comes as leaf from s3
+              next if node.key == path
 
-            node_tree << {
-                :text => node.key.split('/').pop,
-                :downloadPath => "/#{node.key}",
-                :id => "/#{node.key}",
-                :leaf => true
-            }
-          else
-            #must prefix all paths with / to be consistent with file system
-            node_tree << {
-                :iconCls => "icon-content",
-                :text => node.prefix.split('/').pop,
-                :id => "/#{node.prefix}".chop,
-                :leaf => false
-            }
+              parent[:children] << {
+                  :text => node.key.split('/').pop,
+                  :downloadPath => "/#{node.key}",
+                  :id => "/#{node.key}",
+                  :leaf => true
+              }
+            else
+              #must prefix all paths with / to be consistent with file system
+              parent[:children] << {
+                  :iconCls => "icon-content",
+                  :text => node.prefix.split('/').pop,
+                  :id => "/#{node.prefix}".chop,
+                  :leaf => false
+              }
+            end
+
           end
 
+          parent
         end
+      end
 
-        node_tree
+      def insert_folders(file_asset_nodes)
+        file_asset_nodes.each do |child_asset_node|
+          node = find_node(File.join(self.root,child_asset_node[:id]))
+          unless node.nil?
+            folders = node[:children].select{|item| !item[:leaf]}
+            child_asset_node[:children] = [] if child_asset_node[:children].nil? && !folders.empty?
+            folders.each do |folder|
+              folder[:id].gsub!(self.root,'')
+              child_asset_node[:children] << folder unless child_asset_node[:children].collect{|child_node| child_node[:text] }.include?(folder[:text])
+            end
+            #insert_folders(child_asset_node[:children])
+          end
+        end unless file_asset_nodes.nil?
       end
 
     end #S3Manager
