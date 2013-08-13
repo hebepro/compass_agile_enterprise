@@ -86,13 +86,15 @@ module Widgets
 
       def update_password
         if @user = User.authenticate(current_user.username, params[:old_password])
+          load_profile_data
+
           if !params[:new_password].blank? && !params[:password_confirmation].blank? && params[:new_password] == params[:password_confirmation]
 
             @user.password_confirmation= params[:password_confirmation]
 
             if @user.change_password!(params[:new_password])
               @message = "Password Updated"
-              load_profile_data
+              
               render :update => {:id => "#{@uuid}_result", :view => :index}
             else
               @message = "Error Updating Password"
@@ -108,6 +110,7 @@ module Widgets
             render :update => {:id => "#{@uuid}_result", :view => :index}
           end
         else
+          load_profile_data
           #### old password wrong ####
           @message = "Invalid Old Password"
           @message_cls = 'sexyerror'
