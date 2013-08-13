@@ -12,7 +12,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
 
     deleteSection:function (node) {
         var self = this;
-        Ext.MessageBox.confirm('Confirm', 'Are you sure you want to delete this section?<br> NOTE: Articles belonging to this section will be orphaned.', function (btn) {
+        Ext.MessageBox.confirm('Confirm', 'Are you sure you want to delete this section?<br> NOTE: Articles belonging to this section will be orphaned.<br><br>', function (btn) {
             if (btn == 'no') {
                 return false;
             }
