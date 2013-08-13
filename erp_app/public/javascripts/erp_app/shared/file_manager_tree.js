@@ -153,8 +153,8 @@ Ext.define("Compass.ErpApp.Shared.FileManagerTree",{
           else
           if(btn == 'yes')
           {
-            selectedNodes = self.getSelectionModel().getSelection();
-
+            selectedNodes = self.selectedNodes; // HACK: in ExtJS 4.2.1 self.getSelectionModel().getSelection(); returns an empty array in itemmove listener so we use a temp variable self.selectedNodes
+            self.selectedNodes = [];
             var msg = Ext.Msg.wait("Saving", "Saving move...");
             Ext.apply(self.extraPostData, {
               parent_node:newParent.data.id,
@@ -258,7 +258,10 @@ Ext.define("Compass.ErpApp.Shared.FileManagerTree",{
               if(record.data.height){
                 details += '<br /> Height: '+record.data.height + ' px';
               }
-              Ext.Msg.alert('Properties', details);
+              var messageBox = Ext.create('Ext.window.MessageBox',{
+                style: 'white-space:nowrap;'
+              });
+              messageBox.alert('Properties', details);
             }
           }
       });
@@ -676,18 +679,14 @@ Ext.define("Compass.ErpApp.Shared.FileManagerTree",{
       viewConfig: {
         loadMask: true,
         plugins: {
-          ptype: 'treeviewdragdrop'
+          ptype: 'treeviewdragdrop'          
+        },
+        listeners:{
+          'beforedrop':function(node, data, overModel, dropPosition, dropHandlers, eOpts){
+            // HACK: in ExtJS 4.2.1 self.getSelectionModel().getSelection(); returns an empty array in itemmove listener so we set a temp variable self.selectedNodes here for use by itemmove
+            self.selectedNodes = self.getSelectionModel().getSelection(); 
+          }
         }
-        // these events were throwing extjs errors when trying to move multiple files in file manager when hovering over drop node
-        // Since they are not being used I am commenting them out
-        // listeners:{
-        //   'beforedrop':function(node, data, overModel, dropPosition,dropFunction,options){
-        //     self.fireEvent('beforedrop_view', node, data, overModel, dropPosition,dropFunction,options);
-        //   },
-        //   'drop':function(node, data, overModel, dropPosition, options){
-        //     self.fireEvent('drop_view', node, data, overModel, dropPosition, options);
-        //   }
-        // }
       }
     }, config);
 
