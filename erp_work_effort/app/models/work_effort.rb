@@ -8,7 +8,7 @@ class WorkEffort < ActiveRecord::Base
   belongs_to :facility, :polymorphic => true
   has_many   :work_effort_assignments
   has_many   :work_effort_statuses
-
+  has_many   :work_effort_party_roles, :class_name => 'WorkEffortPartyRole', :dependent => :destroy
   belongs_to :projected_cost, :class_name => 'Cost', :foreign_key => 'projected_cost_id'
   belongs_to :actual_cost, :class_name => 'Cost', :foreign_key => 'actual_cost_id'
   #has_one    :work_effort_deliverable

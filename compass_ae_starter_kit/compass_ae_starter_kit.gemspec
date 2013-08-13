@@ -14,6 +14,7 @@ Gem::Specification.new do |s|
   s.email       = ["russonrails@gmail.com"]
   s.homepage    = "http://development.compassagile.com"
 
+  s.license = 'GPL-3'
   s.files = Dir["{lib,config,public}/**/*"] + ["GPL-3-LICENSE", "README.md"]
   s.bindir      = 'bin'
   s.executables = ['compass_ae']

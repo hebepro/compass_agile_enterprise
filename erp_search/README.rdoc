@@ -5,7 +5,9 @@ ERP Search adds Solr extensions to Compass using Sunspot.
 
 Setup
 =====
-Copy vendor/plugins/erp_search/config/sunspot.yml to config/sunspot.yml
+Copy engine's erp_search/config/erp_search.yml to [approot]config/erp_search.yml
+Edit config/erp_search.yml to your desired configuration if different from default
+Copy engine's erp_search/config/sunspot.yml to [approot]config/sunspot.yml
 Edit config/sunspot.yml to your desired configuration if different from default
 
 
