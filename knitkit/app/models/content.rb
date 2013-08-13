@@ -29,25 +29,26 @@ class Content < ActiveRecord::Base
   def self.search(options = {})
     predicate = Content.includes([:website_sections])
 
-    if options[:section_unique_name]
+    unless options[:section_unique_name].blank?
       predicate = predicate.where("website_sections.internal_identifier = ?", options[:section_unique_name])
     end
 
-    if options[:parent_id]
+    unless options[:parent_id].blank?
       predicate = predicate.where("website_sections.id" => WebsiteSection.find(options[:parent_id]).self_and_descendants.collect(&:id))
     end
 
-    if options[:content_type]
+    unless options[:content_type].blank?
       predicate = predicate.where("website_sections.type = ?", options[:content_type])
     end
 
-    if options[:website_id]
+    unless options[:website_id].blank?
       predicate = predicate.where("website_sections.website_id = ?", options[:website_id])
     end
 
     predicate = predicate.where("(UPPER(contents.title) LIKE UPPER('%#{options[:query]}%')
                       OR UPPER(contents.excerpt_html) LIKE UPPER('%#{options[:query]}%') 
                       OR UPPER(contents.body_html) LIKE UPPER('%#{options[:query]}%') )").order("contents.created_at DESC")
+
     if options[:page]
       predicate.paginate(:page => options[:page], :per_page => options[:per_page])
     else
