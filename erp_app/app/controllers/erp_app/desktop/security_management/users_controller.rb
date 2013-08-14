@@ -128,7 +128,7 @@ module ErpApp
             assign_to_id = params[:id]
             u = User.find(assign_to_id)
 
-            render :json => {:success => true, :roles => u.all_roles, :capabilities => u.class_capabilities_to_hash }
+            render :json => {:success => true, :roles => u.all_uniq_roles, :capabilities => u.class_capabilities_to_hash }
           rescue Exception => e
             Rails.logger.error e.message
             Rails.logger.error e.backtrace.join("\n")
