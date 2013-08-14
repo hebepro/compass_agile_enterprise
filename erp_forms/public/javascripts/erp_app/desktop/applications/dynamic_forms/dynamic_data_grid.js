@@ -6,7 +6,6 @@ Ext.define("Compass.ErpApp.Desktop.Applications.DynamicForms.FileTree",{
   collapsible:false,
   title:'Files',
   rootText:'Files',    
-  allowDownload:true,
   addViewContentsToContextMenu:false,
   rootVisible:true,
   multiSelect:true,
@@ -26,11 +25,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.DynamicForms.FileTree",{
       return false;
     },
     'fileDeleted':function(fileTreePanel, node){},
-    'fileUploaded':function(fileTreePanel, node){},
-    'downloadfile':function(fileTreePanel, node){
-      window.open("/download/"+node.data.text+"?path=" + node.data.downloadPath,'mywindow','width=400,height=200');
-      return false;
-    }
+    'fileUploaded':function(fileTreePanel, node){}
   },
 
   changeSecurityOnFile : function(node, secure, fileTree){
@@ -275,6 +270,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.DynamicForms.DynamicDataGridPane
                     var fileTree = Ext.create('Compass.ErpApp.Desktop.Applications.DynamicForms.FileTree', {
                       width: 250,
                       minHeight: 800,
+                      allowDownload:false,
                       listeners:{
                         'beforeload':function(store){
                             store.getProxy().extraParams.id = record_id;
@@ -287,6 +283,10 @@ Ext.define("Compass.ErpApp.Desktop.Applications.DynamicForms.DynamicDataGridPane
                             setTimeout(function(){ 
                                 panel.getStore().load();
                             },100);
+                        },
+                        'downloadfile':function(fileTreePanel, node){
+                          window.open("/download/"+node.data.text+"?path=" + node.data.downloadPath,'mywindow','width=400,height=200');
+                          return false;
                         }
                       }
                     });
