@@ -1,6 +1,3 @@
-Version 2.1.3
+Version 3.1.1
 - Changed middleware to insert_before Rack::Runtime instead of Rack::Lock to allow for config.threadsafe!
-Version 2.1.2 - 6-23-2013
-- Added filtering to tables
-Version 2.1.1 - 02-25-2013
-- Bug fixes
+Version 3.1.0 - 1-11-2013
