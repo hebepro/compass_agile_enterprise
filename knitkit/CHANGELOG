@@ -1,4 +1,4 @@
-Version 2.1.14
+Version 2.1.14 - 8-15-2013
 - Added ability to secure Online Document Sections
 - Updated Knitkit::BaseController#set_section to check security on root Online Document Section
 - Fixed bug in Knitkit::OnlineDocumentSectionsController#get_content when there is no content version
