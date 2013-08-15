@@ -4,8 +4,8 @@ module Knitkit
 
     layout 'knitkit/online_document_sections'
 
-    before_filter :find_root
-    before_filter :find_document_sections, :only => :build_tree
+    append_before_filter :find_root
+    append_before_filter :find_document_sections, :only => :build_tree
 
     def index
       @online_document = OnlineDocumentSection.find(params[:section_id])
@@ -31,8 +31,10 @@ module Knitkit
     end
 
     def get_content
-      document_section = OnlineDocumentSection.find(params[:document_section_id])
-      content = document_section.documented_item_published_content(@active_publication)
+      document_section = OnlineDocumentSection.where(:internal_identifier => params[:document_section_id]).first
+      content = document_section.documented_item_published_content(@active_publication) unless @active_publication.nil?
+      content = document_section.documented_item.content if @active_publication.nil? or content.nil?
+
       if document_section.use_markdown and content
         html = Kramdown::Document.new(content.body_html).to_html
       else

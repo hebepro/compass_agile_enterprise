@@ -1,3 +1,8 @@
+Version 2.1.14
+- Added ability to secure Online Document Sections
+- Updated Knitkit::BaseController#set_section to check security on root Online Document Section
+- Fixed bug in Knitkit::OnlineDocumentSectionsController#get_content when there is no content version
+- Fixed Online Document Sections requests to consistently use iid
 Version 2.1.13 - 8-14-2013
 - Fixed website iid on new websites, friendly id should only create a slug if iid is nil
 - Fixed bug in render_content_area when there is no content version

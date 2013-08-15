@@ -226,11 +226,10 @@
         resize_windows();
 
         // Load root page
-
         Ext.Ajax.request({
             url: '/online_document_sections/get_content',
             params: {
-                document_section_id:<%= @root.id %>,
+                document_section_id:'<%= @root.internal_identifier %>',
                 section_id:<%= @root.id %>
             },
             success: function (response) {

@@ -1,4 +1,16 @@
 Compass.ErpApp.Desktop.Applications.Knitkit.addDocumentOptions = function (self, items, record) {
+    if (currentUser.hasCapability('unsecure','WebsiteSection') || currentUser.hasCapability('secure','WebsiteSection')) {
+        items.push({
+            text:'Security',
+            iconCls:'icon-document_lock',
+            listeners:{
+                'click':function () {
+                    self.changeSecurity(record, '/knitkit/erp_app/desktop/section/update_security', record.data.id.split('_')[1]);
+                }
+            }
+        });
+    }
+
     if (currentUser.hasCapability('create','WebsiteSection')) {
         items.push({
             text:'Add Document',
