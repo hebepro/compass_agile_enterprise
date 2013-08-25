@@ -2,7 +2,7 @@ module Widgets
   module Scaffold
     class Base < ErpApp::Widgets::Base
       def index
-        @model_name = params[:model_name]
+        @model_name = params[:model]
         @title = params[:grid][:title] || params[:model].pluralize
         @width = params[:grid][:width] || '100%'
         @height = params[:grid][:height] || 500
@@ -61,7 +61,7 @@ module Widgets
 
         #merge in passed widget options
         options.each do |key, value|
-          options[key] = session[:widgets][self.uuid][key] unless session[:widgets][self.uuid][key].blank?
+          options[key] = session[:widgets][self.uuid][:scaffold][key] unless session[:widgets][self.uuid][:scaffold][key].blank?
         end
 
         ActiveExt::Core.new(model_id,options)

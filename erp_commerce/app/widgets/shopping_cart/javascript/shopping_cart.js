@@ -1,6 +1,6 @@
 Compass.ErpApp.Widgets.ShoppingCart = {
     template: new Ext.Template("<%= render_widget :shopping_cart,\n",
-        "   :action => {action},\n",
+        "   :action => :{action},\n",
         "   :params => {:{symbol} => '{url}'} %>"),
 
     addShoppingCart: function () {
@@ -22,11 +22,11 @@ Compass.ErpApp.Widgets.ShoppingCart = {
                         xtype: 'combo',
                         forceSelection: true,
                         store: [
-                            [':price_summary', 'Price Summary'],
-                            [':cart_items', 'Cart Items']
+                            ['price_summary', 'Price Summary'],
+                            ['cart_items', 'Cart Items']
                         ],
                         fieldLabel: 'Widget View',
-                        value: ':price_summary',
+                        value: 'price_summary',
                         name: 'widgetLayout',
                         allowBlank: false,
                         triggerAction: 'all',
@@ -35,7 +35,7 @@ Compass.ErpApp.Widgets.ShoppingCart = {
                                 var basicForm = field.findParentByType('form').getForm();
                                 var cartItemsUrlField = basicForm.findField('cartItemsUrl');
                                 var productsUrlField = basicForm.findField('productsUrl');
-                                if (newValue == ':price_summary') {
+                                if (newValue == 'price_summary') {
                                     cartItemsUrlField.show();
                                     productsUrlField.hide();
                                     cartItemsUrlField.setValue('/cart-summary');
@@ -75,7 +75,7 @@ Compass.ErpApp.Widgets.ShoppingCart = {
                             var action = basicForm.findField('widgetLayout').getValue();
 
                             var data = {action: action};
-                            if (action == ':price_summary') {
+                            if (action == 'price_summary') {
                                 data.symbol = 'cart_items_url';
                                 data.url = basicForm.findField('cartItemsUrl').getValue();
                             }
