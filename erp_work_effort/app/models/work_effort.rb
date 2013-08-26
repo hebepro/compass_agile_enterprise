@@ -3,17 +3,34 @@ class WorkEffort < ActiveRecord::Base
 
   acts_as_nested_set
   include ErpTechSvcs::Utils::DefaultNestedSetMethods
+  has_tracked_status
 
+  belongs_to  :work_effort_type
+  belongs_to  :work_effort_purpose_type
+
+  ## How is this Work Effort related to Work Order Items (order_line_items)
+  has_many    :work_effort_item_fulfillments, :dependent => :destroy
+  has_many    :order_line_items, :through => :work_effort_item_fulfillments
+
+  ## How is this Work Effort related to business parties, requestors, workers, approvers
+  has_many    :work_effort_party_assignments, :dependent => :destroy
+  has_many    :parties, :through => :work_effort_party_assignments
+
+  ## What Inventory Items are used in the execution of this Work Effort
+  has_many    :work_effort_inventory_assignments, :dependent => :destroy
+  has_many    :inventory_entries, :through => :work_effort_inventory_assignments
+
+  ## What Fixed Assets (tools, equipment) are used in the execution of this Work Effort
+  has_many    :work_effort_fixed_asset_assignments, :dependent => :destroy
+  has_many    :fixed_assets, :through => :work_effort_fixed_asset_assignments
+
+  ## Allow for polymorphic subtypes of this class
   belongs_to :work_effort_record, :polymorphic => true
-  belongs_to :facility, :polymorphic => true
-  has_many   :work_effort_assignments
-  has_many   :work_effort_statuses
-  has_many   :work_effort_party_roles, :class_name => 'WorkEffortPartyRole', :dependent => :destroy
+
   belongs_to :projected_cost, :class_name => 'Cost', :foreign_key => 'projected_cost_id'
   belongs_to :actual_cost, :class_name => 'Cost', :foreign_key => 'actual_cost_id'
-  #has_one    :work_effort_deliverable
+  belongs_to :facility
 
-  #get current status
   def status
     work_effort_status = self.descendants.flatten!.nil? ? self.get_current_status : self.descendants.flatten!.last.get_current_status
     work_effort_status.work_effort_status_type.description
