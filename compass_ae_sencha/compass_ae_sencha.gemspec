@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.homepage    = "http://tntech.biz"
   s.summary     = "Use Sencha with CompassAE"
   s.description = "This gem provides the Sencha library for CompassAE."
-  s.license     = "MIT"
+  s.license     = "GPL-3"
 
-  s.files = Dir["{public,lib}/**/*"] + ["LICENSE", "Rakefile", "README.md"]
+  s.files = Dir["{public,lib}/**/*"] + ["GPL-3-LICENSE", "Rakefile", "README.md"]
 end

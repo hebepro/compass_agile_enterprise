@@ -1,3 +1,5 @@
+Version 3.1.15 - 8-26-2013
+- Updated mobile app buttons
 Version 3.1.14 - 8-14-2013
 - Fixed file move bug (workaround for ExtJS 4.2.1 issue)
 - Fixed url wrapping in file properties

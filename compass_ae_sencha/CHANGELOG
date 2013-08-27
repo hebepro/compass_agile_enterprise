@@ -1,3 +1,5 @@
+Version 1.0.4 - 8-26-2013
+- Fixed bug in sencha touch css
 Version 1.0.3 - 8-14-2013
 - Upgraded ExtJS to 4.2.1
 - Changed middleware to insert_before Rack::Runtime instead of Rack::Lock to allow for config.threadsafe!
