@@ -32,13 +32,13 @@ class WorkEffort < ActiveRecord::Base
   belongs_to :facility
 
   def status
-    work_effort_status = self.descendants.flatten!.nil? ? self.get_current_status : self.descendants.flatten!.last.get_current_status
-    work_effort_status.work_effort_status_type.description
+    # get status via has_tracked_status
+    current_status
   end
 
   # return true if this effort has been started, false otherwise
   def started?
-    get_current_status.nil? ? false : true
+    current_status.nil? ? false : true
   end
   
   # return true if this effort has been completed, false otherwise
@@ -46,6 +46,10 @@ class WorkEffort < ActiveRecord::Base
     finished_at.nil? ? false : true
   end
   
+  def finished?
+    completed?
+  end
+
   #start initial work_status
   def start(status_type)
     effort = self
@@ -54,11 +58,8 @@ class WorkEffort < ActiveRecord::Base
       effort = children.last
     end
 
-    current_status = effort.get_current_status
-
     if current_status.nil?
-      work_effort_status = WorkEffortStatus.create(:started_at => DateTime.now, :work_effort_status_type => status_type)
-      effort.work_effort_statuses << work_effort_status
+      effort.current_status = status_type
       effort.started_at = DateTime.now
       effort.save
     else
@@ -66,77 +67,11 @@ class WorkEffort < ActiveRecord::Base
     end
   end
 
-  # completes current status if current status is in progress
-  # start status passed in
-  # if status passed in is last status, starts parent status if status exists
-  def send_to_status(status_type, complete_effort=false, complete_status=false)
-    current_status = get_current_status
-    
-    unless current_status.nil?
-      new_work_effort_status = WorkEffortStatus.new
-      new_work_effort_status.started_at = DateTime.now
-      new_work_effort_status.finished_at = new_work_effort_status.started_at if complete_status
-      new_work_effort_status.work_effort_status_type = status_type
-      new_work_effort_status.work_effort = self
-      new_work_effort_status.save
-      current_status.finished_at = DateTime.now
-      current_status.save
-      complete_work_effort if complete_effort
-    else
-      raise 'Effort Has Not Started'
-    end
-  end
-  
-  #completes current status
-  #start next status if not last status
-  #starts parent status if parent exists
-  def send_to_next_status
-    current_status = get_current_status
-
-    unless current_status.nil?
-      next_status_type = current_status.work_effort_status_type.next_status_type
-
-      if next_status_type.nil?
-        complete_work_effort
-      else
-        new_work_effort_status = WorkEffortStatus.new
-        new_work_effort_status.started_at = DateTime.now
-        new_work_effort_status.work_effort_status_type = next_status_type
-        new_work_effort_status.work_effort = self
-        new_work_effort_status.save
-      end
-
-      current_status.finished_at = DateTime.now
-      current_status.save
-    else
-      raise 'Effort Has Not Started' if current_status.nil?
-    end
+  def finish
+    complete
   end
 
-  def send_to_previous_status
-    current_status = get_current_status
-
-    unless current_status.nil?
-      previous_status_type = current_status.work_effort_status_type.previous_status_type
-
-      if previous_status_type.nil?
-        raise 'Current status is initial status' if current_status.nil?
-      else
-        new_work_effort_status = WorkEffortStatus.new
-        new_work_effort_status.started_at = DateTime.now
-        new_work_effort_status.work_effort_status_type = previous_status_type
-        new_work_effort_status.work_effort = self
-        new_work_effort_status.save
-      end
-
-      current_status.finished_at = DateTime.now
-      current_status.save
-    else
-      raise 'Effort Has Not Started' if current_status.nil?
-    end
-  end
-
-  def complete_work_effort
+  def complete
     self.finished_at = Time.now
     self.actual_completion_time = time_diff_in_minutes(self.finished_at.to_time, self.started_at.to_time)
     self.save
@@ -144,10 +79,6 @@ class WorkEffort < ActiveRecord::Base
   end
 
   protected
-  def get_current_status
-    self.work_effort_statuses.find_by_finished_at(nil)
-  end
-
   def time_diff_in_minutes (time_one, time_two)
     (((time_one - time_two).round) / 60)
   end
