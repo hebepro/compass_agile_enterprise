@@ -621,51 +621,6 @@ def self.up
       add_index :party_resource_availability_types, :description
     end
 
-    ##********************************************************************************************
-    ## TODO To be replaced by "has_tracked_status"???
-    ## these are the status for both requirements and work_efforts.
-    ##********************************************************************************************
-    ## work_requirement_work_effort_status_types
-    unless table_exists?(:work_requirement_work_effort_status_types)
-      create_table :work_requirement_work_effort_status_types do |t|
-        #foreign keys
-        t.integer :work_requirement_id
-        t.integer :work_effort_status_type_id
-        t.boolean :is_initial_status
-
-        t.timestamps
-      end
-    end
-
-    ## work_effort_status_types
-    unless table_exists?(:work_effort_status_types)
-      create_table :work_effort_status_types do |t|
-        t.string  :internal_identifier
-        t.string  :description
-        t.integer :next_status_id
-        t.integer :previous_status_id
-
-        t.timestamps
-      end
-      add_index :work_effort_status_types, :internal_identifier
-      add_index :work_effort_status_types, :description
-    end
-
-    ## work_effort_statuses
-    unless table_exists?(:work_effort_statuses)
-      create_table  :work_effort_statuses do |t|
-        t.datetime  :started_at
-        t.datetime  :finished_at
-        t.integer   :work_effort_id
-        t.integer   :work_effort_status_type_id
-
-        t.timestamps
-      end
-
-      add_index :work_effort_statuses, :work_effort_status_type_id
-      add_index :work_effort_statuses, :work_effort_id
-    end
-
   end
 
   def self.down
