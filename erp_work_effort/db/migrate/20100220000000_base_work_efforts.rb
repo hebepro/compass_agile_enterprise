@@ -255,8 +255,8 @@ def self.up
 
         #foreign keys
         t.integer     :facility_id
-        t.integer     :projected_cost_id
-        t.integer     :actual_cost_id
+        t.integer     :projected_cost_money_id
+        t.integer     :actual_cost_money_id
         t.references  :fixed_asset
         t.references  :work_effort_purpose_type
         t.references  :work_effort_type

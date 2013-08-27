@@ -27,8 +27,8 @@ class WorkEffort < ActiveRecord::Base
   ## Allow for polymorphic subtypes of this class
   belongs_to :work_effort_record, :polymorphic => true
 
-  belongs_to :projected_cost, :class_name => 'Cost', :foreign_key => 'projected_cost_id'
-  belongs_to :actual_cost, :class_name => 'Cost', :foreign_key => 'actual_cost_id'
+  belongs_to :projected_cost, :class_name => 'Money', :foreign_key => 'projected_cost_money_id'
+  belongs_to :actual_cost, :class_name => 'Money', :foreign_key => 'actual_cost_money_id'
   belongs_to :facility
 
   def status
