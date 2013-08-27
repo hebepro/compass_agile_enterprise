@@ -9,8 +9,8 @@ class WorkEffort < ActiveRecord::Base
   belongs_to  :work_effort_purpose_type
 
   ## How is this Work Effort related to Work Order Items (order_line_items)
-  has_many    :work_effort_item_fulfillments, :dependent => :destroy
-  has_many    :order_line_items, :through => :work_effort_item_fulfillments
+  has_many    :work_order_item_fulfillments, :dependent => :destroy
+  has_many    :order_line_items, :through => :work_order_item_fulfillments
 
   ## How is this Work Effort related to business parties, requestors, workers, approvers
   has_many    :work_effort_party_assignments, :dependent => :destroy
