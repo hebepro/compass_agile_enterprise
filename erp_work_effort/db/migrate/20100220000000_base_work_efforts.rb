@@ -1,6 +1,39 @@
 class BaseWorkEfforts < ActiveRecord::Migration
  
 def self.up
+
+    unless table_exists?(:facilities)
+      create_table :facilities do |t|
+
+        t.string  :description
+        t.string  :internal_identifier
+        t.integer :facility_type_id
+
+        #polymorphic columns
+        t.integer :facility_record_id
+        t.integer :facility_record_type
+
+        t.timestamps
+      end
+    end
+
+    unless table_exists?(:facility_types)
+      create_table :facility_types do |t|
+
+        t.string  :description
+        t.string  :internal_identifier
+        t.string  :external_identifier
+        t.string  :external_identifer_source
+
+        #these columns are required to support the behavior of the plugin 'awesome_nested_set'
+        t.integer :parent_id
+        t.integer :lft
+        t.integer :rgt
+
+        t.timestamps
+      end
+    end
+
     ##********************************************************************************************
     ## Infrastructure and Accounting
     ##********************************************************************************************
