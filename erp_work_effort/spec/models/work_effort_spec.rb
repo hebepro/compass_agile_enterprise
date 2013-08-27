@@ -23,7 +23,13 @@ describe WorkEffort do
     al.should be_an_instance_of(AuditLog)
     al.should be_persisted
 
+    # test creation of work effort
     al.work_effort.should be_an_instance_of(WorkEffort)
     al.work_effort.should be_persisted
+
+    # test destruction of work effort
+    work_effort_id = al.work_effort.id
+    al.destroy
+    WorkEffort.where(:id => work_effort_id).should_not exist
   end
 end
