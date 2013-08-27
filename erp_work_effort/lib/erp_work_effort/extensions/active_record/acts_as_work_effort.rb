@@ -19,13 +19,13 @@ module ErpWorkEffort
         
             has_one :work_effort, :as => :work_effort_record
         
-            [
-              :description,
+            [ :description,
               :description=,
               :facility, 
               :facility=,
-              :work_effort_assignments,
-              :work_effort_statuses,
+              :work_effort_party_assignments,
+              :work_effort_inventory_assignments,
+              :work_effort_fixed_asset_assignments,
               :projected_cost,
               :projected_cost=,
               :projected_completion_time,
@@ -33,8 +33,7 @@ module ErpWorkEffort
               :actual_cost,
               :start,
               :started?,
-              :completed?,
-              :send_to_status
+              :completed?
             ].each do |m| 
               delegate m, :to => :work_effort 
             end        

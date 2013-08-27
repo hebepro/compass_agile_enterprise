@@ -1,10 +1,233 @@
 class BaseWorkEfforts < ActiveRecord::Migration
  
-  def self.up
+def self.up
+    ##********************************************************************************************
+    ## Infrastructure and Accounting
+    ##********************************************************************************************
+    ## TODO Move to a basic accounting engine
+    unless table_exists?(:fixed_assets)
+      create_table :fixed_assets do |t|
 
-    ## work_efforts
+        #foreign key references
+        t.references :fixed_asset_type
+
+        #custom columns go here
+        t.string :description
+        t.string :comments
+        t.string :internal_identifier
+        t.string :external_identifier
+        t.string :external_id_source
+
+        #polymorphic columns
+        t.string  :fixed_asset_record_type
+        t.integer :fixed_asset_record_id
+
+        t.timestamps
+      end
+    end
+
+    unless table_exists?(:fixed_asset_types)
+      create_table :fixed_asset_types do |t|
+        #these columns are required to support the behavior of the plugin 'awesome_nested_set'
+        t.integer :parent_id
+        t.integer :lft
+        t.integer :rgt
+
+        #custom columns go here
+        t.string :description
+        t.string :comments
+        t.string :internal_identifier
+        t.string :external_identifier
+        t.string :external_id_source
+
+        t.timestamps
+      end
+    end
+
+    ##********************************************************************************************
+    ## Human resource (Party) skill types
+    ##********************************************************************************************
+    unless table_exists?(:skill_types)
+      create_table :skill_types do |t|
+        t.integer  :parent_id
+        t.integer  :lft
+        t.integer  :rgt
+
+        #custom columns go here
+        t.string  :description
+        t.string  :comments
+        t.string  :internal_identifier
+        t.string  :external_identifier
+        t.string  :external_id_source
+
+        t.timestamps
+      end
+    end
+
+    ## party skills
+    unless table_exists?(:party_skills)
+      create_table :party_skills do |t|
+        t.integer  :party_id
+        t.integer  :skill_type_id
+
+        t.timestamps
+      end
+      add_index :party_skills,  [:party_id, :skill_type_id], :name => "party_skills_idx"
+    end
+
+    ##********************************************************************************************
+    ## Types of goods required as a standard for the completion of work efforts. This is different from
+    ## inventory_items because it is not for planning. It is only for noting the type of good
+    ## that is required to perform the work effort. - See DMRB v1, pp 223-224
+    ##********************************************************************************************
+    unless table_exists?(:good_types)
+      create_table :good_types do |t|
+        #these columns are required to support the behavior of the plugin 'awesome_nested_set'
+        t.integer :parent_id
+        t.integer :lft
+        t.integer :rgt
+
+        #custom columns go here
+        t.string :description
+        t.string :comments
+        t.string :internal_identifier
+        t.string :external_identifier
+        t.string :external_id_source
+
+        t.timestamps
+      end
+    end
+
+    ##********************************************************************************************
+    ## Deliverables - outputs from work efforts
+    ##********************************************************************************************
+    unless table_exists?(:deliverables)
+      create_table :deliverables do |t|
+
+        t.string :description
+        t.string :comments
+        t.string :internal_identifier
+        t.string :external_identifier
+        t.string :external_id_source
+
+        #polymorphic columns
+        t.string  :deliverable_record_type
+        t.integer :deliverable_record_id
+
+        t.timestamps
+      end
+    end
+
+    # deliverable types
+    unless table_exists?(:deliverable_types)
+      create_table :deliverable_types do |t|
+        #these columns are required to support the behavior of the plugin 'awesome_nested_set'
+        t.integer :parent_id
+        t.integer :lft
+        t.integer :rgt
+
+        #custom columns go here
+        t.string :description
+        t.string :comments
+        t.string :internal_identifier
+        t.string :external_identifier
+        t.string :external_id_source
+
+        t.timestamps
+      end
+    end
+
+    ##********************************************************************************************
+    ## Requirements
+    ##********************************************************************************************
+    unless table_exists?(:requirements)
+      create_table :requirements do |t|
+
+        #better nested set columns
+        t.integer :parent_id
+        t.integer :lft
+        t.integer :rgt
+
+        t.string :description
+        t.string :type
+        t.integer :projected_completion_time
+        t.integer :estimated_budget_money_id
+
+        #requirement type
+        t.integer :requirement_type_id
+        #polymorphic columns
+        t.integer :requirement_record_id
+        t.string  :requirement_record_type
+
+        #These columns represent optional relationships to the items used by and
+        #produced via fulfillment of the requirement
+        #TODO if we do separate requirement from work requirement, some of these relationships
+        #would get moved to work_requirement or another subtype. See DMRB V1 p187
+        t.integer   :fixed_asset_id
+        t.integer   :product_id
+        t.integer   :deliverable_id
+
+        t.timestamps
+      end
+    end
+
+    # requirement types. We use polymorphic subtypes
+    unless table_exists?(:requirement_types)
+      create_table :requirement_types do |t|
+        #these columns are required to support the behavior of the plugin 'awesome_nested_set'
+        t.integer :parent_id
+        t.integer :lft
+        t.integer :rgt
+
+        #custom columns go here
+        t.string :description
+        t.string :comments
+        t.string :internal_identifier
+        t.string :external_identifier
+        t.string :external_id_source
+
+        t.timestamps
+      end
+    end
+
+    # Create requirement_party_roles
+    unless table_exists?(:requirement_party_roles)
+      create_table :requirement_party_roles do |t|
+        t.string  :description
+
+        t.integer  :requirement_id
+        t.integer  :party_id
+        t.integer  :role_type_id
+
+        t.string  :external_identifier
+        t.string  :external_id_source
+
+        t.datetime :valid_from
+        t.datetime :valid_to
+
+        t.timestamps
+      end
+      add_index :requirement_party_roles,  [:requirement_id, :party_id, :role_type_id], :name => "requirement_party_roles_idx"
+    end
+
+    ##********************************************************************************************
+    ## Base Work Effort data structures
+    ##********************************************************************************************
     unless table_exists?(:work_efforts)
       create_table :work_efforts do |t|
+        #better nested set columns
+        t.integer :parent_id
+        t.integer :lft
+        t.integer :rgt
+
+        #foreign keys
+        t.integer     :facility_id
+        t.integer     :projected_cost_id
+        t.integer     :actual_cost_id
+        t.references  :fixed_asset
+        t.references  :work_effort_purpose_type
+        t.references  :work_effort_type
+
         t.string   :description
         t.string   :type
         t.datetime :started_at
@@ -12,145 +235,333 @@ class BaseWorkEfforts < ActiveRecord::Migration
         t.integer  :projected_completion_time
         t.integer  :actual_completion_time
 
-        t.timestamps
-
         #polymorphic columns
-        t.integer  :facility_id
-        t.string   :facility_type
         t.integer  :work_effort_record_id
         t.string   :work_effort_record_type
 
-        #foreign keys
-        t.integer  :projected_cost_id
-        t.integer  :actual_cost_id
-
-        #better nested set columns
-        t.integer :parent_id
-        t.integer :lft
-        t.integer :rgt
+        t.timestamps
       end
-
-      add_index :work_efforts, [:work_effort_record_id, :work_effort_record_type], :name => "work_effort_record_id_type"
-      add_index :work_efforts, [:facility_type, :facility_id], :name => "facility"
+      add_index :work_efforts, [:work_effort_record_id, :work_effort_record_type], :name => "work_effort_record_id_type_idx"
+      add_index :work_efforts, :fixed_asset_id
       add_index :work_efforts, :finished_at
     end
 
-    ## work_requirements
-    unless table_exists?(:work_requirements)
-      create_table :work_requirements do |t|
-        t.string :description
-        t.string :type
-        t.integer :projected_completion_time
-        t.timestamps
-
-        #polymorphic columns
-        t.integer :work_requirement_record_id
-        t.string  :work_requirement_record_type
-        t.integer :facility_id
-        t.string  :facility_type
-
-        # foreign keys
-        t.integer :cost_id
-
-        #better nested set columns
+    ## work_effort types
+    unless table_exists?(:work_effort_types)
+      create_table :work_effort_types do |t|
+        #these columns are required to support the behavior of the plugin 'awesome_nested_set'
         t.integer :parent_id
         t.integer :lft
         t.integer :rgt
-      end
-    end
-  
-    ## work_requirement_work_effort_status_types
-    unless table_exists?(:work_requirement_work_effort_status_types)
-      create_table :work_requirement_work_effort_status_types do |t|
-        t.timestamps
 
-        #foreign keys
-        t.integer :work_requirement_id
-        t.integer :work_effort_status_type_id
-        t.boolean :is_initial_status
-      end
-    end
-
-    ## work_effort_statuses
-    unless table_exists?(:work_effort_statuses)
-      create_table :work_effort_statuses do |t|
-        t.datetime :started_at
-        t.datetime :finished_at
-        t.integer :work_effort_id
-        t.integer :work_effort_status_type_id
+        #custom columns go here
+        t.string :description
+        t.string :comments
+        t.string :internal_identifier
+        t.string :external_identifier
+        t.string :external_id_source
 
         t.timestamps
       end
-
-      add_index :work_effort_statuses, :work_effort_status_type_id
-      add_index :work_effort_statuses, :work_effort_id
     end
 
-    ## work_effort_status_types
-    unless table_exists?(:work_effort_status_types)
-      create_table :work_effort_status_types do |t|
-        t.string  :internal_identifier
-        t.string  :description
-        t.integer :next_status_id
-        t.integer :previous_status_id
+    # work_effort purpose types - is this work_effort to produce something or repair something?
+    unless table_exists?(:work_effort_purpose_types)
+      create_table :work_effort_purpose_types do |t|
+        #these columns are required to support the behavior of the plugin 'awesome_nested_set'
+        t.integer :parent_id
+        t.integer :lft
+        t.integer :rgt
+
+        #custom columns go here
+        t.string :description
+        t.string :comments
+        t.string :internal_identifier
+        t.string :external_identifier
+        t.string :external_id_source
 
         t.timestamps
       end
-
-      add_index :work_effort_status_types, :internal_identifier
-      add_index :work_effort_status_types, :description
     end
 
-    ## work_effort_assignments
-    unless table_exists?(:work_effort_assignments)
-      create_table :work_effort_assignments do |t|
-        #foreign keys
+    ## Easy to confuse this with work_effort_type_associations, which are for associations between types of
+    ## work efforts used for standards or templates. This is the type used when the actual association is created.
+    ## It is still used to store things like dependency and breakdown, but this is the type data and
+    ## work_effort_type_associations is used to store valid combinations of work effort types.
+    unless table_exists?(:work_effort_association_types)
+      create_table :work_effort_association_types do |t|
+        t.integer :parent_id
+        t.integer :lft
+        t.integer :rgt
+
+        #custom columns go here
+        t.integer :valid_from_role_type_id
+        t.integer :valid_to_role_type_id
+        t.string :name
+        t.string :description
+
+        t.string :internal_identifier
+        t.string :external_identifier
+        t.string :external_id_source
+
+        t.timestamps
+      end
+      add_index :work_effort_association_types, :valid_from_role_type_id
+      add_index :work_effort_association_types, :valid_to_role_type_id
+    end
+
+    ## Work effort associations store precedence, concurrence. They can also store
+    ## task breakdowns, but there is a more efficient nested-set data structure directly on the work_effort
+    ## for this purpose, since it is common to reconstruct large work breakdown structures
+    ## with important read performance requirements
+    unless table_exists?(:work_effort_associations)
+      create_table :work_effort_associations do |t|
+        #foreign key references
+        t.references :work_effort_association_type
+
+        t.string    :description
+        t.integer   :work_effort_id_from
+        t.integer   :work_effort_id_to
+        t.integer   :role_type_id_from
+        t.integer   :role_type_id_to
+        t.integer   :relationship_type_id
+        t.datetime  :effective_from
+        t.datetime  :effective_thru
+
+        t.timestamps
+      end
+      add_index :work_effort_associations, :relationship_type_id
+    end
+
+    ##********************************************************************************************
+    ## Work Effort Generation (DMRB V1 pp 194-195)
+    ##********************************************************************************************
+    ## The next three entities represent the relationships between three key entities
+    ## order_line_item <==> requirement <==> work_effort (and work_effort <==> order_line_item)
+
+    ## This entity tracks the relationship between the
+    ## work_order (order_line_item) and the work_effort by which it is fulfilled.
+    unless table_exists?(:work_order_item_fulfillments)
+      create_table :work_order_item_fulfillments do |t|
+        #foreign key references
+        t.references  :work_effort
+        t.references  :order_line_item
+
+        t.string      :description
+
+        t.timestamps
+      end
+      add_index :work_order_item_fulfillments,  [:work_effort_id, :order_line_item_id], :name => "work_order_item_fulfillments_idx"
+    end
+
+    ## relationship to track the relationship between order_line_items and the requirement to fulfill them
+    unless table_exists?(:order_requirement_commitments)
+      create_table :order_requirement_commitments do |t|
+        #foreign key references
+        t.references  :order_line_item
+        t.references  :requirement
+
+        t.string      :description
+        t.integer     :quantity
+
+        t.timestamps
+      end
+      add_index :order_requirement_commitments,  [:order_line_item_id, :requirement_id], :name => "order_item_req_fulfillment_idx"
+    end
+
+    ## relationship to track the relationship between requirements and the work_efforts to fulfill them
+    unless table_exists?(:work_requirement_fulfillment)
+      create_table :work_requirement_fulfillment do |t|
+        t.string    :description
+
+        t.integer   :work_effort_id
+        t.integer   :requirement_id
+
+        t.timestamps
+      end
+      add_index :work_requirement_fulfillment,  [:work_effort_id, :requirement_id], :name => "work_order_req_fulfillment_idx"
+    end
+
+    ##********************************************************************************************
+    ## Work Effort Assignments - what is necessary to complete this work effort
+    ##********************************************************************************************
+    ## work_effort_party_assignments
+    ## this is straight entity_party_role pattern with from and thru dates, but we are keeping
+    ## the DMRB name for this entity.
+    unless table_exists?(:work_effort_party_assignments)
+      create_table :work_effort_party_assignments do |t|
+        #foreign key references
         t.references :work_effort
+        t.references :role_type
+        t.references :party
 
-        t.datetime :assigned_at
         t.datetime :assigned_from
         t.datetime :assigned_thru
-        t.datetime :unassigned_at
 
-        #Polymorphic Columns
-        t.integer :assigned_to_id
-        t.string  :assigned_to_type
-        t.integer :assigned_by_id
-        t.string  :assigned_by_type
+        t.text    :comments
 
         t.timestamps
       end
-
-      add_index :work_effort_assignments, [:assigned_to_id, :assigned_to_type], :name => "assigned_to"
-      add_index :work_effort_assignments, :assigned_from
-      add_index :work_effort_assignments, :assigned_thru
-      add_index :work_effort_assignments, :work_effort_id
+      add_index :work_effort_party_assignments, :assigned_from
+      add_index :work_effort_party_assignments, :assigned_thru
+      add_index :work_effort_party_assignments, :work_effort_id
+      add_index :work_effort_party_assignments, :party_id
     end
 
-    ## valid_work_assignments
-    unless table_exists?(:valid_work_assignments)
-      create_table :valid_work_assignments do |t|
-        t.integer :role_type_id
-        t.integer :work_requirement_id
+    unless table_exists?(:work_effort_inventory_assignments)
+      create_table :work_effort_inventory_assignments do |t|
+        #foreign key references
+        t.references :work_effort
+        t.references :inventory_entry
 
         t.timestamps
       end
-
+      add_index :work_effort_inventory_assignments,  [:work_effort_id, :inventory_entry_id], :name => "work_effort_inv_assignment_idx"
     end
 
-    ## valid_work_assignment_attributes
-    unless table_exists?(:valid_work_assignment_attributes)
-      create_table :valid_work_assignment_attributes do |t|
-        t.integer :valid_work_assignment_id
-        t.string  :name
-        t.string  :type
-        t.string  :value
+    unless table_exists?(:work_effort_fixed_asset_assignments)
+      create_table :work_effort_fixed_asset_assignments do |t|
+        #foreign key references
+        t.references :work_effort
+        t.references :fixed_asset
+
+        t.timestamps
+      end
+      add_index :work_effort_fixed_asset_assignments,  [:work_effort_id, :fixed_asset_id], :name => "work_effort_fixed_asset_assign_idx"
+    end
+
+    ##Not a relationship with work_effort, but stores which fixed assets are assigned to or checked-out by parties
+    unless table_exists?(:party_fixed_asset_assignments)
+      create_table :party_fixed_asset_assignments do |t|
+        #foreign key references
+        t.references  :party
+        t.references  :fixed_asset
+
+        t.datetime    :assigned_from
+        t.datetime    :assigned_thru
+        t.integer     :allocated_cost_money_id
+
+        t.timestamps
+      end
+      add_index :party_fixed_asset_assignments,  [:party_id, :fixed_asset_id], :name => "party_fixed_asset_assign_idx"
+    end
+
+    ##********************************************************************************************
+    ## Work effort type standards
+    ##********************************************************************************************
+
+    ## work_effort type associations - standard for associations between work_efforts
+    unless table_exists?(:work_effort_type_associations)
+      create_table :work_effort_type_associations do |t|
+
+        #this type field is NOT REDUNDANT. It is here to distinguish between work breakdown type associations and
+        #dependency type associations
+        t.integer   :work_effort_type_assoc_type
+
+        #the two work effort types involved in the association
+        t.integer   :work_effort_type_id_from
+        t.integer   :work_effort_type_id_to
+
+        #custom columns go here
+        t.string :description
+        t.string :comments
+        t.string :internal_identifier
+        t.string :external_identifier
+        t.string :external_id_source
 
         t.timestamps
       end
     end
 
-    ## party_resource_availabilities
+    unless table_exists?(:work_effort_fixed_asset_standards)
+      create_table :work_effort_fixed_asset_standards do |t|
+        #foreign key references
+        t.references  :work_effort
+        t.references  :fixed_asset_type
+
+        t.decimal     :estimated_quantity
+        t.decimal     :estimated_duration
+        t.integer     :estimated_cost_money_id
+
+        t.timestamps
+      end
+      add_index :work_effort_fixed_asset_standards, :work_effort_id
+      add_index :work_effort_fixed_asset_standards, :fixed_asset_type_id
+    end
+
+    unless table_exists?(:work_effort_skill_standards)
+      create_table :work_effort_skill_standards do |t|
+        #foreign key references
+        t.references  :work_effort
+        t.references  :skill_type
+
+        t.decimal     :estimated_num_people
+        t.decimal     :estimated_duration
+        t.integer     :estimated_cost_money_id
+
+        t.timestamps
+      end
+      add_index :work_effort_skill_standards, :work_effort_id
+      add_index :work_effort_skill_standards, :skill_type_id
+    end
+
+    unless table_exists?(:work_effort_good_standards)
+      create_table :work_effort_good_standards do |t|
+        #foreign key references
+        t.references  :work_effort
+        t.references  :good_type
+
+        t.decimal     :estimated_quantity
+        t.integer     :estimated_cost_money_id
+
+        t.timestamps
+      end
+      add_index :work_effort_good_standards, :work_effort_id
+    end
+
+    ##********************************************************************************************
+    ## Work Effort Results
+    ##********************************************************************************************
+    unless table_exists?(:work_effort_inventory_produced)
+      create_table :work_effort_inventory_produced do |t|
+        #foreign key references
+        t.references  :work_effort
+        t.references  :inventory_entry
+
+        t.timestamps
+      end
+      add_index :work_effort_inventory_produced, :work_effort_id
+      add_index :work_effort_inventory_produced, :inventory_entry_id
+    end
+
+    unless table_exists?(:work_effort_deliverable_produced)
+      create_table :work_effort_deliverable_produced do |t|
+        #foreign key references
+        t.references  :work_effort
+        t.references  :deliverable
+
+        t.timestamps
+      end
+      add_index :work_effort_deliverable_produced, :work_effort_id
+      add_index :work_effort_deliverable_produced, :deliverable_id
+    end
+
+    unless table_exists?(:work_effort_fixed_asset_serviced)
+      create_table :work_effort_fixed_asset_serviced do |t|
+        #foreign key references
+        t.references  :work_effort
+        t.references  :fixed_asset
+
+        t.timestamps
+      end
+      add_index :work_effort_fixed_asset_serviced, :work_effort_id
+      add_index :work_effort_fixed_asset_serviced, :fixed_asset_id
+    end
+
+    ##********************************************************************************************
+    ## TODO - delete these?
+    ## Party Resource Availability - NOT IN DMRB, but didn't want to delete without review
+    ##********************************************************************************************
     unless table_exists?(:party_resource_availabilities)
       create_table :party_resource_availabilities do |t|
         t.datetime :from_date
@@ -160,7 +571,6 @@ class BaseWorkEfforts < ActiveRecord::Migration
 
         t.timestamps
       end
-
       add_index :party_resource_availabilities, :from_date
       add_index :party_resource_availabilities, :to_date
       add_index :party_resource_availabilities, :pra_type_id
@@ -174,37 +584,118 @@ class BaseWorkEfforts < ActiveRecord::Migration
 
         t.timestamps
       end
-
       add_index :party_resource_availability_types, :internal_identifier
       add_index :party_resource_availability_types, :description
     end
 
-    ## costs
-    unless table_exists?(:costs)
-      create_table :costs do |t|
-        t.integer :money_id
+    ##********************************************************************************************
+    ## TODO To be replaced by "has_tracked_status"???
+    ## these are the status for both requirements and work_efforts.
+    ##********************************************************************************************
+    ## work_requirement_work_effort_status_types
+    unless table_exists?(:work_requirement_work_effort_status_types)
+      create_table :work_requirement_work_effort_status_types do |t|
+        #foreign keys
+        t.integer :work_requirement_id
+        t.integer :work_effort_status_type_id
+        t.boolean :is_initial_status
+
         t.timestamps
       end
     end
-    
+
+    ## work_effort_status_types
+    unless table_exists?(:work_effort_status_types)
+      create_table :work_effort_status_types do |t|
+        t.string  :internal_identifier
+        t.string  :description
+        t.integer :next_status_id
+        t.integer :previous_status_id
+
+        t.timestamps
+      end
+      add_index :work_effort_status_types, :internal_identifier
+      add_index :work_effort_status_types, :description
+    end
+
+    ## work_effort_statuses
+    unless table_exists?(:work_effort_statuses)
+      create_table  :work_effort_statuses do |t|
+        t.datetime  :started_at
+        t.datetime  :finished_at
+        t.integer   :work_effort_id
+        t.integer   :work_effort_status_type_id
+
+        t.timestamps
+      end
+
+      add_index :work_effort_statuses, :work_effort_status_type_id
+      add_index :work_effort_statuses, :work_effort_id
+    end
+
   end
 
   def self.down
-    # Drop all tables, including those that were originally created then deleted
     [
-      # Old tables deleted and no longer used
-      :work_requirement_assignabilities,
-      # Currently used tables
-      :category_classifications, :categories, :work_requirement_assignability_attributes,
-      :valid_work_assignments, :work_effort_assignments, :work_effort_status_types,
-      :work_effort_statuses, :work_requirement_work_effort_status_types,
-      :work_requirements, :work_efforts, :party_resource_availabilities, :party_resource_availability_types,
-      :costs
+        #infrastructure and accounting
+        :fixed_assets,
+        :fixed_asset_types,
+        :good_types,
+
+        #hr-skills
+        :skill_types,
+        :party_skills,
+
+        #deliverables
+        :deliverables,
+        :deliverable_types,
+
+        #requirements
+        :requirements,
+        :requirement_types,
+        :requirement_party_roles,
+
+        #work effort data structures
+        :work_efforts,
+        :work_effort_types,
+        :work_effort_purpose_types,
+        :work_effort_association_types,
+        :work_effort_associations,
+
+        #work_effort generation
+        :work_order_item_fulfillment,
+        :order_requirement_commitments,
+        :work_requirement_fulfillment,
+
+        #assignments
+        :work_effort_party_assignments,
+        :work_effort_inventory_assignments,
+        :work_effort_fixed_asset_assignments,
+        :party_fixed_asset_assignments,
+
+        ##standards
+        :work_effort_type_associations,
+        :work_effort_fixed_asset_standards,
+        :work_effort_skill_standards,
+        :work_effort_good_standards,
+
+        ##results
+        :work_effort_inventory_produced,
+        :work_effort_deliverable_produced,
+        :work_effort_fixed_asset_serviced,
+
+        ##obsolete??
+        :work_effort_status_types,
+        :work_effort_statuses,
+        :work_requirement_work_effort_status_types,
+        :party_resource_availabilities,
+        :party_resource_availability_types
+
     ].each do |tbl|
       if table_exists?(tbl)
         drop_table tbl
       end
     end
-
   end
+
 end
