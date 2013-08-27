@@ -1,5 +1,8 @@
 require 'spec_helper'
 
 describe SkillType do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it "should create an instance of SkillType" do
+    st = SkillType.create
+    st.should be_instance_of(SkillType)
+  end
 end
