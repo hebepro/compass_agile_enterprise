@@ -638,6 +638,9 @@ def self.up
 
   def self.down
     [
+        :facilities,
+        :facility_types,
+
         #infrastructure and accounting
         :fixed_assets,
         :fixed_asset_types,
@@ -662,6 +665,7 @@ def self.up
         :work_effort_purpose_types,
         :work_effort_association_types,
         :work_effort_associations,
+        :associated_work_efforts,
 
         #work_effort generation
         :work_order_item_fulfillment,
@@ -686,9 +690,6 @@ def self.up
         :work_effort_fixed_asset_serviced,
 
         ##obsolete??
-        :work_effort_status_types,
-        :work_effort_statuses,
-        :work_requirement_work_effort_status_types,
         :party_resource_availabilities,
         :party_resource_availability_types
 
