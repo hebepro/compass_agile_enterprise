@@ -279,6 +279,19 @@ def self.up
       add_index :work_efforts, :finished_at
     end
 
+    unless table_exists?(:associated_work_efforts)
+      create_table :associated_work_efforts do |t|
+        #foreign keys
+        t.integer     :work_effort_id
+
+        #polymorphic columns
+        t.integer  :associated_record_id
+        t.string   :associated_record_type
+      end
+      add_index :associated_work_efforts, [:associated_record_id, :associated_record_type], :name => "associated_record_id_type_idx"
+      add_index :associated_work_efforts, :work_effort_id
+    end
+
     ## work_effort types
     unless table_exists?(:work_effort_types)
       create_table :work_effort_types do |t|
