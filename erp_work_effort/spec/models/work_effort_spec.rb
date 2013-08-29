@@ -9,6 +9,7 @@ describe WorkEffort do
     WorkEffort.create().should be_persisted
   end
 
+  # The choice to test AuditLog is arbitrary
   it "a model can acts_as_work_effort" do
     AuditLog.class_eval do 
       acts_as_work_effort
