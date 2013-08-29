@@ -19,5 +19,6 @@ Gem::Specification.new do |s|
 
   #compass dependencies
   s.add_dependency "erp_tech_svcs", "~> 3.1"
+  s.add_dependency "erp_inventory", "~> 3.1"
   s.add_development_dependency "erp_dev_svcs", "~> 3.1"
 end
