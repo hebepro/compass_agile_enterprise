@@ -50,7 +50,7 @@ module ErpDevSvcs
       #that array
       def self.exec_in_engines(only_in_these_gems = nil)
 
-        code_dirs = [COMPASS_ROOT, COMMERCIAL_ROOT]
+        code_dirs = [COMPASS_ROOT]
         code_dirs.each do |code_dir|
           begin
             find_rails_root!
@@ -68,6 +68,7 @@ module ErpDevSvcs
               gemspec = /(.*)\/(.*.gemspec)/.match(gem)
               #set engine name to the submatch via "[1]"
               engine_name = /(.*).gemspec/.match(gemspec[2])[1]
+
 
               if only_in_these_gems.nil? || only_in_these_gems.include?(engine_name)
                 Dir.chdir(gemspec[1])
