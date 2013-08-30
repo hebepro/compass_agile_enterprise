@@ -5,6 +5,8 @@
 #                :models => [:shipment_items, :shipments]
 # end
 class AssociatedTransportationRoute < ActiveRecord::Base
+	attr_protected :created_at, :updated_at
+
   belongs_to :transportation_route
   belongs_to :associated_record, :polymorphic => true
 end
