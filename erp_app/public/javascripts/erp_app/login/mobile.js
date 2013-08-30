@@ -32,7 +32,6 @@ Ext.application({
                     text: 'Login',
                     flex: 1,
                     scope: this,
-                    ui: 'confirm-round',
                     style: 'margin:0.1em',
                     handler: function (btn) {
                         var form = btn.up('formpanel');

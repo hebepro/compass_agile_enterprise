@@ -1,15 +1,29 @@
-Version 3.1.11
-- Removed natigate away warning
-Version 3.1.10 6-12-2013
+Version 3.1.15 - 8-26-2013
+- Updated mobile app buttons
+Version 3.1.14 - 8-14-2013
+- Fixed file move bug (workaround for ExtJS 4.2.1 issue)
+- Fixed url wrapping in file properties
+- Fix to make effective security display only unique roles in security mgmt desktop app
+- Fixed Configuration is_template validation
+- Changed middleware to insert_before Rack::Runtime instead of Rack::Lock to allow for config.threadsafe!
+Version 3.1.13 - 8-07-2013
+- Fixed bug in user defined configuration options
+Version 3.1.12 - 7-26-2013
+- Added application to tail Rails log
+Version 3.1.11 - 6-23-2013
+- Minor bug fixes and cleanup
+- Added ability to email users in CSR
+- Add history additions to block user navigation in Desktop and Organizer
+Version 3.1.10 - 6-12-2013
 - Change shared loader to load core, then app-specific files
 - Adding support for CellEditing to DynamicEditableGrid
-Version 3.1.9 5-29-2013
+Version 3.1.9 - 5-29-2013
 - Updated mobile apps to use sencha touch 2.2
 - Fixed bug in JobTracker mobile app
 - Moved sencha ActionView helpers into compass_ae_sencha
-Version 3.1.8 5-15-2013
+Version 3.1.8 - 5-15-2013
 - Turned off plupload's chunk_size as it was causing truncated files
-Version 3.1.7 5-14-2013
+Version 3.1.7 - 5-14-2013
 - Upgraded Sencha Touch to 2.2.0
 - Fixed bug in Scaffold desktop application
 Version 3.1.6 - 04-22-2013

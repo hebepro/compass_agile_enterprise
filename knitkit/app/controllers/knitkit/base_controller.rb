@@ -31,6 +31,7 @@ module Knitkit
     def set_section
       unless params[:section_id].nil?
         @website_section = WebsiteSection.find(params[:section_id])
+        @website_section = @website_section.root if @website_section.is_document_section? # check security on root document section
         if @website_section.protected_with_capability?(:view)
           if !current_user and @website_section.path != @login_path
             session[:return_to_url] = @website_section.path

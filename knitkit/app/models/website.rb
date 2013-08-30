@@ -12,7 +12,7 @@ class Website < ActiveRecord::Base
   friendly_id :name, :use => [:slugged], :slug_column => :internal_identifier
 
   def should_generate_new_friendly_id?
-    new_record?
+    new_record? and self.internal_identifier.nil?
   end
 
   has_many :published_websites, :dependent => :destroy
@@ -302,7 +302,7 @@ class Website < ActiveRecord::Base
 
     (tmp_dir + "#{name}.zip").tap do |file_name|
       file_name.unlink if file_name.exist?
-      Zip::ZipFile.open(file_name, Zip::ZipFile::CREATE) do |zip|
+      Zip::ZipFile.open(file_name.to_s, Zip::ZipFile::CREATE) do |zip|
         files.each { |file| zip.add(file[:name], file[:path]) if File.exists?(file[:path]) }
         zip.add('setup.yml', tmp_dir + 'setup.yml')
       end

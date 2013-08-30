@@ -5,69 +5,25 @@ module ErpTechSvcs
   module FileSupport
     class S3Manager < Manager
       class << self
-        cattr_accessor :node_tree, :s3_connection
+        cattr_accessor :s3_connection, :s3_bucket, :tree
 
         def setup_connection
-          @@configuration = YAML::load_file(File.join(Rails.root,'config','s3.yml'))[Rails.env]
-          
+          @@configuration = YAML::load_file(File.join(Rails.root, 'config', 's3.yml'))[Rails.env]
+
           # S3 debug logging
           # AWS.config(
-          #   :logger => Rails.logger,
-          #   :log_level => :info
+          #     :logger => Rails.logger,
+          #     :log_level => :info
           # )
 
           @@s3_connection = AWS::S3.new(
-            :access_key_id     => @@configuration['access_key_id'],
-            :secret_access_key => @@configuration['secret_access_key']
+              :access_key_id => @@configuration['access_key_id'],
+              :secret_access_key => @@configuration['secret_access_key']
           )
 
           @@s3_bucket = @@s3_connection.buckets[@@configuration['bucket'].to_sym]
         end
 
-        def reload
-          !@@s3_connection.nil? ? build_node_tree(true) : setup_connection
-        end
-
-        def cache_key
-          Thread.current[:tenant_id].nil? ? 'node_tree' : "tenant_#{Thread.current[:tenant_id]}_node_tree"
-        end
-
-        def cache_node_tree(node_tree)
-          Rails.cache.write(cache_key, node_tree, :expires_in => ErpTechSvcs::Config.s3_cache_expires_in_minutes.minutes)
-          node_tree
-        end
-
-        def add_children(parent_hash, tree)
-          tree.children.each do |child|
-            child_hash = {
-              :last_modified => '',
-              #:last_modified => (child.leaf? ? @@s3_bucket.objects[child.key].last_modified : ''), 
-              :text => (child.leaf? ? File.basename(child.key) : File.basename(child.prefix)), 
-              :downloadPath => (child.leaf? ? '/'+File.dirname(child.key) : "/#{child.parent.prefix}".sub(%r{/$},'')), 
-              :leaf => child.leaf?, 
-              :id => (child.leaf? ? '/'+child.key : "/#{child.prefix}".sub(%r{/$},'')), 
-              :children => []
-            }
-            child_hash = add_children(child_hash, child) unless child.leaf?
-            unless child_hash[:id].gsub(/\/$/,'') == parent_hash[:id].gsub(/\/$/,'') # resolves s3 issue where empty dir contains itself
-              parent_hash[:children] << child_hash unless child_hash[:downloadPath] == '/.'
-            end
-          end
-
-          parent_hash
-        end
-
-        def build_node_tree(reload=false)
-          node_tree = Rails.cache.read(cache_key)
-          if !reload and !node_tree.nil?
-            #Rails.logger.info "@@@@@@@@@@@@@@ USING CACHED node_tree: #{node_tree.inspect}"
-            return node_tree
-          end
-
-          tree_data = {:text => @@s3_bucket.name, :leaf => false, :id => '', :children => []}
-          tree_data = [add_children(tree_data, @@s3_bucket.as_tree)]
-          cache_node_tree(tree_data)
-        end
       end
 
       def buckets
@@ -86,39 +42,25 @@ module ErpTechSvcs
         ''
       end
 
-      def cache_key
-        ErpTechSvcs::FileSupport::S3Manager.cache_key
-      end
-
-      def clear_cache(path)
-        path = path.sub(%r{^/},'')
-        #Rails.logger.info "deleting cache with key: #{path}"
-        Rails.cache.delete(path) # delete template from cache
-        Rails.cache.delete(cache_key) # delete node tree from cache
-      end
-
       def update_file(path, content)
         file = FileAsset.where(:name => ::File.basename(path)).where(:directory => ::File.dirname(path)).first
         acl = (file.is_secured? ? :private : :public_read) unless file.nil?
-        options = (file.nil? ? {} : {:acl => acl, :content_type => file.content_type })
-        path = path.sub(%r{^/},'')
+        options = (file.nil? ? {} : {:acl => acl, :content_type => file.content_type})
+        path = path.sub(%r{^/}, '')
         bucket.objects[path].write(content, options)
-        clear_cache(path)
       end
 
       def create_file(path, name, content)
-        path = path.sub(%r{^/},'')
+        path = path.sub(%r{^/}, '')
         full_filename = (path.blank? ? name : File.join(path, name))
-        bucket.objects[full_filename].write(content, { :acl => :public_read })
-        clear_cache(path)
+        bucket.objects[full_filename].write(content, {:acl => :public_read})
       end
 
       def create_folder(path, name)
-        path = path.sub(%r{^/},'')
+        path = path.sub(%r{^/}, '')
         full_filename = (path.blank? ? name : File.join(path, name))
         folder = full_filename + "/"
-        bucket.objects[folder].write('', { :acl => :public_read })
-        clear_cache(path)
+        bucket.objects[folder].write('', {:acl => :public_read})
       end
 
       def save_move(path, new_parent_path)
@@ -130,13 +72,12 @@ module ErpTechSvcs
           acl = (file.is_secured? ? :private : :public_read) unless file.nil?
           options = (file.nil? ? {} : {:acl => acl})
           name = File.basename(path)
-          path = path.sub(%r{^/},'')
-          new_path = File.join(new_parent_path,name).sub(%r{^/},'')
+          path = path.sub(%r{^/}, '')
+          new_path = File.join(new_parent_path, name).sub(%r{^/}, '')
           old_object = bucket.objects[path]
           if new_object = old_object.move_to(new_path, options)
             message = "#{name} was moved to #{new_path} successfully"
             result = true
-            clear_cache(path)
           else
             message = "Error moving file #{path}"
           end
@@ -156,18 +97,17 @@ module ErpTechSvcs
           file = FileAsset.where(:name => ::File.basename(path)).where(:directory => ::File.dirname(path)).first
           acl = (file.is_secured? ? :private : :public_read) unless file.nil?
           options = (file.nil? ? {} : {:acl => acl})
-          path = path.sub(%r{^/},'')
-          new_path = new_path.sub(%r{^/},'')
+          path = path.sub(%r{^/}, '')
+          new_path = new_path.sub(%r{^/}, '')
 #          Rails.logger.info "renaming from #{path} to #{new_path}"
           old_object = bucket.objects[path]
           if new_object = old_object.move_to(new_path, options)
             message = "#{old_name} was renamed to #{name} successfully"
             result = true
-            clear_cache(path)
           else
             message = "Error renaming #{old_name}"
           end
-        rescue AWS::S3::Errors::NoSuchKey=>ex
+        rescue AWS::S3::Errors::NoSuchKey => ex
           message = FILE_FOLDER_DOES_NOT_EXIST
         end
 
@@ -175,13 +115,13 @@ module ErpTechSvcs
       end
 
       def set_permissions(path, canned_acl=:public_read)
-        path = path.sub(%r{^/},'')
+        path = path.sub(%r{^/}, '')
         bucket.objects[path].acl = canned_acl
       end
 
       def delete_file(path, options={})
-        is_directory = !path.match(/\/$/).nil?
-        path = path.sub(%r{^/},'')
+        is_directory = File.extname(path).blank?
+        path = path.sub(%r{^/}, '')
         result = false
         message = nil
         begin
@@ -189,21 +129,20 @@ module ErpTechSvcs
             bucket.objects.with_prefix(path).delete_all
             message = "File was deleted successfully"
             result = true
-            clear_cache(path)
           else
             message = FOLDER_IS_NOT_EMPTY
           end
         rescue Exception => e
-         result = false
-         message = e
-        end    
+          result = false
+          message = e
+        end
 
-        return result, message, is_directory    
+        return result, message, is_directory
       end
 
       def exists?(path)
         begin
-          path = path.sub(%r{^/},'')
+          path = path.sub(%r{^/}, '')
           return bucket.objects[path].exists?
         rescue AWS::S3::Errors::NoSuchKey
           return false
@@ -214,10 +153,10 @@ module ErpTechSvcs
         contents = nil
         message = nil
 
-        path = path.sub(%r{^/},'')
+        path = path.sub(%r{^/}, '')
         begin
           object = bucket.objects[path]
-          contents = object.read 
+          contents = object.read
         rescue AWS::S3::Errors::NoSuchKey => error
           contents = ''
           message = FILE_DOES_NOT_EXIST
@@ -227,36 +166,62 @@ module ErpTechSvcs
       end
 
       def build_tree(starting_path, options={})
-        starting_path = "/" + starting_path unless starting_path.first == "/"
         node_tree = find_node(starting_path, options)
         node_tree.nil? ? [] : node_tree
       end
 
       def find_node(path, options={})
-        parent = if options[:file_asset_holder]
-          super
-        else
-          parent = ErpTechSvcs::FileSupport::S3Manager.build_node_tree(false).first
-          unless path.nil?
-            path_pieces = path.split('/')
-            path_pieces.each do |path_piece|
-              next if path_piece.blank?
-              parent[:children].each do |child_node|
-                if child_node[:text] == path_piece
-                  parent = child_node
-                  break
-                end
+        #remove proceeding slash for s3
+        path.sub!(%r{^/}, '')
+
+        parent = {:text => path.split('/').pop, :leaf => false, :id => path, :children => []}
+
+        tree = bucket.as_tree(:prefix => path)
+        tree.children.each do |node|
+          if node.leaf?
+            #ignore current path that comes as leaf from s3
+            next if node.key == path + '/'
+
+            leaf_hash = {
+                :text => node.key.split('/').pop,
+                :downloadPath => "/#{node.key}",
+                :id => "/#{node.key}",
+                :leaf => true
+            }
+
+            if options[:file_asset_holder]
+              files = options[:file_asset_holder].files
+
+              parent_directories =  leaf_hash[:id].split('/')
+              parent_directories.pop
+              parent_directory = parent_directories.join('/')
+
+              file = files.find { |file| file.directory == parent_directory and file.name == leaf_hash[:text] }
+              unless file.nil?
+                leaf_hash[:isSecured] = file.is_secured?
+                leaf_hash[:roles] = file.roles.collect { |r| r.internal_identifier }
+                leaf_hash[:iconCls] = 'icon-document_lock' if leaf_hash[:isSecured]
+                leaf_hash[:size] = file.data_file_size
+                leaf_hash[:width] = file.width
+                leaf_hash[:height] = file.height
+                leaf_hash[:url] = file.url
               end
             end
-            parent = nil unless parent[:id] == path
-          end
 
-          parent
+            parent[:children] << leaf_hash
+          else
+            parent[:children] << {
+                :iconCls => "icon-content",
+                :text => node.prefix.split('/').pop,
+                :id => "/#{node.prefix}".chop,
+                :leaf => false
+            }
+          end
         end
 
         parent
       end
 
-    end#S3Manager
-  end#FileSupport
-end#ErpTechSvcs
+    end #S3Manager
+  end #FileSupport
+end #ErpTechSvcs

@@ -1,2 +1,9 @@
+Version 3.1.2
+- Changed middleware to insert_before Rack::Runtime instead of Rack::Lock to allow for config.threadsafe!
+Version 3.1.1 - 7-26-2013
+- Added quantity to order_line_items
+- Fixed typo bug "resecue"
+Version 3.1.0 - 1-11-2013
+- Support for Rails 3.2
 Version 3.0.6 - 01-10-2013
 - New Security Implementation

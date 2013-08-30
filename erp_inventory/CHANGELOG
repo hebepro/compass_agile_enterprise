@@ -1,0 +1,3 @@
+Version 3.1.1
+- Changed middleware to insert_before Rack::Runtime instead of Rack::Lock to allow for config.threadsafe!
+Version 3.1.0 - 1-11-2013

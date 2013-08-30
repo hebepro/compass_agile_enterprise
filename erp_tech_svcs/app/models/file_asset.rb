@@ -165,7 +165,7 @@ class FileAsset < ActiveRecord::Base
       end
     end
     #return true
-  end 
+  end
 
   def basename
     data_file_name.gsub(/\.#{extname}$/, "")

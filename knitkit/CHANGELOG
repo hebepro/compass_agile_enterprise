@@ -1,6 +1,29 @@
-Version 2.1.9 6-14-2013
+Version 2.1.15 - 8-26-2013
+- Fixed bug in scaffold widget
+Version 2.1.14 - 8-15-2013
+- Added ability to secure Online Document Sections
+- Updated Knitkit::BaseController#set_section to check security on root Online Document Section
+- Fixed bug in Knitkit::OnlineDocumentSectionsController#get_content when there is no content version
+- Fixed Online Document Sections requests to consistently use iid
+Version 2.1.13 - 8-14-2013
+- Fixed website iid on new websites, friendly id should only create a slug if iid is nil
+- Fixed bug in render_content_area when there is no content version
+- Fixed delete section dialog text getting cut off
+- Fixed bug in Content.search (affected search widget)
+- Fixed change password on manage profile widget
+- Fixed bug in updating menu item
+- Changed middleware to insert_before Rack::Runtime instead of Rack::Lock to allow for config.threadsafe!
+Version 2.1.12 - 8-01-2013
+- Fixed website and theme export
+- Fixed theme import
+Version 2.1.11 - 7-03-2013
+- Fixed typo in configuration option for Knitkit images path
+Version 2.1.10 - 6-23-2013
+- Added configuration option for Knitkit images path
+- Added search and deep linking to OnlineDocumentSections
+Version 2.1.9 - 6-14-2013
 - Gem rebuild of 2.1.8 with spec.log removed
-Version 2.1.8 6-12-2013
+Version 2.1.8 - 6-12-2013
 - Added smart renaming of file tabs to Knitkit
 - Fixed issue where multiple files with same basename could not be open concurrently
 Version 2.1.7 - 05-08-013

@@ -45,13 +45,15 @@ module Knitkit
                                  order(:position).all
               published_contents = []
               section_contents.each do |sc|
-                content_version = Content.get_published_version(@active_publication, sc.content)
+                content_version = Content.get_published_version(@active_publication, sc.content) unless @active_publication.nil?
+                content_version = sc.content if @active_publication.nil? or content_version.nil?
                 published_contents << content_version unless content_version.nil?
               end
 
               published_contents.each do |content|
+                content_id = content.content.id rescue content.id
                 html << "<div class='knitkit_content'
-                        contentid='#{content.content.id}'
+                        contentid='#{content_id}'
                         lastupdate='#{content.updated_at.strftime("%m/%d/%Y %I:%M%p")}'>
                         #{(content.body_html.nil? ? '' : content.body_html)}</div>"
 

@@ -2,12 +2,17 @@ require "active_record"
 
 namespace :compass_ae do
   namespace :backup do
-  	
+
   	PG_BACKUP_DIR = '/backup/postgres'
   	SU_POSTGRES = true # set this to false on OS X and true on debian
   	TIMESTAMP_FORMAT = "%Y-%m-%d_%Hh%Mm%Ss" # keep a single underscore or the purge_old task will break
   	@purge_dumps_older_than = 2.weeks.ago
-  	
+
+    db_config = Rails.configuration.database_configuration[Rails.env]
+    host = db_config['host'].blank? ? 'localhost' : db_config['host']
+    username = db_config['username'].blank? ? 'postgres' : db_config['username']
+    pgpw = ENV['PGPASSWORD'].nil? ? '' : "PGPASSWORD=#{ENV['PGPASSWORD']}"
+
   	desc 'backup all postgres databases'
     task :postgres => :environment do
       create_directory(PG_BACKUP_DIR)
@@ -18,7 +23,7 @@ namespace :compass_ae do
       databases.each do |db|
         unless db == "template0"
           puts "Dumping #{db} to #{PG_BACKUP_DIR}"
-          cmd = "pg_dump #{db} > #{PG_BACKUP_DIR}/#{db}_#{Time.now.strftime(TIMESTAMP_FORMAT)}.pgsql"
+          cmd = "#{pgpw} pg_dump -U #{username} -h #{host} #{db} > #{PG_BACKUP_DIR}/#{db}_#{Time.now.strftime(TIMESTAMP_FORMAT)}.pgsql"
           cmd = "sudo su postgres -c \"#{cmd}\"" if SU_POSTGRES
           execute_command(cmd)
         else
