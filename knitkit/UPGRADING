@@ -19,6 +19,10 @@ to: document_section_id:
                 section_id:<%= @root.id %>
             },
 
+to 2.1.13
+A bug was fixed in erp_app with user defined configuration options so Website config should be resaved to ensure they do not break.
+Right click on each website in knitkit, select Configure > Website Setup, verify your settings and click Update
+
 to 2.0.11
 Update Base Template, Compare your header with this one:
 
