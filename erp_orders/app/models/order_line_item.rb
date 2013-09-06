@@ -9,6 +9,9 @@ class OrderLineItem < ActiveRecord::Base
   belongs_to :product_instance
   belongs_to :product_type
 
+  ## Allow for polymorphic subtypes of this class
+  belongs_to :order_line_record, :polymorphic => true
+
   def get_total_charges
     # get all of the charge lines associated with the order_line
     total_hash = Hash.new

@@ -400,6 +400,13 @@ def self.up
       add_index :work_order_item_fulfillments,  [:work_effort_id, :order_line_item_id], :name => "work_order_item_fulfillments_idx"
     end
 
+    unless table_exists?(:work_order_items)
+      create_table :work_order_items do |t|
+        # WorkOrderItem acts_as_order_line_item & polymorphic relationship is on order_line_item so this table only has timestamps
+        t.timestamps
+      end
+    end
+
     ## relationship to track the relationship between order_line_items and the requirement to fulfill them
     unless table_exists?(:order_requirement_commitments)
       create_table :order_requirement_commitments do |t|
