@@ -40,7 +40,7 @@ module ErpOrders
               :unit_of_measurement,
               :unit_of_measurement=
             ].each do |m| 
-              delegate m, :to => :work_effort 
+              delegate m, :to => :order_line_item 
             end        
           end
         end
