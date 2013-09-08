@@ -25,9 +25,14 @@ Ext.define("Compass.ErpApp.Shared.CodeMirror", {
 
             switch (fileType) {
                 case 'rb':
+                    mode = 'ruby';
+                    break;
                 case 'erb':
                 case 'rhtml':
-                    mode = 'ruby';
+                    mode = {
+                        name: 'htmlembedded',
+                        scriptingModeSpec:"ruby"
+                    };
                     break;
                 case 'css':
                     mode = 'css';
@@ -323,11 +328,6 @@ Ext.define("Compass.ErpApp.Shared.CodeMirror", {
             css = null,
             textAreaComp = me.down('textarea'),
             modeCombo = me.down('combo');
-
-        if (mode != null && !Ext.Array.contains(Ext.Object.getKeys(CodeMirror.modes), mode)) {
-            mode = null;
-            Ext.Msg.alert('Warning', 'CodeMirror mode is not supported. Defaulting to text/plain');
-        }
 
         this.initialConfig.codeMirrorConfig = Ext.apply({
             matchBrackets: me.enableMatchBrackets,
