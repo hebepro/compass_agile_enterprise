@@ -83,6 +83,7 @@ class BaseErpServices < ActiveRecord::Migration
         t.column :external_id_source, :string
         t.timestamps
       end
+      add_index :role_types, :internal_identifier, :name => "role_types_iid_idx"
     end
 
     # Create relationship_types table
