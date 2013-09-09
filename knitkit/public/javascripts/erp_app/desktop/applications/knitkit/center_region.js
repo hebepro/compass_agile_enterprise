@@ -357,7 +357,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                 autoHeight: true,
                 value: content,
                 ckEditorConfig: {
-                    extraPlugins: 'jwplayer,knitkitthemes',
+                    extraPlugins: 'jwplayer,knitkitthemes,codemirror',
                     toolbar: self.ckEditorToolbar
                 },
                 listeners: {
@@ -533,7 +533,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                 autoHeight: true,
                 //value:content,
                 ckEditorConfig: {
-                    extraPlugins: 'jwplayer,knitkitthemes',
+                    extraPlugins: 'jwplayer,knitkitthemes,codemirror',
                     toolbar: self.ckEditorToolbar
                 },
                 listeners: {
