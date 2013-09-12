@@ -676,6 +676,7 @@ def self.up
 
         #work_effort generation
         :work_order_item_fulfillment,
+        :work_order_items,
         :order_requirement_commitments,
         :work_requirement_fulfillment,
 
