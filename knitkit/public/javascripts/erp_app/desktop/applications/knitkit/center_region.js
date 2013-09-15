@@ -1,6 +1,7 @@
 Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
     extend: "Ext.panel.Panel",
     alias: 'widget.knitkit_centerregion',
+    ckEditorExtraPlugins: 'jwplayer,knitkitthemes,codemirror',
     ckEditorToolbar: [
         ['Source', '-', 'Preview', 'Print'],
         ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord'],
@@ -10,7 +11,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
         ['TextColor', 'BGColor'],
         ['Bold', 'Italic', 'Underline', 'Strike'],
         ['Subscript', 'Superscript', '-', 'jwplayer'],
-        ['Table', 'NumberedList', 'BulletedList'],
+        ['Image', 'Table', 'NumberedList', 'BulletedList'],
         ['Outdent', 'Indent', 'Blockquote'],
         ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
         ['BidiLtr', 'BidiRtl'],
@@ -357,7 +358,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                 autoHeight: true,
                 value: content,
                 ckEditorConfig: {
-                    extraPlugins: 'jwplayer,knitkitthemes,codemirror',
+                    extraPlugins: self.ckEditorExtraPlugins,
                     toolbar: self.ckEditorToolbar
                 },
                 listeners: {
@@ -533,7 +534,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                 autoHeight: true,
                 //value:content,
                 ckEditorConfig: {
-                    extraPlugins: 'jwplayer,knitkitthemes,codemirror',
+                    extraPlugins: self.ckEditorExtraPlugins,
                     toolbar: self.ckEditorToolbar
                 },
                 listeners: {
@@ -777,11 +778,11 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
             Ext.Msg.alert('Error', 'No editor');
         }
         else {
-            if (activeTab.query('ckeditor').length > 0) {
-                activeTab.query('ckeditor')[0].insertHtml(html);
+            if (activeTab.down('ckeditor')) {
+                activeTab.down('ckeditor').insertHtml(html);
             }
-            else if (activeTab.query('codemirror').length > 0) {
-                activeTab.query('codemirror')[0].insertContent(html);
+            else if (activeTab.down('codemirror')) {
+                activeTab.down('codemirror').insertContent(html);
             }
             else {
                 Ext.Msg.alert('Error', 'No ckeditor or codemirror found');

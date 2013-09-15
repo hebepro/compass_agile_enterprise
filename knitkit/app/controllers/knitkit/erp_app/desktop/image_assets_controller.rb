@@ -6,7 +6,13 @@ module Knitkit
         def get_images
           directory = (params[:directory] == 'root_node' or params[:directory].blank?) ? base_path : params[:directory]
           # this @assets_model.images.select should be refactored into a query
-          render :json => @assets_model.images.select{|image| image.directory == directory.sub(@file_support.root,'')}.collect{|image|{:name => image.name, :shortName => image.name[0..15], :url => image.data.url}}
+          render :json => @assets_model.images.select{|image| image.directory == directory.sub(@file_support.root,'')}.collect{|image|{:id => image.id,
+                                                                                                                                       :name => image.name,
+                                                                                                                                       :shortName => image.name[0..15],
+                                                                                                                                       :url => image.data.url,
+                                                                                                                                       :height => image.height,
+                                                                                                                                       :width => image.width,
+                                                                                                                                       :downloadPath => image.data.path}}
         end
 
         def upload_file

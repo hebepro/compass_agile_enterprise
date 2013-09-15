@@ -46,7 +46,7 @@ var pixlr = (function () {
                 'service': 'editor'
             },
             overlay: {
-                show: function (options) {
+                show: function (options, callback) {
                     var opt = extend(return_obj.settings, options || {}),
                         iframe = document.createElement('iframe'),
                         div = pixlr.overlay.div = document.createElement('div'),
@@ -94,11 +94,10 @@ var pixlr = (function () {
                     iframe.style.display = 'block';
                     iframe.frameBorder = 0;
                     iframe.src = buildUrl(opt);
-                    iframe.load = function() {
-                        alert("the iframe has changed.");
-                    };
 
                     idiv.appendChild(iframe);
+
+                    pixlr.callback = callback;
                 },
                 hide: function (callback) {
                     if (pixlr.overlay.idiv && pixlr.overlay.div) {
@@ -107,6 +106,9 @@ var pixlr = (function () {
                     }
                     if (callback) {
                         eval(callback);
+                    }
+                    if(pixlr.callback){
+                        pixlr.callback();
                     }
                 }
             },
