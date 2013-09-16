@@ -8,9 +8,13 @@ module RoutingFilter
       website = Website.find_by_host(env["HTTP_HOST"])
       if website
         paths = paths_for_website(website)
-        if path.to_sym == :/
+
+        # if mobile is enabled and this is a mobile browser redirect to mobile site
+        if path.to_sym == :/ and mobile_browser?(env)
+          path.sub!(path, "/#{$1}knitkit_mobile#{$3}")
+        elsif path.to_sym == :/
           home_page_url = website.configurations.first.get_configuration_item(ConfigurationItemType.find_by_internal_identifier('homepage_url')).options.first.value
-          valid_section = website.website_sections.detect{|website_section| website_section.path == home_page_url }
+          valid_section = website.website_sections.detect { |website_section| website_section.path == home_page_url }
           type = valid_section.type.pluralize.downcase
           path.sub!('/', "/#{$1}#{type}/#{valid_section.id}#{$3}")
         else
@@ -24,8 +28,8 @@ module RoutingFilter
       end
       yield
     end
-    
-    def around_generate(params, &block)   
+
+    def around_generate(params, &block)
       yield.tap do |path|
         result = result.first if result.is_a?(Array)
         if result !~ %r(^/([\w]{2,4}/)?admin) and result =~ generate_pattern
@@ -34,15 +38,15 @@ module RoutingFilter
         end
       end
     end
-    
+
     protected
     def paths_for_website(website)
-      website ? website.all_section_paths.map{|path| path[1..path.length]}.sort{|a, b| b.size <=> a.size }.join('|') : []
+      website ? website.all_section_paths.map { |path| path[1..path.length] }.sort { |a, b| b.size <=> a.size }.join('|') : []
     end
 
     def website_section_by_path(website, path)
       path = "/#{path}"
-      valid_section = website.website_sections.detect{|website_section| website_section.path == path }
+      valid_section = website.website_sections.detect { |website_section| website_section.path == path }
       if valid_section.nil?
         website.website_sections.each do |website_section|
           valid_section = website_section.child_by_path(path)
@@ -58,8 +62,12 @@ module RoutingFilter
     end
 
     def generate_pattern
-      types = WebsiteSection.types.map{|type| type.downcase.pluralize }.join('|')
+      types = WebsiteSection.types.map { |type| type.downcase.pluralize }.join('|')
       %r((#{types})/([\w]+(/?))(\.?)) # ?(?=\b)?
+    end
+
+    def mobile_browser?(env)
+      true #env["HTTP_USER_AGENT"] && env["HTTP_USER_AGENT"][/(iPhone|iPod|iPad|Android)/]
     end
   end
 end
