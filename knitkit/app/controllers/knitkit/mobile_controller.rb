@@ -5,7 +5,6 @@ module Knitkit
 
     def index
       @current_user = current_user
-
     end
 
     protected

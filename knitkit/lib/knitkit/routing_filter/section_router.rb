@@ -67,7 +67,7 @@ module RoutingFilter
     end
 
     def mobile_browser?(env)
-      true #env["HTTP_USER_AGENT"] && env["HTTP_USER_AGENT"][/(iPhone|iPod|iPad|Android)/]
+      env["HTTP_USER_AGENT"] && env["HTTP_USER_AGENT"][/(iPhone|iPod|iPad|Android)/]
     end
   end
 end
