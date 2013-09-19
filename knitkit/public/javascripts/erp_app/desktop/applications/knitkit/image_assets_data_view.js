@@ -1,69 +1,72 @@
 Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.ImageAssetsDataView", {
     extend: "Ext.view.View",
     alias: 'widget.knitkit_imageassetsdataview',
-	
+
     constructor: function (config) {
         var self = this;
 
         listeners = config.listeners || {};
-		
-		listeners['render'] = function(view){
-			cancel = function(e) {
-			      if (e.preventDefault) { e.preventDefault(); }
-			      return false;
-			    };
-			
-			if(window.FileReader) { 
-				var viewElement = this.getEl();
-				
-				Compass.ErpApp.Utility.addEventHandler(viewElement.dom, 'dragover', function(){
-					viewElement.setStyle('border', 'solid 1px red');
-				});
-				Compass.ErpApp.Utility.addEventHandler(viewElement.dom, 'dragenter', function(){
-					viewElement.setStyle('border', 'solid 1px red');
-				});
-				Compass.ErpApp.Utility.addEventHandler(viewElement.dom, 'dragleave', function(){
-					viewElement.setStyle('border', 'none');
-				});
-				Compass.ErpApp.Utility.addEventHandler(viewElement.dom, 'drop', function(e){
-					console.log('here')
-					
-					e = e || window.event; // get window.event if e argument missing (in IE)   
-				    if (e.preventDefault) { e.preventDefault(); } // stops the browser from redirecting off to the image.
-					
-					 /*var dt    = e.dataTransfer;
-					 var files = dt.files;
-					 for (var i=0; i<files.length; i++) {
-					   var file = files[i];
-					   var reader = new FileReader();
-					    Compass.ErpApp.Utility.addEventHandler(reader, 'loadend', function(e, file) {
-						    var bin           = this.result; 
-						    console.log(bin)
-						    
-						    var newFile       = document.createElement('div');
-						    newFile.innerHTML = 'Loaded : '+file.name+' size '+file.size+' B';
-						    list.appendChild(newFile);  
-						    var fileNumber = list.getElementsByTagName('div').length;
-						    status.innerHTML = fileNumber < files.length 
-						                     ? 'Loaded 100% of file '+fileNumber+' of '+files.length+'...' 
-						                     : 'Done loading. processed '+fileNumber+' files.';
 
-						    var img = document.createElement("img"); 
-						    img.file = file;   
-						    img.src = bin;
-						    list.appendChild(img);
-						}.bindToEventHandler(file));
+        listeners['render'] = function (view) {
+            var store = view.getStore();
 
-    				    reader.readAsDataURL(file);
-					 }*/
-					
-					 return false;
-				})
-			}
-			else{
-				
-			}
-		}
+            if (window.FileReader) {
+                var viewElement = this.getEl();
+
+                Compass.ErpApp.Utility.addEventHandler(viewElement.dom, 'dragover', function (e) {
+                    viewElement.setStyle('border', 'solid 1px red');
+                    e.preventDefault()
+                });
+                Compass.ErpApp.Utility.addEventHandler(viewElement.dom, 'dragenter', function () {
+                    viewElement.setStyle('border', 'solid 1px red');
+                });
+                Compass.ErpApp.Utility.addEventHandler(viewElement.dom, 'dragleave', function () {
+                    viewElement.setStyle('border', 'none');
+                });
+                Compass.ErpApp.Utility.addEventHandler(viewElement.dom, 'drop', function (e) {
+                    e.preventDefault();
+
+
+                    var dt = e.dataTransfer;
+                    var files = dt.files;
+                    for (var i = 0; i < files.length; i++) {
+                        var file = files[i];
+                        var reader = new FileReader();
+                        Compass.ErpApp.Utility.addEventHandler(reader, 'loadend', function (e, file) {
+                            var bin = this.result;
+                            console.log(bin)
+
+                            store.add({
+                                name: file.name,
+                                url: bin
+                            });
+
+                            /*var newFile       = document.createElement('div');
+                             newFile.innerHTML = 'Loaded : '+file.name+' size '+file.size+' B';
+                             list.appendChild(newFile);
+                             var fileNumber = list.getElementsByTagName('div').length;
+                             status.innerHTML = fileNumber < files.length
+                             ? 'Loaded 100% of file '+fileNumber+' of '+files.length+'...'
+                             : 'Done loading. processed '+fileNumber+' files.';
+
+                             var img = document.createElement("img");
+                             img.file = file;
+                             img.src = bin;
+                             list.appendChild(img);   */
+                        }.bindToEventHandler(file));
+
+                        reader.readAsDataURL(file);
+                    }
+
+                    viewElement.setStyle('border', 'none');
+
+                    return false;
+                })
+            }
+            else {
+
+            }
+        };
 
         listeners['itemcontextmenu'] = function (view, record, htmlitem, index, e, options) {
             e.stopEvent();
@@ -103,7 +106,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.ImageAssetsDataView", {
                     {
                         text: 'Insert Image At Cursor',
                         iconCls: 'icon-add',
-                        handler: function(){
+                        handler: function () {
                             var imgTagHtml = '<img';
                             if (record.get('width') && record.get('height')) {
                                 imgTagHtml += (' width="' + record.get('width') + '" height="' + record.get('height') + '"');

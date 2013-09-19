@@ -37,7 +37,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
             xtype: 'codemirror',
             mode: {
                 name: 'htmlembedded',
-                scriptingModeSpec:"ruby"
+                scriptingModeSpec: "ruby"
             },
             sourceCode: template,
             closable: true
@@ -107,7 +107,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                         xtype: 'codemirror',
                         mode: {
                             name: 'htmlembedded',
-                            scriptingModeSpec:"ruby"
+                            scriptingModeSpec: "ruby"
                         },
                         region: 'center',
                         sourceCode: content
@@ -198,7 +198,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                         xtype: 'codemirror',
                         mode: {
                             name: 'htmlembedded',
-                            scriptingModeSpec:"ruby"
+                            scriptingModeSpec: "ruby"
                         },
                         region: 'center',
                         sourceCode: content
@@ -541,6 +541,58 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                     save: function (comp, content) {
                         self.saveContent(id, content, contentType, siteId);
                         if (!Ext.isEmpty(contentGridStore)) contentGridStore.load();
+                    },
+                    ckeditorloaded: function (panel) {
+                        var ckEditorContents = this.getEl();
+
+
+                        Compass.ErpApp.Utility.addEventHandler(ckEditorContents.dom, 'dragover', function (e) {
+                            ckEditorContents.setStyle('border', 'solid 1px red');
+
+                            if (e.preventDefault) {
+                                e.preventDefault();
+                            }
+                            return false;
+                        });
+                        Compass.ErpApp.Utility.addEventHandler(ckEditorContents.dom, 'dragenter', function (e) {
+                            ckEditorContents.setStyle('border', 'solid 1px red');
+
+                            if (e.preventDefault) {
+                                e.preventDefault();
+                            }
+                            return false;
+                        });
+                        Compass.ErpApp.Utility.addEventHandler(ckEditorContents.dom, 'dragleave', function (e) {
+                            e.preventDefault()
+                            ckEditorContents.setStyle('border', 'none');
+                        });
+                        Compass.ErpApp.Utility.addEventHandler(ckEditorContents.dom, 'drop', function (e) {
+                            e.preventDefault();
+
+
+                            var dt = e.dataTransfer;
+                            var files = dt.files;
+                            for (var i = 0; i < files.length; i++) {
+                                var file = files[i];
+                                var reader = new FileReader();
+                                Compass.ErpApp.Utility.addEventHandler(reader, 'loadend', function (e, file) {
+                                    var bin = this.result;
+
+                                    //var img = new CKEDITOR.dom.element(  );
+                                    //img.file = file;
+                                    //img.src = bin;
+                                    panel.insertHtml('<img src='+bin+' height="200" width="200" />');
+
+
+                                }.bindToEventHandler(file));
+
+                                reader.readAsDataURL(file);
+                            }
+
+                            ckEditorContents.setStyle('border', 'none');
+
+                            return false;
+                        })
                     }
                 }
             });

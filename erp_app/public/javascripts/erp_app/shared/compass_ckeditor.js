@@ -72,7 +72,13 @@ Ext.define("Compass.ErpApp.Shared.CKeditor", {
              * @param {Compass.ErpApp.Shared.CKeditor} cKeditor This object
              * @param (contents) contents needing to be saved
              */
-            'save'
+            'save',
+            /**
+             * @event ckeditorloaded
+             * Fired when ckeditor is loaded.
+             * @param {Compass.ErpApp.Shared.CKeditor} cKeditor This object
+             */
+            'ckeditorloaded'
         );
     },
 
@@ -86,7 +92,8 @@ Ext.define("Compass.ErpApp.Shared.CKeditor", {
     },
 
     onRender: function (ct, position) {
-        Compass.ErpApp.Shared.CKeditor.superclass.onRender.call(this, ct, position);
+        this.callParent(arguments);
+
         this.setupCkEditor();
         this.on('resize', this.textAreaResized, this);
     },
@@ -117,6 +124,10 @@ Ext.define("Compass.ErpApp.Shared.CKeditor", {
                     e.e_stopPropagation();
                 }
             }
+        });
+
+        editor.on('instanceReady', function () {
+            me.fireEvent('ckeditorloaded', me);
         });
 
         editor.extjsPanel = this;
@@ -176,9 +187,16 @@ Ext.define("Compass.ErpApp.Shared.CKeditor", {
     },
 
     insertHtml: function (html) {
-        if (this.ckEditorInstance){
+        if (this.ckEditorInstance) {
             this.ckEditorInstance.focus();
             this.ckEditorInstance.insertHtml(html, 'unfiltered_html');
+        }
+    },
+
+    insertElement: function (element) {
+        if (this.ckEditorInstance) {
+            this.ckEditorInstance.focus();
+            this.ckEditorInstance.insertElement(element);
         }
     }
 });

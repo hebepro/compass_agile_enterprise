@@ -260,12 +260,15 @@ Compass.ErpApp.Utility.addEventHandler = function(obj, evt, handler) {
     if(obj.addEventListener) {
         // W3C method
         obj.addEventListener(evt, handler, false);
+        console.log('w3c')
     } else if(obj.attachEvent) {
         // IE method.
         obj.attachEvent('on'+evt, handler);
+        console.log('ie')
     } else {
         // Old school method.
         obj['on'+evt] = handler;
+        console.log('old')
     }
 };
 
