@@ -16,12 +16,14 @@ Paperclip.interpolates(:file_url){|data, style|
   when :filesystem
     #if public is at the front of this path and we are using file_system remove it
     dir_pieces = url.split('/')
-    unless dir_pieces[1] == 'public'
+    path = unless dir_pieces[1] == 'public'
       "/download/#{data.instance.name}?path=#{dir_pieces.delete_if{|name| name == data.instance.name}.join('/')}"
     else
       dir_pieces.delete_at(1) if dir_pieces[1] == 'public'
       dir_pieces.join('/')
     end
+
+    "http://#{ErpTechSvcs::Config.installation_domain}/#{path}"
   when :s3
     url
   end
