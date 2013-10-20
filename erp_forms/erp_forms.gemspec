@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.test_files = Dir["spec/**/*"]
 
   s.add_dependency('dynamic_attributes','~> 1.2.0')
-  s.add_dependency('friendly_id')
+  s.add_dependency('friendly_id', '4.0.10.1')
 
   #compass dependencies
   s.add_dependency 'erp_app', '~> 3.1'
