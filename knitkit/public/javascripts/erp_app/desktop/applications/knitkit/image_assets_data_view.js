@@ -1,7 +1,8 @@
 Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.ImageAssetsDataView", {
     extend: "Ext.view.View",
     alias: 'widget.knitkit_imageassetsdataview',
-
+    directory: null,
+    websiteId: null,
     constructor: function (config) {
         var self = this;
 
@@ -26,33 +27,49 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.ImageAssetsDataView", {
                 Compass.ErpApp.Utility.addEventHandler(viewElement.dom, 'drop', function (e) {
                     e.preventDefault();
 
+                    var dt = e.dataTransfer,
+                        files = dt.files;
 
-                    var dt = e.dataTransfer;
-                    var files = dt.files;
                     for (var i = 0; i < files.length; i++) {
-                        var file = files[i];
-                        var reader = new FileReader();
+                        var file = files[i],
+                            reader = new FileReader();
+
+                        var loadMask = new Ext.LoadMask(self, {msg:"Please wait..."});
+                        loadMask.show();
+
                         Compass.ErpApp.Utility.addEventHandler(reader, 'loadend', function (e, file) {
                             var bin = this.result;
-                            console.log(bin)
 
-                            store.add({
-                                name: file.name,
-                                url: bin
+                            Ext.Ajax.request({
+                                headers: {'Content-Type': file.type},
+                                url: config['uploadUrl'],
+                                jsonData: bin,
+                                params:{
+                                    name: file.name,
+                                    directory: self.directory,
+                                    website_id: self.websiteId,
+                                    is_drag_drop: true
+                                },
+                                success: function(result){
+                                    loadMask.hide();
+                                    resultObj = Ext.JSON.decode(result.responseText);
+                                    if(resultObj.success){
+                                        store.load({
+                                            params:{
+                                                directory: self.directory
+                                            }
+                                        });
+                                        self.fireEvent('imageuploaded', self);
+                                    }
+                                    else{
+                                        Ext.Msg.alert('Error', 'Could not upload image');
+                                    }
+                                },
+                                failure: function(result){
+                                    loadMask.hide();
+                                    Ext.Msg.alert('Error', 'Could not upload image');
+                                }
                             });
-
-                            /*var newFile       = document.createElement('div');
-                             newFile.innerHTML = 'Loaded : '+file.name+' size '+file.size+' B';
-                             list.appendChild(newFile);
-                             var fileNumber = list.getElementsByTagName('div').length;
-                             status.innerHTML = fileNumber < files.length
-                             ? 'Loaded 100% of file '+fileNumber+' of '+files.length+'...'
-                             : 'Done loading. processed '+fileNumber+' files.';
-
-                             var img = document.createElement("img");
-                             img.file = file;
-                             img.src = bin;
-                             list.appendChild(img);   */
                         }.bindToEventHandler(file));
 
                         reader.readAsDataURL(file);
@@ -145,5 +162,18 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.ImageAssetsDataView", {
         }, config);
 
         this.callParent([config]);
+    },
+
+    initComponent: function () {
+        this.callParent(arguments);
+
+        this.addEvents(
+            /**
+             * @event save
+             * Fired when image is uploaded.
+             * @param {Compass.ErpApp.Desktop.Applications.Knitkit.ImageAssetsDataView} This component
+             */
+            'imageuploaded'
+        );
     }
 });

@@ -25,13 +25,16 @@ module Knitkit
             capability_resource = "GlobalImageAsset"
           end
 
-          model = DesktopApplication.find_by_internal_identifier('knitkit')
           begin
             current_user.with_capability(capability_type, capability_resource) do
               result = {}
               upload_path = params[:directory]
               name = params[:name]
               data = request.raw_post
+
+              if params[:is_drag_drop]
+                data = Base64.decode64(data.split(',').last)
+              end
 
               begin
                 upload_path == 'root_node' ? @assets_model.add_file(data, File.join(base_path,name)) : @assets_model.add_file(data, File.join(@file_support.root,upload_path,name))
@@ -63,7 +66,6 @@ module Knitkit
 
           nodes_to_delete = (params[:selected_nodes] ? JSON(params[:selected_nodes]) : [params[:node]])
 
-          model = DesktopApplication.find_by_internal_identifier('knitkit')
           begin
             result = false
             nodes_to_delete.each do |path|

@@ -74,11 +74,12 @@ Ext.define("Compass.ErpApp.Shared.CKeditor", {
              */
             'save',
             /**
-             * @event ckeditorloaded
-             * Fired when ckeditor is loaded.
+             * @event ckeditordrop
+             * Fired when item is dropped into ckeditor.
              * @param {Compass.ErpApp.Shared.CKeditor} cKeditor This object
+             * @param {Event} drop event
              */
-            'ckeditorloaded'
+            'ckeditordrop'
         );
     },
 
@@ -110,8 +111,7 @@ Ext.define("Compass.ErpApp.Shared.CKeditor", {
             toolbarStartupExpanded: true,
             enterMode: CKEDITOR.ENTER_BR,
             shiftEnterMode: CKEDITOR.ENTER_P,
-            baseFloatZIndex: 20000,
-            extraPlugins: '' // removed codemirror plugin as it is unstable
+            baseFloatZIndex: 20000
         });
         var editor = CKEDITOR.replace(this.inputEl.id, this.initialConfig.ckEditorConfig);
 
@@ -126,8 +126,68 @@ Ext.define("Compass.ErpApp.Shared.CKeditor", {
             }
         });
 
-        editor.on('instanceReady', function () {
-            me.fireEvent('ckeditorloaded', me);
+        editor.on('contentDom', function () {
+            // Check if browser supports HTML5 FileReader
+            if (window.FileReader) {
+                var head = editor.document.getHead(),
+                    hoverClass = "cke-image-dd",
+                    hoverClassRegex = new RegExp(" " + hoverClass, "g");
+
+                style = CKEDITOR.dom.element.createFromHtml('<style>.cke-image-dd {box-shadow: 0 0 10px 1px #999 inset !important;}</style>');
+                head.append(style);
+
+                var body = editor.document.getBody();
+
+                Compass.ErpApp.Utility.addEventHandler(body.$, 'dragover', function (e) {
+                    e.preventDefault();
+
+                    // add drag over css
+                    currentClassName = body.$.getAttribute('class');
+                    if (currentClassName && currentClassName.indexOf(hoverClass) === -1) {
+                        body.$.setAttribute('class', currentClassName + " " + hoverClass);
+                    }
+
+                    return false;
+                });
+
+                Compass.ErpApp.Utility.addEventHandler(body.$, 'dragenter', function (e) {
+                    e.preventDefault();
+
+                    // add drag over css
+                    currentClassName = body.$.getAttribute('class');
+                    if (currentClassName && currentClassName.indexOf(hoverClass) === -1) {
+                        body.$.setAttribute('class', currentClassName + " " + hoverClass);
+                    }
+
+                    return false;
+                });
+
+                Compass.ErpApp.Utility.addEventHandler(body.$, 'dragleave', function (e) {
+                    e.preventDefault();
+
+                    // remove drag over css
+                    currentClassName = body.$.getAttribute('class');
+                    if (currentClassName.indexOf(hoverClass) != -1) {
+                        body.$.setAttribute('class', currentClassName.replace(hoverClassRegex, ''));
+                    }
+
+                    return false;
+                });
+
+                Compass.ErpApp.Utility.addEventHandler(body.$, 'drop', function (e) {
+                    e.preventDefault();
+
+                    me.fireEvent('ckeditordrop', me, e);
+
+                    // remove drag over css
+                    currentClassName = body.$.getAttribute('class');
+                    if (currentClassName.indexOf(hoverClass) != -1) {
+                        body.$.setAttribute('class', currentClassName.replace(hoverClassRegex, ''));
+                    }
+
+                    return false;
+                });
+            }
         });
 
         editor.extjsPanel = this;
@@ -165,6 +225,7 @@ Ext.define("Compass.ErpApp.Shared.CKeditor", {
     },
 
     setValue: function (value) {
+
         if (this.ckEditorInstance) {
             this.ckEditorInstance.setData(value);
         }

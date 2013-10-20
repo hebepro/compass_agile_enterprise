@@ -542,57 +542,59 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                         self.saveContent(id, content, contentType, siteId);
                         if (!Ext.isEmpty(contentGridStore)) contentGridStore.load();
                     },
-                    ckeditorloaded: function (panel) {
-                        var ckEditorContents = this.getEl();
+                    ckeditordrop: function (ckeditorPanel, dropEvent) {
+                        var dataTransfer = dropEvent.dataTransfer;
+                        var files = dataTransfer.files;
+                        for (var i = 0; i < files.length; i++) {
+                            var loadMask = new Ext.LoadMask(ckeditorPanel, {msg:"Please wait..."});
+                            loadMask.show();
 
+                            var file = files[i];
+                            var reader = new FileReader();
 
-                        Compass.ErpApp.Utility.addEventHandler(ckEditorContents.dom, 'dragover', function (e) {
-                            ckEditorContents.setStyle('border', 'solid 1px red');
+                            Compass.ErpApp.Utility.addEventHandler(reader, 'loadend', function (e, file) {
+                                var bin = this.result;
 
-                            if (e.preventDefault) {
-                                e.preventDefault();
-                            }
-                            return false;
-                        });
-                        Compass.ErpApp.Utility.addEventHandler(ckEditorContents.dom, 'dragenter', function (e) {
-                            ckEditorContents.setStyle('border', 'solid 1px red');
+                                Ext.Ajax.request({
+                                    headers: {'Content-Type': file.type},
+                                    url: '/knitkit/erp_app/desktop/image_assets/shared/upload_file',
+                                    jsonData: bin,
+                                    params:{
+                                        name: file.name,
+                                        directory: 'root_node',
+                                        is_drag_drop: true
+                                    },
+                                    success: function(result){
+                                        loadMask.hide();
+                                        resultObj = Ext.JSON.decode(result.responseText);
+                                        if(resultObj.success){
+                                            ckeditorPanel.insertHtml('<img src='+bin+' height="200" width="200" />');
+                                            var sharedImageAssetsDataView = self.up('#knitkit').down('knitkit_ImageAssetsPanel').sharedImageAssetsDataView,
+                                                sharedImageAssetsTreePanel = self.up('#knitkit').module.down('knitkit_ImageAssetsPanel').sharedImageAssetsTreePanel;
+                                            sharedImageAssetsDataView.getStore().load({
+                                                params:{
+                                                    directory: sharedImageAssetsDataView.directory
+                                                }
+                                            });
+                                            sharedImageAssetsTreePanel.getStore().load({
+                                                callback:function(){
+                                                    sharedImageAssetsTreePanel.getView().refresh();
+                                                }
+                                            });
+                                        }
+                                        else{
+                                            Ext.Msg.alert('Error', 'Could not upload image');
+                                        }
+                                    },
+                                    failure: function(result){
+                                        loadMask.hide();
+                                        Ext.Msg.alert('Error', 'Could not upload image');
+                                    }
+                                });
+                            }.bindToEventHandler(file));
 
-                            if (e.preventDefault) {
-                                e.preventDefault();
-                            }
-                            return false;
-                        });
-                        Compass.ErpApp.Utility.addEventHandler(ckEditorContents.dom, 'dragleave', function (e) {
-                            e.preventDefault()
-                            ckEditorContents.setStyle('border', 'none');
-                        });
-                        Compass.ErpApp.Utility.addEventHandler(ckEditorContents.dom, 'drop', function (e) {
-                            e.preventDefault();
-
-
-                            var dt = e.dataTransfer;
-                            var files = dt.files;
-                            for (var i = 0; i < files.length; i++) {
-                                var file = files[i];
-                                var reader = new FileReader();
-                                Compass.ErpApp.Utility.addEventHandler(reader, 'loadend', function (e, file) {
-                                    var bin = this.result;
-
-                                    //var img = new CKEDITOR.dom.element(  );
-                                    //img.file = file;
-                                    //img.src = bin;
-                                    panel.insertHtml('<img src='+bin+' height="200" width="200" />');
-
-
-                                }.bindToEventHandler(file));
-
-                                reader.readAsDataURL(file);
-                            }
-
-                            ckEditorContents.setStyle('border', 'none');
-
-                            return false;
-                        })
+                            reader.readAsDataURL(file);
+                        }
                     }
                 }
             });
