@@ -71,6 +71,9 @@ class UpdateWebsiteAndConfiguration < ActiveRecord::Migration
 
       remove_column(:websites, :auto_activate_publication) if columns(:websites).collect {|c| c.name}.include?('auto_activate_publication')
       remove_column(:websites, :email_inquiries) if columns(:websites).collect {|c| c.name}.include?('email_inquiries')
+
+      # Added this to reload website columns into memory
+      Website.reset_column_information
     end
   end
 
