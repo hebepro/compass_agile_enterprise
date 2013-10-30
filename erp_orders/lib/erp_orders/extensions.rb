@@ -1,1 +1,2 @@
 require 'erp_orders/extensions/active_record/acts_as_order_txn'
+require 'erp_orders/extensions/active_record/acts_as_order_line_item'

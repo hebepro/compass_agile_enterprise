@@ -8,7 +8,7 @@ class OrderLineItemPtyRole < ActiveRecord::Base
 
   belongs_to :order_line_item
   belongs_to :party
-  belongs_to :line_item_role_type
+  belongs_to :role_type
 
 #***************************************************************************
 # The association of a transaction to an account happens in the context of
