@@ -19,7 +19,7 @@ module ErpApp
         end
 
         def parties
-          render :inline => if request.put?
+          render :json => if request.put?
                               update_party
                             elsif request.get?
                               get_parties
@@ -215,23 +215,47 @@ module ErpApp
         end
 
         private
+
         def get_parties
-          search_name = params[:party_name]
-          party_type = params[:party_type]
-          start = params[:start] || 0
-          limit = params[:limit] || 30
+          offset = params[:offset] || 0
+          limit = params[:limit] || 25
+          query = params[:query] || nil
 
-          total_count = Party.where("description like ? and business_party_type = ?", "%#{search_name}%", party_type).count
-          parties = Party.where("description like ? and business_party_type = ?", "%#{search_name}%", party_type).order("id").offset(start).limit(limit)
+          to_roles = params[:to_roles]
+          from_roles = params[:from_roles]
 
-          {:totalCount => total_count, :data => parties.collect { |party| {
-              :id => party.id,
-              :enterprise_identifier => party.enterprise_identifier,
-              :created_at => party.created_at,
-              :updated_at => party.updated_at,
-              :business_party => party.business_party
-          } }
-          }.to_json
+          current_party = current_user.party
+
+          from_roles_ids = unless from_roles.blank?
+                             from_roles.split(',').collect { |role| RoleType.find_by_internal_identifier(role).id } unless from_roles.blank?
+                           else
+                             []
+                           end
+
+          to_role_ids = unless to_roles.blank?
+                          to_roles.split(',').collect { |role| RoleType.find_by_internal_identifier(role).id }
+                        else
+                          []
+                        end
+
+          statement = Party.joins("join party_relationships from_reln on from_reln.party_id_from = parties.id")
+          .where('from_reln.role_type_id_from' => from_roles_ids.join(','))
+
+          unless to_role_ids.empty?
+            statement = statement.joins("join party_relationships to_reln on to_reln.party_id_from = #{current_party.id}")
+            .where('to_reln.role_type_id_to' => to_role_ids.join(','))
+          end
+
+          # Apply query if it exists
+          statement = statement.where(Parties.arel_table[:description].matches("%#{query}")) if query
+
+          # Get total count of records
+          total = statement.count
+
+          # Apply limit and offset
+          parties = statement.limit(limit).offset(offset).all
+
+          {:success => true, :total => total, :parties => parties.collect{|item| item.to_hash(:only => [:description, :created_at, :updated_at])}}
         end
 
         def delete_party

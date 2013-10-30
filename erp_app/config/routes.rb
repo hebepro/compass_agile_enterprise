@@ -92,5 +92,3 @@ ErpApp::Engine.routes.draw do
   #job_tracker
   match '/desktop/job_tracker(/:action)' => "desktop/job_tracker/base"
 end
-
-
