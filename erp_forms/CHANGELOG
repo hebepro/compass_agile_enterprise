@@ -1,3 +1,6 @@
+Version 3.1.3
+- Fixed bug with related_combobox field type in form builder
+- Fixed bug with edit dynamic record in desktop app
 Version 3.1.2 - 10-20-2013
 - Added version number to friendly_id in gemspec
 Version 3.1.1 - 8-14-2013
