@@ -1,3 +1,5 @@
+Version 3.1.2 - 10-20-2013
+- Added version number to friendly_id in gemspec
 Version 3.1.1 - 8-14-2013
 - Fixed file download for dynamic records in dynamic forms desktop app
 - Changed middleware to insert_before Rack::Runtime instead of Rack::Lock to allow for config.threadsafe!

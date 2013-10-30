@@ -35,10 +35,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
             title: title + ' - Layout',
             disableToolbar: true,
             xtype: 'codemirror',
-            mode: {
-                name: 'htmlembedded',
-                scriptingModeSpec: "ruby"
-            },
+            mode: 'rhtml',
             sourceCode: template,
             closable: true
         });
@@ -105,10 +102,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                             }
                         },
                         xtype: 'codemirror',
-                        mode: {
-                            name: 'htmlembedded',
-                            scriptingModeSpec: "ruby"
-                        },
+                        mode: 'rhtml',
                         region: 'center',
                         sourceCode: content
                     },
@@ -196,10 +190,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                             }
                         },
                         xtype: 'codemirror',
-                        mode: {
-                            name: 'htmlembedded',
-                            scriptingModeSpec: "ruby"
-                        },
+                        mode: 'rhtml',
                         region: 'center',
                         sourceCode: content
                     },

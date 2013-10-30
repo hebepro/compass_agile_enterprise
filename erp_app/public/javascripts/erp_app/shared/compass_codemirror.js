@@ -29,10 +29,7 @@ Ext.define("Compass.ErpApp.Shared.CodeMirror", {
                     break;
                 case 'erb':
                 case 'rhtml':
-                    mode = {
-                        name: 'htmlembedded',
-                        scriptingModeSpec:"ruby"
-                    };
+                    mode = 'rhtml';
                     break;
                 case 'css':
                     mode = 'css';
@@ -70,6 +67,11 @@ Ext.define("Compass.ErpApp.Shared.CodeMirror", {
      * configuration parameters the mode supports.
      */
     mode: null,
+
+    /**
+     * @cfg {Boolean} showMode Enable mode combo in the toolbar.
+     */
+    showMode: true,
 
     /**
      * @cfg {Boolean} showLineNumbers Enable line numbers button in the toolbar.
@@ -232,12 +234,18 @@ Ext.define("Compass.ErpApp.Shared.CodeMirror", {
             }
         });
 
-        items = [
-            {
+        availableModes.push(['rhtml']);
+
+        items = [];
+
+        // change mode
+        if (me.showMode) {
+            items.push({
                 xtype: 'label',
                 text: 'Mode'
-            },
-            {
+            });
+
+            items.push({
                 xtype: 'combo',
                 store: Ext.create('Ext.data.ArrayStore', {
                     fields: ['name'],
@@ -248,33 +256,44 @@ Ext.define("Compass.ErpApp.Shared.CodeMirror", {
                 valueField: 'name',
                 listeners: {
                     change: function (comp, newValue, oldValue) {
-                        me.codeMirrorInstance.setOption('mode', newValue);
+                        var mode = newValue;
+
+                        if (newValue == 'rhtml') {
+                            mode = {
+                                name: 'htmlembedded',
+                                scriptingModeSpec: "ruby"
+                            }
+                        }
+
+                        me.codeMirrorInstance.setOption('mode', mode);
                         me.codeMirrorInstance.refresh();
                     }
                 }
+            });
+        }
+
+        items.push({
+            text: 'Undo',
+            iconCls: 'icon-undo',
+            handler: function () {
+                this.codeMirrorInstance.undo();
             },
-            {
-                text: 'Undo',
-                iconCls: 'icon-undo',
-                handler: function () {
-                    this.codeMirrorInstance.undo();
-                },
-                scope: this
+            scope: this
+        });
+
+        items.push({
+            text: 'Redo',
+            iconCls: 'icon-redo',
+            handler: function () {
+                this.codeMirrorInstance.redo();
             },
-            {
-                text: 'Redo',
-                iconCls: 'icon-redo',
-                handler: function () {
-                    this.codeMirrorInstance.redo();
-                },
-                scope: this
-            }
-        ];
+            scope: this
+        });
 
         // line numbers button
         if (me.showLineNumbers)
             items.push({
-                cls : baseCSSPrefix + 'btn-icon',
+                cls: baseCSSPrefix + 'btn-icon',
                 iconCls: baseCSSPrefix + 'edit-insertorderedlist',
                 itemId: 'insertorderedlist',
                 tooltip: tipsEnabled ? 'Line Numbers' || undef : undef,
@@ -325,9 +344,20 @@ Ext.define("Compass.ErpApp.Shared.CodeMirror", {
     setupCodeMirror: function () {
         var me = this,
             mode = me.mode || null,
+            codeMirrorMode = null,
             css = null,
             textAreaComp = me.down('textarea'),
             modeCombo = me.down('combo');
+
+        if (mode == 'rhtml') {
+            codeMirrorMode = {
+                name: 'htmlembedded',
+                scriptingModeSpec: "ruby"
+            }
+        }
+        else{
+            codeMirrorMode = mode;
+        }
 
         this.initialConfig.codeMirrorConfig = Ext.apply({
             matchBrackets: me.enableMatchBrackets,
@@ -343,7 +373,7 @@ Ext.define("Compass.ErpApp.Shared.CodeMirror", {
             gutter: me.enableGutter,
             fixedGutter: me.enableFixedGutter,
             theme: me.theme,
-            mode: mode,
+            mode: codeMirrorMode,
             undoDepth: 3,
             extraKeys: {
                 "Ctrl-S": function (instance) {
@@ -368,12 +398,14 @@ Ext.define("Compass.ErpApp.Shared.CodeMirror", {
         me.codeMirrorInstance = CodeMirror.fromTextArea(textAreaComp.inputEl.dom, this.initialConfig.codeMirrorConfig);
         me.codeMirrorInstance.setCursor(1);
 
-        // set value of mode combo
-        if (mode == null) {
-            modeCombo.setValue('text/plain');
-        }
-        else {
-            modeCombo.setValue(mode);
+        if (me.showMode) {
+            // set value of mode combo
+            if (mode == null) {
+                modeCombo.setValue('text/plain');
+            }
+            else {
+                modeCombo.setValue(mode);
+            }
         }
 
         // change the codemirror css
