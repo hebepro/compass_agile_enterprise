@@ -30,11 +30,8 @@
                                                 });
 
                                                 editor.config.contentsCss = stylesheets;
-                                                var data = editor.getData(),
-                                                    modeEditor = editor.getMode(editor.mode),
-                                                    holderElement = editor.getThemeSpace('contents');
-
-                                                modeEditor.load(holderElement, data);
+                                                editor.setMode('source');
+                                                editor.setMode('wysiwyg');
 
                                                 btn.up('window').close();
                                                 window.ckeditorApplyThemeWindow = null;

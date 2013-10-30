@@ -10,10 +10,11 @@ module ErpApp
     # Download Prompt Example: /download/filename.ext?path=/directory&disposition=attachment
     def download
       filename = "#{params[:filename]}.#{params[:format]}"
+      path = params[:path].blank? ? nil : params[:path].gsub("/#{params[:filename]}.#{params[:format]}", '')
       disposition = params[:disposition]
 
       file = FileAsset.where(:name => filename)
-      file = file.where(:directory => params[:path]) unless params[:path].blank?
+      file = file.where(:directory => path) if path
       file = file.first
 
       unless file.nil?

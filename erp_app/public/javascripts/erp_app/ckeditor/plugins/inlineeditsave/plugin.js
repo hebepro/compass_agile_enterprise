@@ -3,6 +3,8 @@
     var a = {
             exec:function(editor){
                 if(editor.checkDirty()){
+                    jQuery('#editableContentOverlay').css('z-index', '1003');
+
                     content = editor.getData();
                     Knitkit.InlineEditing.contentDiv.html(content);
 

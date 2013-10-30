@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title><%= @website.title %></title>
+  <%= include_sencha_touch :debug => (Rails.env != 'production') %>
+  <%= static_javascript_include_tag('erp_app/utility.js') %>
+  <%= static_javascript_include_tag('erp_app/mobile/mobile_base.js') %>
+
+  <script type="text/javascript">
+      Ext.Loader.setPath({
+          'KnitkitMobile': 'javascripts/knitkit/mobile/app',
+          'Ext.ux': 'javascripts/knitkit/mobile/ux'
+      });
+
+      Ext.define("KnitkitMobile.view.Main", {
+          extend: 'Ext.ux.slidenavigation.View',
+          itemId: 'slideContainer',
+
+          requires: [
+              'Ext.Container',
+              'Ext.MessageBox',
+              'Ext.Panel',
+              'Ext.Toolbar',
+              'Ext.event.publisher.Dom'
+          ],
+
+          config: {
+              style: 'font-size:14px;',
+
+              fullscreen: true,
+
+              /**
+               *  Any component within the container with an 'x-toolbar' class
+               *  will be draggable.  To disable draggin all together, set this
+               *  to false.
+               */
+              slideSelector: 'x-container',
+
+              /**
+               *  Time in milliseconds to animate the closing of the container
+               *  after an item has been clicked on in the list.
+               */
+              selectSlideDuration: 200,
+
+              /**
+               *  Enable content masking when container is open.
+               *
+               *  @since 0.2.0
+               */
+              itemMask: true,
+
+              /**
+               *  Define the default slide button config.  Any item that has
+               *  a `slideButton` value that is either `true` or a button config
+               *  will use these values at the default.
+               */
+              slideButtonDefaults: {
+                  selector: 'toolbar'
+              },
+
+              /**
+               *  This allows us to configure how the actual list container
+               *  looks.  Here we've added a custom search field and have
+               *  modified the width.
+               */
+              list: {
+                  maxDrag: 400,
+                  //width: (Ext.os.is.iOS ? 300 : 250),
+                  items: [
+                      {
+                          xtype: 'toolbar',
+                          docked: 'top',
+                          ui: 'light',
+                          title: {
+                              title: 'Menu',
+                              centered: true,
+                              width: 200,
+                              left: 0
+                          }
+                      }
+                  ]
+
+              },
+
+              /**
+               *  Example of how to re-order the groups.
+               */
+              /*groups: {
+               'Pages': 1,
+               'Account': 2
+               },*/
+
+              /**
+               *  These are the default values to apply to the items within the
+               *  container.
+               */
+              defaults: {
+                  style: 'background: #fff',
+                  xtype: 'container'
+              },
+
+              items: [
+                  <% @website.sections.each do |section| %>
+                  <% if section.in_menu && section.allow_access?(@current_user, :view) %>
+                  {
+                      title: '<%= section.title %>',
+                      slideButton: true,
+                      items: [
+                          {
+                              xtype: 'toolbar',
+                              title: '<%= section.title %>',
+                              docked: 'top'
+                          },
+                          {
+                              xtype: 'panel',
+                              scrollable: true,
+                              bodyPadding: '5px',
+                              listeners: {
+                                  painted: function (comp) {
+                                      var me = this;
+
+                                      Ext.Ajax.request({
+                                          method: 'GET',
+                                          timeout: 60000,
+                                          params: {
+                                              is_mobile: true
+                                          },
+                                          url: '/<%= section.internal_identifier %>',
+                                          success: function (response) {
+                                              me.setHtml(response.responseText);
+                                          },
+                                          failure: function (response) {
+                                              Ext.Msg.alert('Info', 'Could not load page');
+                                          }
+                                      });
+                                  }
+                              }
+                          }
+                      ]
+                  },
+                  <% end %>
+                  <% end %>
+              ]
+          }
+      });
+
+      Ext.application({
+          name: 'KnitkitMobile',
+
+          views: ['Main'],
+
+          launch: function () {
+              this.main = Ext.create('KnitkitMobile.view.Main');
+              Ext.Viewport.add(this.main);
+              Ext.Viewport.setActiveItem(this.main);
+          }
+      });
+  </script>
+</head>
+<body>
+</body>
+</html>

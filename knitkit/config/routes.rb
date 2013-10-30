@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   filter :section_router
   
+  get 'knitkit_mobile' => 'knitkit/mobile#index'
   get 'pages/:section_id' => 'knitkit/website_sections#index', :as => 'page'
   get 'onlinedocumentsections/:section_id' => 'knitkit/online_document_sections#index', :as => 'document'
   #get 'onlinedocumentsections/:section_id/:id' => 'knitkit/online_document_sections#show', :as => 'document'
@@ -17,29 +18,33 @@ end
 Knitkit::Engine.routes.draw do
   #Desktop Applications
   #knitkit
-  match '/erp_app/desktop/:action' => 'erp_app/desktop/app'
-  match '/erp_app/desktop/image_assets/:context/:action' => 'erp_app/desktop/image_assets'
-  match '/erp_app/desktop/file_assets/:context/:action' => 'erp_app/desktop/file_assets'
-  #article
-  match '/erp_app/desktop/articles/:action(/:section_id)' => 'erp_app/desktop/articles'
-  #content
-  match '/erp_app/desktop/content/:action' => 'erp_app/desktop/content'
-  #website
-  match '/erp_app/desktop/site(/:action)' => 'erp_app/desktop/website'
-  #section
-  match '/erp_app/desktop/section/:action' => 'erp_app/desktop/website_section'
-  #document
-  match '/erp_app/desktop/online_document_sections/:action' => 'erp_app/desktop/online_document_sections'
-  #theme
-  match '/erp_app/desktop/theme/:action' => 'erp_app/desktop/theme'
-  #versions
-  match '/erp_app/desktop/versions/:action' => 'erp_app/desktop/versions'
-  #comments
-  match '/erp_app/desktop/comments/:action(/:content_id)' => 'erp_app/desktop/comments'
-  #inquiries
-  match '/erp_app/desktop/inquiries/:action(/:website_id)' => 'erp_app/desktop/inquiries'
-  #website_nav
-  match '/erp_app/desktop/website_nav/:action' => 'erp_app/desktop/website_nav'
-  #position
-  match '/erp_app/desktop/position/:action' => 'erp_app/desktop/position'
+  namespace :erp_app do
+    namespace :desktop do
+      match '/:action' => 'app'
+      match '/image_assets/:context/:action' => 'image_assets'
+      match '/file_assets/:context/:action' => 'file_assets'
+      #articl
+      match '/articles/:action(/:section_id)' => 'articles'
+      #conten
+      match '/content/:action' => 'content'
+      #websit
+      match '/site(/:action)' => 'website'
+      #sectio
+      match '/section/:action' => 'website_section'
+      #docume
+      match '/online_document_sections/:action' => 'online_document_sections'
+      #theme
+      match '/theme/:action' => 'theme'
+      #versio
+      match '/versions/:action' => 'versions'
+      #commen
+      match '/comments/:action(/:content_id)' => 'comments'
+      #inquir
+      match '/inquiries/:action(/:website_id)' => 'inquiries'
+      #websit
+      match '/website_nav/:action' => 'website_nav'
+      #positi
+      match '/position/:action' => 'position'
+    end
+  end
 end

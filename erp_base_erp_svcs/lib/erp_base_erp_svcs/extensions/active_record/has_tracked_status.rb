@@ -41,8 +41,14 @@ module ErpBaseErpSvcs
             arel_query.all
           end
 
+          # gets current StatusApplication record
+          def current_status_application
+            self.status_applications.order('id DESC').first
+          end
+
+          # gets current statuses internal_identifier
           def current_status
-            self.status_applications.order('id DESC').first.tracked_status_type.internal_identifier unless self.status_applications.empty?
+            current_status_application.tracked_status_type.internal_identifier unless current_status_application.nil?
           end
 
           #set current status of entity.

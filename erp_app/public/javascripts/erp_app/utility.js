@@ -256,6 +256,19 @@ Compass.ErpApp.Utility.formatCurrency = function (num) {
     return (((sign) ? '' : '-') + '$' + num + '.' + cents);
 };
 
+Compass.ErpApp.Utility.addEventHandler = function(obj, evt, handler) {
+    if(obj.addEventListener) {
+        // W3C method
+        obj.addEventListener(evt, handler, false);
+    } else if(obj.attachEvent) {
+        // IE method.
+        obj.attachEvent('on'+evt, handler);
+    } else {
+        // Old school method.
+        obj['on'+evt] = handler;
+    }
+};
+
 function OnDemandLoadByAjax(){
     this.load = function (components, callback) {
         this.components = components;
@@ -444,5 +457,18 @@ String.prototype.titleize = function () {
         titleized += parts[i].charAt(0).toUpperCase() + parts[i].substring(1);
     }
     return titleized;
+};
+
+//Function Extensions
+
+Function.prototype.bindToEventHandler = function bindToEventHandler() {
+  var handler = this;
+  var boundParameters = Array.prototype.slice.call(arguments);
+  //create closure
+  return function(e) {
+      e = e || window.event; // get window.event if e argument missing (in IE)   
+      boundParameters.unshift(e);
+      handler.apply(this, boundParameters);
+  }
 };
 

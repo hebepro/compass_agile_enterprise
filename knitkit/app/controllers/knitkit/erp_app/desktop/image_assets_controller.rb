@@ -2,11 +2,17 @@ module Knitkit
   module ErpApp
     module Desktop
       class ImageAssetsController < FileAssetsController
-        
+
         def get_images
           directory = (params[:directory] == 'root_node' or params[:directory].blank?) ? base_path : params[:directory]
           # this @assets_model.images.select should be refactored into a query
-          render :json => @assets_model.images.select{|image| image.directory == directory.sub(@file_support.root,'')}.collect{|image|{:name => image.name, :shortName => image.name[0..15], :url => image.data.url}}
+          render :json => @assets_model.images.select { |image| image.directory == directory.sub(@file_support.root, '') }.collect { |image| {:id => image.id,
+                                                                                                                                              :name => image.name,
+                                                                                                                                              :shortName => image.name[0..15],
+                                                                                                                                              :url => image.data.url,
+                                                                                                                                              :height => image.height,
+                                                                                                                                              :width => image.width,
+                                                                                                                                              :downloadPath => image.data.path} }
         end
 
         def upload_file
@@ -19,7 +25,6 @@ module Knitkit
             capability_resource = "GlobalImageAsset"
           end
 
-          model = DesktopApplication.find_by_internal_identifier('knitkit')
           begin
             current_user.with_capability(capability_type, capability_resource) do
               result = {}
@@ -27,10 +32,18 @@ module Knitkit
               name = params[:name]
               data = request.raw_post
 
+              if params[:is_drag_drop]
+                data = Base64.decode64(data.split(',').last)
+              end
+
               begin
-                upload_path == 'root_node' ? @assets_model.add_file(data, File.join(base_path,name)) : @assets_model.add_file(data, File.join(@file_support.root,upload_path,name))
-                result = {:success => true}
-              rescue Exception=>ex
+                file_asset = if upload_path == 'root_node'
+                               @assets_model.add_file(data, File.join(base_path, name))
+                             else
+                               @assets_model.add_file(data, File.join(@file_support.root, upload_path, name))
+                             end
+                result = {:success => true, :url => file_asset.data.url}
+              rescue Exception => ex
                 logger.error ex.message
                 logger.error ex.backtrace.join("\n")
                 result = {:success => false, :error => "Error uploading file."}
@@ -39,7 +52,7 @@ module Knitkit
               #the awesome uploader widget whats this to mime type text, leave it render :inline
               render :inline => result.to_json
             end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability=>ex
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
           end
         end
@@ -57,7 +70,6 @@ module Knitkit
 
           nodes_to_delete = (params[:selected_nodes] ? JSON(params[:selected_nodes]) : [params[:node]])
 
-          model = DesktopApplication.find_by_internal_identifier('knitkit')
           begin
             result = false
             nodes_to_delete.each do |path|
@@ -65,13 +77,13 @@ module Knitkit
                 path = "#{path}/" if params[:leaf] == 'false' and path.match(/\/$/).nil?
                 begin
                   name = File.basename(path)
-                  result, message, is_folder = @file_support.delete_file(File.join(@file_support.root,path))
+                  result, message, is_folder = @file_support.delete_file(File.join(@file_support.root, path))
                   if result and !is_folder
                     file = @assets_model.files.find(:first, :conditions => ['name = ? and directory = ?', ::File.basename(path), ::File.dirname(path)])
                     file.destroy
                   end
                   messages << message
-                rescue Exception=>ex
+                rescue Exception => ex
                   Rails.logger.error ex.message
                   Rails.logger.error ex.backtrace.join("\n")
                   render :json => {:success => false, :error => "Error deleting #{name}"} and return
@@ -83,7 +95,7 @@ module Knitkit
             else
               render :json => {:success => false, :error => messages.join(',')}
             end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability=>ex
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
           end
         end
@@ -105,8 +117,8 @@ module Knitkit
         def set_file_support
           @file_support = ErpTechSvcs::FileSupport::Base.new(:storage => Rails.application.config.erp_tech_svcs.file_storage)
         end
-        
-      end#ImageAssetsController
-    end#Desktop
-  end#ErpApp
-end#Knitkit
+
+      end #ImageAssetsController
+    end #Desktop
+  end #ErpApp
+end #Knitkit

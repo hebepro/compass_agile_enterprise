@@ -12,6 +12,12 @@ ErpApp::Engine.routes.draw do
   match '/public/:action' => "public"
 
   #############################
+  #Pixlar Callback Routes
+  #############################
+
+  match '/pixlr/:action' => 'pixlr'
+
+  #############################
   #Shared Application Routes
   #############################
   match '/shared/notes/:action(/:party_id)' => "shared/notes"

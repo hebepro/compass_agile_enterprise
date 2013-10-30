@@ -25,8 +25,15 @@
     <%= static_javascript_include_tag('ajax_pagination.js') %>
     <%= static_javascript_include_tag('erp_app/shared/dynamic_forms/dynamic_forms_validation.js') %>
     <%= static_javascript_include_tag('knitkit/helpers.js') %>
-    <%= static_javascript_include_tag('knitkit/inline_editing.js') %>
+
+    <!-- CodeMirror -->
+    <%= include_code_mirror_library %>
+
+    <!-- CkEditor -->
     <%= static_javascript_include_tag('erp_app/ckeditor/ckeditor.js') %>
+
+    <!-- Inline Edit -->
+    <%= static_javascript_include_tag('knitkit/inline_editing.js') %>
 
     <%= yield :head %>
   </head>
