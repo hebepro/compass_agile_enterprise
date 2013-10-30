@@ -1,176 +1,178 @@
 //**************************************************
 // Compass Desktop Console
 //**************************************************
-var desktop_console_history=new Array();
-var desktop_console_history_index=0;
+var desktop_console_history = new Array();
+var desktop_console_history_index = 0;
 //----------------------------------
 // add startsWith method to string
-String.prototype.startsWith = function (str){
+String.prototype.startsWith = function (str) {
     return this.indexOf(str) == 0;
 };
 //---------------------------------
-var startup_heading="<font color='goldenrod'><b>Compass Console Version 0.01</b>&nbsp;(<font color='white'>-help</font> for Help)</font><br>"
+var startup_heading = "<div class='compassConsoleHistory'><span style='color:goldenrod;'><b>Compass Console Version 0.01</b>&nbsp;(<span style='color:white;'>-help</span> for Help)</span><br/></div>";
 //---------------------------------
-function sendCommand(destination,command){
-    update_history_panel("<font color='white'>"+command+"</font>")
-     
-    if(command.startsWith("-clear")){
-        clear_history_panel(startup_heading+"<br><hr>");
-    }else{
-     
-    Ext.Ajax.request({
-        url: '/compass_ae_console/erp_app/desktop/command',
-        params: {
-             
-            command_message: command
-        },
-        success: function(response){
-            var text = response.responseText;
-            var result =Ext.JSON.decode(text)
-            update_history_panel("<font color='yellow'>"+result.success+"</font>")
-        }
-    });
+function sendCommand(destination, command) {
+    update_history_panel("<span style='color:white'>" + command + "</span>");
+
+    if (command.startsWith("-clear")) {
+        clear_history_panel(startup_heading + "<br><hr>");
+    } else {
+
+        Ext.Ajax.request({
+            url: '/compass_ae_console/erp_app/desktop/command',
+            params: {
+
+                command_message: command
+            },
+            success: function (response) {
+                var text = response.responseText;
+                var result = Ext.JSON.decode(text)
+                update_history_panel("<div style='color:yellow;'>" + result.success + "</div>")
+            }
+        });
     }
 }
 //---------------------------------
-function clear_history_panel(text){
-    var panel=Ext.getCmp('console_history_panel');
-    
-    panel.update(""+text+"<br>");
-                
+function clear_history_panel(text) {
+    var panel = Ext.getCmp('console_history_panel'),
+        historyDiv = panel.el.query('div.compassConsoleHistory').first();
+
+    historyDiv.innerHTML = text + "<br>";
+
     var d = panel.body.dom;
-    d.scrollTop = d.scrollHeight - d.offsetHeight+10;
+    d.scrollTop = d.scrollHeight - d.offsetHeight + 10;
     panel.doLayout();
 }
 //---------------------------------
-function update_history_panel(text){
-    var panel=Ext.getCmp('console_history_panel');
-    var old = panel.body.dom.innerHTML;
-    panel.update(old+""+text+"<br>");
-                
+function update_history_panel(text) {
+    var panel = Ext.getCmp('console_history_panel'),
+        historyDiv = panel.el.query('div.compassConsoleHistory').first();
+
+    historyDiv.innerHTML = historyDiv.innerHTML + text + "<br>";
+
     var d = panel.body.dom;
-    d.scrollTop = d.scrollHeight - d.offsetHeight+10;
+    d.scrollTop = d.scrollHeight - d.offsetHeight + 10;
     panel.doLayout();
 }
 
 //---------------------------------
-var console_history_panel ={
+var console_history_panel = {
     xtype: 'panel',
-    id : 'console_history_panel',
+    id: 'console_history_panel',
     region: 'center',
     bodyStyle: "background-color:#000;",
-    autoScroll:true,
-    html : startup_heading
-}
+    autoScroll: true,
+    html: startup_heading
+};
 
 //---------------------------------
 
-var console_text_area ={
+var console_text_area = {
     xtype: 'textarea',
-    region : 'south',
+    region: 'south',
     autoscroll: true,
     id: "console_text_area",
     enableKeyEvents: true,
     listeners: {
-        afterrender: function(field) {
+        afterrender: function (field) {
             field.focus();
-          },
+        },
         // use key-up for textarea since ENTER does not affect focus traversal
-        keyup: function(field, e){
+        keyup: function (field, e) {
             //console.log("textarea keyup:"+e);
-            if (e.getKey() == e.ENTER){
-                     
-                sendCommand('console_text_area',field.getValue());
+            if (e.getKey() == e.ENTER) {
+
+                sendCommand('console_text_area', field.getValue());
                 // add to history 
-                desktop_console_history[desktop_console_history.length]=field.getValue().substring(0,field.getValue().length-1);
+                desktop_console_history[desktop_console_history.length] = field.getValue().substring(0, field.getValue().length - 1);
                 //update index
-                desktop_console_history_index=desktop_console_history.length
+                desktop_console_history_index = desktop_console_history.length
                 field.setValue("");
-            }else if (e.getKey() == e.UP){
-                     
-                if(desktop_console_history.length==0){
-                // no history to display
-                }else{
+            } else if (e.getKey() == e.UP) {
+
+                if (desktop_console_history.length == 0) {
+                    // no history to display
+                } else {
                     desktop_console_history_index--;
-                    if(desktop_console_history_index >=0){
-                         
+                    if (desktop_console_history_index >= 0) {
+
                     }
-                    else{
-                        desktop_console_history_index=desktop_console_history.length-1
+                    else {
+                        desktop_console_history_index = desktop_console_history.length - 1
+                    }
+                    field.setValue(desktop_console_history[desktop_console_history_index]);
                 }
-                    field.setValue(desktop_console_history[desktop_console_history_index]);    
-                }
-                   
-            }else if (e.getKey() == e.DOWN){
-                     
-                if(desktop_console_history.length==0){
-                // no history to display
-                }else{
+
+            } else if (e.getKey() == e.DOWN) {
+
+                if (desktop_console_history.length == 0) {
+                    // no history to display
+                } else {
                     desktop_console_history_index++;
-                    if(desktop_console_history_index >=(desktop_console_history.length)){
-                         desktop_console_history_index=0
+                    if (desktop_console_history_index >= (desktop_console_history.length)) {
+                        desktop_console_history_index = 0
                     }
-                    else{
+                    else {
                         //desktop_console_history_index=desktop_console_history.length-1
-                }
-                    field.setValue(desktop_console_history[desktop_console_history_index]);    
+                    }
+                    field.setValue(desktop_console_history[desktop_console_history_index]);
                 }
             }
         }
-    
+
     }
 }
 //---------------------------------
-var console_panel={
+var console_panel = {
     xtype: 'panel',
     layout: 'border',
-    items :[ console_history_panel,console_text_area]
-       
-}
+    items: [ console_history_panel, console_text_area]
+
+};
 
 //---------------------------------
 
-Ext.define("Compass.ErpApp.Desktop.Applications.CompassAeConsole",{
-    extend:"Ext.ux.desktop.Module",
-    id:'compass_console-win',
-    init : function(){
+Ext.define("Compass.ErpApp.Desktop.Applications.CompassAeConsole", {
+    extend: "Ext.ux.desktop.Module",
+    id: 'compass_console-win',
+    init: function () {
         this.launcher = {
             text: 'Compass Console',
-            iconCls:'icon-console',
+            iconCls: 'icon-console',
             handler: this.createWindow,
             scope: this
         }
     },
 
-    createWindow : function(){
+    createWindow: function () {
         var desktop = this.app.getDesktop();
         var win = desktop.getWindow('console');
-        if(!win){
+        if (!win) {
             win = desktop.createWindow({
                 id: 'console',
-                title:'Compass Console',
-                width:1000,
-                height:670,
-                iconCls: 'console_icon',
-                shim:false,
-                animCollapse:false,
-                resizable : false,
-                constrainHeader:true,
+                title: 'Compass Console',
+                width: 1000,
+                height: 670,
+                iconCls: 'icon-console',
+                shim: false,
+                animCollapse: false,
+                resizable: false,
+                constrainHeader: true,
                 layout: 'fit',
-                items:[console_panel]
-                ,
-                tools:[ 
-                {
-                    type:'help',
-                    tooltip: 'about',
-                    handler: function(event, toolEl, panel){
-                        Ext.Msg.alert("About","<center><b>Compass Console</b><br><i>Version 0.01</i>")
+                items: [console_panel],
+                tools: [
+                    {
+                        type: 'help',
+                        tooltip: 'about',
+                        handler: function (event, toolEl, panel) {
+                            Ext.Msg.alert("About", "<b>Compass Console</b><br><i>Version 0.01</i>")
+                        }
                     }
-                }]
-                 
+                ]
+
             });
         }
         win.show();
-        sendCommand('console_text_area',"Rails.version ");
+        sendCommand('console_text_area', "Rails.version ");
     }
 });
