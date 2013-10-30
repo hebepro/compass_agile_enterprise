@@ -70,11 +70,12 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.ImageAssetsPanel", {
                         scope: self,
                         'click': function () {
                             var node = this.sharedImageAssetsTreePanel.selectedNode;
+
                             var imgTagHtml = '<img';
                             if (!Ext.isEmpty(node.data.width) && !Ext.isEmpty(node.data.height)) {
                                 imgTagHtml += (' width="' + node.data.width + '" height="' + node.data.height + '"');
                             }
-                            imgTagHtml += ' alt="' + node.data.text + '" src="/download/' + node.data.text + '?path=' + node.data.downloadPath + '" />';
+                            imgTagHtml += ' alt="' + node.get('name') + '" src="' + node.get('url') + '" >';
                             self.module.centerRegion.insertHtmlIntoActiveCkEditorOrCodemirror(imgTagHtml);
                         }
                     }
@@ -149,11 +150,12 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.ImageAssetsPanel", {
                         scope: self,
                         'click': function () {
                             var node = this.websiteImageAssetsTreePanel.selectedNode;
+
                             var imgTagHtml = '<img';
                             if (!Ext.isEmpty(node.data.width) && !Ext.isEmpty(node.data.height)) {
                                 imgTagHtml += (' width="' + node.data.width + '" height="' + node.data.height + '"');
                             }
-                            imgTagHtml += ' alt="' + node.data.text + '" src="/download/' + node.data.text + '?path=' + node.data.downloadPath + '" >';
+                            imgTagHtml += ' alt="' + node.get('name') + '" src="' + node.get('url') + '" >';
                             self.module.centerRegion.insertHtmlIntoActiveCkEditorOrCodemirror(imgTagHtml);
                         }
                     }

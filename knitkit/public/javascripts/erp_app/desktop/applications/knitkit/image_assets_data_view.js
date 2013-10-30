@@ -128,7 +128,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.ImageAssetsDataView", {
                             if (record.get('width') && record.get('height')) {
                                 imgTagHtml += (' width="' + record.get('width') + '" height="' + record.get('height') + '"');
                             }
-                            imgTagHtml += ' alt="' + record.get('name') + '" src="/download/' + record.get('name') + '?path=' + record.get('downloadPath') + '" >';
+                            imgTagHtml += ' alt="' + record.get('name') + '" src="' + record.get('url') + '" >';
                             self.module.centerRegion.insertHtmlIntoActiveCkEditorOrCodemirror(imgTagHtml);
                         }
                     }

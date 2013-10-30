@@ -559,9 +559,10 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                                         loadMask.hide();
                                         resultObj = Ext.JSON.decode(result.responseText);
                                         if(resultObj.success){
-                                            ckeditorPanel.insertHtml('<img src='+bin+' height="200" width="200" />');
+                                            ckeditorPanel.insertHtml('<img src='+resultObj.url+' height="200" width="200" />');
                                             var sharedImageAssetsDataView = self.up('#knitkit').down('knitkit_ImageAssetsPanel').sharedImageAssetsDataView,
-                                                sharedImageAssetsTreePanel = self.up('#knitkit').module.down('knitkit_ImageAssetsPanel').sharedImageAssetsTreePanel;
+                                                sharedImageAssetsTreePanel = self.up('#knitkit').down('knitkit_ImageAssetsPanel').sharedImageAssetsTreePanel;
+
                                             sharedImageAssetsDataView.getStore().load({
                                                 params:{
                                                     directory: sharedImageAssetsDataView.directory

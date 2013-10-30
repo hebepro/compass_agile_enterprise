@@ -1,3 +1,5 @@
+Version 3.1.18
+- Updated Ckeditor and Codemirror
 Version 3.1.17
 - Fixed view_paths for widgets in ErpApp::Widgets::Loader and ErpApp::Widgets::Base
 Version 3.1.16 - 9-04-2013

@@ -1,3 +1,5 @@
+Version 2.1.17
+- Updated CKeditor and Codemirror
 Version 2.1.16
 - Fixed view_paths for widgets in ErpApp::Widgets::Base.render_template override
 Version 2.1.15 - 8-26-2013
