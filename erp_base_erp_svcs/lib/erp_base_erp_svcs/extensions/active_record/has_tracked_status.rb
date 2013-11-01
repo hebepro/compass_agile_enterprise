@@ -12,6 +12,12 @@ module ErpBaseErpSvcs
             include HasTrackedStatus::InstanceMethods
 
             has_many :status_applications, :as => :status_application_record, :dependent => :destroy
+          
+            scope :with_status, lambda { |status_type_iids|
+              joins(:status_applications => :tracked_status_type).
+              where("status_applications.thru_date IS NULL AND tracked_status_types.internal_identifier IN (?)", 
+                status_type_iids)
+            }          
           end
         end
 
@@ -19,6 +25,23 @@ module ErpBaseErpSvcs
         end
 
         module InstanceMethods
+
+          # does this status match the current_status?
+          def has_status?(tracked_status_iid)
+            current_status == tracked_status_iid
+          end
+
+          # did it have this status in the past but NOT currently?
+          def had_status?(tracked_status_iid)
+            return false if has_status?(tracked_status_iid)
+            has_had_status?(tracked_status_iid)
+          end
+
+          # does it now has it ever had this status?
+          def has_had_status?(tracked_status_iid)
+            result = self.status_applications.joins(:tracked_status_types).where("tracked_status_types.internal_identifier = ?", tracked_status_iid)
+            result.nil? ? false : true
+          end
 
           #get status for given date
           #checks from_date attribute
@@ -43,12 +66,12 @@ module ErpBaseErpSvcs
 
           # gets current StatusApplication record
           def current_status_application
-            self.status_applications.order('id DESC').first
+            self.status_applications.where("status_applications.thru_date IS NULL").order('id DESC').first
           end
 
           # gets current statuses internal_identifier
           def current_status
-            current_status_application.tracked_status_type.internal_identifier unless current_status_application.nil?
+            self.current_status_application.tracked_status_type.internal_identifier unless self.current_status_application.nil?
           end
 
           #set current status of entity.
@@ -57,7 +80,6 @@ module ErpBaseErpSvcs
           #optionally can passed from_date and thru_date to manually set these
           #it will set the thru_date on the current StatusApplication to now
           def current_status=(args)
-            status_iid = nil
             options = {}
 
             if args.is_a?(Array)
@@ -70,10 +92,10 @@ module ErpBaseErpSvcs
             raise "TrackedStatusType does not exist #{status.to_s}" unless tracked_status_type
 
             #set current StatusApplication thru_date to now
-            current_status_application = self.status_applications.last
-            unless current_status_application.nil?
-              current_status_application.thru_date = options[:thru_date].nil? ? Time.now : options[:thru_date]
-              current_status_application.save
+            cta = self.current_status_application
+            unless cta.nil?
+              cta.thru_date = options[:thru_date].nil? ? Time.now : options[:thru_date]
+              cta.save
             end
 
             status_application = StatusApplication.new
@@ -83,6 +105,11 @@ module ErpBaseErpSvcs
 
             self.status_applications << status_application
             self.save
+          end
+
+          # add_status aliases current_status= for legacy support
+          def add_status(tracked_status_iid)
+            self.current_status = tracked_status_iid
           end
 
         end
