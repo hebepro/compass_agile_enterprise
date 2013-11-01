@@ -327,7 +327,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.DynamicForms.DynamicDataGridPane
                     }
                 });
                 center_region.workArea.add(viewPanel);
-                viewPanel.query('form').first().getForm().loadRecord(response_text);
+                viewPanel.query('form').first().getForm().setValues(response_text.data);
                 center_region.workArea.setActiveTab(center_region.workArea.items.length - 1);
             },
             failure: function(response) {

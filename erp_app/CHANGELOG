@@ -1,3 +1,6 @@
+Version 3.1.19
+- Fixed bug in codemirrorHighlight with new codemirror modes behavior
+- Added runmode support to include_code_mirror_library
 Version 3.1.18
 - Updated Ckeditor and Codemirror
 Version 3.1.17

@@ -1264,8 +1264,8 @@ Ext.define("Compass.ErpApp.Desktop.Applications.DynamicForms.FormBuilder",{
                                               if (!Ext.isEmpty(updateWidth)) fieldDefinition.width = updateWidth; } catch(e){}
                                         try { var updateHeight = updateFieldForm.findField('updateHeight').getValue();
                                               if (!Ext.isEmpty(updateHeight)) fieldDefinition.height = updateHeight; } catch(e){}
-                                        
-                                        if (Ext.isEmpty(selected_field.field_xtype) && !Ext.Array.indexOf(['related_combobox','related_searchbox','combobox','combo'], selected_field.xtype)){
+
+                                        if (Ext.isEmpty(selected_field.field_xtype) && Ext.Array.indexOf(['related_combobox','related_searchbox','combobox','combo'], selected_field.xtype) < 0){
                                             switch(updateFieldForm.findField('updateValidationType').getValue()){
                                                 case 'regex':
                                                     var validationRegex = updateFieldForm.findField('updateValidationRegex').getValue();
@@ -1311,11 +1311,11 @@ Ext.define("Compass.ErpApp.Desktop.Applications.DynamicForms.FormBuilder",{
                                                 model: updateFieldForm.findField('updateRelatedModel').getValue()
                                             };
                                             if (selected_field.xtype == 'related_combobox'){
+                                                fieldDefinition.displayField = updateFieldForm.findField('updateDisplayField').getValue();
                                                 fieldDefinition.fields = [
                                                     { name: 'id' },
                                                     { name: fieldDefinition.displayField }
                                                 ];
-                                                fieldDefinition.displayField = updateFieldForm.findField('updateDisplayField').getValue();
                                                 fieldDefinition.extraParams.displayField = fieldDefinition.displayField;
                                             }else if (selected_field.xtype == 'related_searchbox'){
                                                 fieldDefinition.search_fields = updateFieldForm.findField('updateSearchFields').getValue().replace(/\s/g,'');
