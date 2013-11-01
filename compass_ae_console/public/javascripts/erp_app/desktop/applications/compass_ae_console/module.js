@@ -1,15 +1,15 @@
 //**************************************************
 // Compass Desktop Console
 //**************************************************
-var desktop_console_history = new Array();
+var desktop_console_history = [];
 var desktop_console_history_index = 0;
 //----------------------------------
 // add startsWith method to string
 String.prototype.startsWith = function (str) {
-    return this.indexOf(str) == 0;
+    return this.indexOf(str) === 0;
 };
 //---------------------------------
-var startup_heading = "<div class='compassConsoleHistory'><span style='color:goldenrod;'><b>Compass Console Version 0.01</b>&nbsp;(<span style='color:white;'>-help</span> for Help)</span><br/></div>";
+var startup_heading = "<div class='compassConsoleHistory'><span style='color:goldenrod;'><b>Compass Console</b>&nbsp;(<span style='color:white;'>-help</span> for Help)</span><br/></div>";
 //---------------------------------
 function sendCommand(destination, command) {
     update_history_panel("<span style='color:white'>" + command + "</span>");
@@ -26,8 +26,8 @@ function sendCommand(destination, command) {
             },
             success: function (response) {
                 var text = response.responseText;
-                var result = Ext.JSON.decode(text)
-                update_history_panel("<div style='color:yellow;'>" + result.success + "</div>")
+                var result = Ext.JSON.decode(text);
+                update_history_panel("<div style='color:yellow;'>" + result.success + "</div>");
             }
         });
     }
@@ -86,11 +86,11 @@ var console_text_area = {
                 // add to history 
                 desktop_console_history[desktop_console_history.length] = field.getValue().substring(0, field.getValue().length - 1);
                 //update index
-                desktop_console_history_index = desktop_console_history.length
+                desktop_console_history_index = desktop_console_history.length;
                 field.setValue("");
             } else if (e.getKey() == e.UP) {
 
-                if (desktop_console_history.length == 0) {
+                if (desktop_console_history.length === 0) {
                     // no history to display
                 } else {
                     desktop_console_history_index--;
@@ -98,19 +98,19 @@ var console_text_area = {
 
                     }
                     else {
-                        desktop_console_history_index = desktop_console_history.length - 1
+                        desktop_console_history_index = desktop_console_history.length - 1;
                     }
                     field.setValue(desktop_console_history[desktop_console_history_index]);
                 }
 
             } else if (e.getKey() == e.DOWN) {
 
-                if (desktop_console_history.length == 0) {
+                if (desktop_console_history.length === 0) {
                     // no history to display
                 } else {
                     desktop_console_history_index++;
                     if (desktop_console_history_index >= (desktop_console_history.length)) {
-                        desktop_console_history_index = 0
+                        desktop_console_history_index = 0;
                     }
                     else {
                         //desktop_console_history_index=desktop_console_history.length-1
@@ -121,7 +121,7 @@ var console_text_area = {
         }
 
     }
-}
+};
 //---------------------------------
 var console_panel = {
     xtype: 'panel',
@@ -141,7 +141,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.CompassAeConsole", {
             iconCls: 'icon-console',
             handler: this.createWindow,
             scope: this
-        }
+        };
     },
 
     createWindow: function () {
@@ -151,8 +151,8 @@ Ext.define("Compass.ErpApp.Desktop.Applications.CompassAeConsole", {
             win = desktop.createWindow({
                 id: 'console',
                 title: 'Compass Console',
-                width: 1000,
-                height: 670,
+                width: 800,
+                height: 500,
                 iconCls: 'icon-console',
                 shim: false,
                 animCollapse: false,
@@ -161,18 +161,19 @@ Ext.define("Compass.ErpApp.Desktop.Applications.CompassAeConsole", {
                 layout: 'fit',
                 items: [console_panel],
                 tools: [
-                    {
-                        type: 'help',
-                        tooltip: 'about',
-                        handler: function (event, toolEl, panel) {
-                            Ext.Msg.alert("About", "<b>Compass Console</b><br><i>Version 0.01</i>")
-                        }
-                    }
+                    // commenting this out until we can get version number from CompassAeConsole::VERSION
+                    // {
+                    //     type: 'help',
+                    //     tooltip: 'about',
+                    //     handler: function (event, toolEl, panel) {
+                    //         Ext.Msg.alert("About", "<b>Compass Console</b><br><i>Version 0.01</i>");
+                    //     }
+                    // }
                 ]
 
             });
         }
         win.show();
-        sendCommand('console_text_area', "Rails.version ");
+        sendCommand('console_text_area', '"Ruby version: #{RUBY_VERSION}, Rails version: #{Rails.version}, CompassAeConsole version: #{CompassAeConsole.version}"');
     }
 });

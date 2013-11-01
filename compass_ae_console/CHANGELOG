@@ -1,5 +1,7 @@
-Version 2.0.2
-- Fixed Css issues in history panel
 Version 2.0.1
+- Fixed CSS issues in history panel
+- Increased security on controller
+- Cleaned up version reporting
+- Cleaned up javascript validation
 - Changed middleware to insert_before Rack::Runtime instead of Rack::Lock to allow for config.threadsafe!
 Version 2.0.0 - 1-11-2013
