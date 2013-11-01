@@ -37,7 +37,7 @@ module ErpBaseErpSvcs
             has_had_status?(tracked_status_iid)
           end
 
-          # does it now has it ever had this status?
+          # does it now or has it ever had this status?
           def has_had_status?(tracked_status_iid)
             result = self.status_applications.joins(:tracked_status_types).where("tracked_status_types.internal_identifier = ?", tracked_status_iid)
             result.nil? ? false : true
