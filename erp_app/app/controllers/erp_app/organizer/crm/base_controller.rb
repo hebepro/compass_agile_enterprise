@@ -5,185 +5,20 @@ module ErpApp
         @@date_format = "%m/%d/%Y"
         @@datetime_format = "%m/%d/%Y %l:%M%P"
 
-        def menu
-          menu = []
-
-          menu << {:text => 'Individuals', :businessPartType => 'individual', :leaf => true, :iconCls => 'icon-user', :applicationCardId => "individuals_search_grid"}
-          menu << {:text => 'Organizations', :businessPartType => 'organization', :leaf => true, :iconCls => 'icon-user', :applicationCardId => "organizations_search_grid"}
-
-          render :json => menu
-        end
-
-        def contact_purposes
-          render :inline => "{\"types\":#{ContactPurpose.all.to_json(:only => [:id, :description])}}"
-        end
-
         def parties
           render :json => if request.put?
-                              update_party
-                            elsif request.get?
-                              get_parties
-                            elsif request.delete?
-                              delete_party
-                            end
-        end
-
-        def contact_mechanism
-          render :inline => if request.post?
-                              create_contact_mechanism
-                            elsif request.put?
-                              update_contact_mechanism
-                            elsif request.get?
-                              get_contact_mechanisms
-                            elsif request.delete?
-                              delete_contact_mechanism
-                            end
-        end
-
-        def create_party
-          result = {}
-          begin
-            enterprise_identifier = params[:enterprise_identifier]
-            party_type = params[:party_type]
-            klass = party_type.constantize
-            params.delete(:enterprise_identifier)
-            params.delete(:action)
-            params.delete(:controller)
-            params.delete(:party_type)
-            params.delete(:authenticity_token)
-
-            params[:birth_date] = Date.strptime(params[:birth_date], @@date_format) unless params[:birth_date].blank?
-            params[:current_passport_expire_date] = Date.strptime(params[:current_passport_expire_date], @@date_format) unless params[:current_passport_expire_date].blank?
-
-            business_party = klass.create(params)
-            business_party.party.enterprise_identifier = enterprise_identifier
-            business_party.party.save
-
-            result = {:success => true, :message => "#{party_type} Added", :name => business_party.party.description}
-          rescue Exception => ex
-            result = {:success => false, :message => "Error adding #{party_type}"}
-          end
-
-          render :json => result
-        end
-
-        def update_party
-          enterprise_identifier = params[:enterprise_identifier]
-          party_type = params[:party_type]
-          business_party_id = params[:business_party_id]
-          business_party_data = params
-          business_party_data.delete(:id)
-          business_party_data.delete(:business_party_id)
-          business_party_data.delete(:enterprise_identifier)
-          business_party_data.delete(:authenticity_token)
-          business_party_data.delete(:party_type)
-          business_party_data.delete(:controller)
-          business_party_data.delete(:action)
-          puts business_party_data[:birth_date]
-          business_party_data[:birth_date] = Date.strptime(business_party_data[:birth_date], @@date_format) unless business_party_data[:birth_date].blank?
-          business_party_data[:current_passport_expire_date] = Date.strptime(business_party_data[:current_passport_expire_date], @@date_format) unless business_party_data[:current_passport_expire_date].blank?
-
-          klass = party_type.constantize
-          business_party = klass.find(business_party_id)
-
-          business_party_data.each do |key, value|
-            key = key.gsub("business_party.", "")
-            method = key + '='
-            business_party.send method.to_sym, value
-          end
-
-          business_party.save
-          party = business_party.party
-
-          begin
-            party.enterprise_identifier = enterprise_identifier
-            party.save
-          end unless enterprise_identifier.blank?
-
-          render :json => {:success => true,
-                           :message => "#{party_type} updated",
-                           :data => [{
-                                         :id => party.id,
-                                         :enterprise_identifier => party.enterprise_identifier,
-                                         :created_at => party.created_at,
-                                         :updated_at => party.updated_at,
-                                         :business_party => party.business_party
-                                     }]
-          }
+                            update_party
+                          elsif request.post?
+                            create_party
+                          elsif request.get?
+                            params[:party_id].blank? ? get_parties : get_party
+                          elsif request.delete?
+                            delete_party
+                          end
         end
 
         def get_party_details
           @party = Party.find(params[:id]) rescue nil
-        end
-
-        def get_user
-          party = Party.find(params[:party_id]) rescue nil
-
-          if params[:party_id] and !party.nil?
-            user = party.user
-            if user.nil?
-              success = true
-              message = "User Does Not Exist"
-              u = {
-                  :username => '',
-                  :email => '',
-                  :activation_state => '',
-                  :last_login_at => '',
-                  :failed_logins_count => '',
-                  :activation_token => ''
-              }
-            else
-              success = true
-              message = "User Found"
-
-              last_login_at = user.last_login_at.blank? ? '' : user.last_login_at.getlocal.strftime(@@datetime_format)
-
-              u = {
-                  :username => user.username,
-                  :email => user.email,
-                  :activation_state => user.activation_state,
-                  :last_login_at => last_login_at,
-                  :failed_logins_count => user.failed_logins_count,
-                  :activation_token => user.activation_token
-              }
-            end
-          else
-            success = false
-            message = "Party Not Found"
-            u = {}
-          end
-
-          render :json => {:success => success,
-                           :message => message,
-                           :data => [u]
-          }
-        end
-
-        def update_user
-          party = Party.find(params[:party_id]) rescue nil
-
-          if params[:party_id] and !party.nil?
-            user = party.user
-            if user.nil?
-              success = true
-              message = "User Does Not Exist"
-            else
-              user.username = params[:username]
-              user.email = params[:email]
-              if user.save
-                success = true
-                message = "User Successfully Updated"
-              else
-                success = false
-                message = 'Update Failed'
-              end
-            end
-          else
-            success = false
-            message = "Party Not Found"
-          end
-
-          render :json => {:success => success, :message => message} and return
         end
 
         def activate
@@ -199,55 +34,62 @@ module ErpApp
           render :json => {:success => success, :message => message} and return
         end
 
-        def send_email
-          send_to = params[:send_to].strip
-          subject = params[:subject].strip
-          message = params[:message].strip
-          cc_email = params[:cc_email].blank? ? nil : params[:cc_email].strip
-
-          CrmMailer.send_message(send_to, subject, message).deliver
-
-          if cc_email
-            CrmMailer.send_message(cc_email, subject, message).deliver
-          end
-
-          render :json => {:success => true}
-        end
-
         private
+
+        def get_party
+          party = Party.find(params[:party_id])
+
+          data = if party.business_party.class == Organization
+                   party.business_party.to_hash(
+                       :only => [:description, :tax_id_number]
+                   )
+                 else
+                   party.business_party.to_hash(
+                       :only => [:current_personal_title,
+                                 :current_first_name,
+                                 :current_middle_name,
+                                 :current_last_name,
+                                 :current_suffix,
+                                 :current_nickname,
+                                 :current_passport_number,
+                                 :current_passport_expire_date,
+                                 :birth_date,
+                                 :gender,
+                                 :total_years_work_experience,
+                                 :marital_status,
+                                 :social_security_number
+                       ])
+                 end
+
+          data[:id] = party.id
+          data[:model] = party.business_party.class.name
+          data[:enterprise_identifier] = party.enterprise_identifier
+
+          {:success => true, :data => data}
+        end
 
         def get_parties
           offset = params[:offset] || 0
           limit = params[:limit] || 25
-          query = params[:query] || nil
+          query_filter = params[:query_filter] || nil
 
-          to_roles = params[:to_roles]
-          from_roles = params[:from_roles]
+          to_role = params[:to_role]
+          from_roles = params[:from_roles].split(',')
 
-          current_party = current_user.party
+          statement = Party.joins(:party_roles => :role_type).where('role_types.internal_identifier' => from_roles)
 
-          from_roles_ids = unless from_roles.blank?
-                             from_roles.split(',').collect { |role| RoleType.find_by_internal_identifier(role).id } unless from_roles.blank?
-                           else
-                             []
-                           end
+          unless to_role.blank?
+            to_role_type = RoleType.iid(to_role)
 
-          to_role_ids = unless to_roles.blank?
-                          to_roles.split(',').collect { |role| RoleType.find_by_internal_identifier(role).id }
-                        else
-                          []
-                        end
+            to_party_rln = current_user.party.from_relationships.where('to_role_type_id = ?', to_role_type).first
 
-          statement = Party.joins("join party_relationships from_reln on from_reln.party_id_from = parties.id")
-          .where('from_reln.role_type_id_from' => from_roles_ids.join(','))
-
-          unless to_role_ids.empty?
-            statement = statement.joins("join party_relationships to_reln on to_reln.party_id_from = #{current_party.id}")
-            .where('to_reln.role_type_id_to' => to_role_ids.join(','))
+            statement = statement.joins("join party_relationships on party_relationships.party_id_from = parties_id")
+            .where('party_relationships.party_id_to = ?', to_party_rln.party_id_to)
+            .where('to_reln.role_type_id_to' => to_role_type)
           end
 
           # Apply query if it exists
-          statement = statement.where(Parties.arel_table[:description].matches("%#{query}")) if query
+          statement = statement.where(Party.arel_table[:description].matches("%#{query_filter}%")) if query_filter
 
           # Get total count of records
           total = statement.count
@@ -255,100 +97,147 @@ module ErpApp
           # Apply limit and offset
           parties = statement.limit(limit).offset(offset).all
 
-          {:success => true, :total => total, :parties => parties.collect{|item| item.to_hash(:only => [:description, :created_at, :updated_at])}}
+          {:success => true, :total => total, :parties => parties.collect { |item| item.to_hash(:only => [:id, :description, :created_at, :updated_at], :model => item.class.name) }}
+        end
+
+        def create_party
+          result = {}
+
+          ActiveRecord::Base.transaction do
+            begin
+              party_type = params[:business_party_type]
+
+              # Get Party Roles
+              to_role = params[:to_role]
+              from_roles = params[:from_roles]
+
+              klass = party_type.constantize
+
+              # remove parameters not need for creation of object
+              params.delete(:party_id)
+              params.delete(:action)
+              params.delete(:controller)
+              params.delete(:business_party_type)
+              params.delete(:authenticity_token)
+              params.delete(:to_role)
+              params.delete(:from_roles)
+
+              if klass == Organization
+                params.delete(:current_personal_title)
+                params.delete(:current_first_name)
+                params.delete(:current_middle_name)
+                params.delete(:current_last_name)
+                params.delete(:current_suffix)
+                params.delete(:current_nickname)
+                params.delete(:current_passport_number)
+                params.delete(:current_passport_expire_date)
+                params.delete(:birth_date)
+                params.delete(:gender)
+                params.delete(:total_years_work_experience)
+                params.delete(:marital_status)
+                params.delete(:social_security_number)
+              else
+                params.delete(:description)
+                params.delete(:tax_id_number)
+              end
+
+              # clean up data
+              params.each do |k, v|
+                params[k] = params[k].strip
+              end
+
+              params[:birth_date] = Date.strptime(params[:birth_date], @@date_format) unless params[:birth_date].blank?
+              params[:current_passport_expire_date] = Date.strptime(params[:current_passport_expire_date], @@date_format) unless params[:current_passport_expire_date].blank?
+
+              business_party = klass.create(params)
+              business_party.party.save
+
+              # Apply from roles
+              unless from_roles.blank?
+                from_roles.split(',').each do |role_type_iid|
+                  PartyRole.create(:party => business_party.party, :role_type => RoleType.iid(role_type_iid))
+                end
+              end
+
+              # Apply to roles
+              unless to_role.blank?
+                to_party_rln = current_user.party.from_relationships.where('to_role_type_id = ?', RoleType.iid(to_role)).first
+                if to_party_rln
+                  business_party.create_relationship(to_party_rln.description, to_party_rln.to_party.id, to_party_rln.relationship_type)
+                end
+              end
+
+              result = {:success => true, :message => "#{party_type} Added", :name => business_party.party.description}
+            rescue Exception => ex
+              Rails.logger.error ex.message
+              Rails.logger.error ex.backtrace.join("\n")
+              result = {:success => false, :message => "Error adding #{party_type}"}
+            end
+          end
+
+          result
+        end
+
+        def update_party
+          party_type = params[:business_party_type]
+          klass = party_type.constantize
+
+          party_id = params[:party_id]
+          business_party_data = params
+
+          # remove parameters not need for creation of object
+          business_party_data.delete(:party_id)
+          business_party_data.delete(:action)
+          business_party_data.delete(:controller)
+          business_party_data.delete(:business_party_type)
+          business_party_data.delete(:authenticity_token)
+          business_party_data.delete(:to_role)
+          business_party_data.delete(:from_roles)
+
+          if klass == Organization
+            business_party_data.delete(:current_personal_title)
+            business_party_data.delete(:current_first_name)
+            business_party_data.delete(:current_middle_name)
+            business_party_data.delete(:current_last_name)
+            business_party_data.delete(:current_suffix)
+            business_party_data.delete(:current_nickname)
+            business_party_data.delete(:current_passport_number)
+            business_party_data.delete(:current_passport_expire_date)
+            business_party_data.delete(:birth_date)
+            business_party_data.delete(:gender)
+            business_party_data.delete(:total_years_work_experience)
+            business_party_data.delete(:marital_status)
+            business_party_data.delete(:social_security_number)
+          else
+            business_party_data.delete(:description)
+            business_party_data.delete(:tax_id_number)
+          end
+
+          # clean up data
+          business_party_data.each do |k, v|
+            business_party_data[k] = business_party_data[k].strip
+          end
+
+          business_party_data[:birth_date] = Date.strptime(business_party_data[:birth_date], @@date_format) unless business_party_data[:birth_date].blank?
+          business_party_data[:current_passport_expire_date] = Date.strptime(business_party_data[:current_passport_expire_date], @@date_format) unless business_party_data[:current_passport_expire_date].blank?
+
+          party = Party.find(party_id)
+          business_party = party.business_party
+
+          business_party_data.each do |key, value|
+            method = key + '='
+            business_party.send method.to_sym, value
+          end
+
+          business_party.save
+
+          {:success => true, :message => "#{party_type} updated"}
         end
 
         def delete_party
-          party_type = params[:party_type]
-          Party.destroy(params[:id])
+          Party.destroy(params[:party_id])
 
-          {:data => [], :message => "#{party_type} deleted"}.to_json
-        end
-
-        def create_contact_mechanism
-          party_id = params[:party_id]
-          contact_type = params[:contact_type]
-          contact_purpose_id = params[:data][:contact_purpose_id]
-          params[:data].delete(:contact_purpose_id)
-
-          contact_mechanism_class = contact_type.constantize
-          party = Party.find(party_id)
-
-          contact_purpose = contact_purpose_id.blank? ? ContactPurpose.find_by_internal_identifier('default') : ContactPurpose.find(contact_purpose_id)
-          contact_mechanism = party.add_contact(contact_mechanism_class, params[:data], contact_purpose)
-
-          contact_mechanism_class.class_eval do
-            def contact_purpose_id
-              self.contact_purpose ? contact_purpose.id : nil
-            end
-          end
-
-          "{\"success\":true, \"data\":#{contact_mechanism.to_json(:methods => [:contact_purpose_id])},\"message\":\"#{contact_type} added\"}"
-        end
-
-        def update_contact_mechanism
-          contact_type = params[:contact_type]
-          contact_mechanism_id = params[:data][:id]
-          contact_purpose_id = params[:data][:contact_purpose_id]
-          params[:data].delete(:id)
-          params[:data].delete(:contact_purpose_id)
-
-          contact_mechanism = contact_type.constantize.find(contact_mechanism_id)
-
-          if !contact_purpose_id.blank?
-            contact_purpose = ContactPurpose.find(contact_purpose_id)
-            contact_mechanism.contact.contact_purposes.destroy_all
-            contact_mechanism.contact.contact_purposes << contact_purpose
-            contact_mechanism.contact.save
-          end
-
-          params[:data].each do |key, value|
-            method = key + '='
-            contact_mechanism.send method.to_sym, value
-          end
-
-          contact_mechanism.save
-
-          contact_type.constantize.class_eval do
-            def contact_purpose_id
-              self.contact_purpose ? contact_purpose.id : nil
-            end
-          end
-
-          "{\"success\":true, \"data\":#{contact_mechanism.to_json(:methods => [:contact_purpose_id])},\"message\":\"#{contact_type} updated\"}"
-        end
-
-        def get_contact_mechanisms
-          party_id = params[:party_id]
-          contact_type = params[:contact_type]
-
-          contact_mechanism_class = contact_type.constantize
-
-          party = Party.find(party_id)
-          contact_mechanisms = party.find_all_contacts_by_contact_mechanism(contact_mechanism_class)
-
-          contact_mechanism_class.class_eval do
-            def contact_purpose_id
-              self.contact_purpose ? contact_purpose.id : nil
-            end
-          end
-
-          "{\"success\":true, \"data\":#{contact_mechanisms.to_json(:methods => [:contact_purpose_id])}}"
-        end
-
-        def delete_contact_mechanism
-          party_id = params[:party_id]
-          contact_type = params[:contact_type]
-          contact_mechanism_id = params[:id]
-
-          contact_type_class = contact_type.constantize
-          contact_mechanism = contact_type_class.find(contact_mechanism_id)
-          contact_mechanism.destroy
-
-          party = Party.find(party_id)
-          contact_mechanisms = party.find_all_contacts_by_contact_mechanism(contact_type_class)
-
-          "{\"success\":true, \"data\":#{contact_mechanisms.to_json(:methods => [:contact_purpose_id])},\"message\":\"#{contact_type} deleted\"}"
+          {:success => true, :message => "Deleted"}
         end
 
       end #BaseController

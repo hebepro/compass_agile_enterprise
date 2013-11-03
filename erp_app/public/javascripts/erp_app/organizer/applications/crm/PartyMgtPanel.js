@@ -2,13 +2,20 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Crm.PartyMgtPanel", {
     extend: "Ext.panel.Panel",
     alias: 'widget.party_mgt_panel',
     layout: 'border',
-    items: [],
+    listeners: {
+        activate: function () {
+            this.down('partygrid').store.load({
+                params: {
+                    start: 0,
+                    limit: 25
+                }
+            });
+        }
+    },
 
-    initComponent: function () {
-        var config = this.initialConfig;
-
+    constructor: function (config) {
         //add header
-        this.items.push({
+        var items = [{
             xtype: 'panel',
             itemId: 'containerPanel',
             region: 'north',
@@ -23,7 +30,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Crm.PartyMgtPanel", {
                     items: [
                         {
                             xtype: 'image',
-                            src: config.addBtn || '/images/icons/add_user64x64.png',
+                            src: config.addBtn || '/images/erp_app/organizer/applications/crm/customer_360_64x64.png',
                             height: 64,
                             width: 64,
                             cls: 'shortcut-image-button',
@@ -58,7 +65,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Crm.PartyMgtPanel", {
                         {
                             xtype: 'panel',
                             border: false,
-                            html: "<p style='margin: 5px 10px 10px 30px; text-align: center'>"+ config.addBtnDescription +"</p>"
+                            html: "<p style='margin: 5px 10px 10px 30px; text-align: center'>" + config.addBtnDescription + "</p>"
                         }
                     ]
                 },
@@ -88,15 +95,19 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Crm.PartyMgtPanel", {
                         {
                             xtype: 'button',
                             itemId: 'searchbutton',
-                            icon: '/images/icons/toolbar_find.png',
+                            icon: '/images/erp_app/organizer/applications/crm/toolbar_find.png',
                             listeners: {
                                 click: function (button, e, eOpts) {
-                                    var c = button.up('user_mgt_panel');
-                                    var grid = c.query('#usersgrid').first(),
-                                        value = c.query('#usersearchbox').first().getValue();
+                                    var partyMgtPanel = button.up('party_mgt_panel'),
+                                        grid = partyMgtPanel.down('partygrid'),
+                                        value = partyMgtPanel.down('#usersearchbox').getValue();
 
-                                    grid.query('shared_dynamiceditablegrid').first().getStore().load({
-                                        params: {query_filter: value}
+                                    grid.store.load({
+                                        params: {
+                                            query_filter: value,
+                                            start: 0,
+                                            limit: 25
+                                        }
                                     });
                                 }
                             }
@@ -104,16 +115,21 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Crm.PartyMgtPanel", {
                     ]
                 }
             ]
-        });
+        }];
 
-        this.items.push({
+        items.push({
             xtype: 'partygrid',
             region: 'center',
-            toRoles: config.toRoles,
-            fromRoles: config.fromRoles
+            toRole: config.toRole,
+            fromRoles: config.fromRoles,
+            partyMgtTitle: config.title
         });
 
-        this.callParent(arguments);
+        config = Ext.apply({
+            items: items
+        }, config);
+
+        this.callParent([config]);
     }
 
 });        

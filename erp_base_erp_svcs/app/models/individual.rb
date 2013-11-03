@@ -36,12 +36,6 @@ class Individual < ActiveRecord::Base
     ind = Individual.new
     ind.current_first_name = a_user.first_name
     ind.current_last_name = a_user.last_name
-  end
-
-  def self.from_registered_user( a_user )
-    ind = Individual.new
-    ind.current_first_name = a_user.first_name
-    ind.current_last_name = a_user.last_name
 
     #this is necessary because this is where the callback creates the party instance.
     ind.save

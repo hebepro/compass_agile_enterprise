@@ -5,6 +5,9 @@ class UserMailer < ActionMailer::Base
     @user = user
     @url  = "#{get_domain(user.instance_attributes[:domain])}/users/activate/#{user.activation_token}"
     @url << "?login_url=#{@user.instance_attributes[:login_url]}" unless @user.instance_attributes[:login_url].nil?
+
+    @temp_password = @user.instance_attributes[:temp_password] unless @user.instance_attributes[:temp_password].nil?
+
     mail(:to => user.email, :subject => "An account has been created and needs activation")
   end
 

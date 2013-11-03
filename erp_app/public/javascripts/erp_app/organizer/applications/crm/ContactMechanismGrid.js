@@ -2,7 +2,7 @@ var contactPurposeStore = Ext.create('Ext.data.Store', {
     autoLoad: true,
     proxy: {
         type: 'ajax',
-        url: '/erp_app/organizer/crm/contact_purposes',
+        url: '/erp_app/organizer/crm/contact_mechanism/contact_purposes',
         reader: {
             type: 'json',
             root: 'types'
@@ -22,14 +22,16 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Crm.ContactMechanismGrid", {
     extend: "Ext.grid.Panel",
     alias: 'widget.contactmechanismgrid',
     initComponent: function () {
-        var config = this.initialConfig;
+        var me = this,
+            config = me.initialConfig;
+
         var store = Ext.create('Ext.data.Store', {
             fields: config['fields'],
             autoLoad: false,
             autoSync: true,
             proxy: {
                 type: 'rest',
-                url: config['url'] || '/erp_app/organizer/crm/contact_mechanism',
+                url: config['url'] || '/erp_app/organizer/crm/contact_mechanism/index',
                 extraParams: {
                     party_id: config['partyId'],
                     contact_type: config['contactMechanism']
@@ -55,7 +57,17 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Crm.ContactMechanismGrid", {
                             icon: Ext.MessageBox.ERROR,
                             buttons: Ext.Msg.OK
                         });
+
+                        me.setLoading(false);
                     }
+                }
+            },
+            listeners: {
+                'beforesync': function () {
+                    me.setLoading(true);
+                },
+                'datachanged': function () {
+                    me.setLoading(false);
                 }
             }
         });
@@ -286,6 +298,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Crm.ContactMechanismGrid.Email
 
         ];
         config.toolbarItems = [
+            '-',
             {
                 xtype: 'button',
                 text: 'Send Email',
@@ -460,52 +473,6 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Crm.ContactMechanismGrid.Posta
                     xtype: 'textfield'
                 },
                 width: 200
-            },
-            {
-                menuDisabled: true,
-                resizable: false,
-                xtype: 'actioncolumn',
-                header: 'Map It',
-                align: 'center',
-                width: 60,
-                items: [
-                    {
-                        icon: '/images/icons/map/map_16x16.png',
-                        tooltip: 'Revert',
-                        handler: function (grid, rowIndex, colIndex) {
-                            var rec = grid.getStore().getAt(rowIndex);
-                            var addressLines;
-                            if (Compass.ErpApp.Utility.isBlank(rec.get('address_line_2'))) {
-                                addressLines = rec.get('address_line_1');
-                            }
-                            else {
-                                addressLines = rec.get('address_line_1') + ' ,' + rec.get('address_line_2');
-                            }
-
-                            var fullAddress = addressLines + ' ,' + rec.get('city') + ' ,' + rec.get('state') + ' ,' + rec.get('zip') + ' ,' + rec.get('country');
-                            var mapwin = Ext.create('Ext.Window', {
-                                layout: 'fit',
-                                title: addressLines,
-                                width: 450,
-                                height: 450,
-                                border: false,
-                                items: {
-                                    xtype: 'googlemappanel',
-                                    zoomLevel: 17,
-                                    mapType: 'hybrid',
-                                    dropPins: [
-                                        {
-                                            address: fullAddress,
-                                            center: true,
-                                            title: addressLines
-                                        }
-                                    ]
-                                }
-                            });
-                            mapwin.show();
-                        }
-                    }
-                ]
             }
         ];
         config.fields = [
@@ -552,6 +519,49 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Crm.ContactMechanismGrid.Posta
             {
                 type: 'presence',
                 field: 'country'
+            }
+        ];
+        config.toolbarItems = [
+            '-',
+            {
+                xtype: 'button',
+                text: 'Map It',
+                iconCls: 'icon-map',
+                handler: function (button) {
+                    var grid = button.up('postaladdressgrid');
+                    var selection = grid.getView().getSelectionModel().getSelection()[0];
+                    if (selection) {
+                        var addressLines;
+                        if (Compass.ErpApp.Utility.isBlank(selection.get('address_line_2'))) {
+                            addressLines = selection.get('address_line_1');
+                        }
+                        else {
+                            addressLines = selection.get('address_line_1') + ' ,' + selection.get('address_line_2');
+                        }
+
+                        var fullAddress = addressLines + ' ,' + selection.get('city') + ' ,' + selection.get('state') + ' ,' + selection.get('zip') + ' ,' + selection.get('country');
+                        var mapwin = Ext.create('Ext.Window', {
+                            layout: 'fit',
+                            title: addressLines,
+                            width: 450,
+                            height: 450,
+                            border: false,
+                            items: {
+                                xtype: 'googlemappanel',
+                                zoomLevel: 17,
+                                mapType: 'hybrid',
+                                dropPins: [
+                                    {
+                                        address: fullAddress,
+                                        center: true,
+                                        title: addressLines
+                                    }
+                                ]
+                            }
+                        });
+                        mapwin.show();
+                    }
+                }
             }
         ];
         this.callParent([config]);

@@ -37,8 +37,11 @@ ActiveRecord::Base.class_eval do
         end
       end
 
-      #check for additional values
-      options[:additional_values].each{|k, v| hash[k] = v} if options[:additional_values]
+      options.each do |key, value|
+        next if [:only, :methods].include?(key)
+
+        hash[key] = value
+      end
       
     end#end hash tap
   end

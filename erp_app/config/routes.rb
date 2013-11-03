@@ -39,7 +39,11 @@ ErpApp::Engine.routes.draw do
   
   #crm
   match '/organizer/crm/relationship(/:action(/:id))' => "organizer/crm/relationship"
-  match '/organizer/crm(/:action(/:id))' => "organizer/crm/base"
+  match '/organizer/crm/base(/:action(/:id))' => "organizer/crm/base"
+  match '/organizer/crm/users(/:action(/:id))' => "organizer/crm/users"
+  match '/organizer/crm/contact_mechanism(/:action(/:id))' => "organizer/crm/contact_mechanism"
+  match '/organizer/crm/contact_mechanism/contact_purposes' => "organizer/crm/contact_mechanism#contact_purposes"
+
 
   ############################
   #Desktop Application Routes
@@ -48,8 +52,7 @@ ErpApp::Engine.routes.draw do
 
   #Desktop Applications
   #scaffold
-  match '/desktop/scaffold/:action((/:model_name)(.:format))' => "desktop/scaffold/base"
-  match '/desktop/scaffold/role/:action(/:id)' => "desktop/scaffold/role#index"
+  match '/desktop/scaffold/:action((/:model_name)(/:id))' => "desktop/scaffold/base"
   
   #user_management
   match '/desktop/user_management/users(/:action(/:id))' => "desktop/user_management/base"

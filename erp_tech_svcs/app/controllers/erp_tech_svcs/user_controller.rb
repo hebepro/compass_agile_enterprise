@@ -31,11 +31,12 @@ module ErpTechSvcs
     def reset_password
       begin
         login_url = params[:login_url].blank? ? ErpTechSvcs::Config.login_url : params[:login_url]
-        if user = (User.find_by_email(params[:login]))
+        login = params[:login].strip
+        if user = (User.where('username = ? or email = ?', login, login)).first
           new_password = Sorcery::Model::TemporaryToken.generate_random_token
           user.password_confirmation = new_password
           if user.change_password!(new_password)
-            user.add_instance_attribute(:login_url,login_url)
+            user.add_instance_attribute(:login_url, login_url)
             user.add_instance_attribute(:domain, params[:domain])
             user.deliver_reset_password_instructions!
             message = "Password has been reset.  An email has been sent with further instructions to #{user.email}."
@@ -48,14 +49,14 @@ module ErpTechSvcs
           message = "Invalid user name or email address."
           success = false
         end
-        render :json => {:success => success,:message => message}
-      rescue Exception=>ex
-        logger.error ex.message
-        logger.error ex.backtrace
-        render :json => {:success => false,:message => 'Error sending email.'}
+        render :json => {:success => success, :message => message}
+      rescue Exception => ex
+        Rails.logger.error ex.message
+        Rails.logger.error ex.backtrace.join("\n")
+        render :json => {:success => false, :message => 'Error sending email.'}
       end
     end
 
 
-  end#UserController
-end#ErpTechSvcs
+  end #UserController
+end #ErpTechSvcs

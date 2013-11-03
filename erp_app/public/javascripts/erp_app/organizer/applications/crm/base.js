@@ -6,9 +6,10 @@ Compass.ErpApp.Organizer.Applications.Crm.Base = function (config) {
             xtype: 'party_mgt_panel',
             itemId: 'customersPanel',
             fromRoles: ['customer'],
-            toRoles: [],
+            toRole: null,
+            detailsUrl: null,
             title: 'Customers',
-            addBtn: '/images/icons/add_user64x64.png',
+            addBtn: '/images/erp_app/organizer/applications/crm/customer_360_64x64.png',
             addBtnDescription: 'Add Customer',
             searchDescription: 'Find Customer'
         }
@@ -17,7 +18,7 @@ Compass.ErpApp.Organizer.Applications.Crm.Base = function (config) {
     var menuItems = [
         {
             xtype: 'image',
-            src: '/images/icons/carrier-icon50x50.png',
+            src: '/images/erp_app/organizer/applications/crm/customer_360_64x64.png',
             height: 50,
             width: 50,
             cls: 'shortcut-image-button',
@@ -25,9 +26,9 @@ Compass.ErpApp.Organizer.Applications.Crm.Base = function (config) {
             listeners: {
                 render: function (component) {
                     component.getEl().on('click', function (e) {
-
-                        var taskTabPanel = Ext.getCmp('taskTabPanel');
-                        taskTabPanel.setActiveTab(taskTabPanel.down('#customersPanel'));
+                        var taskTabPanel = Ext.getCmp('taskTabPanel'),
+                            tab = taskTabPanel.down('#customersPanel');
+                        taskTabPanel.setActiveTab(tab);
 
                     }, component);
                 }
@@ -55,7 +56,7 @@ Compass.ErpApp.Organizer.Applications.Crm.Base = function (config) {
                     // Wait until each item is rendered to add the click listener, as the panel usually renders before the items within the panel
                     item.on('render', function () {
                         this.getEl().on('click', function () {
-                            Compass.ErpApp.Organizer.Layout.setActiveCenterItem('user_mgt_taskTabPanel');
+                            Compass.ErpApp.Organizer.Layout.setActiveCenterItem('taskTabPanel');
                         });
                     });
                 });
