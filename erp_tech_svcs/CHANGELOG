@@ -1,3 +1,7 @@
+Version 3.1.9
+- Updated party model to allow parties to have multiple users
+- Updated validation messages on user to not include attirbute name
+- Updated activation needed email template to support CRM user creation
 Version 3.1.8 - 08-29-2013
 - Bugfix in HasSecurityRoles#roles_not
 Version 3.1.7 - 08-02-2013
