@@ -9,13 +9,18 @@ String.prototype.startsWith = function (str) {
     return this.indexOf(str) === 0;
 };
 //---------------------------------
-var startup_heading = "<div class='compassConsoleHistory'><span style='color:goldenrod;'><b>Compass Console</b>&nbsp;(<span style='color:white;'>-help</span> for Help)</span><br/></div>";
+var startup_heading = "<div class='compassConsoleHistory'><span style='color:goldenrod;'><b>Compass Console</b>&nbsp;(<span style='color:white;'>-help</span> for Help)</span></div>";
 //---------------------------------
-function sendCommand(destination, command) {
-    update_history_panel("<span style='color:white'>" + command + "</span>");
+function sendCommand(destination, command, includeOriginalCommand) {
+    if (Ext.isEmpty(includeOriginalCommand)) {
+        includeOriginalCommand = true;
+    }
+
+    if (includeOriginalCommand)
+        update_history_panel("<span style='color:white'>" + command + "</span>");
 
     if (command.startsWith("-clear")) {
-        clear_history_panel(startup_heading + "<br><hr>");
+        clear_history_panel(startup_heading);
     } else {
 
         Ext.Ajax.request({
@@ -37,11 +42,13 @@ function clear_history_panel(text) {
     var panel = Ext.getCmp('console_history_panel'),
         historyDiv = panel.el.query('div.compassConsoleHistory').first();
 
-    historyDiv.innerHTML = text + "<br>";
+    historyDiv.innerHTML = text;
 
     var d = panel.body.dom;
     d.scrollTop = d.scrollHeight - d.offsetHeight + 10;
     panel.doLayout();
+
+    sendCommand('console_text_area', '"Ruby version: #{RUBY_VERSION}, Rails version: #{Rails.version}, CompassAeConsole version: #{CompassAeConsole.version}"', false);
 }
 //---------------------------------
 function update_history_panel(text) {
@@ -60,7 +67,7 @@ var console_history_panel = {
     xtype: 'panel',
     id: 'console_history_panel',
     region: 'center',
-    bodyStyle: "background-color:#000;",
+    bodyStyle: "background-color:#000;padding:5px;",
     autoScroll: true,
     html: startup_heading
 };
@@ -152,28 +159,18 @@ Ext.define("Compass.ErpApp.Desktop.Applications.CompassAeConsole", {
                 id: 'console',
                 title: 'Compass Console',
                 width: 800,
-                height: 500,
+                height: 600,
                 iconCls: 'icon-console',
                 shim: false,
                 animCollapse: false,
-                resizable: false,
+                resizable: true,
                 constrainHeader: true,
                 layout: 'fit',
-                items: [console_panel],
-                tools: [
-                    // commenting this out until we can get version number from CompassAeConsole::VERSION
-                    // {
-                    //     type: 'help',
-                    //     tooltip: 'about',
-                    //     handler: function (event, toolEl, panel) {
-                    //         Ext.Msg.alert("About", "<b>Compass Console</b><br><i>Version 0.01</i>");
-                    //     }
-                    // }
-                ]
+                items: [console_panel]
 
             });
         }
         win.show();
-        sendCommand('console_text_area', '"Ruby version: #{RUBY_VERSION}, Rails version: #{Rails.version}, CompassAeConsole version: #{CompassAeConsole.version}"');
+        sendCommand('console_text_area', '"Ruby version: #{RUBY_VERSION}, Rails version: #{Rails.version}, CompassAeConsole version: #{CompassAeConsole.version}"', false);
     }
 });
