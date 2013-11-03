@@ -40,7 +40,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Crm.PartyMgtPanel", {
                                     component.getEl().on('click', function (e) {
 
                                         // open tab with create user form.
-                                        var tabPanel = component.up('#taskTabPanel');
+                                        var tabPanel = component.up('#crmTaskTabPanel');
 
                                         // check and see if tab already open
                                         var tab = tabPanel.down('party_form');

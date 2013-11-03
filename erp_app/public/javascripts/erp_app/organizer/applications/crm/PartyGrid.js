@@ -60,11 +60,11 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Crm.PartyGrid", {
                             tooltip: 'Edit',
                             handler: function (grid, rowIndex, colIndex) {
                                 var record = grid.getStore().getAt(rowIndex),
-                                    taskTabPanel = grid.up('#taskTabPanel'),
+                                    crmTaskTabPanel = grid.up('#crmTaskTabPanel'),
                                     itemId = 'detailsParty-' + record.get('id'),
                                     title = record.get('description');
 
-                                var partyDetailsPanel = taskTabPanel.down('#' + itemId);
+                                var partyDetailsPanel = crmTaskTabPanel.down('#' + itemId);
 
                                 if (!partyDetailsPanel) {
                                     partyDetailsPanel = Ext.create('widget.party_details_panel', {
@@ -72,10 +72,10 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Crm.PartyGrid", {
                                         partyId: record.get('id'),
                                         closable: true
                                     });
-                                    taskTabPanel.add(partyDetailsPanel);
+                                    crmTaskTabPanel.add(partyDetailsPanel);
                                 }
 
-                                taskTabPanel.setActiveTab(partyDetailsPanel);
+                                crmTaskTabPanel.setActiveTab(partyDetailsPanel);
                                 partyDetailsPanel.loadParty();
                             }
                         }
@@ -92,21 +92,21 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Crm.PartyGrid", {
                             tooltip: 'Edit',
                             handler: function (grid, rowIndex, colIndex) {
                                 var record = grid.getStore().getAt(rowIndex),
-                                    taskTabPanel = grid.up('#taskTabPanel'),
+                                    crmTaskTabPanel = grid.up('#crmTaskTabPanel'),
                                     itemId = 'editParty-' + record.get('id'),
                                     title = 'Edit ' + config.partyMgtTitle;
 
-                                var editPartyForm = taskTabPanel.down('#' + itemId);
+                                var editPartyForm = crmTaskTabPanel.down('#' + itemId);
 
                                 if (!editPartyForm) {
                                     editPartyForm = Ext.create('widget.party_form', {
                                         title: title,
                                         partyId: record.get('id')
                                     });
-                                    taskTabPanel.add(editPartyForm);
+                                    crmTaskTabPanel.add(editPartyForm);
                                 }
 
-                                taskTabPanel.setActiveTab(editPartyForm);
+                                crmTaskTabPanel.setActiveTab(editPartyForm);
                                 editPartyForm.loadParty();
                             }
                         }

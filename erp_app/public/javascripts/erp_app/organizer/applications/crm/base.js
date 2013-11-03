@@ -26,9 +26,9 @@ Compass.ErpApp.Organizer.Applications.Crm.Base = function (config) {
             listeners: {
                 render: function (component) {
                     component.getEl().on('click', function (e) {
-                        var taskTabPanel = Ext.getCmp('taskTabPanel'),
-                            tab = taskTabPanel.down('#customersPanel');
-                        taskTabPanel.setActiveTab(tab);
+                        var crmTaskTabPanel = Ext.getCmp('crmTaskTabPanel'),
+                            tab = crmTaskTabPanel.down('#customersPanel');
+                        crmTaskTabPanel.setActiveTab(tab);
 
                     }, component);
                 }
@@ -56,7 +56,7 @@ Compass.ErpApp.Organizer.Applications.Crm.Base = function (config) {
                     // Wait until each item is rendered to add the click listener, as the panel usually renders before the items within the panel
                     item.on('render', function () {
                         this.getEl().on('click', function () {
-                            Compass.ErpApp.Organizer.Layout.setActiveCenterItem('taskTabPanel');
+                            Compass.ErpApp.Organizer.Layout.setActiveCenterItem('crmTaskTabPanel');
                         });
                     });
                 });
@@ -66,15 +66,15 @@ Compass.ErpApp.Organizer.Applications.Crm.Base = function (config) {
     };
 
     //Create the main tab panel which will house instances of the main Task Types
-    var taskTabPanel = Ext.create('Ext.tab.Panel', {
-        id: 'taskTabPanel',
-        itemId: 'taskTabPanel',
+    var crmTaskTabPanel = Ext.create('Ext.tab.Panel', {
+        id: 'crmTaskTabPanel',
+        itemId: 'crmTaskTabPanel',
         //These tasks we always want open
         items: tabs
     });
 
     this.setup = function () {
-        config['organizerLayout'].addApplication(appShortcutMenuPanel, [taskTabPanel]);
+        config['organizerLayout'].addApplication(appShortcutMenuPanel, [crmTaskTabPanel]);
     };
 };
 
