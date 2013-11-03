@@ -2,6 +2,8 @@ module CompassAeConsole
   module ErpApp
     module Desktop
       class BaseController < ::ErpApp::Desktop::BaseController
+        before_filter :security_check
+
         def command
           logger.debug("command received:#{params}")
           begin
@@ -30,8 +32,7 @@ module CompassAeConsole
             when /^-help/
               help_message
             when /^-clear/
-              #this is actually handled in the console desktop application
-              #evaluate_command("")
+              #this is handled in the console desktop application
             when /^-time/
               evaluate_command("Time.now")
             when /^-whoami/
@@ -41,12 +42,20 @@ module CompassAeConsole
             end
 
             logger.debug("result#{result}")
+            logger.debug("result.to_s#{result.to_s}")
+            logger.debug("result.to_s.gsub#{result.to_s.gsub("\n", "<br />\n")}")
 
-            result_message =result.to_s.gsub("\n", "<br />\n")
+            result_message = result.to_s.gsub("\n", "<br />\n")
             render :json=> {:success=>"#{result_message}<hr><br>"}
           end
         end
+
         private
+        def security_check
+          console_app = Application.find_by_internal_identifier('compass_ae_console')
+          raise "Access Denied" unless current_user.desktop.applications.include?(console_app)
+        end
+
         #****************************************************************************
         def help_message()
           message = "<font color='lightgray'><b>Compass Desktop Console Help<b><hr>"
@@ -75,19 +84,24 @@ module CompassAeConsole
         #****************************************************************************
 
         def evaluate_command(command_message)
-          Rails.logger.debug("evaluate_command(#{command_message}")
+          Rails.logger.debug("evaluate_command(#{command_message})")
           begin
             result_eval = $session_binding.eval(command_message)
-            if(result_eval.respond_to?("superclass") &&  result_eval.superclass == ActiveRecord::Base)
+            if(result_eval.respond_to?("superclass") && result_eval.superclass == ActiveRecord::Base)
+              Rails.logger.debug("respond_to superclass")
               result = render_active_record_model(result_eval)
-            elsif(result_eval.class.respond_to?("superclass") &&  result_eval.class.superclass == ActiveRecord::Base)
+            elsif(result_eval.class.respond_to?("superclass") && result_eval.class.superclass == ActiveRecord::Base)
+              Rails.logger.debug("respond_to class superclass")
               result = render_array([result_eval])
             elsif (result_eval.is_a? Array)
+              Rails.logger.debug("respond_to Array")
               result = render_array(result_eval)
             elsif (result_eval.is_a? Hash)
+              Rails.logger.debug("respond_to Hash")
               result = render_hash(result_eval)
             else
-              result = "#{result_eval.to_s}<br>"
+              Rails.logger.debug("respond_to else")
+              result = "#{result_eval.inspect}<br>"
             end
           rescue Exception => e
             result = "<font color='red'>#{e.to_s}</font>"

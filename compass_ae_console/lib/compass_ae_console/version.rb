@@ -6,4 +6,8 @@ module CompassAeConsole
 
     STRING = [MAJOR, MINOR, TINY].compact.join('.')
   end
+
+  def self.version
+    CompassAeConsole::VERSION::STRING
+  end
 end
