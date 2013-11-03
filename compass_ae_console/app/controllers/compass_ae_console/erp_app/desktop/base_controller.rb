@@ -5,9 +5,8 @@ module CompassAeConsole
         before_filter :security_check
 
         def command
-          logger.debug("command received:#{params}")
           begin
-            result=""
+            result = ""
 
             # NOTE- the console uses a shared binding. this is due to the fact
             # that binding instances are not serializable and cant be stored
@@ -22,8 +21,6 @@ module CompassAeConsole
             end
 
             command_message=params[:command_message]
-            logger.debug("console session context:#{$session_binding}")
-            logger.debug("command:#{command_message}")
 
             # here we handle any desktop console-specific command
             # these can include non-eval related funtions
@@ -40,10 +37,6 @@ module CompassAeConsole
                        else
                          evaluate_command(command_message)
                      end
-
-            logger.debug("result#{result}")
-            logger.debug("result.to_s#{result.to_s}")
-            logger.debug("result.to_s.gsub#{result.to_s.gsub("\n", "<br />\n")}")
 
             result_message = result.to_s.gsub("\n", "<br />\n")
             render :json => {:success => "#{result_message}<hr><br>"}
@@ -125,11 +118,11 @@ module CompassAeConsole
 
         #****************************************************************************
         def render_array(result_eval)
-          result="#{result_eval.class.to_s}"
-          Rails.logger.debug("render_array:#{result_eval}")
-          count=0
+          result = "#{result_eval.class.to_s}"
+          count = 0
+
           result_eval.each do |array_element|
-            if (array_element.is_a? ActiveRecord::Base)
+            if array_element.is_a? ActiveRecord::Base
               result << "<span style='color:YellowGreen'>#{array_element.class}[<span color='white'>#{count}</span>] </span>#{hightlight_instance(array_element)} <br>"
             else
               result << "<span style='color:YellowGreen'>#{array_element.class}[<span color='white'>#{count}</span>] </span>#{array_element} <br>"
@@ -141,16 +134,15 @@ module CompassAeConsole
 
         #****************************************************************************
         def render_hash(result_eval)
-          Rails.logger.debug("render_hash:#{result_eval}")
-          result="#{result_eval.class.to_s}<br>"
-          count=0
+          result = "#{result_eval.class.to_s}<br>"
+          count = 0
+
           result_eval.keys.each do |hash_key|
             symbol_modifier=''
-            if (hash_key.is_a? Symbol)
+            if hash_key.is_a? Symbol
               symbol_modifier=':'
             end
-            if (hash_key.is_a? ActiveRecord::Base)
-
+            if hash_key.is_a? ActiveRecord::Base
               result<< "<span style='color:YellowGreen'>#{result_eval.class}[<span style='color:white'>#{symbol_modifier}#{hash_key}</span>] => </span>#{highlight(result_eval[hash_key])} <br>"
             else
               result<<"<span style='color:YellowGreen'>#{result_eval.class}</span>[<span style='color:white'>#{symbol_modifier}#{hash_key}</span>] => #{result_eval[hash_key]} <br>"
