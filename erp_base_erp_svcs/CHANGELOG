@@ -1,7 +1,7 @@
 Version 3.1.6
 - Added method to remove party_relationships when party is removed
 - Added scope :with_status to has_tracked_status
-- Added methods has_status?, had_status? and has_had_status? & other minor improvements to has_tracked_status
+- Added methods has_status?, had_status?, has_had_status?, current_status_type & other improvements to has_tracked_status
 - Added add_status alias to has_tracked_status for legacy support
 Version 3.1.5 - 7-26-2013
 - Pass database host to pg_dump in rake compass_ae:backup:postgres
