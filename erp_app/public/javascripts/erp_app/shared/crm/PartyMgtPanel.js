@@ -1,4 +1,4 @@
-Ext.define("Compass.ErpApp.Organizer.Applications.Crm.PartyMgtPanel", {
+Ext.define("Compass.ErpApp.Shared.Crm.PartyMgtPanel", {
     extend: "Ext.panel.Panel",
     alias: 'widget.party_mgt_panel',
     layout: 'border',
@@ -40,7 +40,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Crm.PartyMgtPanel", {
                                     component.getEl().on('click', function (e) {
 
                                         // open tab with create user form.
-                                        var tabPanel = component.up('#crmTaskTabPanel');
+                                        var tabPanel = component.up('tabpanel');
 
                                         // check and see if tab already open
                                         var tab = tabPanel.down('party_form');
@@ -51,7 +51,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Crm.PartyMgtPanel", {
 
                                         var newPartyForm = Ext.create("widget.party_form", {
                                             title: config.addBtnDescription,
-                                            toRoles: config.toRoles,
+                                            toRole: config.toRole,
                                             fromRoles: config.fromRoles
                                         });
 

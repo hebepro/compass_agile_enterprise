@@ -1,4 +1,4 @@
-Ext.define('Compass.ErpApp.Organizer.Applications.Crm.User', {
+Ext.define('Compass.ErpApp.Shared.Crm.User', {
     extend: 'Ext.data.Model',
     fields: [
         'id',
@@ -25,9 +25,9 @@ Ext.define('Compass.ErpApp.Organizer.Applications.Crm.User', {
     ]
 });
 
-Ext.define("Compass.ErpApp.Organizer.Applications.Crm.UsersGrid", {
+Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
     extend: "Ext.grid.Panel",
-    alias: 'widget.usersgrid',
+    alias: 'widget.crmusersgrid',
 
     constructor: function (config) {
         var me = this;
@@ -42,7 +42,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Crm.UsersGrid", {
                 xtype: 'button',
                 iconCls: 'icon-add',
                 handler: function (button) {
-                    var grid = button.findParentByType('usersgrid');
+                    var grid = button.up('crmusersgrid');
                     var edit = grid.editing;
 
                     grid.store.insert(0, new Compass.ErpApp.Organizer.Applications.Crm.User());
@@ -55,7 +55,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Crm.UsersGrid", {
                 type: 'button',
                 iconCls: 'icon-delete',
                 handler: function (button) {
-                    var grid = button.findParentByType('usersgrid');
+                    var grid = button.up('crmusersgrid');
                     var selection = grid.getView().getSelectionModel().getSelection()[0];
                     if (selection) {
                         Ext.MessageBox.confirm(
@@ -75,7 +75,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Crm.UsersGrid", {
                 type: 'button',
                 iconCls: 'icon-edit',
                 handler: function (button) {
-                    var grid = button.findParentByType('usersgrid');
+                    var grid = button.up('crmusersgrid');
                     var selection = grid.getView().getSelectionModel().getSelection()[0];
                     if (selection) {
                         me.setLoading(true);
@@ -115,7 +115,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Crm.UsersGrid", {
         ];
 
         this.store = Ext.create('Ext.data.Store', {
-            model: Compass.ErpApp.Organizer.Applications.Crm.User,
+            model: Compass.ErpApp.Shared.Crm.User,
             autoLoad: false,
             autoSync: true,
             proxy: {

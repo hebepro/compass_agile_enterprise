@@ -1,4 +1,4 @@
-Ext.define("Compass.ErpApp.Organizer.Applications.Crm.PartyDetailsPanel", {
+Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
     extend: "Ext.panel.Panel",
     alias: 'widget.party_details_panel',
     layout: 'border',
@@ -9,7 +9,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Crm.PartyDetailsPanel", {
         'emailaddressgrid',
         'postaladdressgrid',
         'shared_notesgrid',
-        'usersgrid'
+        'crmusersgrid'
     ],
 
     initComponent: function () {
@@ -36,7 +36,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Crm.PartyDetailsPanel", {
                 {xtype: 'emailaddressgrid', partyId: me.partyId},
                 {xtype: 'postaladdressgrid', partyId: me.partyId},
                 {xtype: 'shared_notesgrid', partyId: me.partyId},
-                {xtype: 'usersgrid', partyId: me.partyId}
+                {xtype: 'crmusersgrid', partyId: me.partyId}
             ]
         });
 

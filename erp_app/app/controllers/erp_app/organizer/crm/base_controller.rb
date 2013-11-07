@@ -10,8 +10,19 @@ module ErpApp
           limit = params[:limit] || 5
           query = params[:query] || nil
           role_type = params[:role_type]
+          to_role = params[:to_role]
 
           statement = Party.joins(:party_roles => :role_type).where('role_types.internal_identifier' => role_type)
+
+          unless to_role.blank?
+            to_role_type = RoleType.iid(to_role)
+
+            to_party_rln = current_user.party.from_relationships.where('role_type_id_to = ?', to_role_type).first
+
+            statement = statement.joins("join party_relationships on party_relationships.party_id_from = parties.id")
+            .where('party_relationships.party_id_to = ?', to_party_rln.party_id_to)
+            .where('party_relationships.role_type_id_to' => to_role_type)
+          end
 
           # Apply query if it exists
           statement = statement.where(Party.arel_table[:description].matches("%#{query}%")) if query
@@ -126,11 +137,11 @@ module ErpApp
           unless to_role.blank?
             to_role_type = RoleType.iid(to_role)
 
-            to_party_rln = current_user.party.from_relationships.where('to_role_type_id = ?', to_role_type).first
+            to_party_rln = current_user.party.from_relationships.where('role_type_id_to = ?', to_role_type).first
 
-            statement = statement.joins("join party_relationships on party_relationships.party_id_from = parties_id")
+            statement = statement.joins("join party_relationships on party_relationships.party_id_from = parties.id")
             .where('party_relationships.party_id_to = ?', to_party_rln.party_id_to)
-            .where('to_reln.role_type_id_to' => to_role_type)
+            .where('party_relationships.role_type_id_to' => to_role_type)
           end
 
           # Apply query if it exists
@@ -206,9 +217,9 @@ module ErpApp
 
               # Apply to roles
               unless to_role.blank?
-                to_party_rln = current_user.party.from_relationships.where('to_role_type_id = ?', RoleType.iid(to_role)).first
+                to_party_rln = current_user.party.from_relationships.where('role_type_id_to = ?', RoleType.iid(to_role)).first
                 if to_party_rln
-                  business_party.create_relationship(to_party_rln.description, to_party_rln.to_party.id, to_party_rln.relationship_type)
+                  business_party.party.create_relationship(to_party_rln.description, to_party_rln.to_party.id, to_party_rln.relationship_type)
                 end
               end
 

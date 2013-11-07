@@ -1,4 +1,4 @@
-Ext.define("Compass.ErpApp.Organizer.Applications.Crm.PartyGrid", {
+Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
     extend: "Ext.grid.Panel",
     alias: 'widget.partygrid',
 
@@ -60,7 +60,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Crm.PartyGrid", {
                             tooltip: 'Edit',
                             handler: function (grid, rowIndex, colIndex) {
                                 var record = grid.getStore().getAt(rowIndex),
-                                    crmTaskTabPanel = grid.up('#crmTaskTabPanel'),
+                                    crmTaskTabPanel = grid.up('tabpanel'),
                                     itemId = 'detailsParty-' + record.get('id'),
                                     title = record.get('description');
 
@@ -92,7 +92,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Crm.PartyGrid", {
                             tooltip: 'Edit',
                             handler: function (grid, rowIndex, colIndex) {
                                 var record = grid.getStore().getAt(rowIndex),
-                                    crmTaskTabPanel = grid.up('#crmTaskTabPanel'),
+                                    crmTaskTabPanel = grid.up('tabpanel'),
                                     itemId = 'editParty-' + record.get('id'),
                                     title = 'Edit ' + config.partyMgtTitle;
 

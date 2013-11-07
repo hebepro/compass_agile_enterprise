@@ -7,7 +7,7 @@ Ext.define("Compass.ErpApp.Shared.PartySearchField", {
 
     constructor: function (config) {
         var me = this,
-            extraParams = {role_type: config.partyRole},
+            extraParams = {role_type: config.partyRole, to_role: config.toRole},
             listTemplate = config.list_template,
             fields = config.fields;
 

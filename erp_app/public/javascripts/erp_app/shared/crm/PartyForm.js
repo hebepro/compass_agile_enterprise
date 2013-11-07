@@ -1,4 +1,4 @@
-Ext.define("Compass.ErpApp.Organizer.Applications.Crm.PartyForm", {
+Ext.define("Compass.ErpApp.Shared.Crm.PartyForm", {
     extend: "Ext.panel.Panel",
     alias: 'widget.party_form',
     closable: true,

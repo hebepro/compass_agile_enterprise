@@ -18,7 +18,7 @@ var contactPurposeStore = Ext.create('Ext.data.Store', {
     ]
 });
 
-Ext.define("Compass.ErpApp.Organizer.Applications.Crm.ContactMechanismGrid", {
+Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
     extend: "Ext.grid.Panel",
     alias: 'widget.contactmechanismgrid',
     initComponent: function () {
@@ -227,8 +227,8 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Crm.ContactMechanismGrid", {
  * This grid extends the ContactMechanismGrid and sets it up with columns for
  * displaying phone numbers
  */
-Ext.define("Compass.ErpApp.Organizer.Applications.Crm.ContactMechanismGrid.PhoneNumberGrid", {
-    extend: "Compass.ErpApp.Organizer.Applications.Crm.ContactMechanismGrid",
+Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid.PhoneNumberGrid", {
+    extend: "Compass.ErpApp.Shared.Crm.ContactMechanismGrid",
     alias: 'widget.phonenumbergrid',
     initComponent: function () {
         this.callParent(arguments);
@@ -266,8 +266,8 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Crm.ContactMechanismGrid.Phone
  * This grid extends ContactMechanismGrid and provides a column configuration for
  * displaying and editing email addresses for a given party
  */
-Ext.define("Compass.ErpApp.Organizer.Applications.Crm.ContactMechanismGrid.EmailAddressGrid", {
-    extend: "Compass.ErpApp.Organizer.Applications.Crm.ContactMechanismGrid",
+Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid.EmailAddressGrid", {
+    extend: "Compass.ErpApp.Shared.Crm.ContactMechanismGrid",
     alias: 'widget.emailaddressgrid',
     initComponent: function () {
         this.callParent(arguments);
@@ -416,8 +416,8 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Crm.ContactMechanismGrid.Email
  * This extends the ContactMechanismGrid and setups up configuration for
  * displaying and editing postal addresses for a given party
  */
-Ext.define("Compass.ErpApp.Organizer.Applications.Crm.ContactMechanismGrid.PostalAddressGrid", {
-    extend: "Compass.ErpApp.Organizer.Applications.Crm.ContactMechanismGrid",
+Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid.PostalAddressGrid", {
+    extend: "Compass.ErpApp.Shared.Crm.ContactMechanismGrid",
     alias: 'widget.postaladdressgrid',
     initComponent: function () {
         this.callParent(arguments);
