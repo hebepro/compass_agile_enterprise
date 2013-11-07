@@ -5,6 +5,51 @@ module ErpApp
         @@date_format = "%m/%d/%Y"
         @@datetime_format = "%m/%d/%Y %l:%M%P"
 
+        def search_parties
+          offset = params[:start] || 0
+          limit = params[:limit] || 5
+          query = params[:query] || nil
+          role_type = params[:role_type]
+
+          statement = Party.joins(:party_roles => :role_type).where('role_types.internal_identifier' => role_type)
+
+          # Apply query if it exists
+          statement = statement.where(Party.arel_table[:description].matches("%#{query}%")) if query
+
+          # Get total count of records
+          total = statement.count
+
+          # Apply limit and offset
+          parties = statement.limit(limit).offset(offset).all
+
+          data = [].tap do |array|
+            parties.each do |party|
+              description_hash = {
+                  :id => party.id,
+                  :description => party.description,
+                  :address_line1 => nil,
+                  :address_line2 => nil,
+                  :city => nil,
+                  :state => nil,
+                  :zip => nil
+              }
+
+              postal_address = party.find_contact_mechanism_with_purpose(PostalAddress, ContactPurpose.default)
+              if postal_address
+                description_hash[:address_line_1] = postal_address.address_line_1
+                description_hash[:address_line_2] = postal_address.address_line_2
+                description_hash[:city] = postal_address.city
+                description_hash[:state] = postal_address.state
+                description_hash[:zip] = postal_address.zip
+              end
+
+              array << description_hash
+            end
+          end
+
+          render :json => {:success => true, :total => total, :parties => data}
+        end
+
         def parties
           render :json => if request.put?
                             update_party
@@ -69,7 +114,7 @@ module ErpApp
         end
 
         def get_parties
-          offset = params[:offset] || 0
+          offset = params[:start] || 0
           limit = params[:limit] || 25
           query_filter = params[:query_filter] || nil
 
