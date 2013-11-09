@@ -69,9 +69,14 @@ module ErpBaseErpSvcs
             self.status_applications.where("status_applications.thru_date IS NULL").order('id DESC').first
           end
 
-          # gets current statuses internal_identifier
+          # get's current status's tracked_status_type
+          def current_status_type
+            self.current_status_application.tracked_status_type unless self.current_status_application.nil?
+          end
+
+          # gets current status's internal_identifier
           def current_status
-            self.current_status_application.tracked_status_type.internal_identifier unless self.current_status_application.nil?
+            self.current_status_type.internal_identifier unless self.current_status_type.nil?
           end
 
           #set current status of entity.
