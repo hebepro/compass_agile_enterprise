@@ -74,9 +74,9 @@ module ErpApp
           party_id = params[:party_id] || user_data[:party_id]
 
           party = Party.find(party_id)
-
-          ActiveRecord::Base.transaction do
-            begin
+          
+          begin
+            ActiveRecord::Base.transaction do
               user = User.new(
                   :email => user_data['email'].strip,
                   :username => user_data['username'].strip,
@@ -109,13 +109,12 @@ module ErpApp
               else
                 result = {:success => false, :message => user.errors.full_messages.to_sentence}
               end
-
-            rescue Exception => ex
-              Rails.logger.error ex.message
-              Rails.logger.error ex.backtrace.join("\n")
-
-              result = {:success => false, :message => "Error adding #{party_type}"}
             end
+          rescue Exception => ex
+            Rails.logger.error ex.message
+            Rails.logger.error ex.backtrace.join("\n")
+
+            result = {:success => false, :message => "Error adding user."}
           end
 
           result

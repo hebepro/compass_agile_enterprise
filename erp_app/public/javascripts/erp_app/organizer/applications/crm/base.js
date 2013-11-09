@@ -14,10 +14,6 @@ Compass.ErpApp.Organizer.Applications.Crm.Base = function (config) {
                     fromRoleType: 'employee'
                 }
             ]
-        },
-        {
-            xtype: 'crmpartymgtpanel',
-            itemId: 'customersPanel'
         }
     ];
 

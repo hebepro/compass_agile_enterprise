@@ -167,11 +167,10 @@ module ErpApp
 
         def create_party
           result = {}
-
-          ActiveRecord::Base.transaction do
-            begin
-              party_type = params[:business_party_type]
-
+          party_type = params[:business_party_type]
+          
+          begin
+            ActiveRecord::Base.transaction do
               # Get Party Roles
               to_party_id = params[:to_party_id]
               relationship_type_to_create = params[:relationship_type_to_create]
@@ -225,17 +224,17 @@ module ErpApp
               end
 
               # Add Party Relationship
-              if to_party_id and relationship_type_to_create
+              if !to_party_id.blank? and !relationship_type_to_create.blank?
                 relationship_type = RelationshipType.find_by_internal_identifier(relationship_type_to_create)
                 business_party.party.create_relationship(relationship_type.description, to_party_id, relationship_type)
               end
 
-              result = {:success => true, :message => "#{party_type} Added", :name => business_party.party.description, :party_id => business_party.party.id}
-            rescue Exception => ex
-              Rails.logger.error ex.message
-              Rails.logger.error ex.backtrace.join("\n")
-              result = {:success => false, :message => "Error adding #{party_type}"}
+              result = {:success => true, :message => "#{party_type} Added.", :name => business_party.party.description, :party_id => business_party.party.id}
             end
+          rescue Exception => ex
+            Rails.logger.error ex.message
+            Rails.logger.error ex.backtrace.join("\n")
+            result = {:success => false, :message => "Error adding #{party_type}."}
           end
 
           result
