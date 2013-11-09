@@ -88,6 +88,9 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
                 toPartyId: me.partyId,
                 relationshipTypeToCreate: partyRelationship.relationshipType,
                 partyRole: partyRelationship.fromRoleType,
+                canAddParty: partyRelationship.canAddParty || true,
+                canEditParty: partyRelationship.canEditParty || true,
+                canDeleteParty: partyRelationship.canDeleteParty || true,
                 listeners:{
                     partycreated: function(comp, partyId){
                         this.store.load();

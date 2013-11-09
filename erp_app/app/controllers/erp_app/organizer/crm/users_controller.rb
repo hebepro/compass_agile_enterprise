@@ -38,14 +38,35 @@ module ErpApp
         protected
 
         def get_users
-          party = Party.find(params[:party_id])
+          party_role = params[:party_role]
+          to_role = params[:to_role]
+          to_party_id = params[:to_party_id]
           offset = params[:offset] || 0
           limit = params[:limit] || 25
           query_filter = params[:query_filter] || nil
 
           user_table = User.arel_table
 
-          statement = party.users
+          statement = User.joins(:party => :party_roles).where(:party_roles => {:role_type_id => RoleType.iid(party_role).id})
+
+          unless to_role.blank?
+            to_role_type = RoleType.iid(to_role)
+
+            if to_party_id.blank?
+              to_party = current_user.party
+              to_party_rln = to_party.from_relationships.where('role_type_id_to = ?', to_role_type).first
+
+              statement = statement.joins("join party_relationships on party_relationships.party_id_from = parties.id")
+              .where('party_relationships.party_id_to = ?', to_party_rln.party_id_to)
+              .where('party_relationships.role_type_id_to' => to_role_type)
+            else
+              to_party = Party.find(to_party_id)
+
+              statement = statement.joins("join party_relationships on party_relationships.party_id_from = parties.id")
+              .where('party_relationships.party_id_to = ?', to_party.id)
+              .where('party_relationships.role_type_id_to' => to_role_type)
+            end
+          end
 
           if query_filter
             statement = statement.where(user_table[:username].matches("%#{query_filter}%")
@@ -62,7 +83,8 @@ module ErpApp
                                                               :last_login_at,
                                                               :created_at,
                                                               :updated_at,
-                                                              :activation_state])
+                                                              :activation_state],
+                                                         :party_description => (user.party.description))
            },
            :total => total}
         end
@@ -74,7 +96,7 @@ module ErpApp
           party_id = params[:party_id] || user_data[:party_id]
 
           party = Party.find(party_id)
-          
+
           begin
             ActiveRecord::Base.transaction do
               user = User.new(

@@ -42,10 +42,10 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
     detailsUrl: '/erp_app/organizer/crm/base/get_party_details/',
 
     /**
-     * @cfg {String} addPartyBtn
-     * Url for add party button.
+     * @cfg {String} addBtnIconCls
+     * Icon css class for add button.
      */
-    addPartyBtn: '/images/erp_app/organizer/applications/crm/customer_360_64x64.png',
+    addBtnIconCls: 'icon-add',
 
     /**
      * @cfg {String} title
@@ -96,17 +96,44 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
      * @param {String} fromRoleType
      * RoleType internal_identifier for from side
      *
+     * @param {Boolean} canAddParty
+     * True to allow party creation.
+     *
+     * @param {Boolean} canEditParty
+     * True to allow party to be edited.
+     *
+     * @param {Boolean} canDeleteParty
+     * True to allow party to be deleted.
+     *
      * @example
      * {
             title: 'Employees',
             relationshipType: 'employee_customer',
             toRoleType: 'customer',
-            fromRoleType: 'employee'
+            fromRoleType: 'employee',
+            canAddParty: true,
+            canEditParty: true,
+            canDeleteParty: true
         }
      */
     partyRelationships: [],
+    /**
+     * @cfg {Boolean} canAddParty
+     * True to allow party creation.
+     */
+    canAddParty: true,
+    /**
+     * @cfg {Boolean} canEditParty
+     * True to allow party to be edited.
+     */
+    canEditParty: true,
+    /**
+     * @cfg {Boolean} canDeleteParty
+     * True to allow party to be deleted.
+     */
+    canDeleteParty: true,
 
-    constructor: function(config){
+    constructor: function (config) {
         var listeners = {
             activate: function () {
                 this.store.load();
@@ -152,11 +179,15 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
             'userupdated'
         );
 
-        var toolBarItems = [
-            {
+        // setup toolbar
+        var toolBarItems = [];
+
+        // attempt to add Add party button
+        if (me.canAddParty) {
+            toolBarItems.push({
                 text: me.addBtnDescription,
                 xtype: 'button',
-                iconCls: 'icon-add',
+                iconCls: me.addBtnIconCls,
                 handler: function (button) {
                     // open tab with create user form.
                     var tabPanel = button.up('crmpartygrid').up('#' + me.applicationContainerId);
@@ -189,9 +220,10 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                     tabPanel.add(crmPartyFormPanel);
                     tabPanel.setActiveTab(crmPartyFormPanel);
                 }
-            },
-            '|',
-            'Search',
+            }, '|');
+        }
+
+        toolBarItems.push('Search',
             {
                 xtype: 'textfield',
                 emptyText: me.searchDescription,
@@ -223,8 +255,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                         });
                     }
                 }
-            }
-        ];
+            });
 
         var store = Ext.create('Ext.data.Store', {
             fields: [
@@ -267,7 +298,9 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
             }
         ];
 
-        me.columns = [
+        // setup columns
+
+        columns = [
             {
                 header: 'Description',
                 dataIndex: 'description'
@@ -332,8 +365,12 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                         }
                     }
                 ]
-            },
-            {
+            }
+        ];
+
+        // attempt to add edit column
+        if (me.canEditParty) {
+            columns.push({
                 xtype: 'actioncolumn',
                 header: 'Edit',
                 align: 'center',
@@ -374,8 +411,13 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                         }
                     }
                 ]
-            },
-            {
+            });
+
+        }
+
+        // attempt to add delete column
+        if (me.canDeleteParty) {
+            columns.push({
                 xtype: 'actioncolumn',
                 header: 'Delete',
                 align: 'center',
@@ -419,10 +461,12 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                         }
                     }
                 ]
-            }
-        ];
+            });
+        }
 
-        this.callParent(arguments);
+        me.columns = columns;
+
+        me.callParent(arguments);
     }
 });
 

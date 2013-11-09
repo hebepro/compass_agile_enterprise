@@ -11,17 +11,27 @@ module ErpApp
           query = params[:query] || nil
           role_type = params[:role_type]
           to_role = params[:to_role]
+          to_party_id = params[:to_party_id]
 
           statement = Party.joins(:party_roles => :role_type).where('role_types.internal_identifier' => role_type)
 
           unless to_role.blank?
             to_role_type = RoleType.iid(to_role)
 
-            to_party_rln = current_user.party.from_relationships.where('role_type_id_to = ?', to_role_type).first
+            if to_party_id.blank?
+              to_party = current_user.party
+              to_party_rln = to_party.from_relationships.where('role_type_id_to = ?', to_role_type).first
 
-            statement = statement.joins("join party_relationships on party_relationships.party_id_from = parties.id")
-            .where('party_relationships.party_id_to = ?', to_party_rln.party_id_to)
-            .where('party_relationships.role_type_id_to' => to_role_type)
+              statement = statement.joins("join party_relationships on party_relationships.party_id_from = parties.id")
+              .where('party_relationships.party_id_to = ?', to_party_rln.party_id_to)
+              .where('party_relationships.role_type_id_to' => to_role_type)
+            else
+              to_party = Party.find(to_party_id)
+
+              statement = statement.joins("join party_relationships on party_relationships.party_id_from = parties.id")
+              .where('party_relationships.party_id_to = ?', to_party.id)
+              .where('party_relationships.role_type_id_to' => to_role_type)
+            end
           end
 
           # Apply query if it exists
@@ -131,13 +141,14 @@ module ErpApp
 
           to_role = params[:to_role]
           party_role = params[:party_role]
+          to_party_id = params[:to_party_id]
 
           statement = Party.joins(:party_roles => :role_type).where('role_types.internal_identifier = ?', party_role)
 
           unless to_role.blank?
             to_role_type = RoleType.iid(to_role)
 
-            if params[:to_party_id].blank?
+            if to_party_id.blank?
               to_party = current_user.party
               to_party_rln = to_party.from_relationships.where('role_type_id_to = ?', to_role_type).first
 
@@ -145,7 +156,7 @@ module ErpApp
               .where('party_relationships.party_id_to = ?', to_party_rln.party_id_to)
               .where('party_relationships.role_type_id_to' => to_role_type)
             else
-              to_party = Party.find(params[:to_party_id])
+              to_party = Party.find(to_party_id)
 
               statement = statement.joins("join party_relationships on party_relationships.party_id_from = parties.id")
               .where('party_relationships.party_id_to = ?', to_party.id)
