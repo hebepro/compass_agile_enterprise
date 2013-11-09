@@ -39,6 +39,7 @@ class Party < ActiveRecord::Base
   # party instance.
   def create_relationship(description, to_party_id, reln_type)
     PartyRelationship.create(:description => description,
+                             :relationship_type => reln_type,
                              :party_id_from => id,
                              :from_role => reln_type.valid_from_role,
                              :party_id_to => to_party_id,

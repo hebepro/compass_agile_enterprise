@@ -15,6 +15,26 @@ module ErpApp
                           end
         end
 
+        def user_for_party
+          result = {:success => true}
+
+          party = Party.find(params[:party_id])
+
+          user = party.user
+
+          if user
+            result[:user] = user.to_hash(:only =>
+                                             [:id, :username,
+                                              :email,
+                                              :last_login_at,
+                                              :created_at,
+                                              :updated_at,
+                                              :activation_state])
+          end
+
+          render :json => result
+        end
+
         protected
 
         def get_users
@@ -49,33 +69,43 @@ module ErpApp
 
         def create_user
           result = {}
-          party = Party.find(params[:party_id])
+
+          user_data = params[:data].present? ? params[:data] : params
+          party_id = params[:party_id] || user_data[:party_id]
+
+          party = Party.find(party_id)
 
           ActiveRecord::Base.transaction do
             begin
-              # begin and end with a letter
-              temp_password = 'AB' + SecureRandom.uuid[0..5] + 'CD'
-
               user = User.new(
-                  :email => params[:data]['email'].strip,
-                  :username => params[:data]['username'].strip,
-                  :password => temp_password,
-                  :password_confirmation => temp_password
+                  :email => user_data['email'].strip,
+                  :username => user_data['username'].strip,
               )
+
+              if user_data[:password].present? && user_data[:password_confirmation].present?
+                user.password = user_data[:password].strip
+                user.password_confirmation = user_data[:password_confirmation].strip
+                user.add_instance_attribute(:temp_password, user_data[:password])
+              else
+                temp_password = 'AB' + SecureRandom.uuid[0..5] + 'CD'
+                user.password = temp_password
+                user.password_confirmation = temp_password
+                user.add_instance_attribute(:temp_password, temp_password)
+              end
+
               #set this to tell activation where to redirect_to for login and temp password
               user.add_instance_attribute(:login_url, '/erp_app/login')
-              user.add_instance_attribute(:temp_password, temp_password)
 
               user.party = party
 
               if user.save
                 result = {:success => user.save, :users => user.to_hash(:only =>
-                                                                           [:id, :username,
-                                                                            :email,
-                                                                            :last_login_at,
-                                                                            :created_at,
-                                                                            :updated_at,
-                                                                            :activation_state])}
+                                                                            [:id, :username,
+                                                                             :email,
+                                                                             :last_login_at,
+                                                                             :created_at,
+                                                                             :updated_at,
+                                                                             :activation_state])}
               else
                 result = {:success => false, :message => user.errors.full_messages.to_sentence}
               end
@@ -92,10 +122,21 @@ module ErpApp
         end
 
         def update_user
+          user_data = params[:data].present? ? params[:data] : params
+
           user = User.find(params[:id])
 
-          user.username = params[:data][:username].strip
-          user.email = params[:data][:email].strip
+          user.username = user_data[:username].strip
+          user.email = user_data[:email].strip
+
+          if user_data[:activation_state].present? && user_data[:activation_state] != 'pending'
+            user.activation_state = user_data[:activation_state].strip
+          end
+
+          if user_data[:password].present? && user_data[:password_confirmation].present?
+            user.password = user_data[:password].strip
+            user.password_confirmation = user_data[:password_confirmation].strip
+          end
 
           if user.save
             result = {:success => user.save, :users => user.to_hash(:only =>

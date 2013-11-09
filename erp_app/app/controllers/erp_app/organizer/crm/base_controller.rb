@@ -130,18 +130,27 @@ module ErpApp
           query_filter = params[:query_filter] || nil
 
           to_role = params[:to_role]
-          from_roles = params[:from_roles].split(',')
+          party_role = params[:party_role]
 
-          statement = Party.joins(:party_roles => :role_type).where('role_types.internal_identifier' => from_roles)
+          statement = Party.joins(:party_roles => :role_type).where('role_types.internal_identifier = ?', party_role)
 
           unless to_role.blank?
             to_role_type = RoleType.iid(to_role)
 
-            to_party_rln = current_user.party.from_relationships.where('role_type_id_to = ?', to_role_type).first
+            if params[:to_party_id].blank?
+              to_party = current_user.party
+              to_party_rln = to_party.from_relationships.where('role_type_id_to = ?', to_role_type).first
 
-            statement = statement.joins("join party_relationships on party_relationships.party_id_from = parties.id")
-            .where('party_relationships.party_id_to = ?', to_party_rln.party_id_to)
-            .where('party_relationships.role_type_id_to' => to_role_type)
+              statement = statement.joins("join party_relationships on party_relationships.party_id_from = parties.id")
+              .where('party_relationships.party_id_to = ?', to_party_rln.party_id_to)
+              .where('party_relationships.role_type_id_to' => to_role_type)
+            else
+              to_party = Party.find(params[:to_party_id])
+
+              statement = statement.joins("join party_relationships on party_relationships.party_id_from = parties.id")
+              .where('party_relationships.party_id_to = ?', to_party.id)
+              .where('party_relationships.role_type_id_to' => to_role_type)
+            end
           end
 
           # Apply query if it exists
@@ -153,7 +162,7 @@ module ErpApp
           # Apply limit and offset
           parties = statement.limit(limit).offset(offset).all
 
-          {:success => true, :total => total, :parties => parties.collect { |item| item.to_hash(:only => [:id, :description, :created_at, :updated_at], :model => item.class.name) }}
+          {:success => true, :total => total, :parties => parties.collect { |item| item.to_hash(:only => [:id, :description, :created_at, :updated_at], :model => item.business_party.class.name) }}
         end
 
         def create_party
@@ -164,8 +173,9 @@ module ErpApp
               party_type = params[:business_party_type]
 
               # Get Party Roles
-              to_role = params[:to_role]
-              from_roles = params[:from_roles]
+              to_party_id = params[:to_party_id]
+              relationship_type_to_create = params[:relationship_type_to_create]
+              party_role = params[:party_role]
 
               klass = party_type.constantize
 
@@ -175,8 +185,9 @@ module ErpApp
               params.delete(:controller)
               params.delete(:business_party_type)
               params.delete(:authenticity_token)
-              params.delete(:to_role)
-              params.delete(:from_roles)
+              params.delete(:party_role)
+              params.delete(:to_party_id)
+              params.delete(:relationship_type_to_create)
 
               if klass == Organization
                 params.delete(:current_personal_title)
@@ -209,21 +220,17 @@ module ErpApp
               business_party.party.save
 
               # Apply from roles
-              unless from_roles.blank?
-                from_roles.split(',').each do |role_type_iid|
-                  PartyRole.create(:party => business_party.party, :role_type => RoleType.iid(role_type_iid))
-                end
+              unless party_role.blank?
+                PartyRole.create(:party => business_party.party, :role_type => RoleType.iid(party_role))
               end
 
-              # Apply to roles
-              unless to_role.blank?
-                to_party_rln = current_user.party.from_relationships.where('role_type_id_to = ?', RoleType.iid(to_role)).first
-                if to_party_rln
-                  business_party.party.create_relationship(to_party_rln.description, to_party_rln.to_party.id, to_party_rln.relationship_type)
-                end
+              # Add Party Relationship
+              if to_party_id and relationship_type_to_create
+                relationship_type = RelationshipType.find_by_internal_identifier(relationship_type_to_create)
+                business_party.party.create_relationship(relationship_type.description, to_party_id, relationship_type)
               end
 
-              result = {:success => true, :message => "#{party_type} Added", :name => business_party.party.description}
+              result = {:success => true, :message => "#{party_type} Added", :name => business_party.party.description, :party_id => business_party.party.id}
             rescue Exception => ex
               Rails.logger.error ex.message
               Rails.logger.error ex.backtrace.join("\n")
@@ -247,8 +254,9 @@ module ErpApp
           business_party_data.delete(:controller)
           business_party_data.delete(:business_party_type)
           business_party_data.delete(:authenticity_token)
-          business_party_data.delete(:to_role)
-          business_party_data.delete(:from_roles)
+          business_party_data.delete(:to_party_id)
+          business_party_data.delete(:party_role)
+          business_party_data.delete(:relationship_type_to_create)
 
           if klass == Organization
             business_party_data.delete(:current_personal_title)

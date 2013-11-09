@@ -28,13 +28,31 @@ Ext.define('Compass.ErpApp.Shared.Crm.User', {
 Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
     extend: "Ext.grid.Panel",
     alias: 'widget.crmusersgrid',
+    frame: false,
+    autoScroll: true,
+    loadMask: true,
+    title: 'Users',
 
-    constructor: function (config) {
+    /**
+     * @cfg {String[]} fromRoles
+     * Array of PartyRoles to load for Grid Example (Customer, Prospect).
+     */
+    partyRoles: ['customer'],
+
+    /**
+     * @cfg {String} toRole
+     * Relationship with this toRole of the current user should be mimic on these parties.
+     */
+    toRole: null,
+
+    /**
+     * @cfg {String} applicationContainerId
+     * The id of the root application container that this panel resides in.
+     */
+    applicationContainerId: 'crmTaskTabPanel',
+
+    initComponent: function () {
         var me = this;
-
-        this.editing = Ext.create('Ext.grid.plugin.RowEditing', {
-            clicksToMoveEditor: 1
-        });
 
         var toolBarItems = [
             {
@@ -42,74 +60,26 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
                 xtype: 'button',
                 iconCls: 'icon-add',
                 handler: function (button) {
-                    var grid = button.up('crmusersgrid');
-                    var edit = grid.editing;
+                    // open tab with create user form.
+                    var tabPanel = button.up('crmpartydetailspanel').up('tabpanel');
 
-                    grid.store.insert(0, new Compass.ErpApp.Organizer.Applications.Crm.User());
-                    edit.startEdit(0, 0);
-                }
-            },
-            '-',
-            {
-                text: 'Delete',
-                type: 'button',
-                iconCls: 'icon-delete',
-                handler: function (button) {
-                    var grid = button.up('crmusersgrid');
-                    var selection = grid.getView().getSelectionModel().getSelection()[0];
-                    if (selection) {
-                        Ext.MessageBox.confirm(
-                            'Confirm', 'Are you sure?',
-                            function (btn) {
-                                if (btn == 'yes') {
-                                    grid.store.remove(selection);
-                                }
-                            }
-                        );
+                    // check and see if tab already open
+                    var tab = tabPanel.down('crmpartyformpanel');
+                    if (tab) {
+                        tabPanel.setActiveTab(tab);
+                        return;
                     }
-                }
-            },
-            '-',
-            {
-                text: 'Reset Password',
-                type: 'button',
-                iconCls: 'icon-edit',
-                handler: function (button) {
-                    var grid = button.up('crmusersgrid');
-                    var selection = grid.getView().getSelectionModel().getSelection()[0];
-                    if (selection) {
-                        me.setLoading(true);
 
-                        Ext.MessageBox.confirm(
-                            'Confirm', 'Reset Password?',
-                            function (btn) {
-                                Ext.Ajax.request({
-                                    method: 'POST',
-                                    url: '/users/reset_password',
-                                    params: {
-                                        login: selection.get('username')
-                                    },
-                                    success: function (response) {
-                                        me.setLoading(false);
+                    var crmPartyFormPanel = Ext.create("widget.crmpartyformpanel", {
+                        title: 'Add User',
+                        partyRoles: me.partyRoles,
+                        allowedPartyType: 'Individual',
+                        toRole: me.toRole,
+                        closable: true
+                    });
 
-                                        responseObj = Ext.JSON.decode(response.responseText);
-
-                                        if (responseObj.success) {
-                                            Ext.Msg.alert("Success", "Password has been reset");
-                                        }
-                                        else{
-                                            Ext.Msg.alert("Error", responseObj.message);
-                                        }
-                                    },
-                                    failure: function (response) {
-                                        me.setLoading(false);
-
-                                        Ext.Msg.alert("Error", "Error loading data.");
-                                    }
-                                });
-                            }
-                        );
-                    }
+                    tabPanel.add(crmPartyFormPanel);
+                    tabPanel.setActiveTab(crmPartyFormPanel);
                 }
             }
         ];
@@ -119,9 +89,9 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
             autoLoad: false,
             autoSync: true,
             proxy: {
-                type: 'rest',
+                type: 'ajax',
                 url: '/erp_app/organizer/crm/users/index',
-                extraParams: { party_id: config.partyId},
+                extraParams: { party_id: me.partyId},
                 reader: {
                     type: 'json',
                     successProperty: 'success',
@@ -129,118 +99,70 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
                     root: 'users',
                     totalProperty: 'total',
                     messageProperty: 'message'
-                },
-                writer: {
-                    type: 'json',
-                    writeAllFields: true,
-                    root: 'data'
-                },
-                listeners: {
-                    exception: function (proxy, response, operation) {
-                        if (response.responseText) {
-                            var responseObj = Ext.JSON.decode(response.responseText);
-
-                            if (responseObj.success) {
-
-                            }
-                            else {
-                                Ext.MessageBox.show({
-                                    title: 'REMOTE EXCEPTION',
-                                    msg: responseObj.message,
-                                    icon: Ext.MessageBox.ERROR,
-                                    buttons: Ext.Msg.OK
-                                });
-                            }
-                        }
-                        else {
-                            Ext.MessageBox.show({
-                                title: 'REMOTE EXCEPTION',
-                                msg: 'An error has occurred',
-                                icon: Ext.MessageBox.ERROR,
-                                buttons: Ext.Msg.OK
-                            });
-                        }
-                        me.setLoading(false);
-                    }
-                }
-            },
-            listeners: {
-                'beforesync': function () {
-                    me.setLoading(true);
-                },
-                'datachanged': function () {
-                    me.setLoading(false);
                 }
             }
         });
 
-        config = Ext.apply({
-            title: 'Users',
-            store: this.store,
-            plugins: [this.editing],
-            columns: [
-                {
-                    header: 'Username',
-                    dataIndex: 'username',
-                    width: 200,
-                    allowBlank: false,
-                    editor: {
-                        xtype: 'textfield'
-                    }
-                },
-                {
-                    header: 'Email',
-                    dataIndex: 'email',
-                    width: 200,
-                    allowBlank: false,
-                    editor: {
-                        xtype: 'textfield'
-                    }
-                },
-                {
-                    header: 'Status',
-                    dataIndex: 'status',
-                    allowBlank: false,
-                    renderer: 'capitalize'
-                },
-                {
-                    header: 'Last Login',
-                    width: 200,
-                    dataIndex: 'lastLoginAt',
-                    renderer: Ext.util.Format.dateRenderer('m/d/Y')
-                },
-                {
-                    header: 'Created At',
-                    width: 200,
-                    dataIndex: 'createdAt',
-                    renderer: Ext.util.Format.dateRenderer('m/d/Y')
-                },
-                {
-                    header: 'Updated At',
-                    width: 200,
-                    dataIndex: 'updatedAt',
-                    renderer: Ext.util.Format.dateRenderer('m/d/Y')
+        this.columns = [
+            {
+                header: 'Username',
+                dataIndex: 'username',
+                width: 200,
+                allowBlank: false,
+                editor: {
+                    xtype: 'textfield'
                 }
-            ],
-            dockedItems: [
-                {
-                    xtype: 'toolbar',
-                    docked: 'top',
-                    items: toolBarItems
-                },
-                {
-                    xtype: 'pagingtoolbar',
-                    store: this.store,
-                    dock: 'bottom',
-                    displayInfo: true
+            },
+            {
+                header: 'Email',
+                dataIndex: 'email',
+                width: 200,
+                allowBlank: false,
+                editor: {
+                    xtype: 'textfield'
                 }
-            ],
-            frame: false,
-            autoScroll: true,
-            loadMask: true
-        }, config);
+            },
+            {
+                header: 'Status',
+                dataIndex: 'status',
+                allowBlank: false,
+                renderer: 'capitalize'
+            },
+            {
+                header: 'Last Login',
+                width: 200,
+                dataIndex: 'lastLoginAt',
+                renderer: Ext.util.Format.dateRenderer('m/d/Y')
+            },
+            {
+                header: 'Created At',
+                width: 200,
+                dataIndex: 'createdAt',
+                renderer: Ext.util.Format.dateRenderer('m/d/Y')
+            },
+            {
+                header: 'Updated At',
+                width: 200,
+                dataIndex: 'updatedAt',
+                renderer: Ext.util.Format.dateRenderer('m/d/Y')
+            }
+        ];
 
-        this.callParent([config]);
+        this.dockedItems = [
+            {
+                xtype: 'toolbar',
+                docked: 'top',
+                items: toolBarItems
+            },
+            {
+                xtype: 'pagingtoolbar',
+                store: this.store,
+                dock: 'bottom',
+                displayInfo: true
+            }
+        ];
+
+        this.callParent(arguments);
     }
 });
 

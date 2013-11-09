@@ -3,15 +3,21 @@ Ext.ns("Compass.ErpApp.Organizer.Applications.Crm");
 Compass.ErpApp.Organizer.Applications.Crm.Base = function (config) {
     var tabs = [
         {
-            xtype: 'party_mgt_panel',
+            xtype: 'crmpartygrid',
+            applicationContainerId: 'crmTaskTabPanel',
             itemId: 'customersPanel',
-            fromRoles: ['customer'],
-            toRole: null,
-            detailsUrl: null,
-            title: 'Customers',
-            addBtn: '/images/erp_app/organizer/applications/crm/customer_360_64x64.png',
-            addBtnDescription: 'Add Customer',
-            searchDescription: 'Find Customer'
+            partyRelationships: [
+                {
+                    title: 'Employees',
+                    relationshipType: 'employee_customer',
+                    toRoleType: 'customer',
+                    fromRoleType: 'employee'
+                }
+            ]
+        },
+        {
+            xtype: 'crmpartymgtpanel',
+            itemId: 'customersPanel'
         }
     ];
 

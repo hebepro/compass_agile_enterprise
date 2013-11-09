@@ -1,177 +1,428 @@
 Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
     extend: "Ext.grid.Panel",
-    alias: 'widget.partygrid',
+    alias: 'widget.crmpartygrid',
+    frame: false,
+    autoScroll: true,
+    loadMask: true,
 
-    constructor: function (config) {
-        var fromRoles = config.fromRoles || [],
-            store = Ext.create('Ext.data.Store', {
-                fields: [
-                    'id',
-                    'description',
-                    {name: 'createdAt', mapping: 'created_at', type: 'date'},
-                    {name: 'updatedAt', mapping: 'updated_at', type: 'date'},
-                    'model'
-                ],
-                proxy: {
-                    type: 'ajax',
-                    url: '/erp_app/organizer/crm/base/parties',
-                    extraParams: {
-                        from_roles: fromRoles.join(),
-                        to_role: config.toRole
-                    },
-                    reader: {
-                        type: 'json',
-                        successProperty: 'success',
-                        root: 'parties',
-                        totalProperty: 'total'
-                    }
-                }
-            });
+    /**
+     * @cfg {String} applicationContainerId
+     * The id of the root application container that this panel resides in.
+     */
+    applicationContainerId: 'crmTaskTabPanel',
 
-        config = Ext.apply({
-            store: store,
-            columns: [
-                {
-                    header: 'Description',
-                    dataIndex: 'description'
-                },
-                {
-                    header: 'Customer Type',
-                    dataIndex: 'model'
-                },
-                {
-                    header: 'Created At',
-                    dataIndex: 'createdAt',
-                    renderer: Ext.util.Format.dateRenderer('m/d/Y')
-                },
-                {
-                    header: 'Updated At',
-                    dataIndex: 'updatedAt',
-                    renderer: Ext.util.Format.dateRenderer('m/d/Y')
-                },
-                {
-                    xtype: 'actioncolumn',
-                    header: 'Details',
-                    align: 'center',
-                    width: 50,
-                    items: [
-                        {
-                            icon: '/images/icons/view/view_16x16.png',
-                            tooltip: 'Edit',
-                            handler: function (grid, rowIndex, colIndex) {
-                                var record = grid.getStore().getAt(rowIndex),
-                                    crmTaskTabPanel = grid.up('tabpanel'),
-                                    itemId = 'detailsParty-' + record.get('id'),
-                                    title = record.get('description');
+    /**
+     * @cfg {String[]} fromRoles
+     * Array of PartyRoles to load for Grid Example (Customer, Prospect).
+     */
+    partyRole: 'customer',
 
-                                var partyDetailsPanel = crmTaskTabPanel.down('#' + itemId);
+    /**
+     * @cfg {String} toRole
+     * To RoleType these parties should be related to.
+     */
+    toRole: null,
 
-                                if (!partyDetailsPanel) {
-                                    partyDetailsPanel = Ext.create('widget.party_details_panel', {
-                                        title: title,
-                                        partyId: record.get('id'),
-                                        closable: true
-                                    });
-                                    crmTaskTabPanel.add(partyDetailsPanel);
-                                }
+    /**
+     * @cfg {Integer} toPartyId
+     * To parties id to get related parties from.
+     */
+    toPartyId: null,
 
-                                crmTaskTabPanel.setActiveTab(partyDetailsPanel);
-                                partyDetailsPanel.loadParty();
-                            }
-                        }
-                    ]
-                },
-                {
-                    xtype: 'actioncolumn',
-                    header: 'Edit',
-                    align: 'center',
-                    width: 50,
-                    items: [
-                        {
-                            icon: '/images/icons/edit/edit_16x16.png',
-                            tooltip: 'Edit',
-                            handler: function (grid, rowIndex, colIndex) {
-                                var record = grid.getStore().getAt(rowIndex),
-                                    crmTaskTabPanel = grid.up('tabpanel'),
-                                    itemId = 'editParty-' + record.get('id'),
-                                    title = 'Edit ' + config.partyMgtTitle;
+    /**
+     * @cfg {string} relationshipTypeToCreate
+     * Relationship type to create parties with.
+     */
+    relationshipTypeToCreate: null,
 
-                                var editPartyForm = crmTaskTabPanel.down('#' + itemId);
+    /**
+     * @cfg {String} detailsUrl
+     * Url to retrieve details for these parties.
+     */
+    detailsUrl: '/erp_app/organizer/crm/base/get_party_details/',
 
-                                if (!editPartyForm) {
-                                    editPartyForm = Ext.create('widget.party_form', {
-                                        title: title,
-                                        partyId: record.get('id')
-                                    });
-                                    crmTaskTabPanel.add(editPartyForm);
-                                }
+    /**
+     * @cfg {String} addPartyBtn
+     * Url for add party button.
+     */
+    addPartyBtn: '/images/erp_app/organizer/applications/crm/customer_360_64x64.png',
 
-                                crmTaskTabPanel.setActiveTab(editPartyForm);
-                                editPartyForm.loadParty();
-                            }
-                        }
-                    ]
-                },
-                {
-                    xtype: 'actioncolumn',
-                    header: 'Delete',
-                    align: 'center',
-                    width: 50,
-                    items: [
-                        {
-                            icon: '/images/icons/delete/delete_16x16.png',
-                            tooltip: 'Delete',
-                            handler: function (grid, rowIndex, colIndex) {
-                                var record = grid.getStore().getAt(rowIndex);
+    /**
+     * @cfg {String} title
+     * title of panel.
+     */
+    title: 'Customers',
 
-                                var myMask = new Ext.LoadMask(grid, {msg: "Please wait..."});
-                                myMask.show();
+    /**
+     * @cfg {String} addBtnDescription
+     * Description for add party button.
+     */
+    addBtnDescription: 'Add Customer',
 
-                                Ext.Msg.confirm('Please Confirm', 'Delete record?', function (btn) {
-                                    if (btn == 'ok' || btn == 'yes') {
-                                        Ext.Ajax.request({
-                                            method: 'DELETE',
-                                            url: '/erp_app/organizer/crm/base/parties',
-                                            params: {
-                                                party_id: record.get('id')
-                                            },
-                                            success: function (response) {
-                                                myMask.hide();
-                                                responseObj = Ext.JSON.decode(response.responseText);
+    /**
+     * @cfg {String} searchDescription
+     * Placeholder description for party search box.
+     */
+    searchDescription: 'Find Customer',
 
-                                                if (responseObj.success) {
-                                                    grid.store.reload();
-                                                }
-                                            },
-                                            failure: function (response) {
-                                                myMask.hide();
-                                                Ext.Msg.alert("Error", "Error with request.");
-                                            }
-                                        });
-                                    }
-                                    else {
-                                        myMask.hide();
-                                    }
-                                });
-                            }
-                        }
-                    ]
-                }
-            ],
-            dockedItems: [
-                {
-                    xtype: 'pagingtoolbar',
-                    store: store,
-                    dock: 'bottom',
-                    displayInfo: true
-                }
-            ],
-            frame: false,
-            autoScroll: true,
-            loadMask: true
-        }, config);
+    /**
+     * @cfg {String} allowedPartyType
+     * Party type that can be created {Both | Individual | Organization}.
+     */
+    allowedPartyType: 'Both',
+
+    /**
+     * @cfg {String} detailsUrl
+     * Url to retrieve details for these parties.
+     */
+    partyMgtTitle: 'Customer',
+
+    /**
+     * @cfg {Array | Object} partyRelationships
+     * Party Relationships to include in the details of this party, is an config object with the following options
+     *
+     * @param {String} title
+     * title of tab
+     *
+     * @param {String} relationshipType
+     * relationship type internal_identifier
+     *
+     * @param {String} relationshipDirection {from | to}
+     * if we are getting the to or from side of relationships
+     *
+     * @param {String} toRoleType
+     * RoleType internal_identifier for to side
+     *
+     * @param {String} fromRoleType
+     * RoleType internal_identifier for from side
+     *
+     * @example
+     * {
+            title: 'Employees',
+            relationshipType: 'employee_customer',
+            toRoleType: 'customer',
+            fromRoleType: 'employee'
+        }
+     */
+    partyRelationships: [],
+
+    constructor: function(config){
+        var listeners = {
+            activate: function () {
+                this.store.load();
+            }
+        };
+
+        config['listeners'] = Ext.apply(listeners, config['listeners']);
 
         this.callParent([config]);
+    },
+
+    initComponent: function () {
+        var me = this;
+
+        me.addEvents(
+            /*
+             * @event partycreated
+             * Fires when a party is created
+             * @param {Compass.ErpApp.Shared.Crm.PartyMgtPanel} this
+             * @param {Int} newPartyId
+             */
+            'partycreated',
+            /*
+             * @event partyupdated
+             * Fires when a party is updated
+             * @param {Compass.ErpApp.Shared.Crm.PartyMgtPanel} this
+             * @param {Int} updatedPartyId
+             */
+            'partyupdated',
+            /*
+             * @event usercreated
+             * Fires when a user is updated
+             * @param {Compass.ErpApp.Shared.Crm.PartyMgtPanel} this
+             * @param {Int} createdUserId
+             */
+            'usercreated',
+            /*
+             * @event userupdated
+             * Fires when a party is updated
+             * @param {Compass.ErpApp.Shared.Crm.PartyMgtPanel} this
+             * @param {Int} updatedUserId
+             */
+            'userupdated'
+        );
+
+        var toolBarItems = [
+            {
+                text: me.addBtnDescription,
+                xtype: 'button',
+                iconCls: 'icon-add',
+                handler: function (button) {
+                    // open tab with create user form.
+                    var tabPanel = button.up('crmpartygrid').up('#' + me.applicationContainerId);
+
+                    // check and see if tab already open
+                    var tab = tabPanel.down('crmpartyformpanel');
+                    if (tab) {
+                        tabPanel.setActiveTab(tab);
+                        return;
+                    }
+
+                    var crmPartyFormPanel = Ext.create("widget.crmpartyformpanel", {
+                        title: me.addBtnDescription,
+                        applicationContainerId: me.applicationContainerId,
+                        toPartyId: me.toPartyId,
+                        partyRole: me.partyRole,
+                        relationshipTypeToCreate: me.relationshipTypeToCreate,
+                        closable: true,
+                        allowedPartyType: me.allowedPartyType,
+                        listeners: {
+                            partycreated: function (comp, partyId) {
+                                me.fireEvent('partycreated', me, partyId);
+                            },
+                            usercreated: function (comp, userId) {
+                                me.fireEvent('usercreated', me, userId);
+                            }
+                        }
+                    });
+
+                    tabPanel.add(crmPartyFormPanel);
+                    tabPanel.setActiveTab(crmPartyFormPanel);
+                }
+            },
+            '|',
+            'Search',
+            {
+                xtype: 'textfield',
+                emptyText: me.searchDescription,
+                width: 200,
+                listeners: {
+                    specialkey: function (field, e) {
+                        if (e.getKey() == e.ENTER) {
+                            var button = field.up('toolbar').down('button');
+                            button.fireEvent('click', button);
+                        }
+                    }
+                }
+            },
+            {
+                xtype: 'button',
+                itemId: 'searchbutton',
+                icon: '/images/erp_app/organizer/applications/crm/toolbar_find.png',
+                listeners: {
+                    click: function (button, e, eOpts) {
+                        var grid = button.up('crmpartygrid'),
+                            value = grid.down('toolbar').down('textfield').getValue();
+
+                        grid.store.load({
+                            params: {
+                                query_filter: value,
+                                start: 0,
+                                limit: 25
+                            }
+                        });
+                    }
+                }
+            }
+        ];
+
+        var store = Ext.create('Ext.data.Store', {
+            fields: [
+                'id',
+                'description',
+                {name: 'createdAt', mapping: 'created_at', type: 'date'},
+                {name: 'updatedAt', mapping: 'updated_at', type: 'date'},
+                'model'
+            ],
+            proxy: {
+                type: 'ajax',
+                url: '/erp_app/organizer/crm/base/parties',
+                extraParams: {
+                    party_role: me.partyRole,
+                    to_role: me.toRole,
+                    to_party_id: me.toPartyId
+                },
+                reader: {
+                    type: 'json',
+                    successProperty: 'success',
+                    root: 'parties',
+                    totalProperty: 'total'
+                }
+            }
+        });
+
+        me.store = store;
+
+        me.dockedItems = [
+            {
+                xtype: 'toolbar',
+                docked: 'top',
+                items: toolBarItems
+            },
+            {
+                xtype: 'pagingtoolbar',
+                store: store,
+                dock: 'bottom',
+                displayInfo: true
+            }
+        ];
+
+        me.columns = [
+            {
+                header: 'Description',
+                dataIndex: 'description'
+            },
+            {
+                header: 'Customer Type',
+                dataIndex: 'model',
+                renderer: function (v) {
+                    switch (v) {
+                        case 'Organization':
+                            return 'Business';
+                            break;
+                        case 'Individual':
+                            return 'Individual';
+                            break;
+                    }
+                }
+            },
+            {
+                header: 'Created At',
+                dataIndex: 'createdAt',
+                renderer: Ext.util.Format.dateRenderer('m/d/Y')
+            },
+            {
+                header: 'Updated At',
+                dataIndex: 'updatedAt',
+                renderer: Ext.util.Format.dateRenderer('m/d/Y')
+            },
+            {
+                xtype: 'actioncolumn',
+                header: 'Details',
+                align: 'center',
+                width: 50,
+                items: [
+                    {
+                        icon: '/images/icons/view/view_16x16.png',
+                        tooltip: 'Edit',
+                        handler: function (grid, rowIndex, colIndex) {
+                            var record = grid.getStore().getAt(rowIndex),
+                                crmTaskTabPanel = grid.up('crmpartygrid').up('#' + me.applicationContainerId),
+                                itemId = 'detailsParty-' + record.get('id'),
+                                title = record.get('description');
+
+                            var partyDetailsPanel = crmTaskTabPanel.down('#' + itemId);
+
+                            if (!partyDetailsPanel) {
+                                partyDetailsPanel = Ext.create('widget.crmpartydetailspanel', {
+                                    title: title,
+                                    itemId: itemId,
+                                    applicationContainerId: me.applicationContainerId,
+                                    detailsUrl: me.detailsUrl,
+                                    partyId: record.get('id'),
+                                    partyModel: record.get('model'),
+                                    partyRelationships: me.partyRelationships,
+                                    closable: true
+                                });
+                                crmTaskTabPanel.add(partyDetailsPanel);
+                            }
+
+                            crmTaskTabPanel.setActiveTab(partyDetailsPanel);
+                            partyDetailsPanel.loadParty();
+                        }
+                    }
+                ]
+            },
+            {
+                xtype: 'actioncolumn',
+                header: 'Edit',
+                align: 'center',
+                width: 50,
+                items: [
+                    {
+                        icon: '/images/icons/edit/edit_16x16.png',
+                        tooltip: 'Edit',
+                        handler: function (grid, rowIndex, colIndex) {
+                            var record = grid.getStore().getAt(rowIndex),
+                                crmTaskTabPanel = grid.up('crmpartygrid').up('#' + me.applicationContainerId),
+                                itemId = 'editParty-' + record.get('id'),
+                                title = 'Edit ' + me.partyMgtTitle;
+
+                            var editPartyForm = crmTaskTabPanel.down('#' + itemId);
+
+                            if (!editPartyForm) {
+                                editPartyForm = Ext.create('widget.crmpartyformpanel', {
+                                    title: title,
+                                    itemId: itemId,
+                                    applicationContainerId: me.applicationContainerId,
+                                    partyType: record.get('model'),
+                                    partyId: record.get('id'),
+                                    listeners: {
+                                        partyupdated: function (comp, partyId) {
+                                            me.fireEvent('partyupdated', me, partyId);
+                                        },
+                                        userupdated: function (comp, userId) {
+                                            me.fireEvent('userupdated', me, userId);
+                                        }
+                                    },
+                                    closable: true
+                                });
+                                crmTaskTabPanel.add(editPartyForm);
+                            }
+
+                            crmTaskTabPanel.setActiveTab(editPartyForm);
+                        }
+                    }
+                ]
+            },
+            {
+                xtype: 'actioncolumn',
+                header: 'Delete',
+                align: 'center',
+                width: 50,
+                items: [
+                    {
+                        icon: '/images/icons/delete/delete_16x16.png',
+                        tooltip: 'Delete',
+                        handler: function (grid, rowIndex, colIndex) {
+                            var record = grid.getStore().getAt(rowIndex);
+
+                            var myMask = new Ext.LoadMask(grid, {msg: "Please wait..."});
+                            myMask.show();
+
+                            Ext.Msg.confirm('Please Confirm', 'Delete record?', function (btn) {
+                                if (btn == 'ok' || btn == 'yes') {
+                                    Ext.Ajax.request({
+                                        method: 'DELETE',
+                                        url: '/erp_app/organizer/crm/base/parties',
+                                        params: {
+                                            party_id: record.get('id')
+                                        },
+                                        success: function (response) {
+                                            myMask.hide();
+                                            responseObj = Ext.JSON.decode(response.responseText);
+
+                                            if (responseObj.success) {
+                                                grid.store.reload();
+                                            }
+                                        },
+                                        failure: function (response) {
+                                            myMask.hide();
+                                            Ext.Msg.alert("Error", "Error with request.");
+                                        }
+                                    });
+                                }
+                                else {
+                                    myMask.hide();
+                                }
+                            });
+                        }
+                    }
+                ]
+            }
+        ];
+
+        this.callParent(arguments);
     }
 });
 
