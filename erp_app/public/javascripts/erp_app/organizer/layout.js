@@ -5,28 +5,28 @@ Compass.ErpApp.Organizer.Layout = function (config) {
     this.layoutConfig = config;
 
     //used to build accordion menu
-    var accordionMenuItems = []
+    var accordionMenuItems = [];
 
     var menu = Ext.create('Ext.menu.Menu', {
-        items:[
+        items: [
             {
-                text:'Preferences',
-                iconCls:'icon-gear',
-                handler:function () {
-                    var win = Ext.create("Compass.ErpApp.Organizer.PreferencesWindow", {iconCls:'icon-gear'});
+                text: 'Preferences',
+                iconCls: 'icon-gear',
+                handler: function () {
+                    var win = Ext.create("Compass.ErpApp.Organizer.PreferencesWindow", {iconCls: 'icon-gear'});
                     win.show();
                     win.setup();
                 }
             },
             {
-                text:'Profile',
-                iconCls:'icon-user',
-                handler:function () {
+                text: 'Profile',
+                iconCls: 'icon-user',
+                handler: function () {
                     var win = Ext.create("Ext.window.Window", {
-                        title:'Profile',
-                        iconCls:'icon-user',
-                        items:[
-                            {xtype:'shared_profilemanagementpanel', title:'', height:250}
+                        title: 'Profile',
+                        iconCls: 'icon-user',
+                        items: [
+                            {xtype: 'shared_profilemanagementpanel', title: '', height: 250}
                         ]
                     });
                     win.show();
@@ -36,11 +36,17 @@ Compass.ErpApp.Organizer.Layout = function (config) {
     });
 
     var toolbar = Ext.create("Ext.toolbar.Toolbar", {
-        items:[
+        items: [
             {
-                text:'Menu',
-                iconCls:'icon-info',
-                menu:menu
+                xtype: 'label',
+                text: 'Welcome',
+                itemId: 'organizerWelcomeMsg'
+            },
+            ' ',
+            {
+                text: 'Menu',
+                iconCls: 'icon-info',
+                menu: menu
             }
         ]
     });
@@ -55,13 +61,13 @@ Compass.ErpApp.Organizer.Layout = function (config) {
     this.setupLogoutButton = function () {
         toolbar.add("->");
         toolbar.add({
-            text:'Logout',
-            xtype:'button',
-            iconCls:"icon-exit",
-            defaultAlign:"right",
-            'listeners':{
-                scope:this,
-                'click':function () {
+            text: 'Logout',
+            xtype: 'button',
+            iconCls: "icon-exit",
+            defaultAlign: "right",
+            'listeners': {
+                scope: this,
+                'click': function () {
                     Ext.MessageBox.confirm('Confirm', 'Are you sure you want to logout?', function (btn) {
                         if (btn == 'no') {
                             return false;
@@ -82,35 +88,35 @@ Compass.ErpApp.Organizer.Layout = function (config) {
     };
 
     this.CenterPanel = Ext.create("Ext.Panel", {
-        id:'erp_app_viewport_center',
-        region:'center',
-        margins:'0 0 0 0',
-        layout:'card',
-        activeItem:0,
-        frame:false,
-        minsize:300,
-        items:[]
+        id: 'erp_app_viewport_center',
+        region: 'center',
+        margins: '0 0 0 0',
+        layout: 'card',
+        activeItem: 0,
+        frame: false,
+        minsize: 300,
+        items: []
     });
 
     this.NorthPanel = Ext.create("Ext.Panel", {
-        region:'north',
-        height:29,
-        layout:'anchor',
-        margins:'0 0 0 0',
-        cmargins:'0 0 0 0',
-        items:[toolbar]
+        region: 'north',
+        height: 29,
+        layout: 'anchor',
+        margins: '0 0 0 0',
+        cmargins: '0 0 0 0',
+        items: [toolbar]
     });
 
     this.EastPanel = Ext.create("Ext.Panel", {
-        region:'east',
-        hidden:true
+        region: 'east',
+        hidden: true
     });
 
     var southToolbar = Ext.create("Ext.toolbar.Toolbar", {
-        items:[
+        items: [
             "->",
             {
-                xtype:"trayclock"
+                xtype: "trayclock"
             }
         ]
     });
@@ -118,12 +124,12 @@ Compass.ErpApp.Organizer.Layout = function (config) {
     this.SouthToolBar = southToolbar;
 
     this.SouthPanel = Ext.create("Ext.Panel", {
-        region:'south',
-        height:29,
-        layout:'anchor',
-        margins:'0 0 0 0',
-        cmargins:'0 0 0 0',
-        items:[
+        region: 'south',
+        height: 29,
+        layout: 'anchor',
+        margins: '0 0 0 0',
+        cmargins: '0 0 0 0',
+        items: [
             southToolbar
         ]
     });
@@ -137,20 +143,20 @@ Compass.ErpApp.Organizer.Layout = function (config) {
 
     this.setup = function () {
         this.WestPanel = {
-            region:'west',
-            margins:'0 0 0 0',
-            cmargins:'0 0 0 0',
-            width:200,
-            split:true,
-            collapsible:true,
-            layout:'accordion',
-            items:accordionMenuItems
+            region: 'west',
+            margins: '0 0 0 0',
+            cmargins: '0 0 0 0',
+            width: 200,
+            split: true,
+            collapsible: true,
+            layout: 'accordion',
+            items: accordionMenuItems
         };
 
         this.viewPort = Ext.create('Ext.container.Viewport', {
-            layout:'border',
-            border:false,
-            items:[
+            layout: 'border',
+            border: false,
+            items: [
                 this.NorthPanel,
                 this.WestPanel,
                 this.CenterPanel,
@@ -158,6 +164,8 @@ Compass.ErpApp.Organizer.Layout = function (config) {
                 this.SouthPanel
             ]
         });
+
+        this.viewPort.down('#organizerWelcomeMsg').setText('Welcome: ' + currentUser.description);
     };
 };
 

@@ -1,3 +1,5 @@
+require 'aasm'
+
 #compass_ae libraries
 require 'erp_base_erp_svcs'
 

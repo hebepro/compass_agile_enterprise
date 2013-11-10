@@ -3,12 +3,12 @@ module ErpApp
 		module ControlPanel
 			class ApplicationManagementController < ErpApp::Desktop::ControlPanel::BaseController
 
-			  def current_user_applcations
+			  def current_user_applications
           user = current_user
 
           node_hashes = []
           desktop = user.desktop
-          desktop.applications.each do |application|
+          desktop.applications.joins(:preference_types).each do |application|
             node_hashes << {:text => application.description, :iconCls => application.icon, :leaf => true, :id => application.id}
           end
 

@@ -18,7 +18,6 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,db,lib,tasks,public}/**/*"] + ["GPL-3-LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["spec/**/*"]
 
-  s.add_dependency "aasm", "3.0.14"
   s.add_dependency "activemerchant", "1.29.3"
 
   #compass_ae dependencies
