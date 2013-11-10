@@ -38,10 +38,10 @@ module ErpApp
           statement = statement.where(Party.arel_table[:description].matches("%#{query}%")) if query
 
           # Get total count of records
-          total = statement.count
+          total = statement.uniq.count
 
           # Apply limit and offset
-          parties = statement.limit(limit).offset(offset).all
+          parties = statement.uniq.limit(limit).offset(offset).all
 
           data = [].tap do |array|
             parties.each do |party|
@@ -168,10 +168,10 @@ module ErpApp
           statement = statement.where(Party.arel_table[:description].matches("%#{query_filter}%")) if query_filter
 
           # Get total count of records
-          total = statement.count
+          total = statement.uniq.count
 
           # Apply limit and offset
-          parties = statement.limit(limit).offset(offset).all
+          parties = statement.uniq.limit(limit).offset(offset).all
 
           {:success => true, :total => total, :parties => parties.collect { |item| item.to_hash(:only => [:id, :description, :created_at, :updated_at], :model => item.business_party.class.name) }}
         end
@@ -179,11 +179,12 @@ module ErpApp
         def create_party
           result = {}
           party_type = params[:business_party_type]
-          
+
           begin
             ActiveRecord::Base.transaction do
               # Get Party Roles
               to_party_id = params[:to_party_id]
+              to_role = params[:to_role]
               relationship_type_to_create = params[:relationship_type_to_create]
               party_role = params[:party_role]
 
@@ -197,6 +198,7 @@ module ErpApp
               params.delete(:authenticity_token)
               params.delete(:party_role)
               params.delete(:to_party_id)
+              params.delete(:to_role)
               params.delete(:relationship_type_to_create)
 
               if klass == Organization
@@ -235,6 +237,16 @@ module ErpApp
               end
 
               # Add Party Relationship
+              if !to_role.blank? && to_party_id.blank?
+                to_role_type = RoleType.iid(to_role)
+
+                to_party = current_user.party
+                to_party_rln = to_party.from_relationships.where('role_type_id_to = ?', to_role_type).first
+                relationship_type = RelationshipType.where('valid_to_role_type_id = ? and valid_from_role_type_id = ?', to_role_type.id, RoleType.iid(party_role).id).first
+
+                business_party.party.create_relationship(relationship_type.description, to_party_rln.party_id_to, relationship_type)
+              end
+
               if !to_party_id.blank? and !relationship_type_to_create.blank?
                 relationship_type = RelationshipType.find_by_internal_identifier(relationship_type_to_create)
                 business_party.party.create_relationship(relationship_type.description, to_party_id, relationship_type)

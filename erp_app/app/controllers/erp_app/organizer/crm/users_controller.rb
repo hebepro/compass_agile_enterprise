@@ -73,19 +73,27 @@ module ErpApp
                                         .or(user_table[:email].matches("%#{query_filter}%")))
           end
 
-          total = statement.count
-          users = statement.limit(limit).offset(offset).all
+          total = statement.uniq.count
+          users = statement.uniq.limit(limit).offset(offset).all
 
           {:success => true,
-           :users => users.collect { |user| user.to_hash(:only =>
-                                                             [:id, :username,
-                                                              :email,
-                                                              :last_login_at,
-                                                              :created_at,
-                                                              :updated_at,
-                                                              :activation_state],
-                                                         :party_description => (user.party.description))
-           },
+           :users => users.collect do |user|
+             user_data = user.to_hash(:only =>
+                                          [:id, :username,
+                                           :email,
+                                           :last_login_at,
+                                           :created_at,
+                                           :updated_at,
+                                           :activation_state],
+                                      :party_description => (user.party.description))
+
+             if user.party.business_party.class == Individual
+               user_data[:first_name] = user.party.business_party.current_first_name
+               user_data[:last_name] = user.party.business_party.current_last_name
+             end
+
+             user_data
+           end,
            :total => total}
         end
 

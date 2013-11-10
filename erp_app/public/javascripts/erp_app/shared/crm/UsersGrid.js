@@ -3,6 +3,8 @@ Ext.define('Compass.ErpApp.Shared.Crm.User', {
     fields: [
         'id',
         'username',
+        {name: 'firstName', mapping: 'first_name'},
+        {name: 'lastName', mapping: 'last_name'},
         {name: 'partyDescription', mapping: 'party_description'},
         'email',
         {name: 'status', mapping: 'activation_state'},
@@ -101,14 +103,14 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
              * Fires when add user is clicked.  Return false to cancel.
              * @param {Compass.ErpApp.Shared.Crm.UsersGrid} this
              */
-            'beforeadduser',
+            'adduserclick',
             /*
              * @event edituserclick
              * Fires before edit user is clicked. Return false to cancel
              * @param {Compass.ErpApp.Shared.Crm.UsersGrid} this
              * @param {Compass.ErpApp.Shared.Crm.User} user about to be edited
              */
-            'beforeedituser'
+            'edituserclick'
         );
 
         this.store = Ext.create('Ext.data.Store', {
@@ -144,7 +146,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
                 xtype: 'button',
                 iconCls: me.addBtnIconCls,
                 handler: function (button) {
-                    if(me.fireEvent('beforeadduser', me) !== false){
+                    if (me.fireEvent('adduserclick', me) !== false) {
 
                     }
                 }
@@ -259,7 +261,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
                         handler: function (grid, rowIndex, colIndex) {
                             var record = grid.getStore().getAt(rowIndex);
 
-                            if(me.fireEvent('beforeedituser', me, record) !== false){
+                            if (me.fireEvent('edituserclick', me, record) !== false) {
 
                             }
                         }

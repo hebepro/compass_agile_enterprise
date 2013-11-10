@@ -18,6 +18,12 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
     relationshipTypeToCreate: null,
 
     /**
+     * @cfg {String} toRole
+     * To RoleType these parties should be related to.
+     */
+    toRole: null,
+
+    /**
      * @cfg {Int} toPartyId
      * Id of party to relationship should created to.
      */
@@ -136,6 +142,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
                                 crmpartyform.submit({
                                     params: {
                                         party_role: me.partyRole,
+                                        to_role: me.toRole,
                                         to_party_id: me.toPartyId,
                                         relationship_type_to_create: me.relationshipTypeToCreate,
                                         business_party_type: me.partyType
