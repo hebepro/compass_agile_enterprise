@@ -8,7 +8,7 @@ module ErpApp
 
           node_hashes = []
           desktop = user.desktop
-          desktop.applications.joins(:preference_types).each do |application|
+          desktop.applications.joins(:preference_types).uniq.each do |application|
             node_hashes << {:text => application.description, :iconCls => application.icon, :leaf => true, :id => application.id}
           end
 

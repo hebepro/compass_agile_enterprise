@@ -1,0 +1,25 @@
+.crm-contacts-list-item {
+    margin-top: 3px;
+    padding-left: 20px;
+    font-size: 11px;
+    line-height: 20px;
+    cursor: pointer;
+    border: 1px solid #fff;
+}
+
+.crm-contacts-list .x-item-selected {
+    font-weight: bold;
+    color: #15428B;
+    background-color: #DFE8F6;
+    border: 1px dotted #A3BAE9;
+}
+
+.crm-contacts-list-icon {
+    float: left;
+    margin-top: 6px;
+    margin-left: 2px;
+}
+
+.crm-contacts-list-item-hover {
+    background-color: #eee;
+}

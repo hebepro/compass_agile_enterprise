@@ -7,7 +7,7 @@ module ErpApp
 
         node_hashes = []
         organizer = user.organizer
-        organizer.applications.joins(:preference_types).each do |application|
+        organizer.applications.joins(:preference_types).uniq.each do |application|
           node_hashes << {:text => application.description, :iconCls => application.icon, :leaf => true, :id => application.id}
         end
 

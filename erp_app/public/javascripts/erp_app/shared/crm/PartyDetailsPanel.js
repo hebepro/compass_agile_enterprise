@@ -6,9 +6,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
     contactWidgetXtypes: [
         'phonenumbergrid',
         'emailaddressgrid',
-        'postaladdressgrid',
-        'shared_notesgrid',
-        'crmusersgrid'
+        'postaladdressgrid'
     ],
 
     /**
@@ -60,12 +58,71 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
 
     initComponent: function () {
         var me = this,
-            tabPanels = [
-                {xtype: 'phonenumbergrid', partyId: me.partyId},
-                {xtype: 'emailaddressgrid', partyId: me.partyId},
-                {xtype: 'postaladdressgrid', partyId: me.partyId},
-                {xtype: 'shared_notesgrid', partyId: me.partyId}
-            ];
+            tabPanels = [];
+
+        contactsPanel = Ext.create('widget.panel', {
+            title: 'Contacts',
+            layout: 'border',
+            itemId: 'contactsContainer',
+            items: [
+                {
+                    xtype: 'panel',
+                    region: 'west',
+                    width: 140,
+                    items: Ext.create('widget.dataview', {
+                        autoScroll: true,
+                        store: Ext.create('Ext.data.SimpleStore', {
+                            fields: ['title', 'xtype', 'iconSrc'],
+                            data: [
+                                ['Phone Numbers', 'phonenumbergrid', '/images/icons/phone/phone_16x16.png'],
+                                ['Email Addresses', 'emailaddressgrid', '/images/icons/mail/mail_16x16.png'],
+                                ['Postal Addressses', 'postaladdressgrid', '/images/icons/home/home_16x16.png']
+                            ]
+                        }),
+                        selModel: {
+                            mode: 'SINGLE',
+                            listeners: {
+                                selectionchange: function (dataView, selection) {
+                                    if (selection) {
+                                        selection = selection.first();
+
+                                        var selectedContactContainer = me.down('#contactsContainer').down('#selectedContactContainer'),
+                                            selectedContact = selectedContactContainer.down(selection.data.xtype);
+
+                                        selectedContactContainer.layout.setActiveItem(selectedContact);
+                                    }
+                                }
+                            }
+                        },
+                        listeners: {
+                            viewready: function (dataView) {
+                                dataView.getSelectionModel().select(dataView.store.first());
+                            }
+                        },
+                        trackOver: true,
+                        cls: 'crm-contacts-list',
+                        itemSelector: '.crm-contacts-list-item',
+                        overItemCls: 'crm-contacts-list-item-hover',
+                        tpl: '<tpl for="."><img class="crm-contacts-list-icon" src="{iconSrc}" /><div class="crm-contacts-list-item">{title}</div></tpl>'
+                    })
+                },
+                {
+                    xtype: 'panel',
+                    flex: 1,
+                    itemId: 'selectedContactContainer',
+                    region: 'center',
+                    layout: 'card',
+                    items: [
+                        {xtype: 'phonenumbergrid', partyId: me.partyId},
+                        {xtype: 'emailaddressgrid', partyId: me.partyId},
+                        {xtype: 'postaladdressgrid', partyId: me.partyId}
+                    ]
+                }
+            ]
+        });
+
+        tabPanels.push(contactsPanel);
+        tabPanels.push({xtype: 'shared_notesgrid', partyId: me.partyId});
 
         me.partyDetailsPanel = Ext.create('widget.panel', {
             flex: 1,
@@ -91,11 +148,11 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
                 canAddParty: partyRelationship.canAddParty || true,
                 canEditParty: partyRelationship.canEditParty || true,
                 canDeleteParty: partyRelationship.canDeleteParty || true,
-                listeners:{
-                    partycreated: function(comp, partyId){
+                listeners: {
+                    partycreated: function (comp, partyId) {
                         this.store.load();
                     },
-                    partyupdated: function(comp, partyId){
+                    partyupdated: function (comp, partyId) {
                         this.store.load();
                     }
                 }
@@ -103,7 +160,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
         });
 
         me.partyDetailsTabPanel = Ext.create('widget.tabpanel', {
-            height: 300,
+            flex: 1,
             collapsible: true,
             region: 'south',
             items: tabPanels
