@@ -125,7 +125,8 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
         tabPanels.push({xtype: 'shared_notesgrid', partyId: me.partyId});
 
         me.partyDetailsPanel = Ext.create('widget.panel', {
-            flex: 1,
+            //flex: 1,
+            //height: 300,
             itemId: 'partyDetails',
             html: 'Party Details',
             border: false,
@@ -160,7 +161,8 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
         });
 
         me.partyDetailsTabPanel = Ext.create('widget.tabpanel', {
-            flex: 1,
+            //flex: 1,
+            height: 400,
             collapsible: true,
             region: 'south',
             items: tabPanels
