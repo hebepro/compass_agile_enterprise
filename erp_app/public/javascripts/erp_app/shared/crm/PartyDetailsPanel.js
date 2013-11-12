@@ -67,6 +67,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
             items: [
                 {
                     xtype: 'panel',
+                    collapsible: true,
                     region: 'west',
                     width: 140,
                     items: Ext.create('widget.dataview', {
