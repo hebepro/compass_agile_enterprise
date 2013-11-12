@@ -1,6 +1,7 @@
 Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
     extend: "Ext.panel.Panel",
     alias: 'widget.crmpartydetailspanel',
+    cls: 'crmpartydetailspanel',
     layout: 'border',
     items: [],
     contactWidgetXtypes: [
@@ -68,7 +69,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
                 {
                     xtype: 'panel',
                     region: 'west',
-                    width: 140,
+                    width: 155,
                     items: Ext.create('widget.dataview', {
                         autoScroll: true,
                         store: Ext.create('Ext.data.SimpleStore', {
@@ -110,6 +111,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
                     xtype: 'panel',
                     flex: 1,
                     itemId: 'selectedContactContainer',
+                    cls: 'selectedContactContainer',
                     region: 'center',
                     layout: 'card',
                     items: [

@@ -21,6 +21,11 @@ var contactPurposeStore = Ext.create('Ext.data.Store', {
 Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
     extend: "Ext.grid.Panel",
     alias: 'widget.contactmechanismgrid',
+    cls: 'contactmechanismgrid',
+    border: false,
+    frame: false,
+    header: false,
+
     initComponent: function () {
         var me = this,
             config = me.initialConfig;
