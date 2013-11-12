@@ -12,7 +12,11 @@ class PhoneNumber < ActiveRecord::Base
   end
 
 	def to_label
-		"#{description} : #{phone_number}"
+		"#{description} : #{to_s}"
 	end
+	
+	def to_s
+	  "#{phone_number}"
+  end
 
 end

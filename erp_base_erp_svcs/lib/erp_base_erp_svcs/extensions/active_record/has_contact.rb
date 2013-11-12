@@ -17,6 +17,12 @@ module ErpBaseErpSvcs
   					after_destroy :destroy_contact
 					
 					  has_one :contact, :as => :contact_mechanism
+					  
+					  [:purpose,
+					    :purposes,
+					    :is_primary,
+					    :is_primary=,
+					    :is_primary?].each { |m| delegate m, :to => :contact }
 				  end
 				end
 
@@ -24,8 +30,12 @@ module ErpBaseErpSvcs
 				end
 
 				module InstanceMethods
-				  # return first contact purpose
-          def contact_purpose
+				  
+				  def save_contact
+					  self.contact.save
+				  end
+				  
+				  def contact_purpose
             contact.contact_purposes.count == 0 ? nil : contact.contact_purposes.first
           end
 
@@ -33,10 +43,6 @@ module ErpBaseErpSvcs
           def contact_purposes
             contact.contact_purposes
           end
-				  
-				  def save_contact
-					  self.contact.save
-				  end
 
 				  def destroy_contact
 					  self.contact.destroy unless self.contact.nil?
@@ -48,9 +54,10 @@ module ErpBaseErpSvcs
               self.contact.description = self.description
             end
           end
-          
+           
 				end
-			end
-		end
-	end
-end
+				
+			end #HasContact
+		end #ActiveRecord
+	end #Extensions
+end #ErpBaseErpSvcs
