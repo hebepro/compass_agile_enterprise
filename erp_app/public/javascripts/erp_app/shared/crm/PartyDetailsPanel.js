@@ -113,9 +113,9 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
                     region: 'center',
                     layout: 'card',
                     items: [
-                        {xtype: 'phonenumbergrid', partyId: me.partyId},
-                        {xtype: 'emailaddressgrid', partyId: me.partyId},
-                        {xtype: 'postaladdressgrid', partyId: me.partyId}
+                        {xtype: 'phonenumbergrid', partyId: me.partyId, listeners:{'contactdatawrite':{fn:me.loadDetails,scope:me}}},
+                        {xtype: 'emailaddressgrid', partyId: me.partyId, listeners:{'contactdatawrite':{fn:me.loadDetails,scope:me}}},
+                        {xtype: 'postaladdressgrid', partyId: me.partyId, listeners:{'contactdatawrite':{fn:me.loadDetails,scope:me}}}
                     ]
                 }
             ]
@@ -173,25 +173,31 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
         this.callParent(arguments);
     },
 
-    loadParty: function () {
-        var me = this,
-            partyDetails = me.down('#partyDetails'),
-            tabPanel = me.down('tabpanel'),
-            detailsUrl = me.detailsUrl;
-
-        if (Ext.isEmpty(me.detailUrl)) {
-            detailsUrl = '/erp_app/organizer/crm/base/get_party_details/'
-        }
-
-        // Load html of party
+	loadDetails: function(){
+		var me = this,
+			detailsUrl = me.detailsUrl,
+			partyDetails = me.down('#partyDetails');
+		
+		var myMask = new Ext.LoadMask(partyDetails, {msg:"Please wait..."});
+		myMask.show();
+		
+		// Load html of party
         Ext.Ajax.request({
             url: detailsUrl + me.partyId,
             disableCaching: false,
             method: 'GET',
             success: function (response) {
-                partyDetails.update(response.responseText);
+                myMask.hide();
+				partyDetails.update(response.responseText);
             }
         });
+	},
+
+    loadParty: function () {
+        var me = this,
+            tabPanel = me.down('tabpanel');
+
+        me.loadDetails();
 
         // Load contact stores
         for (i = 0; i < me.contactWidgetXtypes.length; i += 1) {

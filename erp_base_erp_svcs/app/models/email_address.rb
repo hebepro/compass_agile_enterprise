@@ -10,8 +10,11 @@ class EmailAddress < ActiveRecord::Base
   end
 
   def to_label
-    "#{description} : #{email_address}"
+    "#{description} : #{to_s}"
   end
 
+  def to_s
+    "#{email_address}"
+  end
 
 end

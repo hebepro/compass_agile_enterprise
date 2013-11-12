@@ -63,6 +63,20 @@
         <br>
     <% end %>
 
+	<% if @party.primary_phone %>
+		Primary Phone: <%= @party.primary_phone.to_s  %>
+		<br>
+	<% end %>
+	
+	<% if @party.primary_email %>
+		Primary Email: <%= @party.primary_email.to_s %>
+		<br>
+	<% end %>
+	
+	<% if @party.primary_address %>
+		Primary Address: <%= @party.primary_address.to_s  %>
+	<% end %>
+
   </div>
 
    <% if @party.user %>

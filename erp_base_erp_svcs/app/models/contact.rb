@@ -26,6 +26,10 @@ class Contact < ActiveRecord::Base
   def summary_line
     "#{contact_mechanism.summary_line}"
   end
+  
+  def is_primary?
+    self.is_primary
+  end
 
   # return first contact purpose
   def purpose

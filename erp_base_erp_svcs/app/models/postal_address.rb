@@ -14,9 +14,13 @@ class PostalAddress < ActiveRecord::Base
     if block_given?
       block.call(self)
     else
-      "#{description} : #{address_line_1}, #{city}"
+      "#{description} : #{to_s}"
     end
 	end
+	
+	def to_s
+	  "#{address_line_1}, #{city}, #{state} - #{zip}"
+  end
 
   def zip_eql_to?(zip)
     self.zip.downcase.gsub(/[^a-zA-Z0-9]/, "")[0..4] == zip.to_s.downcase.gsub(/[^a-zA-Z0-9]/,"")[0..4]

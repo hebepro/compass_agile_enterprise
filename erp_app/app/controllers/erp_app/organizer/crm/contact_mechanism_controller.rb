@@ -54,15 +54,18 @@ module ErpApp
             end
           end
 
-          "{\"success\":true, \"data\":#{contact_mechanism.to_json(:methods => [:contact_purpose_id])},\"message\":\"#{contact_type} added\"}"
+          "{\"success\":true, \"data\":#{contact_mechanism.to_json(:methods => [:contact_purpose_id, :is_primary])},\"message\":\"#{contact_type} added\"}"
         end
 
         def update_contact_mechanism
+          party_id = params[:party_id]
           contact_type = params[:contact_type]
           contact_mechanism_id = params[:data][:id]
           contact_purpose_id = params[:data][:contact_purpose_id]
           params[:data].delete(:id)
           params[:data].delete(:contact_purpose_id)
+          params[:data].delete(:updated_at)
+          params[:data].delete(:created_at)
 
           contact_mechanism = contact_type.constantize.find(contact_mechanism_id)
 
@@ -72,13 +75,9 @@ module ErpApp
             contact_mechanism.contact.contact_purposes << contact_purpose
             contact_mechanism.contact.save
           end
-
-          params[:data].each do |key, value|
-            method = key + '='
-            contact_mechanism.send method.to_sym, value
-          end
-
-          contact_mechanism.save
+          
+          party = Party.find(party_id)
+          party.update_contact_with_purpose(contact_type.constantize, contact_purpose, params[:data])
 
           contact_type.constantize.class_eval do
             def contact_purpose_id
@@ -86,7 +85,7 @@ module ErpApp
             end
           end
 
-          "{\"success\":true, \"data\":#{contact_mechanism.to_json(:methods => [:contact_purpose_id])},\"message\":\"#{contact_type} updated\"}"
+          "{\"success\":true, \"data\":#{contact_mechanism.to_json(:methods => [:contact_purpose_id, :is_primary])},\"message\":\"#{contact_type} updated\"}"
         end
 
         def get_contact_mechanisms
@@ -104,7 +103,7 @@ module ErpApp
             end
           end
 
-          "{\"success\":true, \"data\":#{contact_mechanisms.to_json(:methods => [:contact_purpose_id])}}"
+          "{\"success\":true, \"data\":#{contact_mechanisms.to_json(:methods => [:contact_purpose_id, :is_primary])}}"
         end
 
         def delete_contact_mechanism
@@ -119,7 +118,7 @@ module ErpApp
           party = Party.find(party_id)
           contact_mechanisms = party.find_all_contacts_by_contact_mechanism(contact_type_class)
 
-          "{\"success\":true, \"data\":#{contact_mechanisms.to_json(:methods => [:contact_purpose_id])},\"message\":\"#{contact_type} deleted\"}"
+          "{\"success\":true, \"data\":#{contact_mechanisms.to_json(:methods => [:contact_purpose_id, :is_primary])},\"message\":\"#{contact_type} deleted\"}"
         end
 
       end #BaseController

@@ -22,9 +22,13 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
     extend: "Ext.grid.Panel",
     alias: 'widget.contactmechanismgrid',
     initComponent: function () {
-        var me = this,
+       	var me = this,
             config = me.initialConfig;
 
+ 		me.addEvents(
+			'contactdatawrite'
+		);
+		
         var store = Ext.create('Ext.data.Store', {
             fields: config['fields'],
             autoLoad: false,
@@ -68,7 +72,11 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
                 },
                 'datachanged': function () {
                     me.setLoading(false);
-                }
+                },
+				'write': function(){
+					me.store.load();
+					me.fireEvent('contactdatawrite', me);
+				}
             }
         });
 
@@ -117,6 +125,22 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
                 },
                 width: 200
             },
+			{
+                header: 'Primary',
+                dataIndex: 'is_primary',
+                renderer: function(v){
+					if(v){
+						return 'Yes';
+					}
+					else{
+						return 'No';
+					}
+				},
+                width: 200,
+				editor: {
+                    xtype: 'checkbox'
+                },
+            },
             {
                 header: 'Created',
                 dataIndex: 'created_at',
@@ -154,6 +178,9 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
             },
             {
                 name: 'id'
+            },
+			{
+                name: 'is_primary'
             }
         ]);
 
