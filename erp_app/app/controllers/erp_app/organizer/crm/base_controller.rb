@@ -55,7 +55,7 @@ module ErpApp
                   :zip => nil
               }
 
-              postal_address = party.find_contact_mechanism_with_purpose(PostalAddress, ContactPurpose.default)
+              postal_address = party.primary_address
               if postal_address
                 description_hash[:address_line_1] = postal_address.address_line_1
                 description_hash[:address_line_2] = postal_address.address_line_2
