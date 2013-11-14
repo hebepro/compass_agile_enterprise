@@ -1,8 +1,6 @@
 class AuditLog < ActiveRecord::Base
   attr_protected :created_at, :updated_at
 
-  attr_protected :created_at, :updated_at
-
   validates :party_id, :presence => {:message => 'cannot be blank'}
   validates :description, :presence => {:message => 'cannot be blank'}
   validates :audit_log_type, :presence => {:message => 'cannot be blank'}

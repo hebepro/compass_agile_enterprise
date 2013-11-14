@@ -21,6 +21,7 @@ ErpApp::Engine.routes.draw do
   #Shared Application Routes
   #############################
   match '/shared/notes/:action(/:party_id)' => "shared/notes"
+  match '/shared/audit_log/:action' => 'shared/audit_log'
 
   #############################
   #Mobile Application Routes
@@ -80,9 +81,6 @@ ErpApp::Engine.routes.draw do
   match '/desktop/configuration_management/:action' => "desktop/configuration_management/base"
   match '/desktop/configuration_management/types/:action' => "desktop/configuration_management/types"
   match '/desktop/configuration_management/options/:action' => "desktop/configuration_management/options"
-
-  #audit_log_view
-  match '/desktop/audit_log_viewer/:action.:format' => 'desktop/audit_log_viewer/base'
 
   #tail
   match '/desktop/tail(/:action)' => "desktop/tail/base"
