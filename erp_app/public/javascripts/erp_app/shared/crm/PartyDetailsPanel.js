@@ -47,12 +47,16 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
      * @param {String} fromRoleType
      * RoleType internal_identifier for from side
      *
+     * @param {String} allowedPartyType
+     * Party type that can be created {Both | Individual | Organization}.
+     *
      * @example
      * {
             title: 'Employees',
             relationshipType: 'employee_customer',
             toRoleType: 'customer',
-            fromRoleType: 'employee'
+            fromRoleType: 'employee',
+            allowedPartyType: 'Both',
         }
      */
     partyRelationships: [],
@@ -128,8 +132,6 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
         tabPanels.push({xtype: 'shared_notesgrid', partyId: me.partyId});
 
         me.partyDetailsPanel = Ext.create('widget.panel', {
-            //flex: 1,
-            //height: 300,
             itemId: 'partyDetails',
             html: 'Party Details',
             border: false,
@@ -137,11 +139,12 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
             region: 'center',
             autoScroll: true
         });
-
+        console.log(me.partyRelationships)
         Ext.each(me.partyRelationships, function (partyRelationship) {
             tabPanels.push({
                 xtype: 'crmpartygrid',
                 title: partyRelationship.title,
+                allowedPartyType: partyRelationship.allowedPartyType || 'Both',
                 applicationContainerId: me.applicationContainerId,
                 addBtnDescription: 'Add ' + Ext.String.capitalize(partyRelationship.fromRoleType),
                 searchDescription: 'Search ' + partyRelationship.title,
