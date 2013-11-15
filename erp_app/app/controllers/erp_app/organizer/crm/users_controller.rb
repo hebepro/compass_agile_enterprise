@@ -41,8 +41,9 @@ module ErpApp
           party_role = params[:party_role]
           to_role = params[:to_role]
           to_party_id = params[:to_party_id]
-          offset = params[:offset] || 0
+          offset = params[:start] || 0
           limit = params[:limit] || 25
+          included_party_to_relationships = ActiveSupport::JSON.decode params[:included_party_to_relationships]
           query_filter = params[:query_filter] || nil
 
           user_table = User.arel_table
@@ -56,9 +57,11 @@ module ErpApp
               to_party = current_user.party
               to_party_rln = to_party.from_relationships.where('role_type_id_to = ?', to_role_type).first
 
-              statement = statement.joins("join party_relationships on party_relationships.party_id_from = parties.id")
-              .where('party_relationships.party_id_to = ?', to_party_rln.party_id_to)
-              .where('party_relationships.role_type_id_to' => to_role_type)
+              unless to_party_rln.nil?
+                statement = statement.joins("join party_relationships on party_relationships.party_id_from = parties.id")
+                .where('party_relationships.party_id_to = ?', to_party_rln.party_id_to)
+                .where('party_relationships.role_type_id_to' => to_role_type)
+              end
             else
               to_party = Party.find(to_party_id)
 
@@ -86,6 +89,16 @@ module ErpApp
                                            :updated_at,
                                            :activation_state],
                                       :party_description => (user.party.description))
+
+             # add relationships
+             included_party_to_relationships.each do |included_party_to_relationship|
+               included_party_to_relationship.symbolize_keys!
+
+               relationship = user.party.relationships.where('relationship_type_id = ?', RelationshipType.find_by_internal_identifier(included_party_to_relationship[:relationshipType])).first
+               if relationship
+                 user_data[included_party_to_relationship[:toRoleType]] = relationship.to_party.description
+               end
+             end
 
              if user.party.business_party.class == Individual
                user_data[:first_name] = user.party.business_party.current_first_name

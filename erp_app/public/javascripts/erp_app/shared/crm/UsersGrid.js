@@ -1,19 +1,3 @@
-Ext.define('Compass.ErpApp.Shared.Crm.User', {
-    extend: 'Ext.data.Model',
-    fields: [
-        'id',
-        'username',
-        {name: 'firstName', mapping: 'first_name'},
-        {name: 'lastName', mapping: 'last_name'},
-        {name: 'partyDescription', mapping: 'party_description'},
-        'email',
-        {name: 'status', mapping: 'activation_state'},
-        {name: 'lastLoginAt', mapping: 'last_login_at', type: 'date'},
-        {name: 'createdAt', mapping: 'created_at', type: 'date'},
-        {name: 'updatedAt', mapping: 'updated_at', type: 'date'}
-    ]
-});
-
 Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
     extend: "Ext.grid.Panel",
     alias: 'widget.crmusersgrid',
@@ -40,6 +24,28 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
     title: 'Users',
 
     /**
+     * @cfg {Array | Object} includedToPartyRelationships
+     * Party Relationships to include as a column in this grid. It has to be a one to one relationships
+     *
+     * @param {String} title
+     * title of column
+     *
+     * @param {String} relationshipType
+     * relationship type internal_identifier
+     *
+     * @param {String} toRoleType
+     * RoleType internal_identifier for to side
+     *
+     * @example
+     * {
+            title: 'Business',
+            relationshipType: 'employee_business',
+            toRoleType: 'business'
+        }
+     */
+    includedToPartyRelationships: [],
+
+    /**
      * @cfg {String} partyRole
      * Get all user records with this partyRole.
      */
@@ -56,7 +62,6 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
      * To parties id to get related parties from.
      */
     toPartyId: null,
-
 
     /**
      * @cfg {String} searchDescription
@@ -113,8 +118,28 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
             'edituserclick'
         );
 
+        var userFields = [
+            'id',
+            'username',
+            {name: 'firstName', mapping: 'first_name'},
+            {name: 'lastName', mapping: 'last_name'},
+            {name: 'partyDescription', mapping: 'party_description'},
+            'email',
+            {name: 'status', mapping: 'activation_state'},
+            {name: 'lastLoginAt', mapping: 'last_login_at', type: 'date'},
+            {name: 'createdAt', mapping: 'created_at', type: 'date'},
+            {name: 'updatedAt', mapping: 'updated_at', type: 'date'}
+        ];
+
+        if (!Ext.isEmpty(me.includedToPartyRelationships)) {
+            Ext.each(me.includedToPartyRelationships, function (relationship) {
+                userFields.push({
+                    name: relationship.toRoleType
+                })
+            });
+        }
+
         this.store = Ext.create('Ext.data.Store', {
-            model: Compass.ErpApp.Shared.Crm.User,
             autoLoad: false,
             autoSync: true,
             proxy: {
@@ -122,8 +147,9 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
                 url: '/erp_app/organizer/crm/users/index',
                 extraParams: {
                     party_role: me.partyRole,
-                    to_role: me.to_role,
-                    to_party_id: me.to_party_id
+                    to_role: me.toRole,
+                    to_party_id: me.toPartyId,
+                    included_party_to_relationships: Ext.encode(me.includedToPartyRelationships)
                 },
                 reader: {
                     type: 'json',
@@ -133,7 +159,8 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
                     totalProperty: 'total',
                     messageProperty: 'message'
                 }
-            }
+            },
+            fields: userFields
         });
 
         // setup toolbar
@@ -203,14 +230,23 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
 
         // setup columns
 
-        var columns = [
+        var columns = [];
+
+        if (!Ext.isEmpty(me.includedToPartyRelationships)) {
+            Ext.each(me.includedToPartyRelationships, function (relationship) {
+                columns.push({
+                    header: relationship.title,
+                    dataIndex: relationship.toRoleType,
+                    width: 150
+                })
+            });
+        }
+
+        columns.push(
             {
                 header: 'Username',
                 dataIndex: 'username',
-                width: 150,
-                editor: {
-                    xtype: 'textfield'
-                }
+                width: 150
             },
             {
                 header: 'Full Name',
@@ -245,7 +281,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
                 dataIndex: 'updatedAt',
                 renderer: Ext.util.Format.dateRenderer('m/d/Y H:i:s')
             }
-        ];
+        );
 
         // attempt to add edit column
         if (me.canEditUser) {
