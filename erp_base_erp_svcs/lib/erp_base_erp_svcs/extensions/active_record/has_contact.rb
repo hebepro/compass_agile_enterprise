@@ -33,7 +33,11 @@ module ErpBaseErpSvcs
 				  
 				  def save_contact
 					  self.contact.save
-				  end
+          end
+
+          def contact_purpose_id
+            self.contact_purpose ? contact_purpose.id : nil
+          end
 				  
 				  def contact_purpose
             contact.contact_purposes.count == 0 ? nil : contact.contact_purposes.first

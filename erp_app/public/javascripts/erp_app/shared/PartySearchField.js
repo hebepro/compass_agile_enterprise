@@ -16,7 +16,12 @@ Ext.define("Compass.ErpApp.Shared.PartySearchField", {
             extraParams = Ext.apply(config.extraParams, extraParams);
 
         if (!listTemplate) {
-            listTemplate = '<div>{description}</div><div>{addressLine1}</div><div>{addressLine2}</div><div>{city}, {state}</div><div>{zip}</div>';
+            listTemplate = '<div>{description}</div>';
+            listTemplate += '<tpl if="!Ext.isEmpty(addressLine1)">';
+            listTemplate += '<div>{addressLine1}</div>';
+            listTemplate += '<div>{addressLine2}</div>';
+            listTemplate += '<div>{city}, {state}</div><div>{zip}</div>';
+            listTemplate += '</tpl>';
         }
 
         if (!fields) {

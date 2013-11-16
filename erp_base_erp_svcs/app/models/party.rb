@@ -174,8 +174,6 @@ class Party < ActiveRecord::Base
   end
 
   def find_contact_mechanism_with_purpose(contact_mechanism_class, contact_purpose)
-    contact_mechanism = nil
-
     contact = self.find_contact_with_purpose(contact_mechanism_class, contact_purpose)
     contact_mechanism = contact.contact_mechanism unless contact.nil?
 
@@ -183,8 +181,6 @@ class Party < ActiveRecord::Base
   end
 
   def find_contact_with_purpose(contact_mechanism_class, contact_purpose)
-    contact = nil
-
     #if a symbol or string was passed get the model
     unless contact_purpose.is_a? ContactPurpose
       contact_purpose = ContactPurpose.find_by_internal_identifier(contact_purpose.to_s)
@@ -221,18 +217,15 @@ class Party < ActiveRecord::Base
   # looks for contacts matching on value and purpose
   # if a contact exists, it updates, if not, it adds it
   def add_contact(contact_mechanism_class, contact_mechanism_args={}, contact_purposes=[])
+    is_primary = contact_mechanism_args['is_primary']
     contact_purposes = [contact_purposes] if !contact_purposes.kind_of?(Array) # gracefully handle a single purpose not in an array
     contact = find_contact(contact_mechanism_class, contact_mechanism_args, contact_purposes)
     if contact.nil?
-      is_primary = contact_mechanism_args[:is_primary]
       contact_mechanism_args.delete_if { |k, v| ['created_at', 'updated_at', 'is_primary'].include? k.to_s }
       contact_mechanism = contact_mechanism_class.new(contact_mechanism_args)
       contact_mechanism.contact.party = self
       contact_mechanism.contact.contact_purposes = contact_purposes
       contact_mechanism.contact.save
-      contact_mechanism.save
-
-      contact_mechanism.is_primary = is_primary
       contact_mechanism.save
       
       self.contacts << contact_mechanism.contact
@@ -240,7 +233,7 @@ class Party < ActiveRecord::Base
       contact_mechanism = update_contact(contact_mechanism_class, contact, contact_mechanism_args)
     end
     
-    set_primary_contact(contact_mechanism_class, contact_mechanism) if contact_mechanism_args[:is_primary] == true
+    set_primary_contact(contact_mechanism_class, contact_mechanism) if is_primary == true
 
     contact_mechanism
   end

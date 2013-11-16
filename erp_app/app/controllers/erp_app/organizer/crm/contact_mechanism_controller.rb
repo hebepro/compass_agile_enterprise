@@ -48,12 +48,6 @@ module ErpApp
           contact_purpose = contact_purpose_id.blank? ? ContactPurpose.find_by_internal_identifier('default') : ContactPurpose.find(contact_purpose_id)
           contact_mechanism = party.add_contact(contact_mechanism_class, params[:data], contact_purpose)
 
-          contact_mechanism_class.class_eval do
-            def contact_purpose_id
-              self.contact_purpose ? contact_purpose.id : nil
-            end
-          end
-
           "{\"success\":true, \"data\":#{contact_mechanism.to_json(:methods => [:contact_purpose_id, :is_primary])},\"message\":\"#{contact_type} added\"}"
         end
 
@@ -75,15 +69,9 @@ module ErpApp
             contact_mechanism.contact.contact_purposes << contact_purpose
             contact_mechanism.contact.save
           end
-          
+
           party = Party.find(party_id)
           party.update_contact_with_purpose(contact_type.constantize, contact_purpose, params[:data])
-
-          contact_type.constantize.class_eval do
-            def contact_purpose_id
-              self.contact_purpose ? contact_purpose.id : nil
-            end
-          end
 
           "{\"success\":true, \"data\":#{contact_mechanism.to_json(:methods => [:contact_purpose_id, :is_primary])},\"message\":\"#{contact_type} updated\"}"
         end
@@ -97,11 +85,7 @@ module ErpApp
           party = Party.find(party_id)
           contact_mechanisms = party.find_all_contacts_by_contact_mechanism(contact_mechanism_class)
 
-          contact_mechanism_class.class_eval do
-            def contact_purpose_id
-              self.contact_purpose ? contact_purpose.id : nil
-            end
-          end
+          contact_mechanisms.sort_by! { |item| item.is_primary <=> item.is_primary }.reverse!
 
           "{\"success\":true, \"data\":#{contact_mechanisms.to_json(:methods => [:contact_purpose_id, :is_primary])}}"
         end

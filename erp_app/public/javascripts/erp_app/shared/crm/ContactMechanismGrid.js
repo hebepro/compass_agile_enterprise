@@ -13,7 +13,8 @@ var contactPurposeStore = Ext.create('Ext.data.Store', {
             name: 'description'
         },
         {
-            name: 'id'
+            name: 'id',
+            type: 'int'
         }
     ]
 });
@@ -120,23 +121,13 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
                 editor: {
                     xtype: 'combo',
                     forceSelection: true,
-                    typeAhead: true,
-                    mode: 'local',
+                    typeAhead: false,
+                    queryMode: 'local',
                     displayField: 'description',
                     valueField: 'id',
+                    value: 1,
                     store: config['contactPurposeStore'],
-                    selectOnFocus: true,
-                    listeners: {
-                        //This event will fire when combobox rendered completely
-                        afterrender: function() {
-                            var me = this;
-                            this.store.load({
-                                callback: function(){
-                                    me.setValue(1);
-                                }
-                            });
-                        }
-                    }
+                    selectOnFocus: true
                 },
                 width: 200
             },
@@ -262,6 +253,19 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
         }, config);
 
         this.callParent([config]);
+
+        this.on('edit', function (editor, e) {
+            if (!e.record.isValid()) {
+                Ext.Msg.alert('Error', 'Please complete all required fields');
+                return false;
+            }
+        });
+
+        this.on('canceledit', function (editor, e) {
+            if (Ext.isEmpty(e.record.data.id)) {
+                e.grid.store.remove(e.record);
+            }
+        });
     }
 });
 
