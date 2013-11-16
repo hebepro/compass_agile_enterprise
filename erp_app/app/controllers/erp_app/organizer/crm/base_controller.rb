@@ -278,6 +278,7 @@ module ErpApp
           business_party_data.delete(:authenticity_token)
           business_party_data.delete(:to_party_id)
           business_party_data.delete(:party_role)
+          business_party_data.delete(:to_role)
           business_party_data.delete(:relationship_type_to_create)
 
           if klass == Organization
@@ -317,7 +318,7 @@ module ErpApp
 
           business_party.save
 
-          {:success => true, :message => "#{party_type} updated"}
+          {:success => true, :party_id => party_id,  :message => "#{party_type} updated"}
         end
 
         def delete_party

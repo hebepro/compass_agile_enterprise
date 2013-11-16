@@ -130,13 +130,13 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
 
                                 // submit party form first
                                 var partyId = crmpartyform.down('#partyId').getValue(),
-                                    method = null;
+                                    partyAjaxMethod = null;
 
                                 if (Ext.isEmpty(partyId)) {
-                                    method = 'POST';
+                                    partyAjaxMethod = 'POST';
                                 }
                                 else {
-                                    method = 'PUT';
+                                    partyAjaxMethod = 'PUT';
                                 }
 
                                 crmpartyform.submit({
@@ -149,53 +149,65 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
                                     },
                                     clientValidation: true,
                                     url: '/erp_app/organizer/crm/base/parties',
-                                    method: method,
+                                    method: partyAjaxMethod,
                                     waitMsg: 'Please Wait...',
                                     success: function (form, action) {
                                         var partyId = action.result.party_id;
 
-                                        if (method == 'POST')
+                                        if (partyAjaxMethod == 'POST')
                                             me.fireEvent('partycreated', me, partyId);
 
 
-                                        if (method == 'PUT')
+                                        if (partyAjaxMethod == 'PUT')
                                             me.fireEvent('partyupdated', me, partyId);
 
                                         // Check if the user form is visible if so submit that too now
                                         if (action.result.success && crmuserform.isVisible() && crmuserform.getForm().findField('userEnabled').getValue()) {
+                                            var userId = crmuserform.down('#userId').getValue(),
+                                                userAjaxMethod = null;
+
+                                            if (Ext.isEmpty(userId)) {
+                                                userAjaxMethod = 'POST';
+                                            }
+                                            else {
+                                                userAjaxMethod = 'PUT';
+                                            }
+
                                             crmuserform.submit({
                                                 clientValidation: true,
                                                 url: '/erp_app/organizer/crm/users/index',
-                                                method: method,
+                                                method: userAjaxMethod,
                                                 waitMsg: 'Please Wait...',
                                                 params: {
                                                     party_id: partyId
                                                 },
                                                 success: function (form, action) {
                                                     if (action.result.success) {
-                                                        if (method == 'POST')
+                                                        if (userAjaxMethod == 'POST')
                                                             me.fireEvent('usercreated', me, partyId);
 
-                                                        if (method == 'PUT')
+                                                        if (userAjaxMethod == 'PUT')
                                                             me.fireEvent('userupdated', me, action.result.users.id);
 
                                                         crmpartyformpanel.close();
                                                     }
                                                 },
                                                 failure: function (form, action) {
-                                                    Ext.Ajax.request({
-                                                        method: 'DELETE',
-                                                        url: '/erp_app/organizer/crm/base/parties',
-                                                        params: {
-                                                            party_id: partyId
-                                                        },
-                                                        success: function (response) {
-                                                        },
-                                                        failure: function (response) {
-                                                            myMask.hide();
-                                                            Ext.Msg.alert("Error", "Error with request.");
-                                                        }
-                                                    });
+                                                    if (partyAjaxMethod == 'POST') {
+                                                        Ext.Ajax.request({
+                                                            method: 'DELETE',
+                                                            url: '/erp_app/organizer/crm/base/parties',
+                                                            params: {
+                                                                party_id: partyId
+                                                            },
+                                                            success: function (response) {
+                                                            },
+                                                            failure: function (response) {
+                                                                myMask.hide();
+                                                                Ext.Msg.alert("Error", "Error with request.");
+                                                            }
+                                                        });
+                                                    }
 
                                                     switch (action.failureType) {
                                                         case Ext.form.action.Action.CLIENT_INVALID:

@@ -27,13 +27,13 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
     header: false,
 
     initComponent: function () {
-       	var me = this,
+        var me = this,
             config = me.initialConfig;
 
- 		me.addEvents(
-			'contactdatawrite'
-		);
-		
+        me.addEvents(
+            'contactdatawrite'
+        );
+
         var store = Ext.create('Ext.data.Store', {
             fields: config['fields'],
             autoLoad: false,
@@ -78,10 +78,10 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
                 'datachanged': function () {
                     me.setLoading(false);
                 },
-				'write': function(){
-					me.store.load();
-					me.fireEvent('contactdatawrite', me);
-				}
+                'write': function () {
+                    me.store.load();
+                    me.fireEvent('contactdatawrite', me);
+                }
             }
         });
 
@@ -124,27 +124,21 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
                     mode: 'local',
                     displayField: 'description',
                     valueField: 'id',
-                    triggerAction: 'all',
                     store: config['contactPurposeStore'],
-                    selectOnFocus: true
+                    selectOnFocus: true,
+                    listeners: {
+                        //This event will fire when combobox rendered completely
+                        afterrender: function() {
+                            var me = this;
+                            this.store.load({
+                                callback: function(){
+                                    me.setValue(1);
+                                }
+                            });
+                        }
+                    }
                 },
                 width: 200
-            },
-			{
-                header: 'Primary',
-                dataIndex: 'is_primary',
-                renderer: function(v){
-					if(v){
-						return 'Yes';
-					}
-					else{
-						return 'No';
-					}
-				},
-                width: 200,
-				editor: {
-                    xtype: 'checkbox'
-                },
             },
             {
                 header: 'Created',
@@ -159,6 +153,23 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
                 width: 200
             }
         ]);
+
+        config.columns.unshift({
+            header: 'Primary',
+            dataIndex: 'is_primary',
+            renderer: function (v) {
+                if (v) {
+                    return 'Yes';
+                }
+                else {
+                    return 'No';
+                }
+            },
+            width: 200,
+            editor: {
+                xtype: 'checkbox'
+            }
+        });
 
         if (!config.validations)
             config.validations = [];
@@ -184,7 +195,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
             {
                 name: 'id'
             },
-			{
+            {
                 name: 'is_primary'
             }
         ]);

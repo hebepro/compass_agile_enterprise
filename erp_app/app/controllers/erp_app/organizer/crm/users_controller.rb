@@ -24,7 +24,8 @@ module ErpApp
 
           if user
             result[:user] = user.to_hash(:only =>
-                                             [:id, :username,
+                                             [:id,
+                                              :username,
                                               :email,
                                               :last_login_at,
                                               :created_at,

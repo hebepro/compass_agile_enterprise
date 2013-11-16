@@ -139,7 +139,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
             region: 'center',
             autoScroll: true
         });
-        console.log(me.partyRelationships)
+
         Ext.each(me.partyRelationships, function (partyRelationship) {
             tabPanels.push({
                 xtype: 'crmpartygrid',

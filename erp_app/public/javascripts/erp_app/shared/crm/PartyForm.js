@@ -22,6 +22,11 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyForm", {
             items = [],
             partyTypeFieldContainer = null;
 
+        if(me.allowedPartyType !== 'Both' && me.allowedPartyType !== 'Individual' && me.allowedPartyType !== 'Organization'){
+            Ext.Msg.alert('Error', 'Invalid Party Type');
+            me.allowedPartyType = 'Both';
+        }
+
         if (me.allowedPartyType === 'Both') {
             partyTypeFieldContainer = {
                 xtype: 'fieldcontainer',
@@ -64,6 +69,13 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyForm", {
             });
 
             items.push(partyTypeFieldContainer);
+        }
+        else{
+            items.push({
+                xtype: 'hidden',
+                name: 'business_party_type',
+                value: me.allowedPartyType
+            });
         }
 
         this.items = items.concat([
