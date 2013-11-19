@@ -8,10 +8,9 @@ module ErpProducts
             products = []
             ProductType.all.each do |product_type|
               product_hash = product_type.to_hash(
-                :only => [:id, :description => :title],
-                :additional_values => {
+                  :only => [:id, :description => :title],
                   :imageUrl => (product_type.images.empty? ? '/images/img_blank.png' : product_type.images.first.data.url(nil, :escape => false))
-                })
+              )
 
               #I do not like this, need to find a better way
               if product_type.respond_to?(:get_current_simple_amount_with_currency)
@@ -21,21 +20,21 @@ module ErpProducts
               #I do not like this, need to find a better way
               if product_type.respond_to?(:inventory_entries)
                 inventory_entry = if product_type.inventory_entries.empty?
-                  InventoryEntry.create(
-                    :product_type => product_type,
-                    :number_available => 0,
-                    :number_sold => 0,
-                    :description => product_type.description
-                  )
-                else
-                  product_type.inventory_entries.first
-                end
+                                    InventoryEntry.create(
+                                        :product_type => product_type,
+                                        :number_available => 0,
+                                        :number_sold => 0,
+                                        :description => product_type.description
+                                    )
+                                  else
+                                    product_type.inventory_entries.first
+                                  end
 
                 product_hash[:available] = inventory_entry.number_available
                 product_hash[:sold] = inventory_entry.number_sold
                 product_hash[:sku] = inventory_entry.sku.nil? ? '' : inventory_entry.sku
               end
-              
+
               products << product_hash
             end
             render :json => {:products => products}
@@ -66,12 +65,12 @@ module ErpProducts
             description = params[:description]
 
             product_type = ProductType.new(
-              :description => title
+                :description => title
             )
 
             product_type.descriptions << DescriptiveAsset.create(
-              :description => description,
-              :internal_identifier => 'long_description'
+                :description => description,
+                :internal_identifier => 'long_description'
             )
 
             if product_type.save
@@ -109,16 +108,16 @@ module ErpProducts
 
               product_type = ProductType.find(params[:product_type_id])
               #build path
-              path = File.join(product_type.images_path,name)
+              path = File.join(product_type.images_path, name)
               Rails.logger.info "@@@@@@@@ #{path}"
               product_type.add_file(data, path)
               result = {:success => true}
-            rescue Exception=>ex
+            rescue Exception => ex
               Rails.logger.error ex.message
               Rails.logger.error ex.backtrace.join("\n")
               result = {:success => false, :error => "Error uploading #{name}"}
             end
-            
+
             #file uploader wants this inline
             render :inline => result.to_json
           end
@@ -128,8 +127,8 @@ module ErpProducts
           end
 
 
-        end#BaseController
-      end#ProductManager
-    end#Desktop
-  end#ErpApp
-end#ErpProducts
+        end #BaseController
+      end #ProductManager
+    end #Desktop
+  end #ErpApp
+end #ErpProducts

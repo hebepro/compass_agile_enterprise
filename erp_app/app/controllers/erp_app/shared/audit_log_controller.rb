@@ -44,7 +44,7 @@ module ErpApp
         audit_log_items = AuditLogItem.where('audit_log_id = ? ', params[:audit_log_id])
 
         data = audit_log_items.collect do |audit_log_item|
-          audit_log_item.to_hash(:attributes => [:id,
+          audit_log_item.to_hash(:only => [:id,
                                                  :description,
                                                  :created_at,
                                                  :audit_log_id,

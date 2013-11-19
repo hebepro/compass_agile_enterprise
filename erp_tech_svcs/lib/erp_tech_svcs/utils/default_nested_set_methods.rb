@@ -19,15 +19,13 @@ module ErpTechSvcs
 			alias_method_chain :to_json, :leaf
 
       def to_tree_hash(options={})
-        additional_values = options[:additional_values] || {}
-        options[:additional_values] = additional_values.merge({
+        options = options.merge({
           :text => self.to_label,
           :leaf => self.leaf,
           :children => self.children.collect{|child| child.to_tree_hash(options)}
         })
-        tree_hash = self.to_hash(options)
-        tree_hash[:iconCls] = options[:icon_cls] if options[:icon_cls]
-        tree_hash
+
+        self.to_hash(options)
       end
 
 			module ClassMethods

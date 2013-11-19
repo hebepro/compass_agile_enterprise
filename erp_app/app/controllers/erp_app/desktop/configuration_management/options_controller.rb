@@ -6,23 +6,23 @@ module ErpApp
         def index
           options_tbl = ConfigurationOption.arel_table
           arel_query = ConfigurationOption.where(options_tbl[:value].matches("%#{params[:query]}%")
-            .or(options_tbl[:internal_identifier].matches("%#{params[:query]}%")))
-            .where(options_tbl[:user_defined].eq(false))
-            .limit(params[:limit])
-            .offset(params[:start])
+                                                 .or(options_tbl[:internal_identifier].matches("%#{params[:query]}%")))
+          .where(options_tbl[:user_defined].eq(false))
+          .limit(params[:limit])
+          .offset(params[:start])
           options = arel_query.all
 
           respond_to do |format|
             format.json {
               render :json => {
-                :success => true,
-                :total_count => options.count,
-                :options => options.collect{|option|option.to_hash(:only => [:id, :description, :comment, :value, :internal_identifier])}}
+                  :success => true,
+                  :total_count => options.count,
+                  :options => options.collect { |option| option.to_hash(:only => [:id, :description, :comment, :value, :internal_identifier]) }}
             }
             format.tree {
-              render :json => options.collect{|option| option.to_hash(:only => [:internal_identifier, :value, :comment, :description],
-                                              :methods => [{:description => :text}, {:id => :model_id}],
-                                              :additional_values => {:iconCls => 'icon-document', :leaf => true, :children => []})}
+              render :json => options.collect { |option| option.to_hash(:only => [:internal_identifier, :value, :comment, :description],
+                                                                        :methods => [{:description => :text}, {:id => :model_id}],
+                                                                        :iconCls => 'icon-document', :leaf => true, :children => []) }
             }
           end
 
@@ -49,7 +49,7 @@ module ErpApp
           end
         end
 
-      end#BaseController
-    end#ConfigurationManagement
-  end#Desktop
-end#ErpApp
+      end #BaseController
+    end #ConfigurationManagement
+  end #Desktop
+end #ErpApp

@@ -7,7 +7,7 @@ ActiveRecord::Base.class_eval do
       if options[:only]
         options[:only].each do |attribute|
           if attribute.is_a?(Hash)
-            attribute.each do |k,v|
+            attribute.each do |k, v|
               k = k.to_sym
               v = v.to_sym
               hash[v] = self.send(k)
@@ -19,49 +19,15 @@ ActiveRecord::Base.class_eval do
         end
       else
         hash.merge!(self.attributes)
-      end
-
-      #check for attributes option to get only attributes specified
-      if options[:attributes]
-        options[:attributes].each do |attribute|
-          if attribute.is_a?(Hash)
-            attribute.each do |k,v|
-              k = k.to_sym
-              v = v.to_sym
-              hash[v] = self.send(k)
-            end
-          else
-            attribute = attribute.to_sym
-            hash[attribute] = self.send(attribute)
-          end
-        end
-      else
-        hash.merge!(self.attributes)
-      end
-
-      #check for methods option
-      if options[:methods]
-        options[:methods].each do |method|
-          if method.is_a?(Hash)
-            method.each do |k,v|
-              k = k.to_sym
-              v = v.to_sym
-              hash[v] = self.send(k)
-            end
-          else
-            method = method.to_sym
-            hash[method] = self.send(method)
-          end
-        end
       end
 
       options.each do |key, value|
-        next if [:only, :attributes].include?(key)
+        next if [:only].include?(key)
 
         hash[key] = value
       end
-      
-    end#end hash tap
+
+    end #end hash tap
   end
 end
 

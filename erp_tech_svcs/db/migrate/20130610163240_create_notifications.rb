@@ -4,7 +4,7 @@ class CreateNotifications < ActiveRecord::Migration
     unless table_exists? :notifications
       create_table :notifications do |t|
         t.string :type
-        t.references :created_by_id
+        t.references :created_by
         t.text :message
         t.references :notification_type
         t.string :current_state

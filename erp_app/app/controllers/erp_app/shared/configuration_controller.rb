@@ -7,7 +7,7 @@ module ErpApp
         configuration = ::Configuration.find(params[:id])
         tree_array = [].tap do |array|
           configuration.item_types.collect{|item| item.category_classification.category}.uniq.each do |category|
-            array << category.to_tree_hash(:only => [], :methods => [{:id => :categoryId}], :icon_cls => 'icon-index')
+            array << category.to_tree_hash(:only => [{:id => :categoryId}], :iconCls => 'icon-index')
           end
         end
         tree_array.sort_by!{|hash| [hash[:text]]}
