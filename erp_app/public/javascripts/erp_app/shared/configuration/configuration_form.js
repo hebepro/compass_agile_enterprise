@@ -23,24 +23,11 @@ Ext.define("Compass.ErpApp.Shared.ConfigurationForm", {
     bodyStyle: 'padding:5px 5px 0',
     frame: true,
     alreadySetup: false,
-    border: false,
-    fieldDefaults: {
-        labelAlign: 'top'
+    layout: 'anchor',
+    defaults: {
+        anchor: '100%'
     },
-    //  layout: "table",
-    //  items:[{
-    //    itemId:'leftContainer',
-    //    xtype: 'container',
-    //    style: {padding:'5px','vertical-align':'top'},
-    //    columnWidth:.5,
-    //    layout: 'anchor'
-    //  },{
-    //    itemId:'rightContainer',
-    //    xtype: 'container',
-    //    style: {padding:'5px','vertical-align':'top'},
-    //    columnWidth:.5,
-    //    layout: 'anchor'
-    //  }],
+    border: false,
     buttonAlign: 'center',
     buttons: [
         {
@@ -97,9 +84,7 @@ Ext.define("Compass.ErpApp.Shared.ConfigurationForm", {
                         field = Ext.create('Ext.form.field.Text', {
                             itemId: configurationItemType.internalIdentifier + '_id',
                             fieldLabel: configurationItemType.description,
-                            name: configurationItemType.internalIdentifier,
-                            iconCls: 'icon-add',
-                            width: 150
+                            name: configurationItemType.internalIdentifier
                         });
                     }
                     else {
@@ -118,9 +103,7 @@ Ext.define("Compass.ErpApp.Shared.ConfigurationForm", {
                                 name: configurationItemType.internalIdentifier,
                                 displayField: 'description',
                                 valueField: 'value',
-                                width: 150,
                                 queryMode: 'local',
-                                height: 100,
                                 listConfig: {
                                     getInnerTpl: function () {
                                         return '<div data-qtip="{comment}">{description}</div>';
@@ -136,7 +119,6 @@ Ext.define("Compass.ErpApp.Shared.ConfigurationForm", {
                                 itemId: configurationItemType.internalIdentifier + '_id',
                                 fieldLabel: configurationItemType.description,
                                 name: configurationItemType.internalIdentifier,
-                                width: 150,
                                 displayField: 'description',
                                 valueField: 'value',
                                 queryMode: 'local',

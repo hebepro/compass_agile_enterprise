@@ -1,9 +1,9 @@
 class Website < ActiveRecord::Base
   attr_protected :created_at, :updated_at
 
-  after_destroy  :remove_sites_directory, :remove_website_role
+  after_destroy :remove_sites_directory, :remove_website_role
   before_destroy :destroy_sections
-  after_create   :setup_website
+  after_create :setup_website
 
   protected_with_capabilities
   has_file_assets
@@ -54,7 +54,7 @@ class Website < ActiveRecord::Base
 
   alias :sections :website_sections
   alias :hosts :website_hosts
-  
+
   #We only want to destroy parent sections as better nested set will destroy children for us
   def destroy_sections
     parents = []
@@ -63,8 +63,8 @@ class Website < ActiveRecord::Base
         parents << section
       end
     end
-    
-    parents.each {|parent| parent.destroy}
+
+    parents.each { |parent| parent.destroy }
   end
 
   def to_label
@@ -150,9 +150,7 @@ class Website < ActiveRecord::Base
   def setup_website
     PublishedWebsite.create(:website => self, :version => 0, :active => true, :comment => 'New Site Created')
     SecurityRole.create(:description => "Website #{self.title}", :internal_identifier => website_role_iid) if self.role.nil?
-    configuration = ::Configuration.find_template('default_website_configuration').clone(true)
-    configuration.description = "Website #{self.name} Configuration"
-    configuration.internal_identifier = configuration.description.underscore
+    configuration = ::Configuration.find_template('default_website_configuration').clone(true, "Website #{self.title} Configuration", configuration.description.underscore)
     configuration.update_configuration_item(ConfigurationItemType.find_by_internal_identifier('login_url'), '/login')
     configuration.update_configuration_item(ConfigurationItemType.find_by_internal_identifier('homepage_url'), '/home')
     self.configurations << configuration
@@ -230,7 +228,7 @@ class Website < ActiveRecord::Base
     end
 
     self.files.where("directory like '%/#{Rails.application.config.erp_tech_svcs.file_assets_location}/sites/#{self.iid}%'").all.each do |file_asset|
-      setup_hash[:files] << {:path => file_asset.directory, :name => file_asset.name, :roles => file_asset.roles.uniq.collect{|r| r.internal_identifier}}
+      setup_hash[:files] << {:path => file_asset.directory, :name => file_asset.name, :roles => file_asset.roles.uniq.collect { |r| r.internal_identifier }}
     end
 
     setup_hash
@@ -404,7 +402,7 @@ class Website < ActiveRecord::Base
               file = website.add_file(content[:data], File.join(file_support.root, file_asset[:path], file_asset[:name]))
 
               #handle security
-              unless file_asset[:roles].empty? 
+              unless file_asset[:roles].empty?
                 capability = file.add_capability(:download)
                 file_asset[:roles].each do |role_iid|
                   role = SecurityRole.find_by_internal_identifier(role_iid)
@@ -475,16 +473,16 @@ class Website < ActiveRecord::Base
         child_website_item = build_menu_item(item)
         child_website_item.move_to_child_of(website_item)
       end
-      
+
       #handle security
-      unless hash[:roles].empty? 
+      unless hash[:roles].empty?
         capability = website_item.add_capability(:view)
         hash[:roles].each do |role_iid|
           role = SecurityRole.find_by_internal_identifier(role_iid)
           role.add_capability(capability)
         end
       end
-      
+
       website_item
     end
 
@@ -529,7 +527,7 @@ class Website < ActiveRecord::Base
       if section.is_a? OnlineDocumentSection
         section.use_markdown = hash[:use_markdown]
         section.save
-        extension_type =  hash[:use_markdown] ? 'md' : 'html'
+        extension_type = hash[:use_markdown] ? 'md' : 'html'
         entry_data = entries.find { |entry| entry[:type] == 'documented contents' and entry[:name] == "#{section.internal_identifier}.#{extension_type}" }[:data]
         documented_content = DocumentedContent.create(:title => section.title, :body_html => entry_data)
         DocumentedItem.create(:documented_content_id => documented_content.id, :online_document_section_id => section.id)
@@ -541,16 +539,16 @@ class Website < ActiveRecord::Base
           child_section.save
           child_section.move_to_child_of(section)
           # CREATE THE DOCUMENTED CONTENT HERE
-          extension_type =  section_hash[:use_markdown] ? 'md' : 'html'
+          extension_type = section_hash[:use_markdown] ? 'md' : 'html'
           entry_data = entries.find { |entry| entry[:type] == 'documented contents' and entry[:name] == "#{child_section.internal_identifier}.#{extension_type}" }[:data]
           documented_content = DocumentedContent.create(:title => child_section.title, :body_html => entry_data)
           DocumentedItem.create(:documented_content_id => documented_content.id, :online_document_section_id => child_section.id)
         end
       end
-      
+
       #handle security
       if hash[:roles] #if this is a OnlineDocumentSection will not have roles
-        unless hash[:roles].empty? 
+        unless hash[:roles].empty?
           capability = section.add_capability(:view)
           hash[:roles].each do |role_iid|
             role = SecurityRole.find_by_internal_identifier(role_iid)
@@ -558,7 +556,7 @@ class Website < ActiveRecord::Base
           end
         end
       end
-      
+
       section
     end
 

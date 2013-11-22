@@ -3,6 +3,8 @@ Ext.define("Compass.ErpApp.Shared.ConfigurationPanel", {
     alias: "widget.sharedconfigurationpanel",
     autoScroll: true,
     constructor: function (config) {
+        var me = this;
+
         var categoriesTreePanel = {
             xtype: 'treepanel',
             store: {
@@ -49,6 +51,7 @@ Ext.define("Compass.ErpApp.Shared.ConfigurationPanel", {
 
                         if (Ext.isEmpty(configurationForm)) {
                             configurationForm = {
+                                fieldDefaults: me.initialConfig.fieldDefaults,
                                 closable: true,
                                 xtype: 'sharedconfigurationform',
                                 itemId: itemId,
@@ -64,11 +67,16 @@ Ext.define("Compass.ErpApp.Shared.ConfigurationPanel", {
                             tabPanel.add(configurationForm);
                             configurationForm = tabPanel.down('#' + itemId);
                         }
+                        else{
+                            configurationForm.setup();
+                        }
                         tabPanel.setActiveTab(configurationForm);
                     }
                 }
             }
         };
+
+        config.fieldDefaults = config.fieldDefaults || {labelAlign: 'top'};
 
         var configurationFormsCardPanel = {
             xtype: 'tabpanel',

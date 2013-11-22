@@ -113,9 +113,6 @@ Ext.define("Compass.ErpApp.Shared.Preferences.ApplicationManagementPanel", {
             setupPreferencesUrl: me.setupPreferencesUrl + '/' + applicationId,
             loadPreferencesUrl: me.loadPreferencesUrl + '/' + applicationId,
             width: 350,
-            defaults: {
-                width: 150
-            },
             region: 'center',
             listeners: {
                 'beforeAddItemsToForm': function (form, preferenceTypes) {
