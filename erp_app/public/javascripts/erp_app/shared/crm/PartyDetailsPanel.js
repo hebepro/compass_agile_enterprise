@@ -65,6 +65,33 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
         var me = this,
             tabPanels = [];
 
+        me.addEvents(
+            /*
+             * @event contactcreated
+             * Fires when a contact is created
+             * @param {Compass.ErpApp.Shared.Crm.PartyDetailsPanel} this
+             * @param {String} ContactType {PhoneNumber, PostalAddress, EmailAddress}
+             * @param {Record} record
+             */
+            'contactcreated',
+            /*
+             * @event contactupdated
+             * Fires when a contact is updated
+             * @param {Compass.ErpApp.Shared.Crm.PartyDetailsPanel} this
+             * @param {String} ContactType {PhoneNumber, PostalAddress, EmailAddress}
+             * @param {Record} record
+             */
+            'contactupdated',
+            /*
+             * @event contactdestroyed
+             * Fires when a contact is destroyed
+             * @param {Compass.ErpApp.Shared.Crm.PartyDetailsPanel} this
+             * @param {String} ContactType {PhoneNumber, PostalAddress, EmailAddress}
+             * @param {Record} record
+             */
+            'contactdestroyed'
+        );
+
         contactsPanel = Ext.create('widget.panel', {
             title: 'Contacts',
             layout: 'border',
@@ -120,9 +147,21 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
                     region: 'center',
                     layout: 'card',
                     items: [
-                        {xtype: 'phonenumbergrid', partyId: me.partyId, listeners:{'contactdatawrite':{fn:me.loadDetails,scope:me}}},
-                        {xtype: 'emailaddressgrid', partyId: me.partyId, listeners:{'contactdatawrite':{fn:me.loadDetails,scope:me}}},
-                        {xtype: 'postaladdressgrid', partyId: me.partyId, listeners:{'contactdatawrite':{fn:me.loadDetails,scope:me}}}
+                        {xtype: 'phonenumbergrid', partyId: me.partyId, listeners: {
+                            contactcreated: {fn: me.contactCreated, scope: me},
+                            contactupdated: {fn: me.contactUpdated, scope: me},
+                            contactdestroyed: {fn: me.contactDestroyed, scope: me}
+                        }},
+                        {xtype: 'emailaddressgrid', partyId: me.partyId, listeners: {
+                            contactcreated: {fn: me.contactCreated, scope: me},
+                            contactupdated: {fn: me.contactUpdated, scope: me},
+                            contactdestroyed: {fn: me.contactDestroyed, scope: me}
+                        }},
+                        {xtype: 'postaladdressgrid', partyId: me.partyId, listeners: {
+                            contactcreated: {fn: me.contactCreated, scope: me},
+                            contactupdated: {fn: me.contactUpdated, scope: me},
+                            contactdestroyed: {fn: me.contactDestroyed, scope: me}
+                        }}
                     ]
                 }
             ]
@@ -179,25 +218,49 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
         this.callParent(arguments);
     },
 
-	loadDetails: function(){
-		var me = this,
-			detailsUrl = me.detailsUrl,
-			partyDetails = me.down('#partyDetails');
-		
-		var myMask = new Ext.LoadMask(partyDetails, {msg:"Please wait..."});
-		myMask.show();
-		
-		// Load html of party
+    contactCreated: function (comp, contactType, record) {
+        var me = this;
+
+        me.fireEvent('contactcreated', me, contactType, record);
+
+        me.loadDetails();
+    },
+
+    contactUpdated: function (comp, contactType, record) {
+        var me = this;
+
+        me.fireEvent('contactupdated', me, contactType, record);
+
+        me.loadDetails();
+    },
+
+    contactDestroyed: function (comp, contactType, record) {
+        var me = this;
+
+        me.fireEvent('contactdestroyed', me, contactType, record);
+
+        me.loadDetails();
+    },
+
+    loadDetails: function () {
+        var me = this,
+            detailsUrl = me.detailsUrl,
+            partyDetails = me.down('#partyDetails');
+
+        var myMask = new Ext.LoadMask(partyDetails, {msg: "Please wait..."});
+        myMask.show();
+
+        // Load html of party
         Ext.Ajax.request({
             url: detailsUrl + me.partyId,
             disableCaching: false,
             method: 'GET',
             success: function (response) {
                 myMask.hide();
-				partyDetails.update(response.responseText);
+                partyDetails.update(response.responseText);
             }
         });
-	},
+    },
 
     loadParty: function () {
         var me = this,

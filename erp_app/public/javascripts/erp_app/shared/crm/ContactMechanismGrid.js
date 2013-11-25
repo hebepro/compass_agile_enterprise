@@ -32,7 +32,30 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
             config = me.initialConfig;
 
         me.addEvents(
-            'contactdatawrite'
+            /*
+             * @event contactcreated
+             * Fires when a contact is created
+             * @param {Compass.ErpApp.Shared.Crm.ContactMechanismGrid} this
+             * @param {String} ContactType {PhoneNumber, PostalAddress, EmailAddress}
+             * @param {Record} record
+             */
+            'contactcreated',
+            /*
+             * @event contactupdated
+             * Fires when a contact is updated
+             * @param {Compass.ErpApp.Shared.Crm.ContactMechanismGrid} this
+             * @param {String} ContactType {PhoneNumber, PostalAddress, EmailAddress}
+             * @param {Record} record
+             */
+            'contactupdated',
+            /*
+             * @event contactdestroyed
+             * Fires when a contact is destroyed
+             * @param {Compass.ErpApp.Shared.Crm.ContactMechanismGrid} this
+             * @param {String} ContactType {PhoneNumber, PostalAddress, EmailAddress}
+             * @param {Record} record
+             */
+            'contactdestroyed'
         );
 
         var store = Ext.create('Ext.data.Store', {
@@ -79,9 +102,22 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
                 'datachanged': function () {
                     me.setLoading(false);
                 },
-                'write': function () {
+                'write': function (store, operation) {
+                    var record = operation.getRecords()[0];
+
+                    switch(operation.action){
+                        case 'create':
+                            me.fireEvent('contactcreated', me, config['contactMechanism'], record);
+                            break;
+                        case 'update':
+                            me.fireEvent('contactupdated', me, config['contactMechanism'], record);
+                            break;
+                        case 'destroy':
+                            me.fireEvent('contactdestroyed', me, config['contactMechanism'], record);
+                            break;
+                    }
+
                     me.store.load();
-                    me.fireEvent('contactdatawrite', me);
                 }
             }
         });
@@ -187,7 +223,8 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
                 name: 'id'
             },
             {
-                name: 'is_primary'
+                name: 'is_primary',
+                type: 'boolean'
             }
         ]);
 
