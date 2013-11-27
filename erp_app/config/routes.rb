@@ -46,6 +46,7 @@ ErpApp::Engine.routes.draw do
   match '/organizer/crm/users(/:action(/:id))' => "organizer/crm/users"
   match '/organizer/crm/contact_mechanism(/:action(/:id))' => "organizer/crm/contact_mechanism"
   match '/organizer/crm/contact_mechanism/contact_purposes' => "organizer/crm/contact_mechanism#contact_purposes"
+  match '/organizer/crm/send_email' => "organizer/crm/contact_mechanism#send_email"
 
 
   ############################
