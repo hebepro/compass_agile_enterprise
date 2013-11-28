@@ -31,7 +31,8 @@ module Knitkit
     end
 
     def get_content
-      document_section = OnlineDocumentSection.where(:internal_identifier => params[:document_section_id]).first
+      document_section = OnlineDocumentSection.where(:internal_identifier => params[:document_section_id])
+                                              .where(:website_id => @website.id).first
       content = document_section.documented_item_published_content(@active_publication) unless @active_publication.nil?
       content = document_section.documented_item.content if @active_publication.nil? or content.nil?
 
