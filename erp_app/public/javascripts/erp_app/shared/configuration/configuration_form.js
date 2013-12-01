@@ -78,6 +78,7 @@ Ext.define("Compass.ErpApp.Shared.ConfigurationForm", {
         if (!self.alreadySetup) {
             var result = this.fireEvent('beforeAddItemsToForm', self, configurationItemTypes);
             if (result !== false) {
+
                 Ext.each(configurationItemTypes, function (configurationItemType) {
                     var field = null;
                     if (configurationItemType.allowUserDefinedOptions) {
