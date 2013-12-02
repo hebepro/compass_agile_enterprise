@@ -3,8 +3,9 @@ Ext.define("Compass.ErpApp.Shared.Preferences.Form", {
     alias: "widget.sharedpreferencesform",
     preferences: null,
     autoScroll: true,
-    layout: {
-        type: 'vbox'
+    layout: 'anchor',
+    defaults: {
+        anchor: '100%'
     },
     fieldDefaults: {
         labelAlign: 'top'
@@ -90,7 +91,6 @@ Ext.define("Compass.ErpApp.Shared.Preferences.Form", {
                     id: preferenceType.internal_identifier + '_id',
                     fieldLabel: preferenceType.description,
                     name: preferenceType.internal_identifier,
-                    width: 150,
                     value: preferenceType.default_value,
                     triggerAction: 'all',
                     store: store

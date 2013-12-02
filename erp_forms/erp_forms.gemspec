@@ -18,7 +18,6 @@ Gem::Specification.new do |s|
   s.files = Dir["{public,app,config,db,lib,tasks}/**/*"] + ["GPL-3-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["spec/**/*"]
 
-  s.add_dependency('dynamic_attributes','~> 1.2.0')
   s.add_dependency('friendly_id', '4.0.10.1')
 
   #compass dependencies

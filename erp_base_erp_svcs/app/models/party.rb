@@ -110,74 +110,78 @@ class Party < ActiveRecord::Base
 
   def primary_phone_number
     contact_mechanism = nil
-    
+
     contact = self.get_primary_contact(PhoneNumber)
     contact_mechanism = contact.contact_mechanism unless contact.nil?
 
     contact_mechanism
   end
-  alias primary_phone primary_phone_number 
-  
+
+  alias primary_phone primary_phone_number
+
   def primary_phone_number=(phone_number)
     self.set_primary_contact(PhoneNumber, phone_number)
   end
-  alias primary_phone= primary_phone_number= 
-  
+
+  alias primary_phone= primary_phone_number=
+
   def primary_email_address
     contact_mechanism = nil
-    
+
     contact = self.get_primary_contact(EmailAddress)
     contact_mechanism = contact.contact_mechanism unless contact.nil?
 
     contact_mechanism
   end
+
   alias primary_email primary_email_address
-  
+
   def primary_email_address=(email_address)
     self.set_primary_contact(EmailAddress, email_address)
   end
+
   alias primary_email= primary_email_address=
-  
+
   def primary_postal_address
     contact_mechanism = nil
-    
+
     contact = self.get_primary_contact(PostalAddress)
     contact_mechanism = contact.contact_mechanism unless contact.nil?
 
     contact_mechanism
   end
-  alias primary_address primary_postal_address 
-  
+
+  alias primary_address primary_postal_address
+
   def primary_postal_address=(postal_address)
     self.set_primary_contact(PostalAddress, postal_address)
   end
+
   alias primary_address= primary_postal_address=
 
   def set_primary_contact(contact_mechanism_class, contact_mechanism_instance)
     # set is_primary to false for any current primary contacts of this type
-    find_all_contacts_by_contact_mechanism(contact_mechanism_class).each do |contact_mechanism|
-      contact_mechanism.is_primary = false
-      contact_mechanism.save
+    primary_contact_mechanism = get_primary_contact(contact_mechanism_class)
+    if primary_contact_mechanism
+      primary_contact_mechanism.is_primary = false
+      primary_contact_mechanism.save
     end
-    
+
     contact_mechanism_instance.is_primary = true
     contact_mechanism_instance.save
   end
-  
+
   def get_primary_contact(contact_mechanism_class)
     table_name = contact_mechanism_class.name.tableize
 
-    contact = self.contacts.joins("inner join #{table_name} on #{table_name}.id = contact_mechanism_id and contact_mechanism_type = '#{contact_mechanism_class.name}'")
-                           .where('contacts.is_primary = ?', true).first
-    
-    contact
+    self.contacts.joins("inner join #{table_name} on #{table_name}.id = contact_mechanism_id and contact_mechanism_type = '#{contact_mechanism_class.name}'")
+    .where('contacts.is_primary = ?', true).readonly(false).first
   end
 
   def find_contact_mechanism_with_purpose(contact_mechanism_class, contact_purpose)
     contact = self.find_contact_with_purpose(contact_mechanism_class, contact_purpose)
-    contact_mechanism = contact.contact_mechanism unless contact.nil?
 
-    contact_mechanism
+    contact.contact_mechanism unless contact.nil?
   end
 
   def find_contact_with_purpose(contact_mechanism_class, contact_purpose)
@@ -186,9 +190,7 @@ class Party < ActiveRecord::Base
       contact_purpose = ContactPurpose.find_by_internal_identifier(contact_purpose.to_s)
     end
 
-    contact = self.find_contact(contact_mechanism_class, nil, [contact_purpose])
-
-    contact
+    self.find_contact(contact_mechanism_class, nil, [contact_purpose])
   end
 
   def find_all_contacts_by_contact_mechanism(contact_mechanism_class)
@@ -227,13 +229,13 @@ class Party < ActiveRecord::Base
       contact_mechanism.contact.contact_purposes = contact_purposes
       contact_mechanism.contact.save
       contact_mechanism.save
-      
+
       self.contacts << contact_mechanism.contact
     else
       contact_mechanism = update_contact(contact_mechanism_class, contact, contact_mechanism_args)
     end
-    
-    set_primary_contact(contact_mechanism_class, contact_mechanism) if is_primary == true
+
+    set_primary_contact(contact_mechanism_class, contact_mechanism) if is_primary
 
     contact_mechanism
   end

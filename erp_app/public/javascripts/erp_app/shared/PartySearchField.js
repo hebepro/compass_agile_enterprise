@@ -64,21 +64,21 @@ Ext.define("Compass.ErpApp.Shared.PartySearchField", {
                     extraParams: extraParams,
                     url: (config.url || '/erp_app/organizer/crm/base/search_parties')
                 },
-                autoLoad: true,
-                listeners: {
-                    load: function (store, records, options) {
-                        try {
-                            var record_value = self.ownerCt.getRecord().data[me.name];
-                        } catch (e) {
-                        }
-                        if (!Ext.isEmpty(record_value)) {
-                            me.setValue(record_value);
-                        } else if (!Ext.isEmpty(self.default_value)) {
-                            // self.value did not want to work for selecting default value so we use custom self.default_value
-                            me.setValue(self.default_value);
-                        }
-                    }
-                }
+                autoLoad: true
+                // listeners: {
+                //     load: function (store, records, options) {
+                //         // try {
+                //         //     var record_value = self.ownerCt.getRecord().data[me.name];
+                //         // } catch (e) {
+                //         // }
+                //         // if (!Ext.isEmpty(record_value)) {
+                //         //     me.setValue(record_value);
+                //         // } else if (!Ext.isEmpty(self.default_value)) {
+                //         //     // self.value did not want to work for selecting default value so we use custom self.default_value
+                //         //     me.setValue(self.default_value);
+                //         // }
+                //     }
+                // }
             })
         }, config);
 

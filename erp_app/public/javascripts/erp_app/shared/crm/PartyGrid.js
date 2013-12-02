@@ -152,31 +152,58 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
             /*
              * @event partycreated
              * Fires when a party is created
-             * @param {Compass.ErpApp.Shared.Crm.PartyMgtPanel} this
+             * @param {Compass.ErpApp.Shared.Crm.PartyGrid} this
              * @param {Int} newPartyId
              */
             'partycreated',
             /*
              * @event partyupdated
              * Fires when a party is updated
-             * @param {Compass.ErpApp.Shared.Crm.PartyMgtPanel} this
+             * @param {Compass.ErpApp.Shared.Crm.PartyGrid} this
              * @param {Int} updatedPartyId
              */
             'partyupdated',
             /*
              * @event usercreated
              * Fires when a user is updated
-             * @param {Compass.ErpApp.Shared.Crm.PartyMgtPanel} this
+             * @param {Compass.ErpApp.Shared.Crm.PartyGrid} this
              * @param {Int} createdUserId
              */
             'usercreated',
             /*
              * @event userupdated
              * Fires when a party is updated
-             * @param {Compass.ErpApp.Shared.Crm.PartyMgtPanel} this
+             * @param {Compass.ErpApp.Shared.Crm.PartyGrid} this
              * @param {Int} updatedUserId
              */
-            'userupdated'
+            'userupdated',
+            /*
+             * @event contactcreated
+             * Fires when a contact is created
+             * @param {Compass.ErpApp.Shared.Crm.PartyGrid} this
+             * @param {String} ContactType {PhoneNumber, PostalAddress, EmailAddress}
+             * @param {Record} record
+             * @param {int} partyId
+             */
+            'contactcreated',
+            /*
+             * @event contactupdated
+             * Fires when a contact is updated
+             * @param {Compass.ErpApp.Shared.Crm.PartyGrid} this
+             * @param {String} ContactType {PhoneNumber, PostalAddress, EmailAddress}
+             * @param {Record} record
+             * @param {int} partyId
+             */
+            'contactupdated',
+            /*
+             * @event contactdestroyed
+             * Fires when a contact is destroyed
+             * @param {Compass.ErpApp.Shared.Crm.PartyGrid} this
+             * @param {String} ContactType {PhoneNumber, PostalAddress, EmailAddress}
+             * @param {Record} record
+             * @param {int} partyId
+             */
+            'contactdestroyed'
         );
 
         // setup toolbar
@@ -343,7 +370,8 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                             var record = grid.getStore().getAt(rowIndex),
                                 crmTaskTabPanel = grid.up('crmpartygrid').up('#' + me.applicationContainerId),
                                 itemId = 'detailsParty-' + record.get('id'),
-                                title = record.get('description');
+                                title = record.get('description'),
+                                partyId = record.get('id');
 
                             var partyDetailsPanel = crmTaskTabPanel.down('#' + itemId);
 
@@ -353,10 +381,21 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                                     itemId: itemId,
                                     applicationContainerId: me.applicationContainerId,
                                     detailsUrl: me.detailsUrl,
-                                    partyId: record.get('id'),
+                                    partyId: partyId,
                                     partyModel: record.get('model'),
                                     partyRelationships: me.partyRelationships,
-                                    closable: true
+                                    closable: true,
+                                    listeners:{
+                                        contactcreated:function(comp, contactType, record){
+                                            me.fireEvent('contactcreated', me, contactType, record, partyId);
+                                        },
+                                        contactupdated:function(comp, contactType, record){
+                                            me.fireEvent('contactupdated', me, contactType, record, partyId);
+                                        },
+                                        contactdestroyed:function(comp, contactType, record){
+                                            me.fireEvent('contactdestroyed', me, contactType, record, partyId);
+                                        }
+                                    }
                                 });
                                 crmTaskTabPanel.add(partyDetailsPanel);
                             }

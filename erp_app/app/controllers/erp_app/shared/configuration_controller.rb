@@ -18,7 +18,7 @@ module ErpApp
         category_id = params[:category_id]
         configuration = ::Configuration.find(params[:id])
         
-        render :json => {:success => true, :configurationItemTypes => configuration.item_types.by_category(Category.find(category_id)).collect(&:to_js_hash).sort_by{|hash| [hash[:internalIdentifier]]}}
+        render :json => {:success => true, :configurationItemTypes => configuration.item_types.by_category(Category.find(category_id)).order('precedence').order('internal_identifier').collect(&:to_js_hash)}
       end
 
       def load
