@@ -182,6 +182,15 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
         ]);
 
         config.columns.unshift({
+            header: 'Description',
+            dataIndex: 'description',
+            width: 200,
+            editor: {
+                xtype: 'textfield'
+            }
+        });
+
+        config.columns.unshift({
             header: 'Primary',
             dataIndex: 'is_primary',
             renderer: function (v) {
@@ -225,6 +234,9 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
             {
                 name: 'is_primary',
                 type: 'boolean'
+            },
+            {
+                name: 'description'
             }
         ]);
 
