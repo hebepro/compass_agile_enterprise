@@ -23,12 +23,6 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
     partyId: null,
 
     /**
-     * @cfg {String} detailsUrl
-     * Url to retrieve details for these parties.
-     */
-    detailsUrl: '/erp_app/organizer/crm/base/get_party_details/',
-
-    /**
      * @cfg {Array | Object} partyRelationships
      * Party Relationships to include in the details of this party, is an config object with the following options
      *
@@ -244,7 +238,6 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
 
     loadDetails: function () {
         var me = this,
-            detailsUrl = me.detailsUrl,
             partyDetails = me.down('#partyDetails');
 
         var myMask = new Ext.LoadMask(partyDetails, {msg: "Please wait..."});
@@ -252,7 +245,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
 
         // Load html of party
         Ext.Ajax.request({
-            url: detailsUrl + me.partyId,
+            url: '/erp_app/organizer/crm/parties/' + me.partyId + '/details',
             disableCaching: false,
             method: 'GET',
             success: function (response) {

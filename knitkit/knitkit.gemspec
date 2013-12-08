@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.description = "Knitkit is CompassAE's content and digital asset management application. It is based on ideas and code adapted from Mephisto and adva_cms, with significant changes to integrate with the CompassAE object-relational layer and to harmonize the user interface with the rest of CompassAE."
   s.authors     = ["Rick Koloski, Russell Holmes"]
   s.email       = ["russonrails@gmail.com"]
-  s.homepage    = "http://development.compassagile.com"
+  s.homepage    = "http://www.truenorthtechnology.com"
 
   s.license = 'GPL-3'
   s.files = Dir["{public,app,config,db,lib,tasks}/**/*"] + ["GPL-3-LICENSE", "Rakefile", "README.md"]

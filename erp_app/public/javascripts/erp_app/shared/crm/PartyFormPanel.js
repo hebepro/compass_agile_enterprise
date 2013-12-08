@@ -36,6 +36,12 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
     partyId: null,
 
     /**
+     * @cfg {Int} userId
+     * Id of user for the party being edited.
+     */
+    userId: null,
+
+    /**
      * @cfg {String} partyType
      * Type of party (Individual, Organization).
      */
@@ -119,27 +125,30 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
                         flex: 1,
                         text: 'Save',
                         handler: function (btn) {
-                            var crmpartyformpanel = btn.up('crmpartyformpanel'),
-                                crmpartyform = crmpartyformpanel.down('crmpartyform'),
-                                crmuserform = crmpartyformpanel.down('crmuserform');
+                            var crmPartyFormPanel = btn.up('crmpartyformpanel'),
+                                crmPartyForm = crmPartyFormPanel.down('crmpartyform'),
+                                crmUserForm = crmPartyFormPanel.down('crmuserform'),
+                                url = '/erp_app/organizer/crm/parties';
 
-                            if (crmpartyform.isValid()) {
-                                if (crmuserform.isVisible() && crmuserform.getForm().findField('userEnabled').getValue() && !crmpartyform.isValid()) {
+                            if (crmPartyForm.isValid()) {
+                                if (crmUserForm.isVisible() && crmUserForm.getForm().findField('userEnabled').getValue() && !crmPartyForm.isValid()) {
                                     return false
                                 }
 
                                 // submit party form first
-                                var partyId = crmpartyform.down('#partyId').getValue(),
+                                var partyId = crmPartyForm.down('#partyId').getValue(),
                                     partyAjaxMethod = null;
 
                                 if (Ext.isEmpty(partyId)) {
                                     partyAjaxMethod = 'POST';
+
                                 }
                                 else {
                                     partyAjaxMethod = 'PUT';
+                                    url = url + '/' + partyId;
                                 }
 
-                                crmpartyform.submit({
+                                crmPartyForm.submit({
                                     params: {
                                         party_role: me.partyRole,
                                         to_role: me.toRole,
@@ -148,7 +157,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
                                         business_party_type: me.partyType
                                     },
                                     clientValidation: true,
-                                    url: '/erp_app/organizer/crm/base/parties',
+                                    url: url,
                                     method: partyAjaxMethod,
                                     waitMsg: 'Please Wait...',
                                     success: function (form, action) {
@@ -162,8 +171,9 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
                                             me.fireEvent('partyupdated', me, partyId);
 
                                         // Check if the user form is visible if so submit that too now
-                                        if (action.result.success && crmuserform.isVisible() && crmuserform.getForm().findField('userEnabled').getValue()) {
-                                            var userId = crmuserform.down('#userId').getValue(),
+                                        if (action.result.success && crmUserForm.isVisible() && crmUserForm.getForm().findField('userEnabled').getValue()) {
+                                            var userId = crmUserForm.down('#userId').getValue(),
+                                                url = '/erp_app/organizer/crm/users',
                                                 userAjaxMethod = null;
 
                                             if (Ext.isEmpty(userId)) {
@@ -171,11 +181,12 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
                                             }
                                             else {
                                                 userAjaxMethod = 'PUT';
+                                                url = url + '/' + userId;
                                             }
 
-                                            crmuserform.submit({
+                                            crmUserForm.submit({
                                                 clientValidation: true,
-                                                url: '/erp_app/organizer/crm/users/index',
+                                                url: url,
                                                 method: userAjaxMethod,
                                                 waitMsg: 'Please Wait...',
                                                 params: {
@@ -189,17 +200,14 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
                                                         if (userAjaxMethod == 'PUT')
                                                             me.fireEvent('userupdated', me, action.result.users.id);
 
-                                                        crmpartyformpanel.close();
+                                                        crmPartyFormPanel.close();
                                                     }
                                                 },
                                                 failure: function (form, action) {
                                                     if (partyAjaxMethod == 'POST') {
                                                         Ext.Ajax.request({
                                                             method: 'DELETE',
-                                                            url: '/erp_app/organizer/crm/base/parties',
-                                                            params: {
-                                                                party_id: partyId
-                                                            },
+                                                            url: '/erp_app/organizer/crm/parties/' + partyId,
                                                             success: function (response) {
                                                             },
                                                             failure: function (response) {
@@ -223,7 +231,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
                                             });
                                         }
                                         else {
-                                            crmpartyformpanel.close();
+                                            crmPartyFormPanel.close();
                                         }
                                     },
                                     failure: function (form, action) {
@@ -261,7 +269,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
         }
 
         if (!Ext.isEmpty(me.partyType) && me.partyType == 'Individual') {
-            this.down('crmuserform').loadUser(me.partyId);
+            this.down('crmuserform').loadUser(me.partyId, me.userId);
         }
 
         if (!Ext.isEmpty(me.partyType) && me.partyType == 'Organization') {

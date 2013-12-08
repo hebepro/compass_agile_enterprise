@@ -2,7 +2,7 @@ var contactPurposeStore = Ext.create('Ext.data.Store', {
     autoLoad: true,
     proxy: {
         type: 'ajax',
-        url: '/erp_app/organizer/crm/contact_mechanism/contact_purposes',
+        url: '/erp_app/organizer/crm/contact_mechanisms/contact_purposes',
         reader: {
             type: 'json',
             root: 'types'
@@ -64,7 +64,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
             autoSync: true,
             proxy: {
                 type: 'rest',
-                url: config['url'] || '/erp_app/organizer/crm/contact_mechanism/index',
+                url: config['url'] || '/erp_app/organizer/crm/contact_mechanisms',
                 extraParams: {
                     party_id: config['partyId'],
                     contact_type: config['contactMechanism']
@@ -422,14 +422,10 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid.EmailAddressGrid", {
                                 },
                                 items: [
                                     {
-                                        xtype: 'textfield',
+                                        xtype: 'displayfield',
                                         fieldLabel: 'Send To',
                                         width: 300,
-                                        name: 'send_to',
-                                        vtype: 'email',
-                                        value: selection.get('email_address'),
-                                        afterLabelTextTpl: required,
-                                        allowBlank: false
+                                        value: selection.get('email_address')
                                     },
                                     {
                                         xtype: 'textfield',
@@ -457,19 +453,12 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid.EmailAddressGrid", {
 
                                 buttons: [
                                     {
-                                        text: 'Cancel',
-                                        handler: function () {
-                                            this.up('form').getForm().reset();
-                                            this.up('window').hide();
-                                        }
-                                    },
-                                    {
                                         text: 'Send',
                                         handler: function (btn) {
                                             if (this.up('form').getForm().isValid()) {
                                                 this.up('form').getForm().submit({
                                                     waitMsg: 'sending email',
-                                                    url: '/erp_app/organizer/crm/send_email',
+                                                    url: '/erp_app/organizer/crm/contact_mechanisms/'+ selection.get('id') +'/send_email',
                                                     success: function (form, result) {
                                                         btn.up('form').getForm().reset();
                                                         btn.up('window').hide();
@@ -482,6 +471,13 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid.EmailAddressGrid", {
 
 
                                             }
+                                        }
+                                    },
+                                    {
+                                        text: 'Cancel',
+                                        handler: function () {
+                                            this.up('form').getForm().reset();
+                                            this.up('window').hide();
                                         }
                                     }
                                 ]

@@ -144,7 +144,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
             autoSync: true,
             proxy: {
                 type: 'ajax',
-                url: '/erp_app/organizer/crm/users/index',
+                url: '/erp_app/organizer/crm/users',
                 extraParams: {
                     party_role: me.partyRole,
                     to_role: me.toRole,
@@ -328,10 +328,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
                                 if (btn == 'ok' || btn == 'yes') {
                                     Ext.Ajax.request({
                                         method: 'DELETE',
-                                        url: '/erp_app/organizer/crm/users',
-                                        params: {
-                                            id: record.get('id')
-                                        },
+                                        url: '/erp_app/organizer/crm/users/' + record.get('id'),
                                         success: function (response) {
                                             myMask.hide();
                                             responseObj = Ext.JSON.decode(response.responseText);

@@ -252,10 +252,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyForm", {
 
         Ext.Ajax.request({
             method: 'GET',
-            url: '/erp_app/organizer/crm/base/parties',
-            params: {
-                party_id: me.partyId
-            },
+            url: '/erp_app/organizer/crm/parties/' + me.partyId,
             success: function (response) {
                 responseObj = Ext.JSON.decode(response.responseText);
 

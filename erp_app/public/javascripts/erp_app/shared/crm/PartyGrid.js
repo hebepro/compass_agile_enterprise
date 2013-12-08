@@ -36,12 +36,6 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
     relationshipTypeToCreate: null,
 
     /**
-     * @cfg {String} detailsUrl
-     * Url to retrieve details for these parties.
-     */
-    detailsUrl: '/erp_app/organizer/crm/base/get_party_details/',
-
-    /**
      * @cfg {String} addBtnIconCls
      * Icon css class for add button.
      */
@@ -72,8 +66,8 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
     allowedPartyType: 'Both',
 
     /**
-     * @cfg {String} detailsUrl
-     * Url to retrieve details for these parties.
+     * @cfg {String} partyMgtTitle
+     * Title of parties.
      */
     partyMgtTitle: 'Customer',
 
@@ -291,11 +285,12 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                 'description',
                 {name: 'createdAt', mapping: 'created_at', type: 'date'},
                 {name: 'updatedAt', mapping: 'updated_at', type: 'date'},
-                'model'
+                'model',
+                {name: 'userId', mapping: 'user_id', type: 'int'}
             ],
             proxy: {
                 type: 'ajax',
-                url: '/erp_app/organizer/crm/base/parties',
+                url: '/erp_app/organizer/crm/parties',
                 extraParams: {
                     party_role: me.partyRole,
                     to_role: me.toRole,
@@ -380,7 +375,6 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                                     title: title,
                                     itemId: itemId,
                                     applicationContainerId: me.applicationContainerId,
-                                    detailsUrl: me.detailsUrl,
                                     partyId: partyId,
                                     partyModel: record.get('model'),
                                     partyRelationships: me.partyRelationships,
@@ -434,6 +428,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                                     applicationContainerId: me.applicationContainerId,
                                     partyType: record.get('model'),
                                     partyId: record.get('id'),
+                                    userId: record.get('userId'),
                                     listeners: {
                                         partyupdated: function (comp, partyId) {
                                             me.fireEvent('partyupdated', me, partyId);
@@ -476,10 +471,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                                 if (btn == 'ok' || btn == 'yes') {
                                     Ext.Ajax.request({
                                         method: 'DELETE',
-                                        url: '/erp_app/organizer/crm/base/parties',
-                                        params: {
-                                            party_id: record.get('id')
-                                        },
+                                        url: '/erp_app/organizer/crm/parties/' + record.get('id'),
                                         success: function (response) {
                                             myMask.hide();
                                             responseObj = Ext.JSON.decode(response.responseText);

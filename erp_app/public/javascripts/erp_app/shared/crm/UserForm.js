@@ -10,7 +10,7 @@ Ext.define('Compass.ErpApp.Shared.Crm.UserForm', {
      */
     addPartyBtn: '/images/erp_app/organizer/applications/crm/customer_360_64x64.png',
 
-    initComponent: function(){
+    initComponent: function () {
         var me = this;
 
         me.items = [
@@ -91,43 +91,45 @@ Ext.define('Compass.ErpApp.Shared.Crm.UserForm', {
         this.callParent(arguments);
     },
 
-    loadUser: function(partyId){
+    loadUser: function (partyId, userId) {
         var me = this;
+
         me.partyId = partyId;
+        me.userId = userId;
 
         // Load user details
         Ext.Ajax.request({
-            url: '/erp_app/organizer/crm/users/user_for_party',
+            url: '/erp_app/organizer/crm/users/' + userId,
             method: 'GET',
-            params:{
+            params: {
                 party_id: me.partyId
             },
             success: function (response) {
                 var responseObj = Ext.JSON.decode(response.responseText);
 
-                if(responseObj.success){
-                    if(!Ext.isEmpty(responseObj.user)){
+                if (responseObj.success) {
+                    if (!Ext.isEmpty(responseObj.user)) {
                         var statusRadio = me.down('#statusContainer');
 
                         me.getForm().setValues(responseObj.user);
                         me.down('#lastLoginAt').show();
                         statusRadio.show();
-                        if(Ext.isEmpty(responseObj.user.activation_state)){
-                            statusRadio.setValue({'activation_state':'pending'});
+                        if (Ext.isEmpty(responseObj.user.activation_state)) {
+                            statusRadio.setValue({'activation_state': 'pending'});
                         }
-                        else{
-                            statusRadio.setValue({'activation_state':responseObj.user.activation_state});
+                        else {
+                            statusRadio.setValue({'activation_state': responseObj.user.activation_state});
                         }
                     }
-                    else{
+                    else {
                         me.getForm().findField('userEnabled').setValue(false);
                     }
                 }
-                else{
+                else {
                     Ext.Msg.alert('Error', 'Could not load user details');
                 }
             },
-            failure: function(response){
+            failure: function (response) {
                 myMask.hide();
                 Ext.Msg.alert('Error', 'Could not load user details');
             }

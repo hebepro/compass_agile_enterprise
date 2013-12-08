@@ -4,41 +4,6 @@ module ErpApp
       class UsersController < ErpApp::Organizer::BaseController
 
         def index
-          render :json => if request.get?
-                            get_users
-                          elsif request.post?
-                            create_user
-                          elsif request.put?
-                            update_user
-                          elsif request.delete?
-                            delete_user
-                          end
-        end
-
-        def user_for_party
-          result = {:success => true}
-
-          party = Party.find(params[:party_id])
-
-          user = party.user
-
-          if user
-            result[:user] = user.to_hash(:only =>
-                                             [:id,
-                                              :username,
-                                              :email,
-                                              :last_login_at,
-                                              :created_at,
-                                              :updated_at,
-                                              :activation_state])
-          end
-
-          render :json => result
-        end
-
-        protected
-
-        def get_users
           party_role = params[:party_role]
           to_role = params[:to_role]
           to_party_id = params[:to_party_id]
@@ -80,38 +45,61 @@ module ErpApp
           total = statement.uniq.count
           users = statement.uniq.limit(limit).offset(offset).all
 
-          {:success => true,
-           :users => users.collect do |user|
-             user_data = user.to_hash(:only =>
-                                          [:id, :username,
-                                           :email,
-                                           :last_login_at,
-                                           :created_at,
-                                           :updated_at,
-                                           :activation_state],
-                                      :party_description => (user.party.description))
+          data = {
+              :success => true,
+                  :users => users.collect do |user|
+                    user_data = user.to_hash(:only =>
+                                                 [:id, :username,
+                                                  :email,
+                                                  :last_login_at,
+                                                  :created_at,
+                                                  :updated_at,
+                                                  :activation_state],
+                                             :party_description => (user.party.description))
 
-             # add relationships
-             included_party_to_relationships.each do |included_party_to_relationship|
-               included_party_to_relationship.symbolize_keys!
+                    # add relationships
+                    included_party_to_relationships.each do |included_party_to_relationship|
+                      included_party_to_relationship.symbolize_keys!
 
-               relationship = user.party.relationships.where('relationship_type_id = ?', RelationshipType.find_by_internal_identifier(included_party_to_relationship[:relationshipType])).first
-               if relationship
-                 user_data[included_party_to_relationship[:toRoleType]] = relationship.to_party.description
-               end
-             end
+                      relationship = user.party.relationships.where('relationship_type_id = ?', RelationshipType.find_by_internal_identifier(included_party_to_relationship[:relationshipType])).first
+                      if relationship
+                        user_data[included_party_to_relationship[:toRoleType]] = relationship.to_party.description
+                      end
+                    end
 
-             if user.party.business_party.class == Individual
-               user_data[:first_name] = user.party.business_party.current_first_name
-               user_data[:last_name] = user.party.business_party.current_last_name
-             end
+                    if user.party.business_party.class == Individual
+                      user_data[:first_name] = user.party.business_party.current_first_name
+                      user_data[:last_name] = user.party.business_party.current_last_name
+                    end
 
-             user_data
-           end,
-           :total => total}
+                    user_data
+                  end,
+                  :total => total
+          }
+
+          render :json => data
         end
 
-        def create_user
+        def show
+          result = {:success => true}
+
+          user = User.where('id = ?', params[:id]).first
+
+          if user
+            result[:user] = user.to_hash(:only =>
+                                             [:id,
+                                              :username,
+                                              :email,
+                                              :last_login_at,
+                                              :created_at,
+                                              :updated_at,
+                                              :activation_state])
+          end
+
+          render :json => result
+        end
+
+        def create
           result = {}
 
           user_data = params[:data].present? ? params[:data] : params
@@ -161,10 +149,10 @@ module ErpApp
             result = {:success => false, :message => "Error adding user."}
           end
 
-          result
+          render :json => result
         end
 
-        def update_user
+        def update
           user_data = params[:data].present? ? params[:data] : params
 
           user = User.find(params[:id])
@@ -193,13 +181,13 @@ module ErpApp
             result = {:success => false, :message => user.errors.full_messages.to_sentence}
           end
 
-          result
+          render :json => result
         end
 
-        def delete_user
+        def destroy
           user = User.find(params[:id])
 
-          {:success => user.destroy}
+          render :json => {:success => user.destroy}
         end
 
       end #BaseController

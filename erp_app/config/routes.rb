@@ -36,18 +36,40 @@ ErpApp::Engine.routes.draw do
   #############################
   #Organizer Application Routes
   #############################
-  match '/organizer(/:action)' => "organizer/base"
 
-  match '/organizer/application_management/:action(/:id)' => "organizer/application_management"
-  
-  #crm
-  match '/organizer/crm/relationship(/:action(/:id))' => "organizer/crm/relationship"
-  match '/organizer/crm/base(/:action(/:id))' => "organizer/crm/base"
-  match '/organizer/crm/users(/:action(/:id))' => "organizer/crm/users"
-  match '/organizer/crm/contact_mechanism(/:action(/:id))' => "organizer/crm/contact_mechanism"
-  match '/organizer/crm/contact_mechanism/contact_purposes' => "organizer/crm/contact_mechanism#contact_purposes"
-  match '/organizer/crm/send_email' => "organizer/crm/contact_mechanism#send_email"
+  namespace :organizer do
+    match '(/:action)' => "base"
 
+    match '/application_management/:action(/:id)' => "application_management"
+
+    namespace :crm do
+
+      resources :parties do
+        collection do
+          get 'search'
+        end
+
+        member do
+          get 'details'
+        end
+      end
+
+      resources :contact_mechanisms do
+        collection do
+          get 'contact_purposes'
+        end
+
+        member do
+          post 'send_email'
+        end
+      end
+
+      resources :users
+
+      match '/relationship(/:action(/:id))' => "relationship"
+    end
+
+  end
 
   ############################
   #Desktop Application Routes
