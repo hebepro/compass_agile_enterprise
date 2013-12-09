@@ -1,5 +1,7 @@
 Version 3.1.17
+- Updated CRM to restful routes
 - Updated CRM to give ability to create parties based on PartyRoles
+- Added ability to have related parties within CRM Parties
 - Fixed bug in codemirrorHighlight with new codemirror modes behavior
 - Added runmode support to include_code_mirror_library
 - Updated Ckeditor (version 4.2) and Codemirror (version 3.16.1)
