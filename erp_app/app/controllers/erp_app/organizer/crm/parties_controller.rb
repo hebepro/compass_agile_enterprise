@@ -167,33 +167,34 @@ module ErpApp
           business_party_data = params
 
           # remove parameters not need for creation of object
-          business_party_data.delete(:party_id)
-          business_party_data.delete(:action)
-          business_party_data.delete(:controller)
-          business_party_data.delete(:business_party_type)
-          business_party_data.delete(:authenticity_token)
-          business_party_data.delete(:to_party_id)
-          business_party_data.delete(:party_role)
-          business_party_data.delete(:to_role)
-          business_party_data.delete(:relationship_type_to_create)
+          params.delete(:id)
+          params.delete(:party_id)
+          params.delete(:action)
+          params.delete(:controller)
+          params.delete(:business_party_type)
+          params.delete(:authenticity_token)
+          params.delete(:to_party_id)
+          params.delete(:party_role)
+          params.delete(:to_role)
+          params.delete(:relationship_type_to_create)
 
           if klass == Organization
-            business_party_data.delete(:current_personal_title)
-            business_party_data.delete(:current_first_name)
-            business_party_data.delete(:current_middle_name)
-            business_party_data.delete(:current_last_name)
-            business_party_data.delete(:current_suffix)
-            business_party_data.delete(:current_nickname)
-            business_party_data.delete(:current_passport_number)
-            business_party_data.delete(:current_passport_expire_date)
-            business_party_data.delete(:birth_date)
-            business_party_data.delete(:gender)
-            business_party_data.delete(:total_years_work_experience)
-            business_party_data.delete(:marital_status)
-            business_party_data.delete(:social_security_number)
+            params.delete(:current_personal_title)
+            params.delete(:current_first_name)
+            params.delete(:current_middle_name)
+            params.delete(:current_last_name)
+            params.delete(:current_suffix)
+            params.delete(:current_nickname)
+            params.delete(:current_passport_number)
+            params.delete(:current_passport_expire_date)
+            params.delete(:birth_date)
+            params.delete(:gender)
+            params.delete(:total_years_work_experience)
+            params.delete(:marital_status)
+            params.delete(:social_security_number)
           else
-            business_party_data.delete(:description)
-            business_party_data.delete(:tax_id_number)
+            params.delete(:description)
+            params.delete(:tax_id_number)
           end
 
           # clean up data
@@ -207,7 +208,7 @@ module ErpApp
           party = Party.find(party_id)
           business_party = party.business_party
 
-          business_party_data.each do |key, value|
+          params.each do |key, value|
             method = key + '='
             business_party.send method.to_sym, value
           end
