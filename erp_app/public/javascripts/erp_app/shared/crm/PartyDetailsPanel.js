@@ -44,13 +44,24 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
      * @param {String} allowedPartyType
      * Party type that can be created {Both | Individual | Organization}.
      *
+     * @param {Array | Object} partyRelationships
+     *
      * @example
      * {
             title: 'Employees',
             relationshipType: 'employee_customer',
             toRoleType: 'customer',
             fromRoleType: 'employee',
-            allowedPartyType: 'Both',
+            allowedPartyType: 'Individual',
+            partyRelationships: [
+                {
+                    title: 'Family',
+                    relationshipType: 'employee_family_member',
+                    toRoleType: 'employee',
+                    fromRoleType: 'family_member',
+                    allowedPartyType: 'Individual'
+                }
+            ]
         }
      */
     partyRelationships: [],
@@ -188,6 +199,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
                 canAddParty: partyRelationship.canAddParty || true,
                 canEditParty: partyRelationship.canEditParty || true,
                 canDeleteParty: partyRelationship.canDeleteParty || true,
+                partyRelationships: partyRelationship.partyRelationships || [],
                 listeners: {
                     partycreated: function (comp, partyId) {
                         this.store.load();
