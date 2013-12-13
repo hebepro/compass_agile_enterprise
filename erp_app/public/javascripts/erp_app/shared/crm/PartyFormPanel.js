@@ -272,7 +272,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
             this.down('crmuserform').loadUser(me.partyId, me.userId);
         }
 
-        if (!Ext.isEmpty(me.partyType) && me.partyType == 'Organization') {
+        if (me.allowedPartyType == 'Organization' || (!Ext.isEmpty(me.partyType) && me.partyType == 'Organization')) {
             this.down('crmuserform').hide();
         }
     }
