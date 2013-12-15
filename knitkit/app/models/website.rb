@@ -150,7 +150,7 @@ class Website < ActiveRecord::Base
   def setup_website
     PublishedWebsite.create(:website => self, :version => 0, :active => true, :comment => 'New Site Created')
     SecurityRole.create(:description => "Website #{self.title}", :internal_identifier => website_role_iid) if self.role.nil?
-    configuration = ::Configuration.find_template('default_website_configuration').clone(true, "Website #{self.title} Configuration", configuration.description.underscore)
+    configuration = ::Configuration.find_template('default_website_configuration').clone(true, "Website #{self.title} Configuration", "Website #{self.title} Configuration".underscore)
     configuration.update_configuration_item(ConfigurationItemType.find_by_internal_identifier('login_url'), '/login')
     configuration.update_configuration_item(ConfigurationItemType.find_by_internal_identifier('homepage_url'), '/home')
     self.configurations << configuration
