@@ -4,7 +4,8 @@
 ## work_effort_type_associations is used to store valid combinations of work effort types.
 
 class WorkEffortAssociationType < ActiveRecord::Base
-  # attr_accessible :title, :body
+  attr_protected :created_at, :updated_at
+
   acts_as_nested_set
   include ErpTechSvcs::Utils::DefaultNestedSetMethods
 

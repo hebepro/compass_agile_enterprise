@@ -5,24 +5,30 @@ class WorkEffort < ActiveRecord::Base
   include ErpTechSvcs::Utils::DefaultNestedSetMethods
   has_tracked_status
 
-  belongs_to  :work_effort_type
-  belongs_to  :work_effort_purpose_type
+  belongs_to :work_effort_item, :polymorphic => true
+
+  belongs_to :work_effort_type
+  belongs_to :work_effort_purpose_type
 
   ## How is this Work Effort related to Work Order Items (order_line_items)
-  has_many    :work_order_item_fulfillments, :dependent => :destroy
-  has_many    :order_line_items, :through => :work_order_item_fulfillments
+  has_many :work_order_item_fulfillments, :dependent => :destroy
+  has_many :order_line_items, :through => :work_order_item_fulfillments
+
+  ## How is a work effort assigned, it can be assigned to party roles which allow for generic assignment.
+  has_and_belongs_to_many :role_types
+  alias :role_type_assignments :role_types
 
   ## How is this Work Effort related to business parties, requestors, workers, approvers
-  has_many    :work_effort_party_assignments, :dependent => :destroy
-  has_many    :parties, :through => :work_effort_party_assignments
+  has_many :work_effort_party_assignments, :dependent => :destroy
+  has_many :parties, :through => :work_effort_party_assignments
 
   ## What Inventory Items are used in the execution of this Work Effort
-  has_many    :work_effort_inventory_assignments, :dependent => :destroy
-  has_many    :inventory_entries, :through => :work_effort_inventory_assignments
+  has_many :work_effort_inventory_assignments, :dependent => :destroy
+  has_many :inventory_entries, :through => :work_effort_inventory_assignments
 
   ## What Fixed Assets (tools, equipment) are used in the execution of this Work Effort
-  has_many    :work_effort_fixed_asset_assignments, :dependent => :destroy
-  has_many    :fixed_assets, :through => :work_effort_fixed_asset_assignments
+  has_many :work_effort_fixed_asset_assignments, :dependent => :destroy
+  has_many :fixed_assets, :through => :work_effort_fixed_asset_assignments
 
   ## Allow for polymorphic subtypes of this class
   belongs_to :work_effort_record, :polymorphic => true
@@ -30,6 +36,17 @@ class WorkEffort < ActiveRecord::Base
   belongs_to :projected_cost, :class_name => 'Money', :foreign_key => 'projected_cost_money_id'
   belongs_to :actual_cost, :class_name => 'Money', :foreign_key => 'actual_cost_money_id'
   belongs_to :facility
+
+  class << self
+    def work_efforts_for_party(party)
+      role_types_tbl = RoleType.arel_table
+      parties_tbl = Party.arel_table
+
+      self.includes(:role_types)
+          .includes(:parties)
+          .where(role_types_tbl[:id].in(party.party_roles.collect(&:role_type_id)).or(parties_tbl[:id].eq(party.id)))
+    end
+  end
 
   def status
     # get status via has_tracked_status
@@ -40,12 +57,12 @@ class WorkEffort < ActiveRecord::Base
   def started?
     current_status.nil? ? false : true
   end
-  
+
   # return true if this effort has been completed, false otherwise
   def completed?
     finished_at.nil? ? false : true
   end
-  
+
   def finished?
     completed?
   end

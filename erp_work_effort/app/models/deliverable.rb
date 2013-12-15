@@ -1,5 +1,5 @@
 class Deliverable < ActiveRecord::Base
-  # attr_accessible :title, :body
+  attr_protected :created_at, :updated_at
 
   belongs_to :deliverable_type
   belongs_to :deliverable_record, :polymorphic => true

@@ -1,5 +1,4 @@
 class Requirement < ActiveRecord::Base
-  # attr_accessible :title, :body
   attr_protected :created_at, :updated_at
 
   has_many :requirement_party_roles, :dependent => :destroy

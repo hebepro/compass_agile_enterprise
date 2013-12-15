@@ -3,7 +3,6 @@
 ## that is required to perform the work effort. - See DMRB v1, pp 223-224
 
 class GoodType < ActiveRecord::Base
-  # attr_accessible :title, :body
   attr_protected :created_at, :updated_at
 
   acts_as_nested_set

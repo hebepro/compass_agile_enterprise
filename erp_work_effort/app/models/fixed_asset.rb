@@ -1,5 +1,4 @@
 class FixedAsset < ActiveRecord::Base
-  # attr_accessible :title, :body
   attr_protected :created_at, :updated_at
 
   belongs_to :fixed_asset_type
