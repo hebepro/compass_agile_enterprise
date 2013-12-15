@@ -31,6 +31,16 @@
     padding : 5px;
 }
 
+.icon-note_pinned{
+    background-image: url(/images/icons/note_pinned/note_pinned_16x16.png) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/note_pinned/note_pinned_16x16.png', sizingMethod='crop');
+}
+
+.icon-nav_right_blue {
+    background-image: url(/images/icons/nav_right_blue/nav_right_blue_16x16.png) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/nav_right_blue/nav_right_blue_16x16.png', sizingMethod='crop');
+}
+
 .icon-view {
     background-image: url(/images/icons/view/view_16x16.png) !important;
     filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/view/view_16x16.png', sizingMethod='crop');
