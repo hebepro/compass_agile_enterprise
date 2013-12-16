@@ -13,24 +13,30 @@ This engine is implemented with the premise that services like logging, tracing 
 - email\_notifications\_from
   - From address for email notifications.
   - Default : 'notifications@noreply.com'
+- email_regex
+  - Email validation regex
+  - Default : ^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$
 - max\_file\_size\_in\_mb
   - Max allowed file upload size in mega bytes.
   - Default : 5
+- file_upload_types
+  - Allowed file upload types
+  - Default : 'txt,pdf,zip,tgz,gz,rar,jpg,jpeg,gif,png,tif,tiff,bmp,csv,xls,xlsx,doc,docx,ppt,pptx,psd,ai,css,js,mp3,mp4,m4a,m4v,mov,wav,wmv'
 - file\_assets\_location
   - Where you want file_assets to be saved to.
   - Default : file_assets
 - file\_storage
   - File storage to use either s3 or filesystem.
   - Default : :filesystem
+- file\_protocol
+  - Protocol for file urls
+  - Default : http
 - s3\_url\_expires\_in_seconds
   - Set expiration in seconds on an S3 url to a secure file
   - Default : 60
 - s3\_protocol
   - Protocol for S3 URLs
   - Default : https
-- s3\_cache\_expires\_in\_minutes
-  - S3 assets are cached for performance. Set expiration lifetime here in minutes.
-  - Default : 60
 - session\_expires\_in_hours
   - Used by DeleteExpiredSessionsJob to purge inaactive sessions from database.
   - Default : 12
