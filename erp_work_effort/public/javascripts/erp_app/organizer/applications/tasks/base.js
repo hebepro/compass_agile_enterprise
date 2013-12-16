@@ -24,6 +24,8 @@ Compass.ErpApp.Organizer.Applications.Tasks.Base = function (config) {
                 {
                     xtype: 'tasksgridpanel',
                     itemId: 'tasksGridPanel',
+                    canAddTask: false,
+                    canDeleteTask: false,
                     listeners:{
                         activate: function(comp){
                             var details = comp.up('crmpartydetailspanel');
