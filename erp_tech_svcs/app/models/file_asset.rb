@@ -23,7 +23,7 @@ Paperclip.interpolates(:file_url){|data, style|
       dir_pieces.join('/')
     end
 
-    "http://#{ErpTechSvcs::Config.installation_domain}/#{path}"
+    "#{ErpTechSvcs::Config.file_protocol}://#{ErpTechSvcs::Config.installation_domain}/#{path}"
   when :s3
     url
   end
