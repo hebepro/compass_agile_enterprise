@@ -4,10 +4,18 @@ ErpWorkEffort::Engine.routes.draw do
     namespace :organizer do
       namespace :tasks do
 
-        resources :work_efforts
+        resources :work_efforts do
 
-      end
-    end
-  end
+          collection do
+            get :role_types
+            get :work_effort_types
+          end
+
+
+        end
+
+      end #tasks
+    end #organizer
+  end #erp_app
 
 end

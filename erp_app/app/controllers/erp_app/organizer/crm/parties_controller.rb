@@ -295,7 +295,7 @@ module ErpApp
                 business_party.party.create_relationship(relationship_type.description, to_party_id, relationship_type)
               end
 
-              result = {:success => true, :message => "#{party_type} Added.", :name => business_party.party.description, :party_id => business_party.party.id}
+              result = {:success => true, :message => "#{party_type} Added", :name => business_party.party.description, :party_id => business_party.party.id}
             end
           rescue Exception => ex
             Rails.logger.error ex.message

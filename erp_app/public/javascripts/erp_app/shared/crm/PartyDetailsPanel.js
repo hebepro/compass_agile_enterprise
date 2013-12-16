@@ -17,6 +17,12 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
     applicationContainerId: 'crmTaskTabPanel',
 
     /**
+     * @cfg {Array} additionalTabs
+     * Array of additional tab panels to add.
+     */
+    additionalTabs: [],
+
+    /**
      * @cfg {Int} partyId
      * Id of party being edited.
      */
@@ -209,6 +215,10 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
                     }
                 }
             });
+        });
+
+        Ext.each(me.additionalTabs, function (tab) {
+            tabPanels.push(tab);
         });
 
         me.partyDetailsTabPanel = Ext.create('widget.tabpanel', {

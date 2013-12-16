@@ -48,6 +48,16 @@ class WorkEffort < ActiveRecord::Base
     end
   end
 
+  def assigned_parties(role_type='worker')
+    self.work_effort_party_assignments.where('role_type_id = ?', RoleType.iid(role_type)).collect do |item|
+      item.party.description
+    end.join(',')
+  end
+
+  def assigned_roles
+    self.role_types.collect(&:description).join(',')
+  end
+
   def status
     # get status via has_tracked_status
     current_status

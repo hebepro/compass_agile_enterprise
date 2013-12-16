@@ -126,6 +126,11 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
      * True to allow party to be deleted.
      */
     canDeleteParty: true,
+    /**
+     * @cfg {Array} additionalTabs
+     * Array of additional tab panels to add.
+     */
+    additionalTabs: [],
 
     constructor: function (config) {
         var listeners = {
@@ -378,6 +383,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                                     partyId: partyId,
                                     partyModel: record.get('model'),
                                     partyRelationships: me.partyRelationships,
+                                    additionalTabs: me.additionalTabs,
                                     closable: true,
                                     listeners:{
                                         contactcreated:function(comp, contactType, record){
