@@ -331,7 +331,8 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
         columns = [
             {
                 header: 'Description',
-                dataIndex: 'description'
+                dataIndex: 'description',
+                width: 250
             },
             {
                 header: 'Customer Type',
