@@ -7,6 +7,18 @@ module ErpApp
           render :json => {success: true, types: ContactPurpose.all.collect(&:to_hash)}
         end
 
+        def states
+          country_id = 223
+
+          states = GeoZone.find_all_by_geo_country_id(country_id)
+
+          data = states.collect do |item|
+            {state: item.zone_name, geo_zone_code: item.zone_code}
+          end
+
+          render :json => {:success => true, :states => data}
+        end
+
         def index
           party_id = params[:party_id]
           contact_type = params[:contact_type]

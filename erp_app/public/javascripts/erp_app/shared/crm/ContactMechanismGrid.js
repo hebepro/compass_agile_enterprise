@@ -19,6 +19,26 @@ var contactPurposeStore = Ext.create('Ext.data.Store', {
     ]
 });
 
+var statesStore = Ext.create('Ext.data.Store', {
+    autoLoad: true,
+    proxy: {
+        type: 'ajax',
+        url: '/erp_app/organizer/crm/contact_mechanisms/states',
+        reader: {
+            type: 'json',
+            root: 'states'
+        }
+    },
+    fields: [
+        {
+            name: 'state'
+        },
+        {
+            name: 'geo_zone_code'
+        }
+    ]
+});
+
 Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
     extend: "Ext.grid.Panel",
     alias: 'widget.contactmechanismgrid',
@@ -546,7 +566,13 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid.PostalAddressGrid", {
                 header: 'State',
                 dataIndex: 'state',
                 editor: {
-                    xtype: 'textfield'
+                    xtype: 'combo',
+                    forceSelection: true,
+                    typeAhead: true,
+                    queryMode: 'remote',
+                    displayField: 'state',
+                    valueField: 'geo_zone_code',
+                    store: statesStore
                 },
                 width: 200
             },
