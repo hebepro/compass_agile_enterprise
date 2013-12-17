@@ -28,10 +28,10 @@ var pixlr = (function () {
     }
 
     function buildUrl(opt) {
-        var url = 'http://pixlr.com/' + opt.service + '/?s=c', attr;
+        var url = 'https://pixlr.com/' + opt.service + '/?s=c', attr;
         for (attr in opt) {
             if (opt.hasOwnProperty(attr) && attr !== 'service') {
-                url += "&" + attr + "=" + escape(opt[attr]);
+                url += "&" + attr + "=" + encodeURI(opt[attr]);
             }
         }
         return url;
