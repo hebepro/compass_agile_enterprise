@@ -36,13 +36,13 @@ module ErpApp
           end
 
           # Apply query if it exists
-          statement = statement.where(Party.arel_table[:description].matches("%#{query}%")) if query
+          statement = statement.where(Party.arel_table[:description].matches("#{query}%")) if query
 
           # Get total count of records
           total = statement.uniq.count
 
           # Apply limit and offset
-          parties = statement.uniq.limit(limit).offset(offset).all
+          parties = statement.uniq.limit(limit).offset(offset).order('description')
 
           data = [].tap do |array|
             parties.each do |party|

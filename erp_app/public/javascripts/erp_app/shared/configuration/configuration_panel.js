@@ -78,7 +78,7 @@ Ext.define("Compass.ErpApp.Shared.ConfigurationPanel", {
 
         config.fieldDefaults = config.fieldDefaults || {labelAlign: 'top'};
 
-        var configurationFormsCardPanel = {
+        var configurationFormsTabPanel = {
             xtype: 'tabpanel',
             itemId: 'configurationFormsTabPanel',
             region: 'center',
@@ -104,13 +104,12 @@ Ext.define("Compass.ErpApp.Shared.ConfigurationPanel", {
                         menuitem.setChecked(item.closable);
                     }
                 }
-            }),
-            width: 400
+            })
         };
 
         config = Ext.apply({
             layout: 'border',
-            items: [categoriesTreePanel, configurationFormsCardPanel]
+            items: [categoriesTreePanel, configurationFormsTabPanel]
         }, config);
 
         this.callParent([config]);

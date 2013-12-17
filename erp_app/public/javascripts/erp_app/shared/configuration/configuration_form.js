@@ -28,30 +28,6 @@ Ext.define("Compass.ErpApp.Shared.ConfigurationForm", {
         anchor: '100%'
     },
     border: false,
-    buttonAlign: 'center',
-    buttons: [
-        {
-            text: 'Update',
-            handler: function (button) {
-                var self = button.findParentByType('sharedconfigurationform');
-                self.getForm().submit({
-                    reset: false,
-                    waitMsg: 'Updating configuration...',
-                    success: function (form, action) {
-                        var response = Ext.decode(action.response.responseText);
-                        var result = self.fireEvent('afterUpdate', self, response.configurationItems, action.response);
-                        if (result !== false) {
-                            Ext.Msg.alert('Success', 'Configuration Saved');
-                        }
-                    },
-                    failure: function (form, action) {
-                        var message = 'Error saving configuraiton.'
-                        Ext.Msg.alert("Status", message);
-                    }
-                });
-            }
-        }
-    ],
 
     setup: function () {
         var self = this;
@@ -138,6 +114,30 @@ Ext.define("Compass.ErpApp.Shared.ConfigurationForm", {
                     self.add(field);
                 });
             }
+
+            self.add({
+                xtype: 'button',
+                text: 'Update',
+                handler: function (button) {
+                    var self = button.findParentByType('sharedconfigurationform');
+                    self.getForm().submit({
+                        reset: false,
+                        waitMsg: 'Updating configuration...',
+                        success: function (form, action) {
+                            var response = Ext.decode(action.response.responseText);
+                            var result = self.fireEvent('afterUpdate', self, response.configurationItems, action.response);
+                            if (result !== false) {
+                                Ext.Msg.alert('Success', 'Configuration Saved');
+                            }
+                        },
+                        failure: function (form, action) {
+                            var message = 'Error saving configuration.';
+                            Ext.Msg.alert("Status", message);
+                        }
+                    });
+                }
+            });
+
             self.alreadySetup = true;
             self.doLayout();
         }
@@ -146,7 +146,7 @@ Ext.define("Compass.ErpApp.Shared.ConfigurationForm", {
 
     loadConfigurationItems: function () {
         var self = this;
-        var url = '/erp_app/shared/configuration/load/' + self.initialConfig.configurationId
+        var url = '/erp_app/shared/configuration/load/' + self.initialConfig.configurationId;
         if (!Compass.ErpApp.Utility.isBlank(self.initialConfig.categoryId)) {
             url += '/' + self.initialConfig.categoryId;
         }
