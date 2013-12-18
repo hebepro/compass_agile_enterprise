@@ -54,7 +54,6 @@ Compass.ErpApp.Organizer.Layout = function (config) {
     this.ToolBar = toolbar;
 
     this.addToToolBar = function (item) {
-        toolbar.add("|");
         toolbar.add(item);
     };
 

@@ -26,8 +26,8 @@ Compass.ErpApp.Organizer.Applications.Tasks.Base = function (config) {
                     itemId: 'tasksGridPanel',
                     canAddTask: false,
                     canDeleteTask: false,
-                    listeners:{
-                        activate: function(comp){
+                    listeners: {
+                        activate: function (comp) {
                             var details = comp.up('crmpartydetailspanel');
 
                             comp.store.getProxy().extraParams.partyId = details.partyId;
@@ -122,9 +122,10 @@ Compass.ErpApp.Organizer.Applications.Tasks.Base = function (config) {
     this.setup = function () {
         config['organizerLayout'].addApplication(appShortcutMenuPanel, [taskTabPanel]);
 
-        config['organizerLayout'].addToToolBar({
-            text: '<span id="taskPanelTaskCountContainer">Tasks (<span id="taskPanelTaskCount">0</span>)</span>',
-            handler: function(){
+        me.taskCountBtn = Ext.create('widget.button', {
+            hidden: true,
+            text: '<span id="taskPanelTaskCountContainer" style="color:red;font-weight:bold;">Tasks (<span id="taskPanelTaskCount">0</span>)</span>',
+            handler: function () {
                 Compass.ErpApp.Organizer.Layout.setActiveCenterItem('tasksPanel', 'tasksPanelMenu');
 
                 var taskTabPanel = Ext.getCmp('tasksPanel');
@@ -132,28 +133,37 @@ Compass.ErpApp.Organizer.Applications.Tasks.Base = function (config) {
             }
         });
 
+        config['organizerLayout'].addToToolBar(me.taskCountBtn);
+    };
+
+    this.updateTaskCount = function () {
         Ext.Ajax.request({
             method: 'GET',
             url: '/erp_work_effort/erp_app/organizer/tasks/work_efforts/task_count',
-            success: function(response){
+            success: function (response) {
                 responseObj = Ext.decode(response.responseText);
-
-                if(responseObj.success){
-                    if(responseObj.count > 0){
-                        var container = Ext.get('taskPanelTaskCountContainer');
-                        container.applyStyles('font-weight:bold;');
-                        container.applyStyles('color:red;');
-
-                        var count = Ext.get('taskPanelTaskCount');
+                var count = Ext.get('taskPanelTaskCount');
+                if (responseObj.success) {
+                    if (responseObj.count > 0) {
+                        me.taskCountBtn.show();
                         count.update(responseObj.count);
+                    }
+                    else {
+                        me.taskCountBtn.hide();
                     }
                 }
             },
-            failure: function(){
+            failure: function () {
                 // should we display error message or fail silently?
             }
         });
     };
+
+    var task = Ext.TaskManager.start({
+        run: me.updateTaskCount,
+        scope: me,
+        interval: 30000
+    });
 
 };
 
