@@ -87,6 +87,7 @@ Compass.ErpApp.Organizer.Applications.Tasks.Base = function (config) {
     ];
 
     var appShortcutMenuPanel = {
+        id: 'tasksPanelMenu',
         xtype: 'panel',
         title: 'Tasks',
         width: 100,
@@ -120,6 +121,38 @@ Compass.ErpApp.Organizer.Applications.Tasks.Base = function (config) {
 
     this.setup = function () {
         config['organizerLayout'].addApplication(appShortcutMenuPanel, [taskTabPanel]);
+
+        config['organizerLayout'].addToToolBar({
+            text: '<span id="taskPanelTaskCountContainer">Tasks (<span id="taskPanelTaskCount">0</span>)</span>',
+            handler: function(){
+                Compass.ErpApp.Organizer.Layout.setActiveCenterItem('tasksPanel', 'tasksPanelMenu');
+
+                var taskTabPanel = Ext.getCmp('tasksPanel');
+                taskTabPanel.setActiveTab(taskTabPanel.down('#tasksGridPanel'));
+            }
+        });
+
+        Ext.Ajax.request({
+            method: 'GET',
+            url: '/erp_work_effort/erp_app/organizer/tasks/work_efforts/task_count',
+            success: function(response){
+                responseObj = Ext.decode(response.responseText);
+
+                if(responseObj.success){
+                    if(responseObj.count > 0){
+                        var container = Ext.get('taskPanelTaskCountContainer');
+                        container.applyStyles('font-weight:bold;');
+                        container.applyStyles('color:red;');
+
+                        var count = Ext.get('taskPanelTaskCount');
+                        count.update(responseObj.count);
+                    }
+                }
+            },
+            failure: function(){
+                // should we display error message or fail silently?
+            }
+        });
     };
 
 };

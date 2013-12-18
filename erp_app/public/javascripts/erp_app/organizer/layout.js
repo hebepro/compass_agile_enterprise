@@ -38,15 +38,15 @@ Compass.ErpApp.Organizer.Layout = function (config) {
     var toolbar = Ext.create("Ext.toolbar.Toolbar", {
         items: [
             {
-                xtype: 'label',
-                text: 'Welcome',
-                itemId: 'organizerWelcomeMsg'
-            },
-            ' ',
-            {
                 text: 'Menu',
                 iconCls: 'icon-info',
                 menu: menu
+            },
+            ' ',
+            {
+                xtype: 'label',
+                text: 'Welcome',
+                itemId: 'organizerWelcomeMsg'
             }
         ]
     });
@@ -144,6 +144,7 @@ Compass.ErpApp.Organizer.Layout = function (config) {
     this.setup = function () {
         this.WestPanel = {
             region: 'west',
+            id: 'erp_app_viewport_west',
             margins: '0 0 0 0',
             cmargins: '0 0 0 0',
             width: 200,
@@ -169,14 +170,20 @@ Compass.ErpApp.Organizer.Layout = function (config) {
     };
 };
 
-Compass.ErpApp.Organizer.Layout.setActiveCenterItem = function (id, loadRemoteData) {
-    var comp = Ext.ComponentMgr.get('erp_app_viewport_center').query('#' + id).first();
-    Ext.ComponentMgr.get('erp_app_viewport_center').layout.setActiveItem(comp);
+Compass.ErpApp.Organizer.Layout.setActiveCenterItem = function (panel_id, menu_id, loadRemoteData) {
+    // set panel as active
+    var panel = Ext.ComponentMgr.get('erp_app_viewport_center').down('#' + panel_id);
+    if (panel)
+        Ext.ComponentMgr.get('erp_app_viewport_center').layout.setActiveItem(panel);
+
+    var menu = Ext.ComponentMgr.get('erp_app_viewport_west').down('#' + menu_id);
+    if (menu)
+        menu.expand();
 
     if (loadRemoteData === undefined || loadRemoteData) {
-        var hasLoad = ( (typeof comp.loadRemoteData) != 'undefined' );
+        var hasLoad = ( (typeof panel.loadRemoteData) != 'undefined' );
         if (hasLoad) {
-            comp.loadRemoteData();
+            panel.loadRemoteData();
         }
     }
 

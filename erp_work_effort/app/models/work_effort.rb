@@ -38,13 +38,18 @@ class WorkEffort < ActiveRecord::Base
   belongs_to :facility
 
   class << self
-    def work_efforts_for_party(party)
+    def work_efforts_for_party(party, status=nil)
       role_types_tbl = RoleType.arel_table
       parties_tbl = Party.arel_table
 
-      self.includes(:role_types)
-          .includes(:parties)
-          .where(role_types_tbl[:id].in(party.party_roles.collect(&:role_type_id)).or(parties_tbl[:id].eq(party.id)))
+      statement = self
+
+      # apply status if passed
+      statement = statement.with_status(status) if status
+
+      statement.includes(:role_types)
+      .includes(:parties)
+      .where(role_types_tbl[:id].in(party.party_roles.collect(&:role_type_id)).or(parties_tbl[:id].eq(party.id)))
     end
   end
 

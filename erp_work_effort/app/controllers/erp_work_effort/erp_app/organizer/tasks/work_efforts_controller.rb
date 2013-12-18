@@ -16,15 +16,32 @@ module ErpWorkEffort
             render :json => {success: true, work_effort_types: data}
           end
 
+          def task_count
+            party = params[:party_id].blank? ? nil : Party.find(params[:party_id])
+
+            if party
+              work_efforts_statement = WorkEffort.work_efforts_for_party(party, 'pending')
+            else
+              work_efforts_statement = WorkEffort.work_efforts_for_party(current_user.party, 'pending')
+            end
+
+            count = work_efforts_statement.count
+
+            render :json => {success: true, count: count}
+          end
+
           def index
             offset = params[:offset] || 0
             limit = params[:limit] || 25
             party = params[:party_id].blank? ? nil : Party.find(params[:party_id])
+            all_tasks = params[:all_tasks].blank? ? false : true
 
-            if party
-              work_efforts_statement = WorkEffort.work_efforts_for_party(current_user.party)
-            else
+            if all_tasks
               work_efforts_statement = WorkEffort
+            elsif party
+              work_efforts_statement = WorkEffort.work_efforts_for_party(party)
+            else
+              work_efforts_statement = WorkEffort.work_efforts_for_party(current_user.party)
             end
 
             total = work_efforts_statement.count
