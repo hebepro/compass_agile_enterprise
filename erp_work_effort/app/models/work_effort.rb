@@ -53,6 +53,17 @@ class WorkEffort < ActiveRecord::Base
     end
   end
 
+  def <=>(anOther)
+    case anOther.current_status
+      when 'pending'
+        1
+      when 'complete'
+        2
+      else
+        3
+    end
+  end
+
   def assigned_parties(role_type='worker')
     self.work_effort_party_assignments.where('role_type_id = ?', RoleType.iid(role_type)).collect do |item|
       item.party.description

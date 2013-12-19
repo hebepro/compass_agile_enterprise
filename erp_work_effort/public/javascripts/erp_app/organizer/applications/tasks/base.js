@@ -4,6 +4,8 @@ Ext.ns("Compass.ErpApp.Organizer.Applications.Tasks");
  * @param {config} object containing (organizerLayout : reference to main layout container, widgetRoles : roles for widgets contained in this application)
  */
 Compass.ErpApp.Organizer.Applications.Tasks.Base = function (config) {
+    var me = this;
+
     var tabs = [
         {
             xtype: 'tasksgridpanel',
