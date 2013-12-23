@@ -53,8 +53,8 @@ class WorkEffort < ActiveRecord::Base
     end
   end
 
-  def <=>(anOther)
-    case anOther.current_status
+  def <=>(an_other)
+    case an_other.current_status
       when 'pending'
         1
       when 'complete'
