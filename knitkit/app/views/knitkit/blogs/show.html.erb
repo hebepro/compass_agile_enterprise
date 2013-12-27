@@ -5,7 +5,7 @@
   <h3><%=h @published_content.title %></h3>
   <p>
     Posted: <%= @published_content.created_at.to_s(:long) %> <%=published_content_created_by %><br />
-    Topics: <%= @published_content.content.tag_list %>  
+    Topics: <%= @published_content.content.pretty_tag_list %>  
   </p>
   <p><%= raw @published_content.excerpt_html %></p>
   <%= raw @published_content.body_html %>

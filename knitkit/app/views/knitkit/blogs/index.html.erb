@@ -6,7 +6,8 @@
       <h4><%=h content.title %></h4>
       <p>
         Posted: <%= content.created_at.to_s(:long) %> <%=published_content_created_by %><br />
-        Topics: <%=content.content.tag_list %>
+        Topics: <%= content.content.pretty_tag_list %>
+
       </p>
       <div class="blog_body">
         <%= raw content.excerpt_html %>

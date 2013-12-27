@@ -168,6 +168,10 @@ class Content < ActiveRecord::Base
     !PublishedElement.where('published_element_record_id = ? and published_element_record_type = ? and published_elements.version = ?', self.id, 'Content', self.version).first.nil?
   end
 
+  def pretty_tag_list
+    self.tag_list.join(", ")
+  end
+
   protected
 
   def self.build_search_results(results)
