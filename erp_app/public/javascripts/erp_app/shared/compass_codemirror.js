@@ -31,6 +31,9 @@ Ext.define("Compass.ErpApp.Shared.CodeMirror", {
                 case 'rhtml':
                     mode = 'rhtml';
                     break;
+                case 'liquid':
+                    mode = 'rhtml';
+                    break;
                 case 'css':
                     mode = 'css';
                     break;
