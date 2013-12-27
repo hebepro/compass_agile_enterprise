@@ -12,8 +12,10 @@ ErpWorkEffort::Engine.routes.draw do
             get :task_count
           end
 
-
         end
+
+        get 'gantt_tasks' => 'gantt#gantt_tasks'
+        get 'gantt_dependencies' => 'gantt#gantt_dependencies'
 
       end #tasks
     end #organizer

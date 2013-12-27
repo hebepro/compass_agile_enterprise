@@ -38,6 +38,9 @@ Compass.ErpApp.Organizer.Applications.Tasks.Base = function (config) {
                     }
                 }
             ]
+        },
+        {
+            xtype: 'ganttpanel'
         }
     ];
 
