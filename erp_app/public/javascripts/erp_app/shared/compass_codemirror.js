@@ -418,6 +418,11 @@ Ext.define("Compass.ErpApp.Shared.CodeMirror", {
         if (css) {
             css.style.height = '100%';
         }
+
+        var tdElement = Ext.get(textAreaComp.inputEl.up('td', 1, true));
+        tdElement.setStyle('height', '100%');
+
+        me.codeMirrorInstance.refresh();
     },
 
     save: function () {
