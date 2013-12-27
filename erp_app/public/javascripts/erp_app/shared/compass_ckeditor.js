@@ -107,6 +107,7 @@ Ext.define("Compass.ErpApp.Shared.CKeditor", {
             keystrokes: [
                 [CKEDITOR.CTRL + 83 /* S */, 'saveCommand']
             ],
+            allowedContent : true,
             base_path: '/javascripts/ckeditor/',
             toolbarStartupExpanded: true,
             enterMode: CKEDITOR.ENTER_BR,
