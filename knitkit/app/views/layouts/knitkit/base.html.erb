@@ -12,19 +12,10 @@
     
     <title><%= @website.title %></title>
     <%= javascript_include_tag :application %>
-    <%= include_extjs %>
     <%= static_javascript_include_tag('erp_app/utility.js') %>
-    <%= set_erp_tech_config_vars %>
     <%= static_javascript_include_tag('erp_app/jquery_support.js') %>
-    <%= static_javascript_include_tag('datepicker.js') %>
-    <%= static_stylesheet_link_tag('datepicker.css') %>
-    <%= static_stylesheet_link_tag('extjs/resources/css/knitkit_extjs_4.css') %>
     <%= static_stylesheet_link_tag('knitkit/style.css') %>
-    <%= static_stylesheet_link_tag('knitkit/inline_editing.css') %>
     <%= static_javascript_include_tag('erp_app/widgets.js') %>
-    <%= static_javascript_include_tag('ajax_pagination.js') %>
-    <%= static_javascript_include_tag('erp_app/shared/dynamic_forms/dynamic_forms_validation.js') %>
-    <%= static_javascript_include_tag('knitkit/helpers.js') %>
 
     <!-- CodeMirror -->
     <%= include_code_mirror_library %>
@@ -33,6 +24,7 @@
     <%= static_javascript_include_tag('erp_app/ckeditor/ckeditor.js') %>
 
     <!-- Inline Edit -->
+    <%= static_stylesheet_link_tag('knitkit/inline_editing.css') %>
     <%= static_javascript_include_tag('knitkit/inline_editing.js') %>
 
     <%= yield :head %>
@@ -41,7 +33,7 @@
     <div id="main">
       <div id="header">
         <div id="logo">
-          <%=render_version_viewing%>
+          <%= render_version_viewing %>
           <%= render_widget :login,
                             :action => :login_header,
                             :params => {:login_url => '/login',
@@ -68,7 +60,7 @@
       <%= content_for?(:footer) ? yield(:footer) : (render :partial => 'shared/knitkit/footer') %>
       <%= yield :foot %>
     </div>
-    <%= setSessionTimeout %>
+    <%= set_session_timeout %>
     <%= setup_inline_editing %>
   </body>
 </html>

@@ -1,3 +1,5 @@
+Compass.ErpApp.Utility.createNamespace("Knitkit");
+
 Knitkit.InlineEditing = {
     contentDiv: null,
     websiteId: null,

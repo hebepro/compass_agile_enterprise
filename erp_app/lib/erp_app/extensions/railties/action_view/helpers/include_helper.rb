@@ -56,14 +56,14 @@ module ErpApp
               raw "<script type=\"text/javascript\">compassAeInstance = #{json_hash.to_json};</script>"
             end
 
-            def setSessionTimeout(warn_milli_seconds=((ErpApp::Config.session_warn_after*60)*1000),
+            def set_session_timeout(warn_milli_seconds=((ErpApp::Config.session_warn_after*60)*1000),
                 redirect_milli_seconds=((ErpApp::Config.session_redirect_after*60)*1000),
                 redirect_to='/session/sign_out')
               raw "<script type='text/javascript'>Compass.ErpApp.Utility.SessionTimeout.setupSessionTimeout(#{warn_milli_seconds}, #{redirect_milli_seconds}, '#{redirect_to}') </script>" if current_user
             end
 
-            #need to remove camel case not rubyish
-            alias_method :set_session_timeout, :setSessionTimeout
+            # need to remove camel case not rubyish, will be deprecated at some point
+            alias_method :setSessionTimeout, :set_session_timeout
 
             def load_shared_application_resources(resource_type)
               resource_type = resource_type.to_sym

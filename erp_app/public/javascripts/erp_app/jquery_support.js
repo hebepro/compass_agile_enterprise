@@ -1,23 +1,25 @@
-if ($) {
-    $(document).ready(function () {
+if (jQuery) {
+    Compass.ErpApp.Utility.createNamespace("Compass.ErpApp.JQuerySupport");
+
+    jQuery(document).ready(function () {
         Compass.ErpApp.JQuerySupport.setupHtmlReplace();
     });
-
-    Ext.ns("Compass.ErpApp.JQuerySupport");
 
     Compass.ErpApp.JQuerySupport.setupHtmlReplace = function () {
         jQuery('body').unbind('ajaxSuccess').bind('ajaxSuccess', Compass.ErpApp.JQuerySupport.handleHtmlUpdateResponse);
     };
 
     Compass.ErpApp.JQuerySupport.handleHtmlUpdateResponse = function (e, xhr, settings) {
+        var utility = Compass.ErpApp.Utility;
+
         //reset SessionTimeout
-        if(Compass.ErpApp.Utility.SessionTimeout.enabled){
-            Compass.ErpApp.Utility.SessionTimeout.reset();
+        if(utility.SessionTimeout.enabled){
+            utility.SessionTimeout.reset();
         }
 
         if(Compass.ErpApp.JQuerySupport.IsJsonString(xhr.responseText)){
             var responseData = jQuery.parseJSON(xhr.responseText);
-            if (!Ext.isEmpty(responseData) && !Ext.isEmpty(responseData.htmlId)) {
+            if (!utility.isBlank(responseData) && !utility.isBlank(responseData.htmlId)) {
                 var updateDiv = $('#' + responseData.htmlId);
                 try {
                     updateDiv.closest('div.compass_ae-widget').unmask();
@@ -26,7 +28,7 @@ if ($) {
                     //messy catch for no update div
                 }
                 updateDiv.get(0).innerHTML = responseData.html;
-                Compass.ErpApp.Utility.evaluateScriptTags(updateDiv.get(0));
+                utility.evaluateScriptTags(updateDiv.get(0));
             }
         }
     };
