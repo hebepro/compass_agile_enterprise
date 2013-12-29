@@ -215,7 +215,7 @@ Compass.ErpApp.Utility.addCommas = function (nStr) {
 
 Compass.ErpApp.Utility.isBlank = function (obj) {
     if (window['Ext']) {
-        Ext.isEmpty(obj);
+        return Ext.isEmpty(obj);
     }
     else {
         return(!obj || jQuery.trim(obj) === "");

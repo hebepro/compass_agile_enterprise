@@ -23,7 +23,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.FileManager", {
         var win = desktop.getWindow('file_manager');
         if (!win) {
 
-            var contentCardPanel = new Ext.Panel({
+            var contentCardPanel = Ext.create('Ext.Panel', {
                 layout: 'card',
                 autoDestroy: true,
                 frame: false,
@@ -31,7 +31,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.FileManager", {
                 region: 'center'
             });
 
-            var fileTreePanel = new Compass.ErpApp.Shared.FileManagerTree({
+            var fileTreePanel = Ext.create('Compass.ErpApp.Shared.FileManagerTree', {
                     allowDownload: true,
                     addViewContentsToContextMenu: true,
                     region: 'west',
