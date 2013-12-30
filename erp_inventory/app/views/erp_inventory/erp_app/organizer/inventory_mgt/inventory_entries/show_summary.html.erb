@@ -1,0 +1,7 @@
+
+<div style='padding: 10px;'>
+
+  <h1>Product Type: <%= @inventory_entry.description %></h1>
+  <h2>Facility: <%= @inventory_entry.current_storage_facility.description rescue "Storage facility not defined." %></h2>
+
+</div>
