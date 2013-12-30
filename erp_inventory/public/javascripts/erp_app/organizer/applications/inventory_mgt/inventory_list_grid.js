@@ -15,7 +15,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.InventoryListGrid
      * @cfg {String} detailsUrl
      * Url to retrieve details for these parties.
      */
-    detailsUrl: '/erp_app/organizer/inventory_mgt/inventory_entries/show_summary/',
+    detailsUrl: '/erp_inventory/erp_app/organizer/inventory_mgt/inventory_entries/show_summary/',
 
     /**
      * @cfg {String} addBtnIconCls
@@ -165,7 +165,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.InventoryListGrid
             ],
             proxy: {
                 type: 'ajax',
-                url: '/erp_app/organizer/inventory_mgt/inventory_entries',
+                url: '/erp_inventory/erp_app/organizer/inventory_mgt/inventory_entries',
                 extraParams: {
                     party_role: me.partyRole,
                     to_role: me.toRole,
@@ -344,7 +344,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.InventoryListGrid
                                 if (btn == 'ok' || btn == 'yes') {
                                     Ext.Ajax.request({
                                         method: 'DELETE',
-                                        url: '/erp_app/organizer/inventory_mgt/inventory_entries/' + record.get('id'),
+                                        url: '/erp_inventory/erp_app/organizer/inventory_mgt/inventory_entries/' + record.get('id'),
                                         params: {
                                             inventory_entry_id: record.get('id')
                                         },

@@ -25,7 +25,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.FacilityForm",{
             }],
             proxy: {
                 type: 'ajax',
-                url: '/erp_app/organizer/asset_management/facilities',
+                url: '/erp_inventory/erp_app/organizer/asset_management/facilities',
                 reader: {
                     type: 'json',
                     root: 'facilities'
@@ -69,7 +69,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.FacilityForm",{
 
         Ext.Ajax.request({
             method: 'GET',
-            url: '/erp_app/organizer/asset_management/facilities/show',
+            url: '/erp_inventory/erp_app/organizer/asset_management/facilities/show',
             params: {
                 facility_id: me.facilityId
             },

@@ -24,7 +24,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.InventoryDetailsP
      * @cfg {String} detailsUrl
      * Url to retrieve details for these parties.
      */
-    detailsUrl: '/erp_app/organizer/inventory_mgt/base/show/',
+    detailsUrl: '/erp_inventory/erp_app/organizer/inventory_mgt/base/show/',
 
     /**
      * @cfg {Array | Object} partyRelationships

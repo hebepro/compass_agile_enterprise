@@ -70,7 +70,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.InventoryEntryFor
 
                                     },
                                     clientValidation: true,
-                                    url: '/erp_app/organizer/inventory_mgt/inventory_entries/' + inventoryEntryId,
+                                    url: '/erp_inventory/erp_app/organizer/inventory_mgt/inventory_entries/' + inventoryEntryId,
                                     method: inventoryEntryAjaxMethod,
                                     waitMsg: 'Please Wait...',
                                     success: function (form, action) {

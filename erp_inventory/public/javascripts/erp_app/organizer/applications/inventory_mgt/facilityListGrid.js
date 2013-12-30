@@ -15,7 +15,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.FacilityListGrid"
      * @cfg {String} detailsUrl
      * Url to retrieve details for these parties.
      */
-    detailsUrl: '/erp_app/organizer/asset_management/facilities/show_summary/',
+    detailsUrl: '/erp_inventory/erp_app/organizer/asset_management/facilities/show_summary/',
 
     /**
      * @cfg {String} addBtnIconCls
@@ -159,7 +159,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.FacilityListGrid"
             ],
             proxy: {
                 type: 'ajax',
-                url: '/erp_app/organizer/asset_management/facilities',
+                url: '/erp_inventory/erp_app/organizer/asset_management/facilities',
                 extraParams: {
 
                 },
@@ -321,7 +321,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.FacilityListGrid"
                                 if (btn == 'ok' || btn == 'yes') {
                                     Ext.Ajax.request({
                                         method: 'DELETE',
-                                        url: '/erp_app/organizer/asset_management/facilities/' + record.get('id'),
+                                        url: '/erp_inventory/erp_app/organizer/asset_management/facilities/' + record.get('id'),
                                         params: {
                                             facility_id: record.get('id')
                                         },

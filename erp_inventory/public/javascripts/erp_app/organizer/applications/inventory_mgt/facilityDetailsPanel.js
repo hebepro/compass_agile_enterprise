@@ -24,7 +24,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.FacilityDetailsPa
      * @cfg {String} detailsUrl
      * Url to retrieve details.
      */
-    detailsUrl: '/erp_app/organizer/asset_management/facilities/show/',
+    detailsUrl: '/erp_inventory/erp_app/organizer/asset_management/facilities/show/',
 
     /**
      *

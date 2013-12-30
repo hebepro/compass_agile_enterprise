@@ -70,7 +70,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.FacilityFormPanel
 
                                     },
                                     clientValidation: true,
-                                    url: '/erp_app/organizer/asset_management/facilities/' + facilityId,
+                                    url: '/erp_inventory/erp_app/organizer/asset_management/facilities/' + facilityId,
                                     method: facilityAjaxMethod,
                                     waitMsg: 'Please Wait...',
                                     success: function (form, action) {

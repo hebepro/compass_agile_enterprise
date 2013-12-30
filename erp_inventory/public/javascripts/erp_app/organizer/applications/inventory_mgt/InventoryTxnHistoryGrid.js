@@ -45,7 +45,7 @@ Ext.define("Compass.ErpApp.Shared.InventoryMgt.InventoryTxnHistoryGrid", {
      * @cfg {String} detailsUrl
      * Url to retrieve details for these transactions.
      */
-    detailsUrl: '/erp_app/organizer/crm/base/get_party_details/',
+    detailsUrl: '/erp_inventory/erp_app/organizer/crm/base/get_party_details/',
 
 
     /**
@@ -248,7 +248,7 @@ Ext.define("Compass.ErpApp.Shared.InventoryMgt.InventoryTxnHistoryGrid", {
             ],
             proxy: {
                 type: 'ajax',
-                url: '/erp_app/organizer/inventory_mgt/inventory_txns/index',
+                url: '/erp_inventory/erp_app/organizer/inventory_mgt/inventory_txns/index',
                 extraParams: {
                     inventory_entry_id: me.inventoryEntryId,
                     party_role: me.partyRole,
@@ -433,7 +433,7 @@ Ext.define("Compass.ErpApp.Shared.InventoryMgt.InventoryTxnHistoryGrid", {
                                 if (btn == 'ok' || btn == 'yes') {
                                     Ext.Ajax.request({
                                         method: 'DELETE',
-                                        url: '/erp_app/organizer/crm/base/parties',
+                                        url: '#',
                                         params: {
                                             party_id: record.get('id')
                                         },
