@@ -132,7 +132,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
 
     /* documentation using markdown */
 
-    saveDocumentationMarkdown: function (id, siteId, content) {
+    saveDocumentationMarkdown: function (id, comp, content, siteId) {
         var self = this;
         this.setWindowStatus('Saving...');
         Ext.Ajax.request({
@@ -156,6 +156,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                     Ext.Msg.alert('Error', 'Error saving contents');
                     self.clearWindowStatus();
                 }
+                comp.ckEditorInstance.focus();
             },
             failure: function (response) {
                 self.clearWindowStatus();
@@ -175,7 +176,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                 title: sectionName,
                 save: function (comp) {
                     var content = comp.down('codemirror').getValue();
-                    self.saveDocumentationMarkdown(contentId, websiteId, content);
+                    self.saveDocumentationMarkdown(contentId, comp, content, websiteId);
                 },
                 closable: true,
                 itemId: itemId,
@@ -186,7 +187,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                         disableSave: true,
                         listeners: {
                             save: function (comp, content) {
-                                self.saveDocumentationMarkdown(contentId, websiteId, content);
+                                self.saveDocumentationMarkdown(contentId, comp, content, websiteId);
                             }
                         },
                         xtype: 'codemirror',
@@ -304,7 +305,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
 
     /* excerpts */
 
-    saveExcerpt: function (id, content, siteId) {
+    saveExcerpt: function (id, comp, content, siteId) {
         var self = this;
         this.setWindowStatus('Saving...');
         Ext.Ajax.request({
@@ -326,6 +327,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                         panel = activeTab.query('knitkit_nonpublishedversionswebsitesectiongridpanel');
                     }
                     panel[0].getStore().load();
+                    comp.ckEditorInstance.focus();
                 }
                 else {
                     Ext.Msg.alert('Error', 'Error saving excerpt');
@@ -354,7 +356,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                 },
                 listeners: {
                     save: function (comp, content) {
-                        self.saveExcerpt(id, content, siteId);
+                        self.saveExcerpt(id, comp, content, siteId);
                         if (!Ext.isEmpty(contentGridStore)) contentGridStore.load();
                     }
                 }
@@ -401,7 +403,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                 save: function (comp) {
                     if (currentUser.hasCapability('edit_html', 'Content')) {
                         var content = comp.down('ckeditor').getValue();
-                        self.saveExcerpt(id, content, siteId);
+                        self.saveExcerpt(id, comp, content, siteId);
                         if (!Ext.isEmpty(contentGridStore)) contentGridStore.load();
                     } else {
                         currentUser.showInvalidAccess();
@@ -450,7 +452,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
 
     /* content */
 
-    saveContent: function (id, content, contentType, siteId) {
+    saveContent: function (id, comp, content, contentType, siteId) {
         var self = this;
         this.setWindowStatus('Saving...');
         Ext.Ajax.request({
@@ -478,6 +480,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                         }
 
                     }
+                    comp.ckEditorInstance.focus();
                 }
                 else {
                     Ext.Msg.alert('Error', 'Error saving contents');
@@ -530,7 +533,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                 },
                 listeners: {
                     save: function (comp, content) {
-                        self.saveContent(id, content, contentType, siteId);
+                        self.saveContent(id, comp, content, contentType, siteId);
                         if (!Ext.isEmpty(contentGridStore)) contentGridStore.load();
                     },
                     ckeditordrop: function (ckeditorPanel, dropEvent) {
@@ -636,7 +639,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                 save: function (comp) {
                     if (currentUser.hasCapability('edit_html', 'Content')) {
                         var content = comp.down('ckeditor').getValue();
-                        self.saveContent(id, content, contentType, siteId);
+                        self.saveContent(id, comp, content, contentType, siteId);
                         if (contentGridStore) {
                             contentGridStore.load();
                         }
