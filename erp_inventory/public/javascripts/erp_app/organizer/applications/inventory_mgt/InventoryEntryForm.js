@@ -46,30 +46,24 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.InventoryEntryFor
                         xtype: 'textfield',
                         itemId: 'description',
                         fieldLabel: 'Description',
-                        allowBlank: true,
+                        allowBlank: false,
                         name: 'description'
                     },
                     {
                         xtype: 'combobox',
                         itemId: 'inventory_facility',
                         fieldLabel: 'Current Location',
-
                         displayField: 'description',
                         valueField: 'id',
                         store: facilityStore,
-                        name: 'inventory_facility'
-//                        listeners:{
-//                            scope: me,
-//                            'select': function(field, e){
-//                                me.setInventoryLocation( field.getValue());
-//                            }
-//                        }
+                        name: 'inventory_facility',
+                        allowBlank: false
                     },
                     {
                         xtype: 'numberfield',
                         itemId: 'number_available',
                         fieldLabel: 'Number Available',
-                        allowBlank: true,
+                        allowBlank: false,
                         name: 'number_available'
                     },
                     {
@@ -116,30 +110,6 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.InventoryEntryFor
                     basicForm.setValues(responseObj.data);
                     me.down('#inventoryEntryId').setValue(me.inventoryEntryId);
                     me.down('#inventory_facility').setValue(responseObj.data.inventory_storage_facility_id);
-                }
-            },
-            failure: function (response) {
-                Ext.Msg.alert("Error", "Error loading data.");
-            }
-        });
-    },
-    setInventoryLocation: function ( facilityId ) {
-
-        var me = this;
-
-        Ext.Ajax.request({
-            method: 'POST',
-            url: '/erp_inventory/erp_app/organizer/inventory_mgt/inventory_entry_locations',
-            params: {
-                facility_id: facilityId,
-                inventory_entry_id: me.inventoryEntryId
-            },
-            success: function (response) {
-                responseObj = Ext.JSON.decode(response.responseText);
-
-                if (responseObj.success) {
-                    //var basicForm = me.getForm();
-                    //Ext.Msg.alert("Success", "Inventory Entry Updated")
                 }
             },
             failure: function (response) {
