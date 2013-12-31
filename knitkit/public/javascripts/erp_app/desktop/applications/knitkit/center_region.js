@@ -45,14 +45,15 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
 
     /* sections */
 
-    saveSectionLayout: function (sectionId, content) {
+    saveSectionLayout: function (id, comp, content) {
+        jcomp = comp;
         var self = this;
         this.setWindowStatus('Saving...');
         Ext.Ajax.request({
             url: '/knitkit/erp_app/desktop/section/save_layout',
             method: 'POST',
             params: {
-                id: sectionId,
+                id: id,
                 content: content
             },
             success: function (response) {
@@ -68,6 +69,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                 else {
                     Ext.Msg.alert('Error', obj.message);
                 }
+                comp.codeMirrorInstance.focus();
             },
             failure: function (response) {
                 self.clearWindowStatus();
@@ -87,7 +89,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                 title: sectionName,
                 save: function (comp) {
                     var content = comp.down('codemirror').getValue();
-                    self.saveSectionLayout(websiteSectionId, content);
+                    self.saveSectionLayout(websiteSectionId, comp, content);
                 },
                 closable: true,
                 itemId: itemId,
@@ -98,7 +100,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                         disableSave: true,
                         listeners: {
                             save: function (comp, content) {
-                                self.saveSectionLayout(websiteSectionId, content);
+                                self.saveSectionLayout(websiteSectionId, comp, content);
                             }
                         },
                         xtype: 'codemirror',
@@ -221,7 +223,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
 
     /* templates */
 
-    saveTemplateFile: function (path, content) {
+    saveTemplateFile: function (path, comp, content) {
         var self = this;
         this.setWindowStatus('Saving...');
         Ext.Ajax.request({
@@ -237,6 +239,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                 if (!obj.success) {
                     Ext.Msg.alert('Error', obj.message);
                 }
+                comp.codeMirrorInstance.focus();
             },
             failure: function (response) {
                 self.clearWindowStatus();
@@ -273,7 +276,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                 layout: 'fit',
                 save: function (comp) {
                     var content = comp.down('codemirror').getValue();
-                    self.saveTemplateFile(node.data.id, content);
+                    self.saveTemplateFile(node.data.id, comp, content);
                 },
                 items: [
                     {
@@ -282,7 +285,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                         xtype: 'codemirror',
                         listeners: {
                             save: function (comp, content) {
-                                self.saveTemplateFile(node.data.id, content);
+                                self.saveTemplateFile(node.data.id, comp, content);
                             }
                         },
                         mode: mode,
