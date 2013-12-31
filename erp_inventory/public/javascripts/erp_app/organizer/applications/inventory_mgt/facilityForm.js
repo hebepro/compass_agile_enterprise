@@ -46,7 +46,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.FacilityForm",{
                         xtype: 'textfield',
                         itemId: 'description',
                         fieldLabel: 'Description',
-                        allowBlank: true,
+                        allowBlank: false,
                         name: 'description'
                     }
                 ]

@@ -91,7 +91,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.FacilityFormPanel
                                 });
                             }
                             else {
-                                alert('not valid');
+                                Ext.Msg.alert('Invalid Data', 'Please correct highlighted fields.');
                             }
                         }
                     },
