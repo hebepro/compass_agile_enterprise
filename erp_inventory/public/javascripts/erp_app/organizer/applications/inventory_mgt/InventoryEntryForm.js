@@ -57,13 +57,13 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.InventoryEntryFor
                         displayField: 'description',
                         valueField: 'id',
                         store: facilityStore,
-                        name: 'inventory_facility',
-                        listeners:{
-                            scope: me,
-                            'select': function(field, e){
-                                me.setInventoryLocation( field.getValue());
-                            }
-                        }
+                        name: 'inventory_facility'
+//                        listeners:{
+//                            scope: me,
+//                            'select': function(field, e){
+//                                me.setInventoryLocation( field.getValue());
+//                            }
+//                        }
                     },
                     {
                         xtype: 'numberfield',

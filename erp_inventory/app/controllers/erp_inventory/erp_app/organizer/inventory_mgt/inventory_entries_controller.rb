@@ -40,6 +40,11 @@ module ErpInventory
             entry.number_available=params[:number_available]
             entry.save
 
+            location_assignment = InventoryEntryLocation.new
+            location_assignment.inventory_entry = entry
+            location_assignment.facility_id = params[:inventory_facility]
+            location_assignment.save
+
             render :json => {:success => true, :data => entry.to_hash(:only => [:id, :description, :created_at, :updated_at], :model => 'InventoryEntry') }
           end
 
@@ -54,6 +59,11 @@ module ErpInventory
             entry.sku=params[:sku]
             entry.number_available=params[:number_available]
             entry.save
+
+            location_assignment = InventoryEntryLocation.new
+            location_assignment.inventory_entry = entry
+            location_assignment.facility_id = params[:inventory_facility]
+            location_assignment.save
 
             render :json => {:success => true, :data => entry.to_hash(:only => [:id, :description, :created_at, :updated_at], :model => 'InventoryEntry') }
 
