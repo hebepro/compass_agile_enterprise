@@ -152,7 +152,6 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.FacilityListGrid"
                 }
             });
         var store = Ext.create('Ext.data.Store', {
-            pageSize:2,
             fields: [
                 'id',
                 'description',
