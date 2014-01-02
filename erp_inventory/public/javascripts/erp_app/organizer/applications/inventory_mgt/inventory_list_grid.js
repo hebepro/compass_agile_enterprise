@@ -141,9 +141,10 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.InventoryListGrid
                         var grid = button.up('inventory_list_grid'),
                             value = grid.down('toolbar').down('textfield').getValue();
 
+                        grid.store.getProxy().extraParams.query_filter = value;
                         grid.store.load({
-                            params: {
-                                query_filter: value,
+                            page: 1,
+                            params:{
                                 start: 0,
                                 limit: 25
                             }

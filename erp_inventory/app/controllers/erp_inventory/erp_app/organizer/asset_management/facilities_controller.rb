@@ -5,12 +5,22 @@ module ErpInventory
         class FacilitiesController < ::ErpApp::Organizer::BaseController
 
           def index
+            offset = params[:start] || 0
+            limit = params[:limit] || 25
+            query_filter = params[:query_filter].blank? ? nil : params[:query_filter].strip
+
+            factility_tbl = Facility.arel_table
+            statement = Facility.order('created_at asc')
+
+            unless query_filter.blank?
+              statement = statement.where(factility_tbl[:description].matches(query_filter + '%'))
+            end
 
             # Get total count of records
-            total = Facility.count
+            total = statement.count
 
             # Apply limit and offset
-            facilities = Facility.all
+            facilities = statement.offset(offset).limit(limit)
 
             render :json => {:success => true, :total => total, :facilities => facilities.collect { |facility| facility.to_hash(:only => [:id, :description, :created_at, :updated_at]) }}
 
@@ -25,7 +35,7 @@ module ErpInventory
           def show
 
             facility = Facility.find(params[:facility_id])
-            render :json => {:success => true, :data => facility.to_hash(:only => [:id, :description, :created_at, :updated_at]) }
+            render :json => {:success => true, :data => facility.to_hash(:only => [:id, :description, :created_at, :updated_at])}
 
           end
 
@@ -38,7 +48,7 @@ module ErpInventory
             facility.description=params[:description]
             facility.save
 
-            render :json => {:success => true, :data => facility.to_hash(:only => [:id, :description, :created_at, :updated_at]) }
+            render :json => {:success => true, :data => facility.to_hash(:only => [:id, :description, :created_at, :updated_at])}
           end
 
           def edit
@@ -50,14 +60,14 @@ module ErpInventory
             facility.description=params[:description]
             facility.save
 
-            render :json => {:success => true, :data => facility.to_hash(:only => [:id, :description, :created_at, :updated_at]) }
+            render :json => {:success => true, :data => facility.to_hash(:only => [:id, :description, :created_at, :updated_at])}
 
           end
 
           def destroy
 
             facility = Facility.find(params[:facility_id]).destroy
-            render :json => { :success => true }
+            render :json => {:success => true}
 
           end
 

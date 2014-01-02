@@ -5,12 +5,22 @@ module ErpInventory
         class InventoryEntriesController < ::ErpApp::Organizer::BaseController
 
           def index
+            offset = params[:start] || 0
+            limit = params[:limit] || 25
+            query_filter = params[:query_filter].blank? ? nil : params[:query_filter].strip
+
+            inventory_entry_tbl = InventoryEntry.arel_table
+            statement = InventoryEntry.order('created_at asc')
+
+            unless query_filter.blank?
+              statement = statement.where(inventory_entry_tbl[:description].matches(query_filter + '%'))
+            end
 
             # Get total count of records
-            total = InventoryEntry.count
+            total = statement.count
 
             # Apply limit and offset
-            inventory_entries = InventoryEntry.order(:created_at)
+            inventory_entries = statement.offset(offset).limit(limit)
 
             render :json => {:success => true, :total => total, :inventory_entries => inventory_entries.collect { |entry| entry.to_data_hash }}
 

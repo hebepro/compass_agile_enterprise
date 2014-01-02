@@ -1,6 +1,6 @@
-Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.FacilityListGrid",{
-    extend:"Ext.grid.Panel",
-    alias:'widget.facility_list_grid',
+Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.FacilityListGrid", {
+    extend: "Ext.grid.Panel",
+    alias: 'widget.facility_list_grid',
     frame: false,
     autoScroll: true,
     loadMask: true,
@@ -140,9 +140,10 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.FacilityListGrid"
                         var grid = button.up('facility_list_grid'),
                             value = grid.down('toolbar').down('textfield').getValue();
 
+                        grid.store.getProxy().extraParams.query_filter = value;
                         grid.store.load({
-                            params: {
-                                query_filter: value,
+                            page: 1,
+                            params:{
                                 start: 0,
                                 limit: 25
                             }
@@ -151,6 +152,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.FacilityListGrid"
                 }
             });
         var store = Ext.create('Ext.data.Store', {
+            pageSize:2,
             fields: [
                 'id',
                 'description',
@@ -238,7 +240,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.FacilityListGrid"
                                     partyModel: record.get('model'),
                                     partyRelationships: me.partyRelationships,
                                     closable: true,
-                                    listeners:{
+                                    listeners: {
 //                                        contactcreated:function(comp, contactType, record){
 //                                            me.fireEvent('contactcreated', me, contactType, record, partyId);
 //                                        },
