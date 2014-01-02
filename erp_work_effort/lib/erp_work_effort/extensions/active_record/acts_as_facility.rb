@@ -19,9 +19,6 @@ module ErpWorkEffort
 
             has_one :facility, :as => :facility_record
 
-            #Methods delegated to Facility
-            [ :description,:description=,
-            ].each { |m| delegate m, :to => :facility }
           end
         end
 
@@ -34,6 +31,7 @@ module ErpWorkEffort
           end
 
           def save_facility
+            self.facility.description = self.description
             self.facility.save
           end
 

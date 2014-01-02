@@ -19,9 +19,6 @@ module ErpWorkEffort
 
             has_one :fixed_asset, :as => :fixed_asset_record
 
-            #Methods delegated to FixedAsset
-            [ :description,:description=,
-            ].each { |m| delegate m, :to => :fixed_asset }
           end
         end
 
@@ -34,6 +31,7 @@ module ErpWorkEffort
           end
 
           def save_fixed_asset
+            self.fixed_asset.description = self.description
             self.fixed_asset.save
           end
 
