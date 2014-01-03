@@ -47,6 +47,7 @@ class InventoryEntry < ActiveRecord::Base
         :description => self.description,
         :number_available => self.number_available,
         :sku => self.sku,
+        :unit_of_measurement_id => self.unit_of_measurement_id,
         :inventory_storage_facility_id => (self.current_storage_facility.id rescue nil),
         :inventory_storage_facility_description => (self.current_storage_facility.description rescue nil),
         :created_at => self.created_at,

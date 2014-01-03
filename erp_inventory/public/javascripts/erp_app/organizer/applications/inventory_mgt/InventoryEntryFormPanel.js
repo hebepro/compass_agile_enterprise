@@ -34,7 +34,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.InventoryEntryFor
         this.items = [
             {
                 xtype: 'inventory_entry_form',
-                width: 300,
+                width: 350,
                 listeners: {
 
                 }

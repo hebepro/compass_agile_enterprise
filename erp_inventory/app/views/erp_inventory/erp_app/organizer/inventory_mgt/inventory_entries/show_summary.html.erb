@@ -2,6 +2,16 @@
 <div style='padding: 10px;'>
 
   <h1>Product Type: <%= @inventory_entry.description %></h1>
+  <div>
+    <div>
+      <span class="label">Facility: </span>
+      <span><%= @inventory_entry.current_storage_facility.description rescue "Storage facility not defined." %></span>
+    </div>
+  </div>
+
+
   <h2>Facility: <%= @inventory_entry.current_storage_facility.description rescue "Storage facility not defined." %></h2>
+  <h3>Number Available: <%= @inventory_entry.number_available rescue "No availability information." %></h3>
+  <h3>SKU: <%= @inventory_entry.sku rescue "No SKU information." %></h3>
 
 </div>

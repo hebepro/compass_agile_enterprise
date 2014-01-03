@@ -47,6 +47,7 @@ module ErpInventory
             entry = InventoryEntry.new
             entry.description=params[:description]
             entry.sku=params[:sku]
+            entry.unit_of_measurement_id=params[:unit_of_measurement]
             entry.number_available=params[:number_available]
             entry.save
 
@@ -67,6 +68,7 @@ module ErpInventory
             entry = InventoryEntry.find(params[:inventory_entry_id])
             entry.description=params[:description]
             entry.sku=params[:sku]
+            entry.unit_of_measurement_id=params[:unit_of_measurement]
             entry.number_available=params[:number_available]
             entry.save
 

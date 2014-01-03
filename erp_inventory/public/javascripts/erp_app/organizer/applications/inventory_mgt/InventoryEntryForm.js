@@ -5,7 +5,6 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.InventoryEntryFor
     buttonAlign: 'left',
     frame: false,
     border: false,
-    width: 400,
 
     /**
      * @cfg {Int} inventoryEntryId
@@ -35,6 +34,25 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.InventoryEntryFor
             autoLoad: true
         });
 
+        var uomStore = Ext.create('Ext.data.Store', {
+            fields: [{
+                name: "id"
+            }, {
+                name: "description"
+            }],
+            proxy: {
+                type: 'ajax',
+                //url: '/erp_inventory/erp_app/organizer/asset_management/facilities',
+                url: '/erp_app/organizer/fuel_order_tracker/uom/index',
+                reader: {
+                    type: 'json',
+                    root: 'units_of_measurement'
+                }
+            },
+            storeId: 'FacilityStore',
+            autoLoad: true
+        });
+
         me.items = items.concat([
             {
                 xtype: 'fieldset',
@@ -45,6 +63,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.InventoryEntryFor
                     {
                         xtype: 'textfield',
                         itemId: 'description',
+                        width: 300,
                         fieldLabel: 'Description',
                         allowBlank: false,
                         name: 'description'
@@ -52,6 +71,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.InventoryEntryFor
                     {
                         xtype: 'combobox',
                         itemId: 'inventory_facility',
+                        width: 300,
                         fieldLabel: 'Current Location',
                         displayField: 'description',
                         valueField: 'id',
@@ -62,13 +82,26 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.InventoryEntryFor
                     {
                         xtype: 'numberfield',
                         itemId: 'number_available',
+                        width: 300,
                         fieldLabel: 'Number Available',
                         allowBlank: false,
                         name: 'number_available'
                     },
                     {
+                        xtype: 'combobox',
+                        itemId: 'unit_of_measurement',
+                        width: 300,
+                        fieldLabel: 'Unit of measurement',
+                        displayField: 'description',
+                        valueField: 'id',
+                        store: uomStore,
+                        name: 'unit_of_measurement',
+                        allowBlank: true
+                    },
+                    {
                         xtype: 'textfield',
                         itemId: 'sku',
+                        width: 300,
                         fieldLabel: 'SKU',
                         allowBlank: true,
                         name: 'sku'
@@ -110,6 +143,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.InventoryEntryFor
                     basicForm.setValues(responseObj.data);
                     me.down('#inventoryEntryId').setValue(me.inventoryEntryId);
                     me.down('#inventory_facility').setValue(responseObj.data.inventory_storage_facility_id);
+                    me.down('#unit_of_measurement').setValue(responseObj.data.unit_of_measurement_id);
                 }
             },
             failure: function (response) {
