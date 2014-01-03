@@ -1,12 +1,6 @@
 class Facility < ActiveRecord::Base
-  #attr_accessible :description, :facility_record_id, :facility_record_type, :facility_type_id, :internal_identifier
 
-  #acts_as_fixed_asset
-  #
-  ##Allow for polymorphic associated subclsses of ShipmentItem
-  #belongs_to  :facility_record, :polymorphic => true
-  #belongs_to  :facility_type
-  #
-  #belongs_to  :postal_address
-  
+  has_many :inventory_entry_locations
+  has_many :inventory_entries, :through => :inventory_entry_locations
+
 end
