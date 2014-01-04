@@ -8,13 +8,16 @@ module ErpInventory
             offset = params[:start] || 0
             limit = params[:limit] || 25
             query_filter = params[:query_filter].blank? ? nil : params[:query_filter].strip
+            facility_id = params[:facility_id].blank? ? nil : params[:facility_id].strip
 
             inventory_entry_tbl = InventoryEntry.arel_table
             statement = InventoryEntry.order('created_at asc')
 
-            unless query_filter.blank?
-              statement = statement.where(inventory_entry_tbl[:description].matches(query_filter + '%'))
-            end
+            # apply filters if present
+            statement = statement.where(inventory_entry_tbl[:description].matches(query_filter + '%')) if query_filter
+
+            # apply facility if present
+            statement = statement.joins(:inventory_entry_locations).where('facility_id = ?', facility_id) if facility_id
 
             # Get total count of records
             total = statement.count
