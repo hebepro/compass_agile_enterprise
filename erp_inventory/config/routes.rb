@@ -20,5 +20,4 @@ ErpInventory::Engine.routes.draw do
   match '/erp_app/organizer/inventory_mgt/menu' => 'erp_app/organizer/inventory_mgt/base#menu'
   match '/erp_app/organizer/inventory_mgt/inventory_txns(/:action(/:id))' => 'erp_app/organizer/inventory_mgt/inventory_txns'
 
-
 end

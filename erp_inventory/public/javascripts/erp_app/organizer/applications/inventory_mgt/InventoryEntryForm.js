@@ -42,8 +42,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.InventoryEntryFor
             }],
             proxy: {
                 type: 'ajax',
-                //url: '/erp_inventory/erp_app/organizer/asset_management/facilities',
-                url: '/erp_app/organizer/fuel_order_tracker/uom/index',
+                url: '/erp_base_erp_svcs/shared/units_of_measurement',
                 reader: {
                     type: 'json',
                     root: 'units_of_measurement'
