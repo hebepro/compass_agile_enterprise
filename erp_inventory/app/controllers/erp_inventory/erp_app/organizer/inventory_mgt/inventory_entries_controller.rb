@@ -53,7 +53,7 @@ module ErpInventory
                 entry.description=params[:description]
                 entry.sku=params[:sku]
                 entry.unit_of_measurement_id=params[:unit_of_measurement]
-                entry.number_in_stock=params[:number_in_stock_available]
+                entry.number_in_stock=params[:number_in_stock]
                 entry.number_available=params[:number_available]
                 entry.save
 
