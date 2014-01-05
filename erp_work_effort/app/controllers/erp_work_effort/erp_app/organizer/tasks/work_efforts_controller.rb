@@ -47,6 +47,8 @@ module ErpWorkEffort
             total = work_efforts_statement.count
             work_efforts = work_efforts_statement.limit(limit).offset(offset)
 
+            work_efforts.sort!
+
             data = work_efforts.sort.collect { |item| item.to_hash(
                 :only => [
                     :id,
