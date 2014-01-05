@@ -159,6 +159,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.InventoryListGrid
                 'description',
                 'sku',
                 'number_available',
+                'number_in_stock',
                 'inventory_storage_facility_description',
                 {name: 'createdAt', mapping: 'created_at', type: 'date'},
                 {name: 'updatedAt', mapping: 'updated_at', type: 'date'},
@@ -220,10 +221,13 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.InventoryListGrid
                 dataIndex: 'sku'
             },
             {
-                header: 'Quantity',
+                header: 'In Stock',
+                dataIndex: 'number_in_stock'
+            },
+            {
+                header: 'Available',
                 dataIndex: 'number_available'
             },
-
             {
                 header: 'Created At',
                 dataIndex: 'createdAt',

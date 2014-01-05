@@ -80,6 +80,14 @@ Ext.define("Compass.ErpApp.Organizer.Applications.InventoryMgt.InventoryEntryFor
                     },
                     {
                         xtype: 'numberfield',
+                        itemId: 'number_in_stock',
+                        width: 300,
+                        fieldLabel: 'Number In Stock',
+                        allowBlank: false,
+                        name: 'number_in_stock'
+                    },
+                    {
+                        xtype: 'numberfield',
                         itemId: 'number_available',
                         width: 300,
                         fieldLabel: 'Number Available',

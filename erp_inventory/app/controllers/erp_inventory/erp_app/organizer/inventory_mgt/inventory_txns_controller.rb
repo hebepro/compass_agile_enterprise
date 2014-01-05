@@ -8,11 +8,13 @@ module ErpInventory
             offset = params[:start] || 0
             limit = params[:limit] || 25
 
-            statement = BizTxnEvent.joins("inner join inventory_pickup_txns ipt on biz_txn_events.biz_txn_record_id = ipt.id
+            statement = BizTxnEvent.joins("left outer join inventory_pickup_txns ipt on biz_txn_events.biz_txn_record_id = ipt.id
                                and biz_txn_events.biz_txn_record_type = 'InventoryPickupTxn'")
-            .joins("inner join inventory_dropoff_txns idt on biz_txn_events.biz_txn_record_id = idt.id
+            .joins("left outer join inventory_dropoff_txns idt on biz_txn_events.biz_txn_record_id = idt.id
                                and biz_txn_events.biz_txn_record_type = 'InventoryDropoffTxn'")
             .where("idt.inventory_entry_id = ? or ipt.inventory_entry_id = ?", params[:inventory_entry_id], params[:inventory_entry_id])
+            .order('updated_at ASC')
+            .uniq
 
             # Get total count of records
             total = statement.count
