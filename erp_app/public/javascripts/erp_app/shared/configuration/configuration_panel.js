@@ -2,15 +2,24 @@ Ext.define("Compass.ErpApp.Shared.ConfigurationPanel", {
     extend: "Ext.panel.Panel",
     alias: "widget.sharedconfigurationpanel",
     autoScroll: true,
+
+    /**
+     * @cfg {String} setupUrl
+     * Url to setup configuration panel.
+     */
+    setupConfigurationUrl: '/erp_app/shared/configuration/setup_categories',
+
     constructor: function (config) {
         var me = this;
+
+        var setupConfigurationUrl = config['setupConfigurationUrl'] || me.setupConfigurationUrl;
 
         var categoriesTreePanel = {
             xtype: 'treepanel',
             store: {
                 proxy: {
                     type: 'ajax',
-                    url: '/erp_app/shared/configuration/setup_categories/' + config.configurationId
+                    url: setupConfigurationUrl +'/' + config.configurationId
                 },
                 autoLoad: true,
                 root: {
