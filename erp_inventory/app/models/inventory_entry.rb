@@ -16,6 +16,7 @@ class InventoryEntry < ActiveRecord::Base
   end
   has_many :inventory_entry_locations
   has_many :facilities, :through => :inventory_entry_locations
+  belongs_to  :unit_of_measurement
 
   alias_method :storage_facilities, :facilities
 
@@ -46,8 +47,10 @@ class InventoryEntry < ActiveRecord::Base
         :id => self.id,
         :description => self.description,
         :number_available => self.number_available,
+        :number_in_stock => self.number_in_stock,
         :sku => self.sku,
         :unit_of_measurement_id => self.unit_of_measurement_id,
+        :unit_of_measurement_description => self.unit_of_measurement.description,
         :inventory_storage_facility_id => (self.current_storage_facility.id rescue nil),
         :inventory_storage_facility_description => (self.current_storage_facility.description rescue nil),
         :created_at => self.created_at,

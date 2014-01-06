@@ -38,7 +38,7 @@ module ErpInventory
           def show
 
             entry = InventoryEntry.find(params[:inventory_entry_id])
-            render :json => {:success => true, :data => entry.to_data_hash }
+            render :json => {:success => true, :data => entry.to_data_hash}
 
           end
 
@@ -47,19 +47,28 @@ module ErpInventory
 
           def create
 
-            entry = InventoryEntry.new
-            entry.description=params[:description]
-            entry.sku=params[:sku]
-            entry.unit_of_measurement_id=params[:unit_of_measurement]
-            entry.number_available=params[:number_available]
-            entry.save
+            begin
+              ActiveRecord::Base.transaction do
+                entry = InventoryEntry.new
+                entry.description=params[:description]
+                entry.sku=params[:sku]
+                entry.unit_of_measurement_id=params[:unit_of_measurement]
+                entry.number_in_stock=params[:number_in_stock]
+                entry.number_available=params[:number_available]
+                entry.save
 
-            location_assignment = InventoryEntryLocation.new
-            location_assignment.inventory_entry = entry
-            location_assignment.facility_id = params[:inventory_facility]
-            location_assignment.save
+                location_assignment = InventoryEntryLocation.new
+                location_assignment.inventory_entry = entry
+                location_assignment.facility_id = params[:inventory_facility]
+                location_assignment.save
 
-            render :json => {:success => true, :data => entry.to_hash(:only => [:id, :description, :created_at, :updated_at], :model => 'InventoryEntry') }
+                render :json => {:success => true, :data => entry.to_hash(:only => [:id, :description, :created_at, :updated_at], :model => 'InventoryEntry')}
+              end
+            rescue Exception => e
+              Rails.logger.error e.message
+              Rails.logger.error e.backtrace.join("\n")
+              render :json => {:success => false, :message => e.message}
+            end
           end
 
           def edit
@@ -67,27 +76,34 @@ module ErpInventory
           end
 
           def update
+            begin
+              ActiveRecord::Base.transaction do
+                entry = InventoryEntry.find(params[:inventory_entry_id])
+                entry.description=params[:description]
+                entry.sku=params[:sku]
+                entry.unit_of_measurement_id=params[:unit_of_measurement]
+                entry.number_available=params[:number_available]
+                entry.number_in_stock=params[:number_in_stock]
+                entry.save
 
-            entry = InventoryEntry.find(params[:inventory_entry_id])
-            entry.description=params[:description]
-            entry.sku=params[:sku]
-            entry.unit_of_measurement_id=params[:unit_of_measurement]
-            entry.number_available=params[:number_available]
-            entry.save
+                location_assignment = InventoryEntryLocation.new
+                location_assignment.inventory_entry = entry
+                location_assignment.facility_id = params[:inventory_facility]
+                location_assignment.save
 
-            location_assignment = InventoryEntryLocation.new
-            location_assignment.inventory_entry = entry
-            location_assignment.facility_id = params[:inventory_facility]
-            location_assignment.save
-
-            render :json => {:success => true, :data => entry.to_hash(:only => [:id, :description, :created_at, :updated_at], :model => 'InventoryEntry') }
-
+                render :json => {:success => true, :data => entry.to_hash(:only => [:id, :description, :created_at, :updated_at], :model => 'InventoryEntry')}
+              end
+            rescue Exception => e
+              Rails.logger.error e.message
+              Rails.logger.error e.backtrace.join("\n")
+              render :json => {:success => false, :message => e.message}
+            end
           end
 
           def destroy
 
-            entry = InventoryEntry.find(params[:inventory_entry_id]).destroy
-            render :json => { :success => true }
+            entry = InventoryEntry.find(params[:inventory_entry_id])
+            render :json => {:success => entry.destroy}
 
           end
 

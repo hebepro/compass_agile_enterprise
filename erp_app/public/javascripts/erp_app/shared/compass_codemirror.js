@@ -380,10 +380,10 @@ Ext.define("Compass.ErpApp.Shared.CodeMirror", {
             undoDepth: 3,
             extraKeys: {
                 "Ctrl-S": function (instance) {
-                    me.fireEvent('save', self, self.getValue());
+                    me.fireEvent('save', me, me.getValue());
                 },
                 "Cmd-S": function (instance) {
-                    me.fireEvent('save', self, self.getValue());
+                    me.fireEvent('save', me, me.getValue());
                 }
             },
             showCursorWhenSelecting: true,
