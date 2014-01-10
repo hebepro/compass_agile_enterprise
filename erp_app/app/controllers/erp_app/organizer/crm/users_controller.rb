@@ -47,34 +47,34 @@ module ErpApp
 
           data = {
               :success => true,
-                  :users => users.collect do |user|
-                    user_data = user.to_hash(:only =>
-                                                 [:id, :username,
-                                                  :email,
-                                                  :last_login_at,
-                                                  :created_at,
-                                                  :updated_at,
-                                                  :activation_state],
-                                             :party_description => (user.party.description))
+              :users => users.collect do |user|
+                user_data = user.to_hash(:only =>
+                                             [:id, :username,
+                                              :email,
+                                              :last_login_at,
+                                              :created_at,
+                                              :updated_at,
+                                              :activation_state],
+                                         :party_description => (user.party.description))
 
-                    # add relationships
-                    included_party_to_relationships.each do |included_party_to_relationship|
-                      included_party_to_relationship.symbolize_keys!
+                # add relationships
+                included_party_to_relationships.each do |included_party_to_relationship|
+                  included_party_to_relationship.symbolize_keys!
 
-                      relationship = user.party.relationships.where('relationship_type_id = ?', RelationshipType.find_by_internal_identifier(included_party_to_relationship[:relationshipType])).first
-                      if relationship
-                        user_data[included_party_to_relationship[:toRoleType]] = relationship.to_party.description
-                      end
-                    end
+                  relationship = user.party.relationships.where('relationship_type_id = ?', RelationshipType.find_by_internal_identifier(included_party_to_relationship[:relationshipType])).first
+                  if relationship
+                    user_data[included_party_to_relationship[:toRoleType]] = relationship.to_party.description
+                  end
+                end
 
-                    if user.party.business_party.class == Individual
-                      user_data[:first_name] = user.party.business_party.current_first_name
-                      user_data[:last_name] = user.party.business_party.current_last_name
-                    end
+                if user.party.business_party.class == Individual
+                  user_data[:first_name] = user.party.business_party.current_first_name
+                  user_data[:last_name] = user.party.business_party.current_last_name
+                end
 
-                    user_data
-                  end,
-                  :total => total
+                user_data
+              end,
+              :total => total
           }
 
           render :json => data
@@ -130,7 +130,18 @@ module ErpApp
 
               user.party = party
 
+              if params[:skip_activation_email].present? and params[:skip_activation_email] === 'true'
+                user.skip_activation_email = true
+              end
+
               if user.save
+                if params[:skip_activation_email].present? and params[:skip_activation_email] === 'true'
+                  if user_data[:activation_state].present? and user_data[:activation_state] != 'pending'
+                    user.activation_state = user_data[:activation_state].strip
+                    user.save!
+                  end
+                end
+
                 result = {:success => user.save, :users => user.to_hash(:only =>
                                                                             [:id, :username,
                                                                              :email,
@@ -160,7 +171,7 @@ module ErpApp
           user.username = user_data[:username].strip
           user.email = user_data[:email].strip
 
-          if user_data[:activation_state].present? && user_data[:activation_state] != 'pending'
+          if user_data[:activation_state].present?
             user.activation_state = user_data[:activation_state].strip
           end
 

@@ -48,6 +48,32 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
     partyType: null,
 
     /**
+     * @cfg {String | Array} formFields
+     * Optional Fields to show in edit and create forms, if set to 'All' all fields will be shown.
+     * if set to 'None' no fields are shown.
+     * If an array is passed only field names within array are shown
+     * field names are:
+     * - organizationTaxId
+     * - individualTitle
+     * - individualMiddleName
+     * - individualSuffix
+     * - individualNickname
+     * - individualPassportNumber
+     * - individualPassportExpirationDate
+     * - individualDateOfBirth
+     * - individualTotalYrsWorkExp
+     * - individualMaritalStatus
+     * - individualSocialSecurityNumber
+     */
+    formFields: 'None',
+
+    /**
+     * @cfg {Boolean} skipUserActivationEmail
+     * true to skip activation email for user and allow user manually active users.
+     */
+    skipUserActivationEmail: true,
+
+    /**
      * @cfg {String} applicationContainerId
      * The id of the root application container that this panel resides in.
      */
@@ -96,7 +122,9 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
         this.items = [
             {
                 xtype: 'crmpartyform',
-                allowedPartyType: (me.partyType || me.allowedPartyType),
+                formFields: me.formFields,
+                allowedPartyType: me.allowedPartyType,
+                partyType: me.partyType,
                 width: 300,
                 listeners: {
                     'partytypechange': function (comp, partyType) {
@@ -113,7 +141,8 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
                 width: 300,
                 xtype: 'crmuserform',
                 allowFormToggle: true,
-                applicationContainerId: me.applicationContainerId
+                applicationContainerId: me.applicationContainerId,
+                skipUserActivationEmail: me.skipUserActivationEmail
             },
             {
                 xtype: 'container',
@@ -268,7 +297,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
             this.down('crmpartyform').loadParty(me.partyId);
         }
 
-        if (!Ext.isEmpty(me.partyType) && me.partyType == 'Individual') {
+        if (!Ext.isEmpty(me.partyType) && me.partyType == 'Individual' && !Ext.isEmpty(me.partyId)) {
             this.down('crmuserform').loadUser(me.partyId, me.userId);
         }
 

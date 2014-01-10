@@ -66,6 +66,32 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
     allowedPartyType: 'Both',
 
     /**
+     * @cfg {String | Array} formFields
+     * Optional Fields to show in edit and create forms, if set to 'All' all fields will be shown.
+     * if set to 'None' no fields are shown.
+     * If an array is passed only field names within array are shown
+     * field names are:
+     * - organizationTaxId
+     * - individualTitle
+     * - individualMiddleName
+     * - individualSuffix
+     * - individualNickname
+     * - individualPassportNumber
+     * - individualPassportExpirationDate
+     * - individualDateOfBirth
+     * - individualTotalYrsWorkExp
+     * - individualMaritalStatus
+     * - individualSocialSecurityNumber
+     */
+    formFields: 'None',
+
+    /**
+     * @cfg {Boolean} skipUserActivationEmail
+     * true to skip activation email for user and allow user manually active users.
+     */
+    skipUserActivationEmail: true,
+
+    /**
      * @cfg {String} partyMgtTitle
      * Title of parties.
      */
@@ -231,6 +257,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                         toPartyId: me.toPartyId,
                         partyRole: me.partyRole,
                         toRole: me.toRole,
+                        skipUserActivationEmail: me.skipUserActivationEmail,
                         relationshipTypeToCreate: me.relationshipTypeToCreate,
                         closable: true,
                         allowedPartyType: me.allowedPartyType,
@@ -335,7 +362,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                 width: 250
             },
             {
-                header: 'Customer Type',
+                header: 'Type',
                 dataIndex: 'model',
                 renderer: function (v) {
                     switch (v) {
