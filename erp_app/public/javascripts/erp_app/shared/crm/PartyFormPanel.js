@@ -12,6 +12,12 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
     partyRole: 'customer',
 
     /**
+     * @cfg {String[]} securityRoles
+     * Array of SecurityRoles to add to users during creation.
+     */
+    securityRoles: [],
+
+    /**
      * @cfg {string} relationshipTypeToCreate
      * Relationship type to create parties with.
      */
@@ -140,6 +146,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
             {
                 width: 300,
                 xtype: 'crmuserform',
+                securityRoles: me.securityRoles,
                 allowFormToggle: true,
                 applicationContainerId: me.applicationContainerId,
                 skipUserActivationEmail: me.skipUserActivationEmail

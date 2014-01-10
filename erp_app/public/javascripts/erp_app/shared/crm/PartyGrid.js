@@ -12,10 +12,16 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
     applicationContainerId: 'crmTaskTabPanel',
 
     /**
-     * @cfg {String[]} fromRoles
-     * Array of PartyRoles to load for Grid Example (Customer, Prospect).
+     * @cfg {String} partyRole
+     * PartyRole to load for Grid Example (Customer, Prospect).
      */
     partyRole: 'customer',
+
+    /**
+     * @cfg {String[]} securityRoles
+     * Array of SecurityRoles to add to users during creation.
+     */
+    securityRoles: [],
 
     /**
      * @cfg {String} toRole
@@ -256,6 +262,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                         applicationContainerId: me.applicationContainerId,
                         toPartyId: me.toPartyId,
                         partyRole: me.partyRole,
+                        securityRoles: me.securityRoles,
                         toRole: me.toRole,
                         skipUserActivationEmail: me.skipUserActivationEmail,
                         relationshipTypeToCreate: me.relationshipTypeToCreate,

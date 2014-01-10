@@ -134,6 +134,13 @@ module ErpApp
                 user.skip_activation_email = true
               end
 
+              # add security roles if present
+              if params[:security_roles].present?
+                params[:security_roles].split(',').each do |security_role|
+                  user.party.add_role(security_role)
+                end
+              end
+
               if user.save
                 if params[:skip_activation_email].present? and params[:skip_activation_email] === 'true'
                   if user_data[:activation_state].present? and user_data[:activation_state] != 'pending'

@@ -10,6 +10,12 @@ Ext.define('Compass.ErpApp.Shared.Crm.UserForm', {
      */
     addPartyBtn: '/images/erp_app/organizer/applications/crm/customer_360_64x64.png',
 
+    /**
+     * @cfg {String[]} securityRoles
+     * Array of SecurityRoles to add to users during creation.
+     */
+    securityRoles: [],
+
     initComponent: function () {
         var me = this;
 
@@ -89,6 +95,11 @@ Ext.define('Compass.ErpApp.Shared.Crm.UserForm', {
                         itemId: 'skipUserActivationEmail',
                         name: 'skip_activation_email',
                         value: false
+                    },
+                    {
+                        xtype: 'hidden',
+                        name: 'security_roles',
+                        value: me.securityRoles.join()
                     }
                 ]
             }
