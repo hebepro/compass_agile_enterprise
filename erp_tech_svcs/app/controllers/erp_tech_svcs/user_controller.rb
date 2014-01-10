@@ -33,7 +33,11 @@ module ErpTechSvcs
         login_url = params[:login_url].blank? ? ErpTechSvcs::Config.login_url : params[:login_url]
         login = params[:login].strip
         if user = (User.where('username = ? or email = ?', login, login)).first
-          new_password = Sorcery::Model::TemporaryToken.generate_random_token
+
+          # generate new password with only letters
+          charset = %w{ A C D E F G H J K M N P Q R T V W X Y Z }
+          new_password = (0...8).map{ charset.to_a[rand(charset.size)] }.join
+
           user.password_confirmation = new_password
           if user.change_password!(new_password)
             user.add_instance_attribute(:login_url, login_url)
