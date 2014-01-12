@@ -1,6 +1,6 @@
-Ext.define("Compass.ErpApp.Organizer.Applications.Tasks.GanttPanel", {
+Ext.define("Compass.ErpApp.Organizer.Applications.Tasks.TaskGanttPanel", {
     extend: "Ext.panel.Panel",
-    alias: 'widget.ganttpanel',
+    alias: 'widget.taskganttpanel',
     title: 'Gantt',
     layout: 'fit',
 
@@ -42,6 +42,35 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Tasks.GanttPanel", {
                 showDuration: false
             },
 
+            dockedItems:[
+                {
+                    xtype: 'toolbar',
+                    items:[
+                        {
+                            text: 'Add new task',
+                            iconCls: 'icon-add',
+                            handler: function () {
+                                var newTask = new taskStore.model({
+                                    Name: 'New task',
+                                    leaf: true,
+                                    PercentDone: 0
+                                });
+                                taskStore.getRootNode().appendChild(newTask);
+                            }
+                        },
+                        {
+                            enableToggle: true,
+                            id: 'demo-readonlybutton',
+                            text: 'Read only mode',
+                            pressed: false,
+                            handler: function () {
+                                gantt.setReadOnly(this.pressed);
+                            }
+                        }
+                    ]
+                }
+            ],
+
             lockedGridConfig: { forceFit: true },
 
             viewConfig: {
@@ -79,35 +108,30 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Tasks.GanttPanel", {
                 {
                     xtype: 'namecolumn',
                     width: 200
+                },
+                {
+                    xtype : 'startdatecolumn',
+                    resizable: true,
+                    sortable: false
+                },
+                {
+                    xtype : 'enddatecolumn',
+                    hidden : true
+                },
+                {
+                    xtype : 'durationcolumn',
+                    tdCls : 'sch-column-duration',
+                    menuDisabled: true,
+                },
+                {
+                    xtype : 'percentdonecolumn',
+                    width : 50,
+                    hideable: false
                 }
             ],
 
             taskStore: taskStore,
             dependencyStore: dependencyStore,
-
-            buttons: [
-                {
-                    text: 'Add new task...',
-                    iconCls: 'icon-add',
-                    handler: function () {
-                        var newTask = new taskStore.model({
-                            Name: 'New task',
-                            leaf: true,
-                            PercentDone: 0
-                        });
-                        taskStore.getRootNode().appendChild(newTask);
-                    }
-                },
-                {
-                    enableToggle: true,
-                    id: 'demo-readonlybutton',
-                    text: 'Read only mode',
-                    pressed: false,
-                    handler: function () {
-                        g.setReadOnly(this.pressed);
-                    }
-                }
-            ],
 
             listeners: {
 

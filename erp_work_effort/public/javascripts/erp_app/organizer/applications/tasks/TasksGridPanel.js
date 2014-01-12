@@ -32,12 +32,19 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Tasks.GridPanel", {
      */
     canDeleteTask: true,
 
+    /**
+     * @cfg {Boolean} allTasks
+     * True to get all tasks.
+     */
+    allTasks: false,
+
     initComponent: function () {
         var me = this;
 
         var fields = [
             'id',
             'description',
+            'project',
             {name: 'createdAt', mapping: 'created_at', type: 'datetime'},
             {name: 'currentStatus', mapping: 'current_status'},
             {name: 'currentStatusDescription', mapping: 'current_status_description'},
@@ -76,13 +83,13 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Tasks.GridPanel", {
                         var tabPanel = button.up('tasksgridpanel').up('#tasksPanel');
 
                         // check and see if tab already open
-                        var tab = tabPanel.down('addtaskform');
+                        var tab = tabPanel.down('taskform');
                         if (tab) {
                             tabPanel.setActiveTab(tab);
                             return;
                         }
 
-                        var crmPartyFormPanel = Ext.create("widget.addtaskform");
+                        var crmPartyFormPanel = Ext.create("widget.taskpanel");
 
                         tabPanel.add(crmPartyFormPanel);
                         tabPanel.setActiveTab(crmPartyFormPanel);
@@ -126,8 +133,9 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Tasks.GridPanel", {
                 }
             });
 
-        if(Ext.isEmpty(me.initialConfig.columns)){
+        if (Ext.isEmpty(me.initialConfig.columns)) {
             me.columns = [
+                { text: 'Project', dataIndex: 'project', width: 200, sortable: false },
                 { text: 'Description', dataIndex: 'description', width: 200, sortable: false },
                 { text: 'Status', dataIndex: 'currentStatusDescription', sortable: false },
                 { text: 'Assigned Parties', dataIndex: 'assignedParties', sortable: false },
@@ -208,7 +216,15 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Tasks.GridPanel", {
     constructor: function (config) {
         var listeners = {
             'activate': function () {
-                this.store.load({
+                var store = this.store;
+
+                if (config['allTasks'] == true) {
+                    store.getProxy().extraParams = {
+                        all_tasks: true
+                    };
+                }
+
+                store.load({
                     params: {
                         start: 0,
                         limit: 25

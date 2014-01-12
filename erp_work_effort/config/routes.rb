@@ -10,6 +10,8 @@ ErpWorkEffort::Engine.routes.draw do
             get :role_types
             get :work_effort_types
             get :task_count
+            get :projects
+            get :tasks
           end
 
         end

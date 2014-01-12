@@ -9,7 +9,8 @@ Compass.ErpApp.Organizer.Applications.Tasks.Base = function (config) {
     var tabs = [
         {
             xtype: 'tasksgridpanel',
-            itemId: 'tasksGridPanel'
+            itemId: 'tasksGridPanel',
+            allTasks: currentUser.hasRole('admin')
         },
         {
             xtype: 'crmpartygrid',
@@ -40,7 +41,7 @@ Compass.ErpApp.Organizer.Applications.Tasks.Base = function (config) {
             ]
         },
         {
-            xtype: 'ganttpanel'
+            xtype: 'taskganttpanel'
         }
     ];
 

@@ -37,6 +37,9 @@ class WorkEffort < ActiveRecord::Base
   belongs_to :actual_cost, :class_name => 'Money', :foreign_key => 'actual_cost_money_id'
   belongs_to :facility
 
+  has_many :from_work_effort_associations, :class_name => 'WorkEffortAssociation', :foreign_key => 'work_effort_id_from'
+  has_many :to_work_effort_associations, :class_name => 'WorkEffortAssociation', :foreign_key => 'work_effort_id_to'
+
   class << self
     def work_efforts_for_party(party, status=nil)
       role_types_tbl = RoleType.arel_table
@@ -62,6 +65,28 @@ class WorkEffort < ActiveRecord::Base
       else
         3
     end
+  end
+
+  def is_project?
+    self.work_effort_type.internal_identifier == 'project'
+  end
+
+  def project
+    _project = nil
+
+    # check if this work effort is a project
+    if self.is_project?
+      _project = self
+    else
+      # find first parent that is a project and return
+      self.ancestors.each do |parent|
+        if parent.is_project?
+          _project = parent
+        end
+      end
+    end
+
+    _project
   end
 
   def assigned_parties(role_type='worker')
@@ -118,6 +143,13 @@ class WorkEffort < ActiveRecord::Base
     self.finished_at = Time.now
     self.actual_completion_time = time_diff_in_minutes(self.finished_at.to_time, self.started_at.to_time)
     self.save
+  end
+
+  def duration
+    days = (self.end_date - self.start_date).to_i
+
+    # add on to the duration because it goes through the end date
+    days + 1
   end
 
   protected

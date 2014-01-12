@@ -36,7 +36,7 @@ Ext.application({
                                 'itemtap':function(me, index, targe, record, e, options){
                                     var itemId = record.get('itemId'),
                                         container = this.up('#mainContainer');
-                                        app = container.down(itemId);
+                                        app = container.down("#"+itemId);
                                     container.setActiveItem(app);
                                 }
                             }
