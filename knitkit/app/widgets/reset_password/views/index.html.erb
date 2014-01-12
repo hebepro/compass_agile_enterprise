@@ -1,32 +1,41 @@
-<div id="<%=widget_result_id%>"></div>
-<div>
-  <%= form_tag '/users/reset_password', :remote => true, :id => 'reset_password_form' do %>
-    <div class="form_settings">
-      <p>
-        <span style="width:175px">Email Address</span>
-        <%= text_field_tag "login"%>
-      </p>
-      <input type="hidden" name="login_url" value="<%=@login_url%>" />
-      <input type="hidden" name="domain" value="<%=@domain%>" />
-      <p style="padding-top: 15px">
-        <span style="width:175px">&nbsp;</span>
-        <%= submit_tag "Reset", :disable_with => "Please wait...", :class => "submit", :style => 'margin: 0 0 0 0px;'%>
-      </p>
+<div style="margin-top:10px;" class="container">
+  <div class="row">
+    <div class="col-lg-1" style="margin: 0 auto;float:none;width:500px;">
+      <div style="width:500px;" id="<%=widget_result_id%>"></div>
+      <%= form_tag '/users/reset_password', :remote => true, :id => 'reset_password_form', :class => "form-signin", :style => 'max-width: 500px;' do %>
+          <h2 class="form-signin-heading">Reset Your Password</h2>
+          <input name="login" type="text" class="form-control" placeholder="Username / Email Address" required autofocus>
+          <br/>
+          <p class="text-center">
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Reset Password</button>
+            <%= link_to 'Cancel', 'home' %>
+          </p>
+          <input type="hidden" name="login_url" value="<%=@login_url%>" />
+          <input type="hidden" name="domain" value="<%=@domain%>" />
+      <% end %>
     </div>
-  <% end %>
+  </div>
 </div>
 <script type="text/javascript">
-jQuery('#reset_password_form').bind('ajaxComplete', function(e, xhr, settings){
-  var response = jQuery.parseJSON(xhr.responseText);
-  if(response.success){
-    jQuery('#<%=widget_result_id%>').html('<div class="sexynotice">'+response.message+'</div>');
-  }
-  else{
-    jQuery('#<%=widget_result_id%>').html('<div class="sexyerror">'+response.message+'</div>');
-  }
-});
+    jQuery('#reset_password_form').bind('ajax:success', function(e, response){
+        if(response.success){
+            html = [
+                '<div class="alert alert-success" >',
+                '<button type="button" class="close" data-dismiss="alert">&times;</button>',
+                response.message,
+                '</div>'
+            ].join('');
+            jQuery('#<%=widget_result_id%>').html(html);
+        }
+        else{
+            html = [
+                '<div class="alert alert-danger" >',
+                '<button type="button" class="close" data-dismiss="alert">&times;</button>',
+                response.message,
+                '</div>'
+            ].join('');
+
+            jQuery('#<%=widget_result_id%>').html(html);
+        }
+    });
 </script>
-
-
-
-
