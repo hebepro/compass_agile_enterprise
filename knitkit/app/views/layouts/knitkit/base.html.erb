@@ -12,10 +12,12 @@
   <!-- bootstrap -->
   <%= static_javascript_include_tag 'knitkit/bootstrap.min.js' %>
   <%= static_javascript_include_tag 'knitkit/theme.js' %>
+  <%= static_javascript_include_tag 'knitkit/bootstrap-datepicker.js' %>
 
   <%= static_stylesheet_link_tag 'knitkit/bootstrap.min.css' %>
   <%= static_stylesheet_link_tag 'knitkit/bootstrap-responsive.min.css' %>
   <%= static_stylesheet_link_tag 'knitkit/custom.css' %>
+  <%= static_stylesheet_link_tag 'knitkit/datepicker.css' %>
   <!-- end bootstrap -->
 
   <%= static_javascript_include_tag('erp_app/utility.js') %>
@@ -31,7 +33,7 @@
 
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="navbar-header pull-left">
-        <a class="navbar-brand" href="/home"><%= theme_image_tag 'bootstrapdark', 'logo.png' %></a>
+        <a class="navbar-brand" href="/home"><img src="/images/knitkit/logo.png" alt="Logo" /></a>
       </div>
 
       <div class="navbar-header pull-right">
@@ -67,9 +69,8 @@
   </div>
 
   <div class="footer">
-    <div class="container">
-      <p class="text-muted text-center credit">Powered by: <a href="http://compassagile.com">CompassAE</a></p>
-    </div>
+    <%= content_for?(:footer) ? yield(:footer) : (render :partial => 'shared/knitkit/footer') %>
+    <%= yield :foot %>
   </div>
 
 </body>

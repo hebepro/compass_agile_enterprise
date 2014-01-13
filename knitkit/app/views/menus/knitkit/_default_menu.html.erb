@@ -1,5 +1,5 @@
-<div id="menubar">
-  <ul id="menu">
+<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+  <ul class="nav navbar-nav">
    <% selected_menu_item = nil
       menu_items.each do |menu_item| 
         if menu_item.allow_access?(@current_user, :view)
@@ -9,7 +9,7 @@
         <% else %>
         <li>
         <% end %>
-        <a href="<%= menu_item.path %>"><span><%= menu_item.title %></span></a>
+        <a href="<%= menu_item.path %>"><%= menu_item.title %></a>
       </li>
     <% end %>
   <% end %>

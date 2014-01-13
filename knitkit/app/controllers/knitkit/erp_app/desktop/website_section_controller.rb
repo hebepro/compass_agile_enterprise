@@ -6,43 +6,55 @@ module Knitkit
 
         def new
           begin
+            result = {success: false}
+
             current_user.with_capability('create', 'WebsiteSection') do
-              website = Website.find(params[:website_id])
+              begin
+                ActiveRecord::Base.transaction do
 
-              if params[:title].to_s.downcase == 'blog' && params[:type] == 'Blog'
-                result = {:success => false, :message => 'Blog can not be the title of a Blog'}
-              else
-                website_section = WebsiteSection.new
-                website_section.website_id = website.id
-                website_section.in_menu = params[:in_menu] == 'yes'
-                website_section.title = params[:title]
-                website_section.render_base_layout = params[:render_with_base_layout] == 'yes'
-                website_section.type = params[:type] unless params[:type] == 'Page'
-                website_section.internal_identifier = params[:internal_identifier]
-                website_section.position = 0 # explicitly set position null, MS SQL doesn't always honor column default
+                  website = Website.find(params[:website_id])
 
-                if website_section.save
-                  if params[:website_section_id]
-                    parent_website_section = WebsiteSection.find(params[:website_section_id])
-                    website_section.move_to_child_of(parent_website_section)
+                  if params[:title].to_s.downcase == 'blog' && params[:type] == 'Blog'
+                    result = {:success => false, :message => 'Blog can not be the title of a Blog'}
+                  else
+                    website_section = WebsiteSection.new
+                    website_section.website_id = website.id
+                    website_section.in_menu = params[:in_menu] == 'yes'
+                    website_section.title = params[:title]
+                    website_section.render_base_layout = params[:render_with_base_layout] == 'yes'
+                    website_section.type = params[:type] unless params[:type] == 'Page'
+                    website_section.internal_identifier = params[:internal_identifier]
+                    website_section.position = 0 # explicitly set position null, MS SQL doesn't always honor column default
+
+                    if website_section.save
+                      if params[:website_section_id]
+                        parent_website_section = WebsiteSection.find(params[:website_section_id])
+                        website_section.move_to_child_of(parent_website_section)
+                      end
+
+                      if params[:type] == "OnlineDocumentSection"
+                        documented_content = DocumentedContent.create(:title => website_section.title, :created_by => current_user, :body_html => website_section.title)
+                        DocumentedItem.create(:documented_content_id => documented_content.id, :online_document_section_id => website_section.id)
+                      end
+
+                      website_section.update_path!
+                      result = {:success => true, :node => build_section_hash(website_section, website_section.website)}
+                    else
+                      message = "<ul>"
+                      website_section.errors.collect do |e, m|
+                        message << "<li>#{e} #{m}</li>"
+                      end
+                      message << "</ul>"
+                      result = {:success => false, :message => message}
+                    end
+
                   end
-
-                  if params[:type] == "OnlineDocumentSection"
-                    documented_content = DocumentedContent.create(:title => website_section.title, :created_by => current_user, :body_html => website_section.title)
-                    DocumentedItem.create(:documented_content_id => documented_content.id, :online_document_section_id => website_section.id)
-                  end
-
-                  website_section.update_path!
-                  result = {:success => true, :node => build_section_hash(website_section, website_section.website)}
-                else
-                  message = "<ul>"
-                  website_section.errors.collect do |e, m|
-                    message << "<li>#{e} #{m}</li>"
-                  end
-                  message << "</ul>"
-                  result = {:success => false, :message => message}
                 end
-
+              rescue Exception => e
+                # TODO send error notification
+                Rails.logger.error e.message
+                Rails.logger.error e.backtrace.join("\n")
+                result = {:success => false, :message => 'Could not create Section'}
               end
 
               render :json => result
@@ -89,7 +101,7 @@ module Knitkit
               end
             end
 
-            render :json => {:success => true, :secured => @website_section.is_secured?, :roles => @website_section.roles.collect{|item| item.internal_identifier}}
+            render :json => {:success => true, :secured => @website_section.is_secured?, :roles => @website_section.roles.collect { |item| item.internal_identifier }}
           else
             render :json => {:success => false, :message => "User does not have capability."}
           end

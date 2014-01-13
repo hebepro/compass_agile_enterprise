@@ -1,0 +1,148 @@
+<div style="margin-top:5px;" id="emailMessageArea"></div>
+<table class="table table-striped" id="emailsTable">
+  <thead>
+  <tr>
+    <th>Email Address</th>
+    <th>Contact Type</th>
+    <th>&nbsp;</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @email_addresses.each_with_index do |e, i| %>
+      <tr id="email<%= e.id %>">
+        <td><%= e.email_address %></td>
+        <td><%= e.contact.contact_purposes.first.description %></td>
+        <td>
+          <button type="button" class="emailDeleteBtn btn btn-danger" data-id="<%= e.id %>">Delete</button>
+        </td>
+      </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<button type="button" id="addEmailBtn" class="btn btn-success">Add Email</button>
+
+<div id="addEmailDiv" style="display:none;">
+  <%= form_tag build_widget_url(:add_email_address), :remote => true, :id => 'phone_number_form', :role => 'form' do %>
+      <div class="form-group">
+        <label for="newEmail">Email address</label>
+        <input type="email" name="email_address" class="form-control" id="newEmail" placeholder="Enter email" required="true">
+        <label for="contact_purpose">Contact Type</label>
+        <%= select_tag("contact_purpose", options_for_select(@purpose_hash, :selected => "default"), :class => "form-control") %>
+      </div>
+      <button id="submitEmailBtn" type="submit" class="btn btn-primary">Submit</button>
+      <button id="cancelEmailBtn" type="button" class="btn btn-default">Cancel</button>
+  <% end %>
+</div>
+
+<script type="text/javascript">
+
+    emailsPage = {
+        setup: function () {
+            jQuery('#addEmailBtn').click(function () {
+                var addBtn = jQuery(this);
+
+                addBtn.css('display', 'none');
+                jQuery('#addEmailDiv').css('display', '');
+            });
+
+            jQuery('#cancelEmailBtn').click(function () {
+                var addBtn = jQuery('#addEmailBtn');
+
+                addBtn.css('display', '');
+                jQuery('#addEmailDiv').css('display', 'none');
+            });
+
+            jQuery('#phone_number_form').bind('ajax:success', function (e, response) {
+                var html = '';
+
+                if (response.success) {
+                    html = [
+                        '<div class="alert alert-success" >',
+                        '<button type="button" class="close" data-dismiss="alert">&times;</button>',
+                        response.message,
+                        '</div>'
+                    ].join('');
+
+                    var newRowHtml = [
+                        '<tr id="email' + response.email.id + '">',
+                        '<td>' + response.email.email_address + '</td>',
+                        '<td>' + response.email.contact_purpose + '</td>',
+                        '<td>',
+                        '<button type="button" class="emailDeleteBtn btn btn-danger" data-id="' + response.email.id + '" >Delete</button>',
+                        '</td>',
+                        '</tr>'
+                    ].join('');
+
+                    $('#emailsTable > tbody:last').append(newRowHtml);
+
+                    window['emailsPage'].bindDeleteBtn();
+
+                    jQuery('#addEmailBtn').css('display', '');
+                    jQuery('#addEmailDiv').css('display', 'none');
+                }
+                else {
+                    html = [
+                        '<div class="alert alert-danger" >',
+                        '<button type="button" class="close" data-dismiss="alert">&times;</button>',
+                        response.message,
+                        '</div>'
+                    ].join('');
+                }
+
+                jQuery('#emailMessageArea').html(html);
+            });
+
+            window['emailsPage'].bindDeleteBtn();
+        },
+
+        bindDeleteBtn: function(){
+            jQuery('.emailDeleteBtn').click(function () {
+                var btn = jQuery(this);
+
+                var id = btn.attr('data-id');
+
+                jQuery.ajax({
+                    url: '<%= build_widget_url(:remove_email_address) %>',
+                    data: {email_address_id: id},
+                    success: function (data) {
+                        if (data.success) {
+                            html = [
+                                '<div class="alert alert-danger" >',
+                                '<button type="button" class="close" data-dismiss="alert">&times;</button>',
+                                data.message,
+                                '</div>'
+                            ].join('');
+
+                            jQuery('#emailMessageArea').html(html);
+
+                            jQuery('#email' + id).remove();
+                        }
+                        else {
+                            html = [
+                                '<div class="alert alert-danger" >',
+                                '<button type="button" class="close" data-dismiss="alert">&times;</button>',
+                                data.message,
+                                '</div>'
+                            ].join('');
+
+                            jQuery('#emailMessageArea').html(html);
+                        }
+                    },
+                    error: function () {
+                        html = [
+                            '<div class="alert alert-danger" >',
+                            '<button type="button" class="close" data-dismiss="alert">&times;</button>',
+                            'Could not remove email',
+                            '</div>'
+                        ].join('');
+
+                        jQuery('#emailMessageArea').html(html);
+                    }
+                });
+            });
+        }
+    };
+
+    emailsPage.setup();
+</script>

@@ -94,7 +94,7 @@ module Widgets
 
             if @user.change_password!(params[:new_password])
               @message = "Password Updated"
-              
+
               render :update => {:id => "#{@uuid}_result", :view => :index}
             else
               @message = "Error Updating Password"
@@ -117,6 +117,42 @@ module Widgets
           render :update => {:id => "#{@uuid}_result", :view => :index}
         end
 
+      end
+
+      def add_email_address
+        begin
+          email_address = params[:email_address].strip
+          contact_purpose = params[:contact_purpose]
+
+          email = current_user.party.update_or_add_contact_with_purpose(EmailAddress,
+                                                                        ContactPurpose.find_by_internal_identifier(contact_purpose),
+                                                                        {email_address: email_address})
+
+          {:json => {success: true, message: 'Email added', email: email.to_hash(:only => [:id, :email_address],
+                                                                                 :contact_purpose => email.contact_purpose.description)}}
+        rescue Exception => ex
+          Rails.logger.error ex.message
+          Rails.logger.error ex.backtrace.join("\n")
+          #TODO send out notification
+
+          {:json => {success: false, message: 'Could not add email'}}
+        end
+      end
+
+      def remove_email_address
+        begin
+          email_address_id = params[:email_address_id].strip
+
+          EmailAddress.find(email_address_id).destroy
+
+          {:json => {success: true, message: 'Email removed'}}
+        rescue Exception => ex
+          Rails.logger.error ex.message
+          Rails.logger.error ex.backtrace.join("\n")
+          #TODO send out notification
+
+          {:json => {success: false, message: 'Could not remove email'}}
+        end
       end
 
       def update_contact_information

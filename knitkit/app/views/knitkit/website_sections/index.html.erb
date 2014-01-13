@@ -1,5 +1,9 @@
-<h2><%=h @website_section.title %></h2>
+<div class="container">
+  <div class="page-header">
+    <h1><%= @website_section.title %></h1>
+  </div>
 
-<% @contents.each do |content| %>
-    <%= render_editable_content(content) %>
-<% end %>
+  <% @contents.each do |content| %>
+      <%= render_editable_content(content) %>
+  <% end %>
+</div>
