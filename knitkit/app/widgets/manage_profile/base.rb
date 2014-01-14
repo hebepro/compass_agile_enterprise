@@ -2,7 +2,7 @@ module Widgets
   module ManageProfile
     class Base < ErpApp::Widgets::Base
 
-      def load_profile_data
+      def index
         @user = User.find(current_user)
         @individual = @user.party.business_party
         @email_addresses = @user.party.find_all_contacts_by_contact_mechanism(EmailAddress)
@@ -28,10 +28,6 @@ module Widgets
         states.each do |s|
           @states_id << [s.zone_name, s.id]
         end
-      end
-
-      def index
-        load_profile_data
 
         render
       end
@@ -39,29 +35,14 @@ module Widgets
       def update_user_information
         #### Get appropriate models ####
 
-        @user=User.find(current_user)
-        @individual= @user.party.business_party
+        @user = User.find(current_user)
+        @individual = @user.party.business_party
 
-        #### Formating the date for sqlite. Will probably need diffrent formating for production ####
-        if params[:date][:day].to_i < 10
-          day="0#{params[:date][:day]}"
-        else
-          day= params[:date][:day]
-        end
-
-        if params[:date][:month].to_i < 10
-          month="0#{params[:date][:month]}"
-        else
-          month= params[:date][:month]
-        end
-
-        formated_date= "#{params[:date][:year]}-#{month}-#{day}"
-
-        @individual.current_first_name= params[:first_name]
-        @individual.current_last_name= params[:last_name]
-        @individual.current_middle_name= params[:middle_name]
-        @individual.gender= params[:gender]
-        @individual.birth_date= formated_date
+        @individual.current_first_name = params[:first_name]
+        @individual.current_last_name = params[:last_name]
+        @individual.current_middle_name = params[:middle_name]
+        @individual.gender = params[:gender]
+        @individual.birth_date = params[:birth_date]
         @user.email = params[:email]
 
         #### check validation then save and render message ####
@@ -70,15 +51,16 @@ module Widgets
             @user.save
             @individual.save
             @message = "User Information Updated"
-            load_profile_data
-            render :update => {:id => "#{@uuid}_result", :view => :index}
+
+            render :update => {:id => "#{@uuid}_result", :view => :success}
           else
             @message_cls = 'sexyerror'
             @message = "Error Updating User Information"
-            render :update => {:id => "#{@uuid}_result", :view => :index}
+            render :update => {:id => "#{@uuid}_result", :view => :error}
           end
         else
-          render :update => {:id => "#{@uuid}_result", :view => :index}
+          @message = "User Information Updated"
+          render :update => {:id => "#{@uuid}_result", :view => :success}
         end
 
       end
@@ -86,7 +68,6 @@ module Widgets
 
       def update_password
         if @user = User.authenticate(current_user.username, params[:old_password])
-          load_profile_data
 
           if !params[:new_password].blank? && !params[:password_confirmation].blank? && params[:new_password] == params[:password_confirmation]
 
@@ -95,26 +76,25 @@ module Widgets
             if @user.change_password!(params[:new_password])
               @message = "Password Updated"
 
-              render :update => {:id => "#{@uuid}_result", :view => :index}
+              render :update => {:id => "#{@uuid}_result", :view => :success}
             else
               @message = "Error Updating Password"
-              @message_cls = 'sexyerror'
+
               #### validation failed ####
-              render :update => {:id => "#{@uuid}_result", :view => :index}
+              render :update => {:id => "#{@uuid}_result", :view => :error}
             end
 
           else
             #### password and password confirmation cant be blank or unequal ####
             @message = "Password Confirmation Must Match Password"
-            @message_cls = 'sexyerror'
-            render :update => {:id => "#{@uuid}_result", :view => :index}
+
+            render :update => {:id => "#{@uuid}_result", :view => :error}
           end
         else
-          load_profile_data
           #### old password wrong ####
           @message = "Invalid Old Password"
-          @message_cls = 'sexyerror'
-          render :update => {:id => "#{@uuid}_result", :view => :index}
+
+          render :update => {:id => "#{@uuid}_result", :view => :error}
         end
 
       end
@@ -152,6 +132,92 @@ module Widgets
           #TODO send out notification
 
           {:json => {success: false, message: 'Could not remove email'}}
+        end
+      end
+
+      def add_phone_number
+        begin
+          phone_number = params[:phone_number].strip
+          contact_purpose = params[:contact_purpose]
+
+          phone_number = current_user.party.update_or_add_contact_with_purpose(PhoneNumber,
+                                                                               ContactPurpose.find_by_internal_identifier(contact_purpose),
+                                                                               {phone_number: phone_number})
+
+          {:json => {success: true, message: 'Phone number added', phone: phone_number.to_hash(:only => [:id, :phone_number],
+                                                                                               :contact_purpose => phone_number.contact_purpose.description)}}
+        rescue Exception => ex
+          Rails.logger.error ex.message
+          Rails.logger.error ex.backtrace.join("\n")
+          #TODO send out notification
+
+          {:json => {success: false, message: 'Could not add phone number'}}
+        end
+      end
+
+      def remove_phone_number
+        begin
+          phone_number_id = params[:phone_number_id].strip
+
+          PhoneNumber.find(phone_number_id).destroy
+
+          {:json => {success: true, message: 'Phone number removed'}}
+        rescue Exception => ex
+          Rails.logger.error ex.message
+          Rails.logger.error ex.backtrace.join("\n")
+          #TODO send out notification
+
+          {:json => {success: false, message: 'Could not remove phone number'}}
+        end
+      end
+
+      def add_address
+        begin
+          address_line_1 = params[:address_line_1].strip
+          address_line_2 = params[:address_line_2].strip
+          city = params[:city].strip
+          geo_zone_id = params[:state].strip
+          postal_code = params[:postal_code].strip
+          contact_purpose = params[:contact_purpose]
+
+          postal_address = current_user.party.update_or_add_contact_with_purpose(PostalAddress,
+                                                                                 ContactPurpose.find_by_internal_identifier(contact_purpose),
+                                                                                 {
+                                                                                     address_line_1: address_line_1,
+                                                                                     address_line_2: address_line_2,
+                                                                                     city: city,
+                                                                                     geo_zone_id: geo_zone_id,
+                                                                                     state: GeoZone.find(geo_zone_id).zone_name,
+                                                                                     zip: postal_code,
+                                                                                 })
+
+          {:json => {success: true,
+                     message: 'Address added',
+                     address: postal_address.to_hash(:only => [:id, :address_line_1, :address_line_2,
+                                                               :city, :state, :zip],
+                                                     :contact_purpose => postal_address.contact_purpose.description)}}
+        rescue Exception => ex
+          Rails.logger.error ex.message
+          Rails.logger.error ex.backtrace.join("\n")
+          #TODO send out notification
+
+          {:json => {success: false, message: 'Could not add address'}}
+        end
+      end
+
+      def remove_address
+        begin
+          address_id = params[:address_id].strip
+
+          PostalAddress.find(address_id).destroy
+
+          {:json => {success: true, message: 'address removed'}}
+        rescue Exception => ex
+          Rails.logger.error ex.message
+          Rails.logger.error ex.backtrace.join("\n")
+          #TODO send out notification
+
+          {:json => {success: false, message: 'Could not remove address'}}
         end
       end
 
@@ -279,8 +345,6 @@ module Widgets
             contact_type_in_use=true
           end
         end
-
-        load_profile_data
 
         #### Renders proper error or success message ####
         if contact_type_in_use

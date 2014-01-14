@@ -83,6 +83,10 @@ class WebsiteSection < ActiveRecord::Base
   def is_section?
     ['Page', 'Blog'].include? type
   end
+
+  def display_in_menu?
+    self.in_menu
+  end
   
   def is_secured?
     self.protected_with_capability?('view')

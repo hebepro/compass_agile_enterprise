@@ -1,0 +1,179 @@
+<div style="margin-top:5px;" id="addressMessageArea"></div>
+<table class="table table-striped" id="addressesTable">
+  <thead>
+  <tr>
+    <th>Address Line 1</th>
+    <th>Address Line 2</th>
+    <th>City</th>
+    <th>State</th>
+    <th>Postal Code</th>
+    <th>Contact Type</th>
+    <th>&nbsp;</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @postal_addresses.each do |p| %>
+      <tr>
+        <td><%= p.address_line_1 %></td>
+        <td><%= p.address_line_2 %></td>
+        <td><%= p.city %></td>
+        <td><%= p.state %></td>
+        <td><%= p.zip %></td>
+        <td><%= p.contact.contact_purposes.first.description %></td>
+        <td>
+          <button type="button"
+                  class="addressDeleteBtn btn btn-danger"
+                  data-id="<%= p.id %>">Delete
+          </button>
+        </td>
+      </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<button type="button" id="addAddressBtn" class="btn btn-success">Add Address</button>
+
+<div id="addAddressDiv" style="display:none;">
+  <%= form_tag build_widget_url(:add_address), :remote => true, :id => 'address_form', :role => 'form' do %>
+      <div class="form-group">
+        <%= label_tag :address_line_1 %>
+        <%= text_field_tag :address_line_1, nil, class: 'form-control', required: true %>
+
+        <%= label_tag :address_line_2 %>
+        <%= text_field_tag :address_line_2, nil, class: 'form-control' %>
+
+        <%= label_tag :city %>
+        <%= text_field_tag :city, nil, class: 'form-control', required: true %>
+
+        <%= label_tag :state  %>
+        <%= select_tag("state", options_for_select(@states_id, :selected => "default", :disabled => "default"), :class => "form-control") %>
+
+        <%= label_tag :postal_code %>
+        <%= text_field_tag :postal_code, nil, class: 'form-control', required: true %>
+
+        <%= label_tag :contact_purpose  %>
+        <%= select_tag("contact_purpose", options_for_select(@purpose_hash, :selected => "default"), :class => "form-control") %>
+      </div>
+      <button id="submitAddressBtn" type="submit" class="btn btn-primary">Submit</button>
+      <button id="cancelAddressBtn" type="button" class="btn btn-default">Cancel</button>
+  <% end %>
+</div>
+
+<script type="text/javascript">
+
+    addressesPanel = {
+        setup: function () {
+            jQuery('#addAddressBtn').click(function () {
+                var addBtn = jQuery(this);
+
+                addBtn.css('display', 'none');
+                jQuery('#addAddressDiv').css('display', '');
+            });
+
+            jQuery('#cancelAddressBtn').click(function () {
+                var addBtn = jQuery('#addAddressBtn');
+
+                addBtn.css('display', '');
+                jQuery('#addAddressDiv').css('display', 'none');
+            });
+
+            jQuery('#address_form').bind('ajax:success', function (e, response) {
+                var html = '';
+
+                if (response.success) {
+                    html = [
+                        '<div class="alert alert-success" >',
+                        '<button type="button" class="close" data-dismiss="alert">&times;</button>',
+                        response.message,
+                        '</div>'
+                    ].join('');
+
+                    var newRowHtml = [
+                        '<tr id="address' + response.address.id + '">',
+                        '<td>' + response.address.address_line_1 + '</td>',
+                        '<td>' + response.address.address_line_2 + '</td>',
+                        '<td>' + response.address.city + '</td>',
+                        '<td>' + response.address.state + '</td>',
+                        '<td>' + response.address.postal_code + '</td>',
+                        '<td>',
+                        '<button type="button" class="addressDeleteBtn btn btn-danger" data-id="' + response.address.id + '" >Delete</button>',
+                        '</td>',
+                        '</tr>'
+                    ].join('');
+
+                    $('#addressesTable > tbody:last').append(newRowHtml);
+
+                    window['addressesPanel'].bindDeleteBtn();
+
+                    jQuery('#addAddressBtn').css('display', '');
+                    jQuery('#addAddressDiv').css('display', 'none');
+                    jQuery('#address_form')[0].reset();
+                }
+                else {
+                    html = [
+                        '<div class="alert alert-danger" >',
+                        '<button type="button" class="close" data-dismiss="alert">&times;</button>',
+                        response.message,
+                        '</div>'
+                    ].join('');
+                }
+
+                jQuery('#addressMessageArea').html(html);
+            });
+
+            window['addressesPanel'].bindDeleteBtn();
+        },
+
+        bindDeleteBtn: function () {
+            jQuery('.addressDeleteBtn').confirmModal({
+                confirmCallback: addressesPanel.deleteAddress,
+                confirmMessage   : 'Are you sure you want to remove this address ?'
+            });
+        },
+
+        deleteAddress: function (link, data) {
+            var id = data.id;
+
+            jQuery.ajax({
+                url: '<%= build_widget_url(:remove_address) %>',
+                data: {address_id: id},
+                success: function (data) {
+                    if (data.success) {
+                        html = [
+                            '<div class="alert alert-danger" >',
+                            '<button type="button" class="close" data-dismiss="alert">&times;</button>',
+                            data.message,
+                            '</div>'
+                        ].join('');
+
+                        jQuery('#addressMessageArea').html(html);
+
+                        jQuery('#address' + id).remove();
+                    }
+                    else {
+                        html = [
+                            '<div class="alert alert-danger" >',
+                            '<button type="button" class="close" data-dismiss="alert">&times;</button>',
+                            data.message,
+                            '</div>'
+                        ].join('');
+
+                        jQuery('#addressMessageArea').html(html);
+                    }
+                },
+                error: function () {
+                    html = [
+                        '<div class="alert alert-danger" >',
+                        '<button type="button" class="close" data-dismiss="alert">&times;</button>',
+                        'Could not remove address',
+                        '</div>'
+                    ].join('');
+
+                    jQuery('#addressMessageArea').html(html);
+                }
+            });
+        }
+    };
+
+    addressesPanel.setup();
+</script>

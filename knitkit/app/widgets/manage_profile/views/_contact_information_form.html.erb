@@ -9,58 +9,10 @@
     <%= render :partial => 'email_address' %>
   </div>
   <div class="tab-pane fade" id="phone">
-    <table class="table table-striped">
-      <thead>
-      <tr>
-        <th>Phone Number</th>
-        <th>Contact Type</th>
-        <th>&nbsp;</th>
-      </tr>
-      </thead>
-      <tbody>
-      <% @phone_numbers.each_with_index do |p, i| %>
-          <tr>
-            <td><%= p.phone_number %></td>
-            <td><%= p.contact.contact_purposes.first.description %></td>
-            <td>
-              <button type="button" class="btn btn-danger">Delete</button>
-            </td>
-          </tr>
-      <% end %>
-      </tbody>
-    </table>
-    <button type="button" class="btn btn-success">Add Phone Number</button>
+    <%= render :partial => 'phone_number' %>
   </div>
   <div class="tab-pane fade" id="address">
-    <table class="table table-striped">
-      <thead>
-      <tr>
-        <th>Address Line 1</th>
-        <th>Address Line 2</th>
-        <th>City</th>
-        <th>State</th>
-        <th>Postal Code</th>
-        <th>Contact Type</th>
-        <th>&nbsp;</th>
-      </tr>
-      </thead>
-      <tbody>
-      <% @postal_addresses.each_with_index do |p, i| %>
-          <tr>
-            <td><%= p.address_line_1 %></td>
-            <td><%= p.address_line_2 %></td>
-            <td><%= p.city %></td>
-            <td><%= p.state %></td>
-            <td><%= p.postal_code %></td>
-            <td><%= p.contact.contact_purposes.first.description %></td>
-            <td>
-              <button type="button" class="btn btn-danger">Delete</button>
-            </td>
-          </tr>
-      <% end %>
-      </tbody>
-    </table>
-    <button type="button" class="btn btn-success">Add Address</button>
+    <%= render :partial => 'address' %>
   </div>
 </div>
 

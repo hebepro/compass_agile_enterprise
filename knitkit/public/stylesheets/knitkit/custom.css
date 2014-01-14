@@ -5,11 +5,11 @@
     h2 {
         font-size: 24px;
     	margin-top: 0px;
-    }    
-    .container {
-    	padding: 0;   
     }
-    
+    .container {
+    	padding: 0;
+    }
+
     .container>.navbar-collapse {
     	clear: both;
 		margin-right: 0px;
@@ -71,10 +71,10 @@ body {
     margin-top: 14px;
 }
 .login-header a span {
-    color: #aaa;    
+    color: #aaa;
 }
 .login-header a span:hover {
-    color: #fff;    
+    color: #fff;
 }
 
 .container > h1 {

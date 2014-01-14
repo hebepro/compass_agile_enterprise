@@ -1,21 +1,21 @@
-<div style="margin-top:5px;" id="emailMessageArea"></div>
-<table class="table table-striped" id="emailsTable">
+<div style="margin-top:5px;" id="phoneMessageArea"></div>
+<table class="table table-striped" id="phoneNumbersTable">
   <thead>
   <tr>
-    <th>Email Address</th>
+    <th>Phone Number</th>
     <th>Contact Type</th>
     <th>&nbsp;</th>
   </tr>
   </thead>
   <tbody>
-  <% @email_addresses.each do |e| %>
-      <tr id="email<%= e.id %>">
-        <td><%= e.email_address %></td>
-        <td><%= e.contact.contact_purposes.first.description %></td>
+  <% @phone_numbers.each do |p| %>
+      <tr id="phone<%= p.id %>">
+        <td><%= p.phone_number %></td>
+        <td><%= p.contact.contact_purposes.first.description %></td>
         <td>
           <button type="button"
-                  class="emailDeleteBtn btn btn-danger"
-                  data-id="<%= e.id %>">Delete
+                  class="phoneDeleteBtn btn btn-danger"
+                  data-id="<%= p.id %>">Delete
           </button>
         </td>
       </tr>
@@ -23,43 +23,44 @@
   </tbody>
 </table>
 
-<button type="button" id="addEmailBtn" class="btn btn-success">Add Email</button>
+<button type="button" id="addPhoneBtn" class="btn btn-success">Add Phone Number</button>
 
-<div id="addEmailDiv" style="display:none;">
-  <%= form_tag build_widget_url(:add_email_address), :remote => true, :id => 'email_form', :role => 'form' do %>
+<div id="addPhoneDiv" style="display:none;">
+  <%= form_tag build_widget_url(:add_phone_number), :remote => true, :id => 'phone_number_form', :role => 'form' do %>
       <div class="form-group">
-
-        <%= label_tag :email_address %>
-        <%= text_field_tag :email_address, nil, class: 'form-control', required: true %>
+        <%= label_tag :phone_number %>
+        <%= text_field_tag :phone_number, nil, class: 'form-control', required: true %>
 
         <%= label_tag :contact_purpose  %>
         <%= select_tag("contact_purpose", options_for_select(@purpose_hash, :selected => "default"), :class => "form-control") %>
 
       </div>
-      <button id="submitEmailBtn" type="submit" class="btn btn-primary">Submit</button>
-      <button id="cancelEmailBtn" type="button" class="btn btn-default">Cancel</button>
+      <button id="submitPhoneBtn" type="submit" class="btn btn-primary">Submit</button>
+      <button id="cancelPhoneBtn" type="button" class="btn btn-default">Cancel</button>
   <% end %>
 </div>
 
 <script type="text/javascript">
 
-    emailsPage = {
+    jQuery('#phone_number').mask("(999) 999-9999");
+
+    phonesPanel = {
         setup: function () {
-            jQuery('#addEmailBtn').click(function () {
+            jQuery('#addPhoneBtn').click(function () {
                 var addBtn = jQuery(this);
 
                 addBtn.css('display', 'none');
-                jQuery('#addEmailDiv').css('display', '');
+                jQuery('#addPhoneDiv').css('display', '');
             });
 
-            jQuery('#cancelEmailBtn').click(function () {
-                var addBtn = jQuery('#addEmailBtn');
+            jQuery('#cancelPhoneBtn').click(function () {
+                var addBtn = jQuery('#addPhoneBtn');
 
                 addBtn.css('display', '');
-                jQuery('#addEmailDiv').css('display', 'none');
+                jQuery('#addPhoneDiv').css('display', 'none');
             });
 
-            jQuery('#email_form').bind('ajax:success', function (e, response) {
+            jQuery('#phone_number_form').bind('ajax:success', function (e, response) {
                 var html = '';
 
                 if (response.success) {
@@ -71,22 +72,22 @@
                     ].join('');
 
                     var newRowHtml = [
-                        '<tr id="email' + response.email.id + '">',
-                        '<td>' + response.email.email_address + '</td>',
-                        '<td>' + response.email.contact_purpose + '</td>',
+                        '<tr id="phone' + response.phone.id + '">',
+                        '<td>' + response.phone.phone_number + '</td>',
+                        '<td>' + response.phone.contact_purpose + '</td>',
                         '<td>',
-                        '<button type="button" class="emailDeleteBtn btn btn-danger" data-id="' + response.email.id + '" >Delete</button>',
+                        '<button type="button" class="phoneDeleteBtn btn btn-danger" data-id="' + response.phone.id + '" >Delete</button>',
                         '</td>',
                         '</tr>'
                     ].join('');
 
-                    $('#emailsTable > tbody:last').append(newRowHtml);
+                    $('#phoneNumbersTable > tbody:last').append(newRowHtml);
 
-                    window['emailsPage'].bindDeleteBtn();
+                    window['phonesPanel'].bindDeleteBtn();
 
-                    jQuery('#addEmailBtn').css('display', '');
-                    jQuery('#addEmailDiv').css('display', 'none');
-                    jQuery('#email_form')[0].reset();
+                    jQuery('#addPhoneBtn').css('display', '');
+                    jQuery('#addPhoneDiv').css('display', 'none');
+                    jQuery('#phone_number_form')[0].reset();
                 }
                 else {
                     html = [
@@ -97,25 +98,25 @@
                     ].join('');
                 }
 
-                jQuery('#emailMessageArea').html(html);
+                jQuery('#phoneMessageArea').html(html);
             });
 
-            window['emailsPage'].bindDeleteBtn();
+            window['phonesPanel'].bindDeleteBtn();
         },
 
         bindDeleteBtn: function () {
-            jQuery('.emailDeleteBtn').confirmModal({
-                confirmCallback: emailsPage.deleteEmail,
-                confirmMessage   : 'Are you sure you want to remove this email ?'
+            jQuery('.phoneDeleteBtn').confirmModal({
+                confirmCallback: phonesPanel.deletePhone,
+                confirmMessage   : 'Are you sure you want to remove this phone number ?'
             });
         },
 
-        deleteEmail: function (link, data) {
+        deletePhone: function (link, data) {
             var id = data.id;
 
             jQuery.ajax({
-                url: '<%= build_widget_url(:remove_email_address) %>',
-                data: {email_address_id: id},
+                url: '<%= build_widget_url(:remove_phone_number) %>',
+                data: {phone_number_id: id},
                 success: function (data) {
                     if (data.success) {
                         html = [
@@ -125,9 +126,9 @@
                             '</div>'
                         ].join('');
 
-                        jQuery('#emailMessageArea').html(html);
+                        jQuery('#phoneMessageArea').html(html);
 
-                        jQuery('#email' + id).remove();
+                        jQuery('#phone' + id).remove();
                     }
                     else {
                         html = [
@@ -137,22 +138,22 @@
                             '</div>'
                         ].join('');
 
-                        jQuery('#emailMessageArea').html(html);
+                        jQuery('#phoneMessageArea').html(html);
                     }
                 },
                 error: function () {
                     html = [
                         '<div class="alert alert-danger" >',
                         '<button type="button" class="close" data-dismiss="alert">&times;</button>',
-                        'Could not remove email',
+                        'Could not remove phone number',
                         '</div>'
                     ].join('');
 
-                    jQuery('#emailMessageArea').html(html);
+                    jQuery('#phoneMessageArea').html(html);
                 }
             });
         }
     };
 
-    emailsPage.setup();
+    phonesPanel.setup();
 </script>

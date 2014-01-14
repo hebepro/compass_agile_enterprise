@@ -13,6 +13,7 @@
   <%= static_javascript_include_tag 'knitkit/bootstrap.min.js' %>
   <%= static_javascript_include_tag 'knitkit/theme.js' %>
   <%= static_javascript_include_tag 'knitkit/bootstrap-datepicker.js' %>
+  <%= static_javascript_include_tag 'knitkit/confirm-bootstrap.js' %>
 
   <%= static_stylesheet_link_tag 'knitkit/bootstrap.min.css' %>
   <%= static_stylesheet_link_tag 'knitkit/bootstrap-responsive.min.css' %>
@@ -24,54 +25,52 @@
   <%= static_javascript_include_tag('erp_app/jquery_support.js') %>
   <%= static_javascript_include_tag('erp_app/widgets.js') %>
   <%= static_javascript_include_tag('knitkit/inline_editing.js') %>
+  <%= static_javascript_include_tag('knitkit/jquery.maskedinput.min.js') %>
 
   <%= static_stylesheet_link_tag 'knitkit/inline_editing.css' %>
 </head>
 <body>
 
-  <div id="wrap">
+<div id="wrap">
 
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-      <div class="navbar-header pull-left">
-        <a class="navbar-brand" href="/home"><img src="/images/knitkit/logo.png" alt="Logo" /></a>
-      </div>
-
-      <div class="navbar-header pull-right">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-      </div>
-       <span class="login-header">
-        <% unless @current_user -%>
-          <a href="/home"><span>Login</span></a>
-        <% else %>
-          <a href="/session/sign_out?login_url=/home"><span>Logout</span></a>
-        <% end %>
-       </span>
-
-      <div class="container">
-        <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <%= content_for?(:menu) ? yield(:menu) : render_menu(@contents) %>
-          </ul>
-        </div>
-      </div>
-    </nav>
-
-    <!-- Wrap all page content here -->
-
-    <div class="content-area">
-      <%= yield %>
+  <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="navbar-header pull-left">
+      <a class="navbar-brand" href="/home"><img src="/images/knitkit/logo.png" alt="Logo"/></a>
     </div>
 
+    <div class="navbar-header pull-right">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+
+    <%= render_widget :login,
+                      :action => :login_header,
+                      :params => {:login_url => '/login', :signup_url => '/sign-up'} %>
+
+    <div class="container">
+      <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+          <%= content_for?(:menu) ? yield(:menu) : render_menu(@contents) %>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Wrap all page content here -->
+
+  <div class="content-area">
+    <%= yield %>
   </div>
 
-  <div class="footer">
-    <%= content_for?(:footer) ? yield(:footer) : (render :partial => 'shared/knitkit/footer') %>
-    <%= yield :foot %>
-  </div>
+</div>
+
+<div class="footer">
+  <%= content_for?(:footer) ? yield(:footer) : (render :partial => 'shared/knitkit/footer') %>
+  <%= yield :foot %>
+</div>
 
 </body>
 </html>

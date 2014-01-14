@@ -101,7 +101,7 @@
 
               items: [
                   <% @website.sections.each do |section| %>
-                  <% if section.in_menu && section.allow_access?(@current_user, :view) %>
+                  <% if section.in_menu && section.allow_access?(current_user, :view) %>
                   {
                       title: '<%= section.title %>',
                       slideButton: true,

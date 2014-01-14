@@ -4,7 +4,6 @@ module Knitkit
     before_filter :set_website
 
     def index
-      @current_user = current_user
     end
 
     protected
