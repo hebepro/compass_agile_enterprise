@@ -13,7 +13,7 @@
   </thead>
   <tbody>
   <% @postal_addresses.each do |p| %>
-      <tr>
+      <tr id="address<%= p.id %>">
         <td><%= p.address_line_1 %></td>
         <td><%= p.address_line_2 %></td>
         <td><%= p.city %></td>
@@ -34,7 +34,7 @@
 <button type="button" id="addAddressBtn" class="btn btn-success">Add Address</button>
 
 <div id="addAddressDiv" style="display:none;">
-  <%= form_tag build_widget_url(:add_address), :remote => true, :id => 'address_form', :role => 'form' do %>
+  <%= form_remote_tag build_widget_url(:add_address), :id => 'address_form', :role => 'form' do %>
       <div class="form-group">
         <%= label_tag :address_line_1 %>
         <%= text_field_tag :address_line_1, nil, class: 'form-control', required: true %>
@@ -94,16 +94,21 @@
                         '<td>' + response.address.address_line_2 + '</td>',
                         '<td>' + response.address.city + '</td>',
                         '<td>' + response.address.state + '</td>',
-                        '<td>' + response.address.postal_code + '</td>',
+                        '<td>' + response.address.zip + '</td>',
+                        '<td>' + response.address.contact_purpose + '</td>',
                         '<td>',
                         '<button type="button" class="addressDeleteBtn btn btn-danger" data-id="' + response.address.id + '" >Delete</button>',
                         '</td>',
                         '</tr>'
                     ].join('');
 
-                    $('#addressesTable > tbody:last').append(newRowHtml);
+                    jQuery('#addressesTable > tbody:last').append(newRowHtml);
+                    var newDeleteBtn = jQuery('#addressesTable > tbody:last > tr:last > td:last > button');
 
-                    window['addressesPanel'].bindDeleteBtn();
+                    newDeleteBtn.confirmModal({
+                        confirmCallback: addressesPanel.deleteAddress,
+                        confirmMessage   : 'Are you sure you want to remove this address ?'
+                    });
 
                     jQuery('#addAddressBtn').css('display', '');
                     jQuery('#addAddressDiv').css('display', 'none');
@@ -140,7 +145,7 @@
                 success: function (data) {
                     if (data.success) {
                         html = [
-                            '<div class="alert alert-danger" >',
+                            '<div class="alert alert-success" >',
                             '<button type="button" class="close" data-dismiss="alert">&times;</button>',
                             data.message,
                             '</div>'

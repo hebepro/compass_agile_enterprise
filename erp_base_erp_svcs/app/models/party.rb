@@ -231,8 +231,6 @@ class Party < ActiveRecord::Base
     contact_mechanism.contact.save
     contact_mechanism.save
 
-    self.contacts << contact_mechanism.contact
-
     set_primary_contact(contact_mechanism_class, contact_mechanism) if is_primary
 
     contact_mechanism
@@ -258,8 +256,11 @@ class Party < ActiveRecord::Base
   end
 
   def update_contact(contact_mechanism_class, contact, contact_mechanism_args)
-    contact_mechanism_class.update(contact.contact_mechanism, contact_mechanism_args)
     set_primary_contact(contact_mechanism_class, contact.contact_mechanism) if contact_mechanism_args[:is_primary] == true
+
+    contact_mechanism_class.update(contact.contact_mechanism, contact_mechanism_args)
+
+    contact.contact_mechanism
   end
 
   def get_contact_by_method(m)
