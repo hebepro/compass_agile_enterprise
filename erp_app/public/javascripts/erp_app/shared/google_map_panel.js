@@ -18,7 +18,7 @@ Ext.define('Ext.ux.GoogleMapPanel', {
 
         var defConfig = {
             plain: true,
-            zoomLevel: 3,
+            zoomLevel: 10,
             yaw: 180,
             pitch: 0,
             zoom: 0,
