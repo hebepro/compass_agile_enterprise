@@ -16,3 +16,6 @@ require 'knitkit/extensions/action_controller/theme_support/acts_as_themed_contr
 
 #action_mailer extensions
 require 'knitkit/extensions/action_mailer/theme_support/acts_as_themed_mailer'
+
+#willpaginate
+require 'knitkit/extensions/will_paginate/link_renderer'

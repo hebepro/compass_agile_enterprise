@@ -1,8 +1,16 @@
-<%= render_widget :login,
-                  :params => {:logout_to => "/login", 
-                              :login_to => "/home",
-                              #optional field if Sign Up widget is setup
-                              :signup_url => '/sign-up',
-                              #optional field if Reset Password widget is setup
-                              :reset_password_url => '/reset-password'
-                             } %>
+<div style="margin-top:10px;" class="container">
+  <div class="row">
+    <div class="col-lg-1" style="margin: 0 auto;float:none;width:500px;">
+      <h2><%= @website_section.title %></h2>
+
+      <%= render_widget :login,
+                        :params => {:logout_to => "/login",
+                                    :login_to => "/home",
+                                    #optional field if Sign Up widget is setup
+                                    :signup_url => '/sign-up',
+                                    #optional field if Reset Password widget is setup
+                                    :reset_password_url => '/reset-password'
+                        } %>
+    </div>
+  </div>
+</div>

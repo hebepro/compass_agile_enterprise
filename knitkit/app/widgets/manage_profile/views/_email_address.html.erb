@@ -30,7 +30,7 @@
       <div class="form-group">
 
         <%= label_tag :email_address %>
-        <%= text_field_tag :email_address, nil, class: 'form-control', required: true %>
+        <%= text_field_tag :email_address, nil, class: 'form-control', required: true, :type => 'email' %>
 
         <%= label_tag :contact_purpose  %>
         <%= select_tag("contact_purpose", options_for_select(@purpose_hash, :selected => "default"), :class => "form-control") %>

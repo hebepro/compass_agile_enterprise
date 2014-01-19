@@ -1,55 +1,52 @@
-<div class="container" style="margin-top:10px;">
-  <div id="<%= widget_result_id %>">
-    <% if @message %>
-        <div class="alert alert-success">
-          <%= @message %>
-        </div>
-    <% end %>
-  </div>
+<div id="<%= widget_result_id %>">
+  <% if @message %>
+      <div class="alert alert-success">
+        <%= @message %>
+      </div>
+  <% end %>
+</div>
 
-  <div class="panel-group" id="accordion">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h4 class="panel-title">
-          <a data-toggle="collapse" data-parent="#accordion" href="#userInformation">
-            User Information
-          </a>
-        </h4>
-      </div>
-      <div id="userInformation" class="panel-collapse collapse in">
-        <div class="panel-body">
-          <%= render :partial => '/user_information_form' %>
-        </div>
-      </div>
+<div class="panel-group" id="accordion">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#userInformation">
+          User Information
+        </a>
+      </h4>
     </div>
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h4 class="panel-title">
-          <a data-toggle="collapse" data-parent="#accordion" href="#password">
-            Password
-          </a>
-        </h4>
-      </div>
-      <div id="password" class="panel-collapse collapse">
-        <div class="panel-body">
-          <%= render :partial => '/password_form' %>
-        </div>
-      </div>
-    </div>
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h4 class="panel-title">
-          <a data-toggle="collapse" data-parent="#accordion" href="#contactInformation">
-            Contact Information
-          </a>
-        </h4>
-      </div>
-      <div id="contactInformation" class="panel-collapse collapse">
-        <div class="panel-body">
-          <%= render :partial => '/contact_information_form' %>
-        </div>
+    <div id="userInformation" class="panel-collapse collapse in">
+      <div class="panel-body">
+        <%= render :partial => '/user_information_form' %>
       </div>
     </div>
   </div>
-
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#password">
+          Password
+        </a>
+      </h4>
+    </div>
+    <div id="password" class="panel-collapse collapse">
+      <div class="panel-body">
+        <%= render :partial => '/password_form' %>
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#contactInformation">
+          Contact Information
+        </a>
+      </h4>
+    </div>
+    <div id="contactInformation" class="panel-collapse collapse">
+      <div class="panel-body">
+        <%= render :partial => '/contact_information_form' %>
+      </div>
+    </div>
+  </div>
 </div>

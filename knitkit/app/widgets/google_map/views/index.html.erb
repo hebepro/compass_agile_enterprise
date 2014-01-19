@@ -5,15 +5,15 @@
         var myOptions = {
             zoom: <%=@zoom%>,
             mapTypeId: google.maps.MapTypeId.<%=@map_type%>
-        }
+        };
 
         var map_<%=@uuid%> = new google.maps.Map(document.getElementById('<%=@uuid%>'), myOptions);
         var dropPins = <%=raw @drop_pins.to_json%>;
         window.codeAddress(dropPins, map_<%=@uuid%>)
-    }
+    };
 
     if (!window.mapJsLoaded) {
-        new OnDemandLoadByAjax().load('http://maps.google.com/maps/api/js?sensor=false&callback=loadMap_<%=@uuid%>');
+        new OnDemandLoadByAjax().load('https://maps.google.com/maps/api/js?sensor=false&callback=loadMap_<%=@uuid%>');
         window.mapJsLoaded = true;
     }
     else {

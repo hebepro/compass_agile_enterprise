@@ -1,41 +1,35 @@
-<div style="margin-top:10px;" class="container">
-  <div class="row">
-    <div class="col-lg-1" style="margin: 0 auto;float:none;width:500px;">
-      <h2>Login</h2>
-
-      <div style="width:500px;" id="<%= widget_result_id %>">
-        <% if @message %>
-            <div class="alert alert-info">
-              <button type="button" class="close" data-dismiss="alert">&times;</button>
-              <%= @message %>
-            </div>
-        <% end %>
+<div style="width:500px;" id="<%= widget_result_id %>">
+  <% if @message %>
+      <div class="alert alert-info">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <%= @message %>
       </div>
-      <div>
-        <%= form_tag '/session/sign_in', :remote => true, :id => 'login_form' do %>
+  <% end %>
+</div>
+<div>
+  <%= form_tag '/session/sign_in', :remote => true, :id => 'login_form' do %>
 
-            <div class="form-group">
-              <label for="login">Username or Email address</label>
-              <%= text_field_tag "login", nil, :class => "form-control", :placeholder => "Login or email" %>
-            </div>
-
-            <div class="form-group">
-              <%= password_field_tag "password", nil, :class => "form-control", :placeholder => "**********" %>
-            </div>
-
-            <input type="hidden" name="logout_to" value="<%=@logout_to%>" />
-            <input type="hidden" name="login_to" value="<%=@login_to%>" />
-
-            <p class="text-center">
-              <%= submit_tag "Login", :disable_with => "Please wait...", :class => "btn btn-primary submit", :style => ''%>
-              <%unless @signup_url.blank?%> | <%= link_to 'Sign Up', @signup_url %> <%end%> <%unless @reset_password_url.blank?%> | <%= link_to 'Reset Password', @reset_password_url %> <%end%>
-            </p>
-
-        <% end %>
+      <div class="form-group">
+        <label for="login">Username or Email address</label>
+        <%= text_field_tag "login", nil, :class => "form-control", :placeholder => "Login or email" %>
       </div>
 
-    </div>
-  </div>
+      <div class="form-group">
+        <%= password_field_tag "password", nil, :class => "form-control", :placeholder => "**********" %>
+      </div>
+
+      <input type="hidden" name="logout_to" value="<%= @logout_to %>"/>
+      <input type="hidden" name="login_to" value="<%= @login_to %>"/>
+
+      <p class="text-center">
+        <%= submit_tag "Login", :disable_with => "Please wait...", :class => "btn btn-primary submit", :style => '' %>
+        <% unless @signup_url.blank? %> | <%= link_to 'Sign Up', @signup_url %>
+        <% end %>
+        <% unless @reset_password_url.blank? %> | <%= link_to 'Reset Password', @reset_password_url %>
+        <% end %>
+      </p>
+
+  <% end %>
 </div>
 
 <script type="text/javascript">

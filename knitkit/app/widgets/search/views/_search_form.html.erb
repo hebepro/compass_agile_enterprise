@@ -1,0 +1,41 @@
+<%= form_tag (@redirect_results ? @search_url : build_widget_url(:search)), :remote => !@redirect_results do %>
+    <div class="form-group">
+      <%= label_tag :search_for, 'Search For' %>
+      <%= text_field_tag :query, @query, class: 'form-control', required: true %>
+    </div>
+
+    <%= hidden_field_tag :section_unique_name, @section_unique_name %>
+    <%= hidden_field_tag :content_type, @content_type %>
+    <%= hidden_field_tag :per_page, @per_page %>
+
+    <p class="form-group">
+      <%= submit_tag "Search", :disable_with => "Please wait...", :class => "btn btn-primary submit" %>
+    </p>
+<% end %>
+<br/>
+<div id="<%= widget_result_id %>">
+  <% if @results %>
+      <% @results.each do |r| %>
+          <p>
+            <a href="<%= r[:link] %>"><%= r[:title] %></a><br/>
+            <%= sanitize(r[:content].body_html[0..500], :tags => []) unless r[:content].body_html.nil? %><br/>
+          </p>
+      <% end %>
+      <%=
+          will_paginate @results,
+                        :renderer => Knitkit::Extensions::WillPaginate::LinkRenderer,
+                        :params => {
+                                :widget_name => 'search',
+                                :widget_action => 'search',
+                                :uuid => @uuid,
+                                :query => @query,
+                                :content_type => @content_type,
+                                :section_unique_name => @section_unique_name,
+                                :per_page => @per_page,
+                                :controller => 'erp_app/widget_proxy',
+                                :only_path => true,
+                                :scope => erp_app
+                        }
+      %>
+  <% end %>
+</div>

@@ -1,48 +1,29 @@
-<% unless @ajax_results %>
-<p>
-  <%=render :partial => '/search' %>
-</p>
-<% end %>
-
 <% @results.each do |r| %>
-<p>
-  <a href="<%=r[:link] %>"><%= r[:title] %></a><br />
-  <%= sanitize(r[:content].body_html[0..10], :tags=>[]) unless r[:content].body_html.nil? %><br />
-</p>
+    <p>
+      <a href="<%= r[:link] %>"><%= r[:title] %></a>
+      <br/>
+      <%= sanitize(r[:content].body_html[0..500], :tags => []) unless r[:content].body_html.nil? %>
+      <br/>
+    </p>
 <% end %>
-
-<% if @ajax_results %>  
-<p>
-  <%= will_paginate @results, :class => 'pagination ajax', :params => { :widget_name => 'search',
-                                                                        :widget_action => 'new',
-                                                                        :uuid => @uuid,
-                                                                        :query => params[:query],
-                                                                        :content_type => params[:content_type],
-                                                                        :section_permalink => params[:section_permalink],
-                                                                        :per_page => params[:per_page],
-                                                                        :only_path => true,
-                                                                        :use_route => :widget,
-                                                                        :scope => erp_app
-                                                                      } %>
-</p>
-<% else %>
-<p>
-   <%= will_paginate @results, :params => { :section_id => WebsiteSection.find_by_permalink(@results_permalink).id,                                            
-                                            :widget_action => 'new', 
-                                            :query => params[:query],
-                                            :content_type => params[:content_type],
-                                            :section_permalink => params[:section_permalink],
-                                            :per_page => params[:per_page],
-                                            :only_path => true,
-                                            :use_route => :page,
-                                            :scope => main_app                                    
-                                          } %>
-</p>
-<% end %>
-<% if @ajax_results %>  
+<%=
+   will_paginate @results,
+                 :renderer => Knitkit::Extensions::WillPaginate::LinkRenderer,
+                 :params => {
+                         :widget_name => 'search',
+                         :widget_action => 'search',
+                         :uuid => @uuid,
+                         :query => @query,
+                         :content_type => @content_type,
+                         :section_unique_name => @section_unique_name,
+                         :per_page => @per_page,
+                         :controller => 'erp_app/widget_proxy',
+                         :only_path => true,
+                         :scope => erp_app
+                 }
+%>
 <script type="text/javascript">
-$(function(){
-  jQuery('.pagination a').attr('data-remote', 'true'); 
-});
+    $(function(){
+        jQuery('.pagination a').attr('data-remote', 'true');
+    });
 </script>
-<% end %>

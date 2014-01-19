@@ -7,9 +7,7 @@
       </div>
     </div>
 
-
     <div class="col-md-8">
-
 
       <% @contents.each do |content| %>
           <div id="blog_<%= h content.id %>">
@@ -20,11 +18,10 @@
               Topics: <%= content.content.pretty_tag_list %>
             </p>
 
-            <div class="blog_body">
-              <p>
-                <%= raw content.excerpt_html %>
-              </p>
-            </div>
+            <p>
+              <%= raw content.excerpt_html %>
+            </p>
+
             <div><%= link_to 'Read More...', main_app.blog_article_path(@website_section.id, content.permalink) %></div>
 
           </div>
@@ -32,38 +29,34 @@
 
       <%= blog_pagination 'blog_pagination', params %>
 
-
     </div>
 
     <div class="col-md-4">
-      <div class="sidebar blog_tags">
+      <div>
         <h4>Topics</h4>
         <%= blog_topics 'tag_link' %>
       </div>
 
-      <div class="sidebar rss">
+      <div>
         <h4>Links</h4>
         <%= blog_rss_links 'RSS Feed' %>
       </div>
 
-      <div class="sidebar blog_search">
+      <div>
         <% #Optional Parameters:
            # content_type: Leave blank to search all section types, set to Blog to only search Blog articles
-           # section_permalink: This is the permalink value for the section
-           #                    Useful if you only want to search articles within a single Blog section
-           # results_permalink: How do you want your results to display? via ajax? or on a new page?
-           #                    Leave blank if you want results to display via ajax on the same page as the search form
-           #                    Enter the permalink of results page if you want the search results to display on a new page
+           # section_unique_name: Leave blank to search all pages if passed will confine search to a particular
+           #  pages content
+           # search_url: Main search url, only needed if results are being redirected
+           # redirect_results: If true will redirect to search page to display results.  Used for inline search
+           #   boxes
            # per_page: Number of results per page
-           # class: CSS class for the form           %>
+        %>
         <%= render_widget :search,
-                          :action => get_widget_action,
                           :params => set_widget_params({
                                                                :content_type => 'Blog',
-                                                               :section_permalink => '',
-                                                               :results_permalink => 'search',
-                                                               :per_page => 20,
-                                                               :class => ''
+                                                               :section_unique_name => @blog.internal_identifier,
+                                                               :per_page => 2
                                                        }) %>
       </div>
     </div>

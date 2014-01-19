@@ -1,22 +1,16 @@
-<div style="margin-top:10px;" class="container">
-  <div class="row">
-    <div class="col-lg-1" style="margin: 0 auto;float:none;width:500px;">
-      <div style="width:500px;" id="<%= widget_result_id %>"></div>
-      <%= form_tag '/users/reset_password', :remote => true, :id => 'reset_password_form', :class => "form-signin", :style => 'max-width: 500px;' do %>
-          <h2 class="form-signin-heading">Reset Your Password</h2>
-          <input name="login" type="text" class="form-control" placeholder="Username / Email Address" required autofocus>
-          <br/>
+<div style="width:500px;" id="<%= widget_result_id %>"></div>
+<%= form_tag '/users/reset_password', :remote => true, :id => 'reset_password_form', :class => "form-signin", :style => 'max-width: 500px;' do %>
+    <input name="login" type="text" class="form-control" placeholder="Username / Email Address" required autofocus>
+    <br/>
 
-          <p class="text-center">
-            <button class="btn btn-lg btn-primary btn-block" type="submit">Reset Password</button>
-            <%= link_to 'Cancel', 'home' %>
-          </p>
-          <input type="hidden" name="login_url" value="<%= @login_url %>"/>
-          <input type="hidden" name="domain" value="<%= @domain %>"/>
-      <% end %>
-    </div>
-  </div>
-</div>
+    <p class="text-center">
+      <button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+      <%= link_to 'Cancel', 'home' %>
+    </p>
+    <input type="hidden" name="login_url" value="<%= @login_url %>"/>
+    <input type="hidden" name="domain" value="<%= @domain %>"/>
+<% end %>
+
 <script type="text/javascript">
     jQuery('#reset_password_form').bind('ajax:success', function (e, response) {
         var html = '';
