@@ -17,7 +17,7 @@ module ErpApp
           Note.include_root_in_json = false
 			
           party = Party.find(params[:party_id])
-          notes = party.notes.order("#{sort} #{dir}").limit(limit).offset(start)
+          notes = party.notes.order("created_at desc").limit(limit).offset(start)
 			
           render :inline => "{\"totalCount\":#{party.notes.count}, \"notes\":#{notes.to_json(:only => [:id, :content, :created_at], :methods => [:summary, :note_type_desc, :created_by_username])}}"
         end

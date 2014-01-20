@@ -218,7 +218,7 @@ Compass.ErpApp.Utility.isBlank = function (obj) {
         return Ext.isEmpty(obj);
     }
     else {
-        return(!obj || jQuery.trim(obj) === "");
+        return(!obj || jQuery.trim(obj) === "" || obj.length == 0);
     }
 };
 

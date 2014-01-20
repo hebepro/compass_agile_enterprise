@@ -109,16 +109,19 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
             {
                 header: 'Note Type',
                 dataIndex: 'note_type_desc',
+                sortable: false,
                 width: 150
             },
             {
                 header: 'Summary',
                 dataIndex: 'summary',
+                sortable: false,
                 width: 130
             },
             {
                 header: 'Created By',
                 dataIndex: 'created_by_username',
+                sortable: false,
                 width: 100
             },
             {

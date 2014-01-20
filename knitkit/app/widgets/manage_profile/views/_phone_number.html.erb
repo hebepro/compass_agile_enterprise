@@ -81,9 +81,15 @@
                         '</tr>'
                     ].join('');
 
-                    $('#phoneNumbersTable > tbody:last').append(newRowHtml);
+                    jQuery('#phoneNumbersTable > tbody:last').append(newRowHtml);
 
-                    window['phonesPanel'].bindDeleteBtn();
+                    var newDeleteBtn = jQuery('#phoneNumbersTable > tbody:last > tr:last > td:last > button');
+
+                    newDeleteBtn.confirmModal({
+                        confirmCallback: phonesPanel.deletePhone,
+                        confirmMessage   : 'Are you sure you want to remove this phone number ?'
+                    });
+
 
                     jQuery('#addPhoneBtn').css('display', '');
                     jQuery('#addPhoneDiv').css('display', 'none');
@@ -120,7 +126,7 @@
                 success: function (data) {
                     if (data.success) {
                         html = [
-                            '<div class="alert alert-danger" >',
+                            '<div class="alert alert-success" >',
                             '<button type="button" class="close" data-dismiss="alert">&times;</button>',
                             data.message,
                             '</div>'

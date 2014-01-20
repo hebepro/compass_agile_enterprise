@@ -169,6 +169,8 @@ class Party < ActiveRecord::Base
 
     contact_mechanism_instance.is_primary = true
     contact_mechanism_instance.save
+
+    contact_mechanism_instance
   end
 
   def get_primary_contact(contact_mechanism_class)
@@ -221,19 +223,13 @@ class Party < ActiveRecord::Base
   def add_contact(contact_mechanism_class, contact_mechanism_args={}, contact_purposes=[])
     is_primary = contact_mechanism_args['is_primary']
     contact_purposes = [contact_purposes] if !contact_purposes.kind_of?(Array) # gracefully handle a single purpose not in an array
-    contact = find_contact(contact_mechanism_class, contact_mechanism_args, contact_purposes)
-    if contact.nil?
-      contact_mechanism_args.delete_if { |k, v| ['created_at', 'updated_at', 'is_primary'].include? k.to_s }
-      contact_mechanism = contact_mechanism_class.new(contact_mechanism_args)
-      contact_mechanism.contact.party = self
-      contact_mechanism.contact.contact_purposes = contact_purposes
-      contact_mechanism.contact.save
-      contact_mechanism.save
 
-      self.contacts << contact_mechanism.contact
-    else
-      contact_mechanism = update_contact(contact_mechanism_class, contact, contact_mechanism_args)
-    end
+    contact_mechanism_args.delete_if { |k, v| ['created_at', 'updated_at', 'is_primary'].include? k.to_s }
+    contact_mechanism = contact_mechanism_class.new(contact_mechanism_args)
+    contact_mechanism.contact.party = self
+    contact_mechanism.contact.contact_purposes = contact_purposes
+    contact_mechanism.contact.save
+    contact_mechanism.save
 
     set_primary_contact(contact_mechanism_class, contact_mechanism) if is_primary
 
@@ -243,11 +239,13 @@ class Party < ActiveRecord::Base
   # tries to update contact by purpose
   # if contact doesn't exist, it adds it
   def update_or_add_contact_with_purpose(contact_mechanism_class, contact_purpose, contact_mechanism_args)
-    if return_value = update_contact_with_purpose(contact_mechanism_class, contact_purpose, contact_mechanism_args)
-      return_value
-    else
-      add_contact(contact_mechanism_class, contact_mechanism_args, [contact_purpose])
+    contact_mechanism = update_contact_with_purpose(contact_mechanism_class, contact_purpose, contact_mechanism_args)
+
+    unless contact_mechanism
+      contact_mechanism = add_contact(contact_mechanism_class, contact_mechanism_args, [contact_purpose])
     end
+
+    contact_mechanism
   end
 
   # looks for a contact matching on purpose
@@ -258,8 +256,11 @@ class Party < ActiveRecord::Base
   end
 
   def update_contact(contact_mechanism_class, contact, contact_mechanism_args)
-    contact_mechanism_class.update(contact.contact_mechanism, contact_mechanism_args)
     set_primary_contact(contact_mechanism_class, contact.contact_mechanism) if contact_mechanism_args[:is_primary] == true
+
+    contact_mechanism_class.update(contact.contact_mechanism, contact_mechanism_args)
+
+    contact.contact_mechanism
   end
 
   def get_contact_by_method(m)
