@@ -62,7 +62,45 @@ Compass.ErpApp.Utility.SessionTimeout = {
                         });
                     }
                     else {
-                        window.location = self.redirectTo;
+                        var warningModal = jQuery('<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>'),
+                            modalDialog = jQuery('<div class="modal-dialog"></div>'),
+                            modalContent = jQuery('<div class="modal-content"></div>'),
+                            modalHeader = jQuery('<div class="modal-header"><h4 class="modal-title" id="myModalLabel">Please Confirm</h4></div>'),
+                            modalBody = jQuery('<div class="modal-body">Your session is about to expire due to inactivity. Do you wish to continue this session?</div>'),
+                            footer = jQuery('<div class="modal-footer"></div>'),
+                            yesBtn = jQuery('<button type="button" class="btn btn-default" data-dismiss="modal">Yes</button>'),
+                            noBtn = jQuery('<button type="button" class="btn btn-primary" data-dismiss="modal">No</button>');
+
+                        footer.append(yesBtn);
+                        footer.append(noBtn);
+                        modalContent.append(modalHeader);
+                        modalContent.append(modalBody);
+                        modalContent.append(footer);
+                        modalDialog.append(modalContent);
+                        warningModal.append(modalDialog);
+
+                        noBtn.bind('click', function () {
+                            warningModal.modal('hide');
+                            warningModal.remove();
+                            window.location = self.redirectTo;
+                        });
+
+                        yesBtn.bind('click', function () {
+                            warningModal.modal('hide');
+                            warningModal.remove();
+
+                            jQuery.ajax({
+                                method: 'POST',
+                                url: '/session/keep_alive',
+                                success: function (result, request) {
+                                    self.reset();
+                                }
+                            });
+                        });
+
+                        jQuery("body").append(warningModal);
+
+                        warningModal.modal({backdrop: false});
                     }
 
                 }, this.warnInMilliseconds);
