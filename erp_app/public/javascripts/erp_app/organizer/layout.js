@@ -35,7 +35,14 @@ Compass.ErpApp.Organizer.Layout = function (config) {
         ]
     });
 
-    var toolbar = Ext.create("Ext.toolbar.Toolbar", {
+    this.toolBar = Ext.create("Ext.toolbar.Toolbar", {
+        dock: 'top',
+        height: 50,
+        style: {
+            backgroundColor: '#537697',
+            paddingLeft: '22px',
+            paddingRight: '15px'
+        },
         items: [
             {
                 text: 'Menu',
@@ -45,21 +52,20 @@ Compass.ErpApp.Organizer.Layout = function (config) {
             ' ',
             {
                 xtype: 'label',
+                style: 'color:white;',
                 text: 'Welcome',
                 itemId: 'organizerWelcomeMsg'
             }
         ]
     });
 
-    this.ToolBar = toolbar;
-
     this.addToToolBar = function (item) {
-        toolbar.add(item);
+        this.toolBar.add(item);
     };
 
     this.setupLogoutButton = function () {
-        toolbar.add("->");
-        toolbar.add({
+        this.toolBar.add("->");
+        this.toolBar.add({
             text: 'Logout',
             xtype: 'button',
             iconCls: "icon-exit",
@@ -86,32 +92,27 @@ Compass.ErpApp.Organizer.Layout = function (config) {
         });
     };
 
-    this.CenterPanel = Ext.create("Ext.Panel", {
+    this.centerPanel = Ext.create("Ext.Panel", {
         id: 'erp_app_viewport_center',
+        cls: 'masterPanel',
+        style:{
+            marginRight: '20px',
+            borderRadiusBottomRight: '10px'
+        },
         region: 'center',
-        margins: '0 0 0 0',
         layout: 'card',
         activeItem: 0,
-        frame: false,
-        minsize: 300,
         items: []
     });
 
-    this.NorthPanel = Ext.create("Ext.Panel", {
-        region: 'north',
-        height: 29,
-        layout: 'anchor',
-        margins: '0 0 0 0',
-        cmargins: '0 0 0 0',
-        items: [toolbar]
-    });
-
-    this.EastPanel = Ext.create("Ext.Panel", {
-        region: 'east',
-        hidden: true
-    });
-
-    var southToolbar = Ext.create("Ext.toolbar.Toolbar", {
+    this.bottomBar = Ext.create("Ext.toolbar.Toolbar", {
+        dock: 'bottom',
+        height: 50,
+        style: {
+            backgroundColor: '#537697',
+            paddingLeft: '22px',
+            paddingRight: '15px'
+        },
         items: [
             "->",
             {
@@ -120,48 +121,46 @@ Compass.ErpApp.Organizer.Layout = function (config) {
         ]
     });
 
-    this.SouthToolBar = southToolbar;
-
-    this.SouthPanel = Ext.create("Ext.Panel", {
-        region: 'south',
-        height: 29,
-        layout: 'anchor',
-        margins: '0 0 0 0',
-        cmargins: '0 0 0 0',
-        items: [
-            southToolbar
-        ]
-    });
-
     this.addApplication = function (menuPanel, components) {
         accordionMenuItems.push(menuPanel);
         for (var i = 0; i < components.length; i++) {
-            this.CenterPanel.add(components[i]);
+            this.centerPanel.add(components[i]);
         }
     };
 
     this.setup = function () {
-        this.WestPanel = {
-            region: 'west',
+        this.westPanel = {
             id: 'erp_app_viewport_west',
-            margins: '0 0 0 0',
-            cmargins: '0 0 0 0',
+            style:{
+                marginRight: '10px',
+                marginLeft: '20px',
+                borderRadius: '5px'
+            },
+            region: 'west',
             width: 200,
             split: true,
-            collapsible: true,
             layout: 'accordion',
             items: accordionMenuItems
         };
 
         this.viewPort = Ext.create('Ext.container.Viewport', {
-            layout: 'border',
             border: false,
+            layout: 'fit',
             items: [
-                this.NorthPanel,
-                this.WestPanel,
-                this.CenterPanel,
-                this.EastPanel,
-                this.SouthPanel
+                {
+                    xtype:'panel',
+                    border: false,
+                    layout: 'border',
+                    dockedItems: [
+                        this.toolBar,
+                        this.bottomBar
+                    ],
+                    items:[
+                        this.westPanel,
+                        this.centerPanel,
+                        this.eastPanel
+                    ]
+                }
             ]
         });
 

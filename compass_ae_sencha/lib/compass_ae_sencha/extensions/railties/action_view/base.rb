@@ -17,21 +17,14 @@ ActionView::Base.class_eval do
         resources << static_javascript_include_tag("extjs/ext-all.js")
       end
 
+      resources << static_javascript_include_tag("extjs/ext-theme-neptune.js")
+
       resources << static_javascript_include_tag("extjs/helpQtip.js")
       resources << static_javascript_include_tag("extjs/ext_ux_tab_close_menu.js")
       resources << static_javascript_include_tag("extjs/Ext.ux.form.MultiSelect.js")
       resources << static_javascript_include_tag("extjs/Ext.ux.CheckColumn.js")
 
-      if opt[:theme] === false
-        #do nothing not theme loaded.
-      elsif opt[:theme]
-        theme = opt[:theme].split(':')[0]
-        sub_theme = opt[:theme].split(':')[1]
-        resources << static_stylesheet_link_tag("#{theme}/resources/css/#{sub_theme}.css")
-      else
-        #this file will effectively be used as the default stylesheet if no theme is selected
-        resources << static_stylesheet_link_tag("clifton/resources/css/clifton.css")
-      end
+      resources << static_stylesheet_link_tag("extjs/resources/css/compass-ae-default.css")
 
       resources << add_authenticity_token_to_extjs
 
