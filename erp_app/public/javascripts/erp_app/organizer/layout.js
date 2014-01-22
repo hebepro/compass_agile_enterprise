@@ -95,11 +95,12 @@ Compass.ErpApp.Organizer.Layout = function (config) {
     };
 
     this.centerPanel = Ext.create("Ext.Panel", {
-        id: 'erp_app_viewport_center',
         cls: 'masterPanel',
-        style:{
+        id: 'erp_app_viewport_center',
+        style: {
             marginRight: '20px',
-            borderRadiusBottomRight: '10px'
+            borderBottomLeftRadius: '5px',
+            borderBottomRightRadius: '5px'
         },
         region: 'center',
         layout: 'card',
@@ -134,7 +135,7 @@ Compass.ErpApp.Organizer.Layout = function (config) {
     this.setup = function () {
         this.westPanel = {
             id: 'erp_app_viewport_west',
-            style:{
+            style: {
                 marginRight: '10px',
                 marginLeft: '20px',
                 borderRadius: '5px'
@@ -151,14 +152,14 @@ Compass.ErpApp.Organizer.Layout = function (config) {
             layout: 'fit',
             items: [
                 {
-                    xtype:'panel',
+                    xtype: 'panel',
                     border: false,
                     layout: 'border',
                     dockedItems: [
                         this.toolBar,
                         this.bottomBar
                     ],
-                    items:[
+                    items: [
                         this.westPanel,
                         this.centerPanel,
                         this.eastPanel
