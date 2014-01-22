@@ -10,38 +10,16 @@ Ext.define("Ext.ux.menu.Clock",{
   ariaRole:"menu",
   cls:"x-menu ux-start-menu",
   defaultAlign:"bl-tl",
-  height:230,
   floating:true,
-  layout:'border',
+  layout:'fit',
   shadow:true,
-  width:375,
   timeFormat:"g:i:s A",
   tpl:"{time}",
   initComponent:function(){
     var a=this;
 
-    if(typeof(a.tpl)=="string"){
-      a.tpl=new Ext.XTemplate(a.tpl)
-    }
-
-    var html = '<canvas class="CoolClock:chunkySwiss"></canvas><br/><div style="text-align:center;width:100%;font-size:18px;"><span id="desktopClockTime"></span></div>';
-    if (Ext.isIE || Ext.isIE6 || Ext.isIE7 || Ext.isIE8)
-      html = "Clock Not Supported By Browser";
-
-    var clock = Ext.create("Ext.panel.Panel",{
-      layout:'fit',
-      frame:false,
-      region:'center',
-      height:175,
-      width:175,
-      html:html
-    });
-
     var calandar = Ext.create("Ext.panel.Panel",{
-      width: 200,
       frame:false,
-      region:'west',
-      bodyPadding: 10,
       items: [{
         xtype: 'datepicker',
         handler: function(picker, date) {
@@ -50,8 +28,7 @@ Ext.define("Ext.ux.menu.Clock",{
       }]
     });
 
-
-    a.items = [clock,calandar]
+    a.items = [calandar];
     Ext.menu.Manager.register(a);
     a.callParent();
   },
@@ -92,7 +69,6 @@ Ext.define("Ext.ux.menu.Clock",{
   },
   show:function(){
     var a=this;
-    CoolClock.findAndCreateClocks();
     if(!a.timer){
       a.updateTime();
     }

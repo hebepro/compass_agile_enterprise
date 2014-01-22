@@ -366,7 +366,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
             {
                 header: 'Description',
                 dataIndex: 'description',
-                width: 250
+                flex: 2
             },
             {
                 header: 'Type',
@@ -380,23 +380,26 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                             return 'Individual';
                             break;
                     }
-                }
+                },
+                flex: 1
             },
             {
                 header: 'Created At',
                 dataIndex: 'createdAt',
-                renderer: Ext.util.Format.dateRenderer('m/d/Y')
+                renderer: Ext.util.Format.dateRenderer('m/d/Y'),
+                flex: 1
             },
             {
                 header: 'Updated At',
                 dataIndex: 'updatedAt',
-                renderer: Ext.util.Format.dateRenderer('m/d/Y')
+                renderer: Ext.util.Format.dateRenderer('m/d/Y'),
+                flex: 1
             },
             {
                 xtype: 'actioncolumn',
+                flex: 1,
                 header: 'Details',
                 align: 'center',
-                width: 50,
                 items: [
                     {
                         icon: '/images/icons/view/view_16x16.png',
@@ -420,14 +423,14 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                                     partyRelationships: me.partyRelationships,
                                     additionalTabs: me.additionalTabs,
                                     closable: true,
-                                    listeners:{
-                                        contactcreated:function(comp, contactType, record){
+                                    listeners: {
+                                        contactcreated: function (comp, contactType, record) {
                                             me.fireEvent('contactcreated', me, contactType, record, partyId);
                                         },
-                                        contactupdated:function(comp, contactType, record){
+                                        contactupdated: function (comp, contactType, record) {
                                             me.fireEvent('contactupdated', me, contactType, record, partyId);
                                         },
-                                        contactdestroyed:function(comp, contactType, record){
+                                        contactdestroyed: function (comp, contactType, record) {
                                             me.fireEvent('contactdestroyed', me, contactType, record, partyId);
                                         }
                                     }
@@ -448,8 +451,8 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
             columns.push({
                 xtype: 'actioncolumn',
                 header: 'Edit',
+                width: 100,
                 align: 'center',
-                width: 50,
                 items: [
                     {
                         icon: '/images/icons/edit/edit_16x16.png',
@@ -496,8 +499,8 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
             columns.push({
                 xtype: 'actioncolumn',
                 header: 'Delete',
+                width: 100,
                 align: 'center',
-                width: 50,
                 items: [
                     {
                         icon: '/images/icons/delete/delete_16x16.png',
