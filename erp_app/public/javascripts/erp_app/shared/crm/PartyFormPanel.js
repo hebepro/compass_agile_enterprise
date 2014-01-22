@@ -131,7 +131,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
                 formFields: me.formFields,
                 allowedPartyType: me.allowedPartyType,
                 partyType: me.partyType,
-                width: 300,
+                width: 400,
                 listeners: {
                     'partytypechange': function (comp, partyType) {
                         if (partyType == 'Individual') {
@@ -144,7 +144,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
                 }
             },
             {
-                width: 300,
+                width: 400,
                 xtype: 'crmuserform',
                 securityRoles: me.securityRoles,
                 allowFormToggle: true,
@@ -153,12 +153,19 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
             },
             {
                 xtype: 'container',
-                width: 300,
-                layout: 'hbox',
+                width: 400,
+                layout: {
+                    type: "hbox",
+                    pack: "center",
+                    align: "middle"
+                },
                 items: [
                     {
                         xtype: 'button',
-                        flex: 1,
+                        width: 150,
+                        style:{
+                            marginRight: '5px'
+                        },
                         text: 'Save',
                         handler: function (btn) {
                             var crmPartyFormPanel = btn.up('crmpartyformpanel'),
@@ -288,7 +295,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
                     },
                     {
                         xtype: 'button',
-                        flex: 1,
+                        width: 150,
                         text: 'Cancel',
                         handler: function (btn) {
                             btn.up('crmpartyformpanel').close();

@@ -465,7 +465,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid.EmailAddressGrid", {
                                     {
                                         xtype: 'htmleditor',
                                         name: 'message',
-                                        fieldLabel: 'Biography',
+                                        fieldLabel: 'Message',
                                         height: 200,
                                         allowBlank: false
                                     }

@@ -55,7 +55,7 @@
   </style>
 
   <!--javascript-->
-  <%= include_extjs(:theme => @desktop.get_preference(:extjs_theme), :debug => (Rails.env != 'production')) %>
+  <%= include_extjs(:debug => (Rails.env != 'production')) %>
   <%= static_javascript_include_tag("extjs/overrides.js") %>
 
   <%= static_javascript_include_tag("erp_app/utility.js") %>

@@ -26,7 +26,7 @@ Compass.ErpApp.Organizer.Layout = function (config) {
                         title: 'Profile',
                         iconCls: 'icon-user',
                         items: [
-                            {xtype: 'shared_profilemanagementpanel', title: '', height: 250}
+                            {xtype: 'shared_profilemanagementpanel', title: ''}
                         ]
                     });
                     win.show();

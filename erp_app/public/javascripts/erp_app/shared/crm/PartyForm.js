@@ -4,7 +4,6 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyForm", {
     buttonAlign: 'left',
     frame: false,
     border: false,
-    width: 400,
 
     /**
      * @cfg {Int} partyId
@@ -51,7 +50,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyForm", {
 
         var partyType = (me.partyType || me.allowedPartyType);
 
-        if(partyType !== 'Both' && partyType !== 'Individual' && partyType !== 'Organization'){
+        if (partyType !== 'Both' && partyType !== 'Individual' && partyType !== 'Organization') {
             Ext.Msg.alert('Error', 'Invalid Party Type');
             partyType = 'Both';
         }
@@ -66,7 +65,11 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyForm", {
                     width: 100,
                     height: 50
                 },
-                layout: 'hbox',
+                layout: {
+                    type: "hbox",
+                    pack: "center",
+                    align: "middle"
+                },
                 items: []
             };
 
@@ -99,7 +102,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyForm", {
 
             items.push(partyTypeFieldContainer);
         }
-        else{
+        else {
             items.push({
                 xtype: 'hidden',
                 name: 'business_party_type',
@@ -113,16 +116,18 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyForm", {
                 title: 'Business Details',
                 hidden: true,
                 itemId: 'organizationDetails',
+                defaults: {
+                    xtype: 'textfield',
+                    width: 350
+                },
                 items: [
                     {
-                        xtype: 'textfield',
                         itemId: 'organizationDescription',
                         fieldLabel: 'Description',
                         allowBlank: true,
                         name: 'description'
                     },
                     {
-                        xtype: 'textfield',
                         itemId: 'organizationTaxId',
                         fieldLabel: 'Tax ID',
                         allowBlank: true,
@@ -135,9 +140,12 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyForm", {
                 xtype: 'fieldset',
                 itemId: 'individualDetails',
                 title: 'Individual Details',
+                defaults: {
+                    xtype: 'textfield',
+                    width: 350
+                },
                 items: [
                     {
-                        xtype: 'textfield',
                         itemId: 'individualTitle',
                         fieldLabel: 'Title',
                         allowBlank: true,
@@ -145,56 +153,48 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyForm", {
                         name: 'current_personal_title'
                     },
                     {
-                        xtype: 'textfield',
                         itemId: 'firstName',
                         fieldLabel: 'First Name',
                         allowBlank: false,
                         name: 'current_first_name'
                     },
                     {
-                        xtype: 'textfield',
                         fieldLabel: 'Middle Name',
                         allowBlank: true,
                         hidden: me.hideField('individualMiddleName'),
                         name: 'current_middle_name'
                     },
                     {
-                        xtype: 'textfield',
                         itemId: 'lastName',
                         fieldLabel: 'Last Name',
                         allowBlank: false,
                         name: 'current_last_name'
                     },
                     {
-                        xtype: 'textfield',
                         fieldLabel: 'Suffix',
                         allowBlank: true,
                         hidden: me.hideField('individualSuffix'),
                         name: 'current_suffix'
                     },
                     {
-                        xtype: 'textfield',
                         fieldLabel: 'Nickname',
                         allowBlank: true,
                         hidden: me.hideField('individualNickname'),
                         name: 'current_nickname'
                     },
                     {
-                        xtype: 'textfield',
                         fieldLabel: 'Passport Number',
                         allowBlank: true,
                         hidden: me.hideField('individualPassportNumber'),
                         name: 'current_passport_number'
                     },
                     {
-                        xtype: 'datefield',
                         fieldLabel: 'Passport Expiration Date',
                         allowBlank: true,
                         hidden: me.hideField('individualPassportExpirationDate'),
                         name: 'current_passport_expire_date'
                     },
                     {
-                        xtype: 'datefield',
                         fieldLabel: 'DOB',
                         itemId: 'dob',
                         allowBlank: true,
@@ -223,21 +223,18 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyForm", {
                         ]
                     },
                     {
-                        xtype: 'textfield',
                         fieldLabel: 'Total Yrs Work Exp',
                         allowBlank: true,
                         hidden: me.hideField('individualTotalYrsWorkExp'),
                         name: 'total_years_work_experience'
                     },
                     {
-                        xtype: 'textfield',
                         fieldLabel: 'Marital Status',
                         allowBlank: true,
                         hidden: me.hideField('individualMaritalStatus'),
                         name: 'marital_status'
                     },
                     {
-                        xtype: 'textfield',
                         fieldLabel: 'Social Security Number',
                         allowBlank: true,
                         hidden: me.hideField('individualSocialSecurityNumber'),
@@ -318,7 +315,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyForm", {
         });
     },
 
-    hideField: function(fieldName){
+    hideField: function (fieldName) {
         return (this.formFields == 'None' || (this.formFields !== 'All' && !Ext.Array.contains(fieldName)))
     }
 });

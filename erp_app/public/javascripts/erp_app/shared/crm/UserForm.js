@@ -26,8 +26,11 @@ Ext.define('Compass.ErpApp.Shared.Crm.UserForm', {
                 checkboxName: 'userEnabled',
                 title: 'User Information',
                 flex: 1,
-                defaultType: 'textfield',
                 style: 'padding: 10px',
+                defaults: {
+                    xtype: 'textfield',
+                    width: 350
+                },
                 items: [
                     {
                         fieldLabel: 'Username',
@@ -65,7 +68,7 @@ Ext.define('Compass.ErpApp.Shared.Crm.UserForm', {
                         itemId: 'statusContainer',
                         fieldLabel: 'Status',
                         defaultType: 'radiofield',
-                        columns: [100, 100, 100],
+                        columns: [120, 120, 120],
                         items: [
                             {
                                 boxLabel: 'Active',
