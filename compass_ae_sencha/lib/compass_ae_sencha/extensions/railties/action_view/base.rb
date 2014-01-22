@@ -24,7 +24,7 @@ ActionView::Base.class_eval do
       resources << static_javascript_include_tag("extjs/Ext.ux.form.MultiSelect.js")
       resources << static_javascript_include_tag("extjs/Ext.ux.CheckColumn.js")
 
-      resources << static_stylesheet_link_tag("extjs/resources/css/compass-ae-default.css")
+      resources << static_stylesheet_link_tag("extjs/resources/css/compass-ae-default-all.css")
 
       resources << add_authenticity_token_to_extjs
 

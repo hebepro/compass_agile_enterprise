@@ -36,15 +36,16 @@ Compass.ErpApp.Organizer.Layout = function (config) {
     });
 
     this.toolBar = Ext.create("Ext.toolbar.Toolbar", {
+        ui: 'cleantoolbar-dark',
         dock: 'top',
         height: 50,
         style: {
-            backgroundColor: '#537697',
             paddingLeft: '22px',
             paddingRight: '15px'
         },
         items: [
             {
+                ui: 'cleanbutton',
                 text: 'Menu',
                 iconCls: 'icon-info',
                 menu: menu
@@ -66,6 +67,7 @@ Compass.ErpApp.Organizer.Layout = function (config) {
     this.setupLogoutButton = function () {
         this.toolBar.add("->");
         this.toolBar.add({
+            ui: 'cleanbutton',
             text: 'Logout',
             xtype: 'button',
             iconCls: "icon-exit",
@@ -106,16 +108,17 @@ Compass.ErpApp.Organizer.Layout = function (config) {
     });
 
     this.bottomBar = Ext.create("Ext.toolbar.Toolbar", {
+        ui: 'cleantoolbar-dark',
         dock: 'bottom',
         height: 50,
         style: {
-            backgroundColor: '#537697',
             paddingLeft: '22px',
             paddingRight: '15px'
         },
         items: [
             "->",
             {
+                ui: 'cleanbutton',
                 xtype: "trayclock"
             }
         ]

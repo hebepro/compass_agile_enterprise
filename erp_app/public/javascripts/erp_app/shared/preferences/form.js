@@ -4,13 +4,15 @@ Ext.define("Compass.ErpApp.Shared.Preferences.Form", {
     preferences: null,
     autoScroll: true,
     layout: 'anchor',
+    frame: false,
+    border: false,
+    bodyPadding: '5px',
     defaults: {
         anchor: '100%'
     },
     fieldDefaults: {
         labelAlign: 'top'
     },
-    frame: true,
     buttonAlign: 'left',
     items: [],
     buttons: [
