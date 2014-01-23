@@ -25,6 +25,16 @@
     filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/btn/save_all/save_all_16x16.png', sizingMethod='crop');
 }
 
+.btn-save-light {
+    background-image: url(/images/btn_light/save/save_16x16.png) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/btn/save/save_16x16.png', sizingMethod='crop');
+}
+
+.btn-save-all-light {
+    background-image: url(/images/btn_light/save_all/save_all_16x16.png) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/btn/save_all/save_all_16x16.png', sizingMethod='crop');
+}
+
 /****Buttons Icons****/
 
 .ext_tooltip li {

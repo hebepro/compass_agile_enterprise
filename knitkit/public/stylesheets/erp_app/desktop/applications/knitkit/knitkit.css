@@ -1,3 +1,8 @@
+.icon-knitkit {
+    background-image:url( /images/icons/knitkit/knitkit_16x16.png ) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/knitkit/knitkit_16x16.png', sizingMethod='crop');
+}
+
 .image-assets .thumb img {
     border: 1px solid white;
     height: 60px;

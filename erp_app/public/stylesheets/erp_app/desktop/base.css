@@ -5,6 +5,72 @@
 * http://www.sencha.com/license
 */
 
+.x-window-default {
+    background-color: #537697 !important;
+    border-color: #537697 !important;
+}
+
+.x-toolbar-ide-main span.x-btn-inner {
+    color: #fff;
+}
+
+.x-toolbar-ide-main {
+    background-color: #537697 !important;
+    padding-bottom: 5px !important;
+    border-top-left-radius: 5px !important;
+    border-top-right-radius: 5px !important;
+}
+
+.x-toolbar-ide-main .x-btn {
+    background-color: #537697 !important;
+    background-image: none !important;
+}
+
+.x-border-layout-ct {
+    background-color: #537697 !important;
+}
+
+.x-panel-header-default {
+    background-color: #ffffff;
+}
+
+.x-btn-default-toolbar-small {
+    background-image: none !important;
+    border-style: none !important;
+    background-color: #ffffff !important;
+}
+
+.x-btn-toolbar {
+    background-image: none !important;
+}
+
+.x-toolbar-tasktoolbar .x-btn-default-toolbar-small {
+    background-color: #fff !important;
+    border-style: none;
+}
+
+#erp_app_viewport_center-body {
+    border-bottom-left-radius: 9px !important;
+    border-bottom-right-radius: 9px !important;
+}
+
+.x-tab-bar-strip-default {
+    border-color: white;
+    background-color: white;
+}
+
+.x-tab-default-active {
+    background-color: white;
+}
+
+.x-tab-bar-strip-default-top {
+    border-top-right-radius: 5px;
+}
+
+.x-panel-body-default {
+    border-width: 0;
+}
+
 /*----------------------------------------------------
     Start Button
 */

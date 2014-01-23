@@ -4,7 +4,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
     init: function () {
         this.launcher = {
             text: 'KnitKit',
-            iconCls: 'icon-palette',
+            iconCls: 'icon-knitkit',
             handler: this.createWindow,
             scope: this
         }
@@ -28,7 +28,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
                 width: 1200,
                 height: 550,
                 maximized: true,
-                iconCls: 'icon-palette',
+                iconCls: 'icon-knitkit',
                 shim: false,
                 animCollapse: false,
                 constrainHeader: true,

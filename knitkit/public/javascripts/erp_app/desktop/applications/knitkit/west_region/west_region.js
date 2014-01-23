@@ -961,6 +961,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
         this.contentsCardPanel = Ext.create('Ext.Panel',{
             layout:'card',
             region:'south',
+            header: false,
             split:true,
             height:300,
             collapsible:true

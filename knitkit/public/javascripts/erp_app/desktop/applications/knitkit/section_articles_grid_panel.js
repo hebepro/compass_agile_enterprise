@@ -1,5 +1,6 @@
 Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SectionArticlesGridPanel",{
   extend:"Ext.grid.Panel",
+  header: false,
   alias:'widget.knitkit_sectionarticlesgridpanel',
   detachArticle : function(article_id){
     var self = this;
