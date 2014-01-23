@@ -207,7 +207,10 @@
 */
 
 .ux-wallpaper {
-    background-color: #3d71b8;
+    background-color: #000;
+    background-image: url(/images/art/compass-ae-logo-reverse-1.png) !important;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .ux-wallpaper-tiled {
