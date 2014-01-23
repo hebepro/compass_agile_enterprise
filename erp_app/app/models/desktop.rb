@@ -23,20 +23,6 @@ class Desktop < AppContainer
       :user => self.user,
       :preference => pref
     )
-
-    #setup theme
-    theme_pt = PreferenceType.iid('extjs_theme')
-    self.preference_types << theme_pt
-
-    pref = Preference.create(
-      :preference_type => theme_pt,
-      :preference_option => theme_pt.default_preference_option
-    )
-
-    self.user_preferences << UserPreference.create(
-      :user => self.user,
-      :preference => pref
-    )
     
     self.save
   end
