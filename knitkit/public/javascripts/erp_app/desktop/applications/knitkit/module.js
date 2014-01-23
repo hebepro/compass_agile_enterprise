@@ -34,16 +34,17 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
                 constrainHeader: true,
                 layout: 'border',
                 tbar: {
+                    ui: 'ide-main',
                     items: [
                         {
-                            iconCls: 'btn-save',
+                            iconCls: 'btn-save-light',
                             text: 'Save',
                             handler: function (btn) {
                                 centerRegion.saveCurrent();
                             }
                         },
                         {
-                            iconCls: 'btn-save-all',
+                            iconCls: 'btn-save-all-light',
                             text: 'Save All',
                             handler: function (btn) {
                                 centerRegion.saveAll();
@@ -99,10 +100,12 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
                     this.centerRegion,
                     {
                         xtype: 'knitkit_eastregion',
+                        header: false,
                         module: this
                     },
                     {
                         xtype: 'knitkit_westregion',
+                        header: false,
                         centerRegion: this.centerRegion,
                         module: this
                     }
