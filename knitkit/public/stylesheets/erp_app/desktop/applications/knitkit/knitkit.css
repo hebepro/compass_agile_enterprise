@@ -3,6 +3,26 @@
     filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/knitkit/knitkit_16x16.png', sizingMethod='crop');
 }
 
+.image-assets-panel .x-tab-bar-body {
+    background-color: #fff;
+}
+.image-assets-panel a.x-tab {
+    border-style: solid;
+    border-color: #aaa;
+    border-bottom-color: #fff !important;
+    border-width: thin !important;
+}
+
+.file-assets-panel .x-tab-bar-body {
+    background-color: #fff;
+}
+.file-assets-panel a.x-tab {
+    border-style: solid;
+    border-color: #aaa;
+    border-bottom-color: #fff !important;
+    border-width: thin !important;
+}
+
 .image-assets .thumb img {
     border: 1px solid white;
     height: 60px;

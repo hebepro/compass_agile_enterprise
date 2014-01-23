@@ -1,6 +1,7 @@
 Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.ImageAssetsPanel", {
     extend: "Ext.tab.Panel",
     alias: 'widget.knitkit_ImageAssetsPanel',
+    cls: 'image-assets-panel',
 
     constructor: function (config) {
         this.websiteId = null;
