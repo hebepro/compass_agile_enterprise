@@ -125,7 +125,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
                 'write': function (store, operation) {
                     var record = operation.getRecords()[0];
 
-                    switch(operation.action){
+                    switch (operation.action) {
                         case 'create':
                             me.fireEvent('contactcreated', me, config['contactMechanism'], record);
                             break;
@@ -278,7 +278,18 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
                 handler: function (button) {
                     var grid = button.findParentByType('contactmechanismgrid');
                     var edit = grid.editing;
-                    grid.store.insert(0, new Model());
+                    var model = null;
+
+                    if (grid.initialConfig.contactMechanism == 'PostalAddress') {
+                        model = new Model({
+                            country: 'USA'
+                        });
+                    }
+                    else {
+                        model = new Model();
+                    }
+
+                    grid.store.insert(0, model);
                     edit.startEdit(0, 0);
                 }
             },
@@ -478,7 +489,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid.EmailAddressGrid", {
                                             if (this.up('form').getForm().isValid()) {
                                                 this.up('form').getForm().submit({
                                                     waitMsg: 'sending email',
-                                                    url: '/erp_app/organizer/crm/contact_mechanisms/'+ selection.get('id') +'/send_email',
+                                                    url: '/erp_app/organizer/crm/contact_mechanisms/' + selection.get('id') + '/send_email',
                                                     success: function (form, result) {
                                                         btn.up('form').getForm().reset();
                                                         btn.up('window').hide();
