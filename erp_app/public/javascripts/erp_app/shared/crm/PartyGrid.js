@@ -168,6 +168,9 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
         var listeners = {
             activate: function () {
                 this.store.load();
+            },
+            itemdblclick: function(grid, record, item, index){
+                grid.ownerCt.showDetails(index);
             }
         };
 
@@ -405,41 +408,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                         icon: '/images/icons/view/view_16x16.png',
                         tooltip: 'Edit',
                         handler: function (grid, rowIndex, colIndex) {
-                            var record = grid.getStore().getAt(rowIndex),
-                                crmTaskTabPanel = grid.up('crmpartygrid').up('#' + me.applicationContainerId),
-                                itemId = 'detailsParty-' + record.get('id'),
-                                title = record.get('description'),
-                                partyId = record.get('id');
-
-                            var partyDetailsPanel = crmTaskTabPanel.down('#' + itemId);
-
-                            if (!partyDetailsPanel) {
-                                partyDetailsPanel = Ext.create('widget.crmpartydetailspanel', {
-                                    title: title,
-                                    itemId: itemId,
-                                    applicationContainerId: me.applicationContainerId,
-                                    partyId: partyId,
-                                    partyModel: record.get('model'),
-                                    partyRelationships: me.partyRelationships,
-                                    additionalTabs: me.additionalTabs,
-                                    closable: true,
-                                    listeners: {
-                                        contactcreated: function (comp, contactType, record) {
-                                            me.fireEvent('contactcreated', me, contactType, record, partyId);
-                                        },
-                                        contactupdated: function (comp, contactType, record) {
-                                            me.fireEvent('contactupdated', me, contactType, record, partyId);
-                                        },
-                                        contactdestroyed: function (comp, contactType, record) {
-                                            me.fireEvent('contactdestroyed', me, contactType, record, partyId);
-                                        }
-                                    }
-                                });
-                                crmTaskTabPanel.add(partyDetailsPanel);
-                            }
-
-                            crmTaskTabPanel.setActiveTab(partyDetailsPanel);
-                            partyDetailsPanel.loadParty();
+                            grid.ownerCt.showDetails(rowIndex);
                         }
                     }
                 ]
@@ -491,7 +460,6 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                     }
                 ]
             });
-
         }
 
         // attempt to add delete column
@@ -543,6 +511,45 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
         me.columns = columns;
 
         me.callParent(arguments);
+    },
+
+    showDetails: function(index){
+        var me = this,
+            record = me.getStore().getAt(index),
+            crmTaskTabPanel = me.up('#' + me.applicationContainerId),
+            itemId = 'detailsParty-' + record.get('id'),
+            title = record.get('description'),
+            partyId = record.get('id');
+
+        var partyDetailsPanel = crmTaskTabPanel.down('#' + itemId);
+
+        if (!partyDetailsPanel) {
+            partyDetailsPanel = Ext.create('widget.crmpartydetailspanel', {
+                title: title,
+                itemId: itemId,
+                applicationContainerId: me.applicationContainerId,
+                partyId: partyId,
+                partyModel: record.get('model'),
+                partyRelationships: me.partyRelationships,
+                additionalTabs: me.additionalTabs,
+                closable: true,
+                listeners: {
+                    contactcreated: function (comp, contactType, record) {
+                        me.fireEvent('contactcreated', me, contactType, record, partyId);
+                    },
+                    contactupdated: function (comp, contactType, record) {
+                        me.fireEvent('contactupdated', me, contactType, record, partyId);
+                    },
+                    contactdestroyed: function (comp, contactType, record) {
+                        me.fireEvent('contactdestroyed', me, contactType, record, partyId);
+                    }
+                }
+            });
+            crmTaskTabPanel.add(partyDetailsPanel);
+        }
+
+        crmTaskTabPanel.setActiveTab(partyDetailsPanel);
+        partyDetailsPanel.loadParty();
     }
 });
 

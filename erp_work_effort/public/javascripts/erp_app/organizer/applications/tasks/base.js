@@ -1,142 +1,100 @@
 Ext.ns("Compass.ErpApp.Organizer.Applications.Tasks");
 /**
  * Method to setup organizer application
- * @param {config} object containing (organizerLayout : reference to main layout container, widgetRoles : roles for widgets contained in this application)
+ * @param {config} Object containing (organizerLayout : reference to main layout container)
  */
 Compass.ErpApp.Organizer.Applications.Tasks.Base = function (config) {
     var me = this;
 
-    var tabs = [
-        {
-            xtype: 'tasksgridpanel',
-            itemId: 'tasksGridPanel'
-        },
-        {
-            xtype: 'crmpartygrid',
-            title: 'Workers',
-            searchDescription: 'Find Worker',
-            partyMgtTitle: 'Worker',
-            addBtnDescription: 'Add Worker',
-            applicationContainerId: 'tasksPanel',
-            itemId: 'workersPanel',
-            partyRole: 'worker',
-            partyRelationships: [],
-            allowedPartyType: 'Individual',
-            additionalTabs: [
+    this.setup = function () {
+        config.organizerLayout.addApplication({
+            title: 'Tasks',
+            id: 'tasksPanel',
+            tabs: [
                 {
                     xtype: 'tasksgridpanel',
-                    itemId: 'tasksGridPanel',
-                    canAddTask: false,
-                    canDeleteTask: false,
-                    listeners: {
-                        activate: function (comp) {
-                            var details = comp.up('crmpartydetailspanel');
+                    itemId: 'tasksGridPanel'
+                },
+                {
+                    xtype: 'crmpartygrid',
+                    title: 'Workers',
+                    searchDescription: 'Find Worker',
+                    partyMgtTitle: 'Worker',
+                    addBtnDescription: 'Add Worker',
+                    applicationContainerId: 'tasksPanel',
+                    itemId: 'workersPanel',
+                    partyRole: 'worker',
+                    partyRelationships: [],
+                    allowedPartyType: 'Individual',
+                    additionalTabs: [
+                        {
+                            xtype: 'tasksgridpanel',
+                            itemId: 'tasksGridPanel',
+                            canAddTask: false,
+                            canDeleteTask: false,
+                            listeners: {
+                                activate: function (comp) {
+                                    var details = comp.up('crmpartydetailspanel');
 
-                            comp.store.getProxy().extraParams.partyId = details.partyId;
-                            comp.store.load();
+                                    comp.store.getProxy().extraParams.partyId = details.partyId;
+                                    comp.store.load();
+                                }
+                            }
                         }
+                    ]
+                }
+            ],
+            menuItems: [
+                {
+                    title: 'Tasks',
+                    tabItemId: 'tasksGridPanel',
+                    imgSrc: '/images/icons/erp_work_effort/tasks50x50.png',
+                    filterPanel: {
+                        xtype: 'form',
+                        items: [
+                            {
+                                labelWidth: 50,
+                                width: 175,
+                                fieldLabel: 'Before',
+                                xtype: 'datefield'
+                            },
+                            {
+                                labelWidth: 50,
+                                width: 175,
+                                fieldLabel: 'After',
+                                xtype: 'datefield'
+                            }
+                        ],
+                        buttons: [
+                            {
+                                text: 'Filter'
+                            }
+                        ]
                     }
+                },
+                {
+                    title: 'Manage Workers',
+                    tabItemId: 'workersPanel',
+                    imgSrc: '/images/erp_app/organizer/applications/crm/customer_360_64x64.png'
                 }
             ]
-        }
-    ];
 
-    var menuItems = [
-        {
-            xtype: 'image',
-            src: '/images/icons/erp_work_effort/tasks50x50.png',
-            height: 50,
-            width: 50,
-            cls: 'shortcut-image-button',
-            style: 'display: block; margin: 2px 0px 0px 72px; clear: both;cursor: pointer;',
-            listeners: {
-                render: function (c) {
-                    c.getEl().on('click', function (e) {
-                        var taskTabPanel = Ext.getCmp('tasksPanel');
-                        taskTabPanel.setActiveTab(taskTabPanel.down('#tasksGridPanel'));
-                    }, c);
-                }
-            }
-        },
-        {
-            xtype: 'panel',
-            border: false,
-            html: "<p style='margin: 0px 0px 10px 0px; text-align: center'>Tasks</p>"
-        },
-        {
-            xtype: 'image',
-            src: '/images/erp_app/organizer/applications/crm/customer_360_64x64.png',
-            height: 50,
-            width: 50,
-            cls: 'shortcut-image-button',
-            style: 'display: block; margin: 10px 0px 0px 75px; clear: both;',
-            listeners: {
-                render: function (component) {
-                    component.getEl().on('click', function (e) {
-                        var crmTaskTabPanel = Ext.getCmp('tasksPanel'),
-                            tab = crmTaskTabPanel.down('#workersPanel');
-                        crmTaskTabPanel.setActiveTab(tab);
-
-                    }, component);
-                }
-            }
-        },
-        {
-            xtype: 'panel',
-            border: false,
-            html: "<p style='margin: 0px 0px 10px 0px; text-align: center'>Manage Workers</p>"
-        }
-    ];
-
-    var appShortcutMenuPanel = {
-        id: 'tasksPanelMenu',
-        xtype: 'panel',
-        title: 'Tasks',
-        width: 100,
-        autoScroll: true,
-        listeners: {
-            render: function (c) {
-                /*
-                 *  We want a listener on each DOM element within this menu to ensure the center panel is set
-                 *  properly when they are clicked. This is because this custom panel does not use the default
-                 *  menu tree panel type, and hence does not inherit the switching behavior automatically.
-                 */
-                c.items.each(function (item) {
-                    // Wait until each item is rendered to add the click listener, as the panel usually renders before the items within the panel
-                    item.on('render', function () {
-                        this.getEl().on('click', function () {
-                            Compass.ErpApp.Organizer.Layout.setActiveCenterItem('tasksPanel');
-                        });
-                    });
-                });
-            }
-        },
-        items: menuItems
+        });
     };
 
-    //Create the main tab panel which will house instances of the main Task Types
-    var taskTabPanel = Ext.create('Ext.tab.Panel', {
-        id: 'tasksPanel',
-        itemId: 'tasksPanel',
-        items: tabs
+    me.taskCountBtn = Ext.create('widget.button', {
+        ui: 'cleanbutton',
+        hidden: true,
+        text: '<span id="taskPanelTaskCountContainer">Tasks (<span id="taskPanelTaskCount">0</span>)</span>',
+        handler: function () {
+            Compass.ErpApp.Organizer.Layout.setActiveCenterItem('tasksPanel', 'tasksPanelMenu');
+
+            var taskTabPanel = Ext.getCmp('tasksPanel');
+            taskTabPanel.setActiveTab(taskTabPanel.down('#tasksGridPanel'));
+        }
     });
 
-    this.setup = function () {
-        config['organizerLayout'].addApplication(appShortcutMenuPanel, [taskTabPanel]);
-
-        me.taskCountBtn = Ext.create('widget.button', {
-            hidden: true,
-            text: '<span id="taskPanelTaskCountContainer" style="color:red;font-weight:bold;">Tasks (<span id="taskPanelTaskCount">0</span>)</span>',
-            handler: function () {
-                Compass.ErpApp.Organizer.Layout.setActiveCenterItem('tasksPanel', 'tasksPanelMenu');
-
-                var taskTabPanel = Ext.getCmp('tasksPanel');
-                taskTabPanel.setActiveTab(taskTabPanel.down('#tasksGridPanel'));
-            }
-        });
-
-        config['organizerLayout'].addToToolBar(me.taskCountBtn);
-    };
+    config['organizerLayout'].addToToolBar(me.taskCountBtn);
 
     this.updateTaskCount = function () {
         Ext.Ajax.request({
@@ -166,6 +124,5 @@ Compass.ErpApp.Organizer.Applications.Tasks.Base = function (config) {
         scope: me,
         interval: 30000
     });
-
 };
 
