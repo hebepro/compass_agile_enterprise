@@ -9,9 +9,10 @@
 
     <%= static_javascript_include_tag("erp_app/utility.js","erp_app/login/window.js")%>
     <%= add_authenticity_token_to_extjs%>
+
   </head>
   <body style="background-color:#000;">
-    <div style="text-align:center;width:100%; padding-top: 4%;">
+    <div style="text-align:center;width:100%; padding-top: 4%; margin-bottom: 100px;">
       <img alt="Compass Agile Enterprise" src="/images/art/compass-ae-logo-reverse-1.png" />
    </div>
     <script type="text/javascript">
@@ -21,5 +22,7 @@
           loginWindow.show();
       });
     </script>
+
+
   </body>
 </html>

@@ -140,7 +140,7 @@
                         <%=raw @desktop.shortcuts.collect{|app| "{name:'#{app.description}',iconCls:'#{app.shortcut_id}-shortcut',module:'#{app.shortcut_id}'}"}.join(",")%>
                     ]
                 }),
-                wallpaper: "/images/wallpaper/<%=@desktop.get_preference(:desktop_background) %>",
+                //wallpaper: "/images/wallpaper/<%=@desktop.get_preference(:desktop_background) %>",
                 wallpaperStretch: true
             })
         },
