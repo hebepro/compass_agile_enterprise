@@ -569,7 +569,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid.PostalAddressGrid", {
                     xtype: 'combo',
                     forceSelection: true,
                     typeAhead: true,
-                    queryMode: 'remote',
+                    queryMode: 'local',
                     displayField: 'state',
                     valueField: 'geo_zone_code',
                     store: statesStore
