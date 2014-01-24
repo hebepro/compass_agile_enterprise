@@ -170,7 +170,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                 this.store.load();
             },
             itemdblclick: function(grid, record, item, index){
-                grid.showDetails(index);
+                grid.ownerCt.showDetails(index);
             }
         };
 
