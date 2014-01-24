@@ -319,6 +319,9 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyForm", {
     },
 
     hideField: function(fieldName){
-        return (this.formFields == 'None' || (this.formFields !== 'All' && !Ext.Array.contains(fieldName)))
+        console.log(this.initialConfig.formFields)
+        console.log(fieldName)
+
+        return (this.formFields == 'None' || (this.formFields !== 'All' && !Ext.Array.contains(this.initialConfig.formFields, fieldName)))
     }
 });

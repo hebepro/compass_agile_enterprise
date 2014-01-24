@@ -266,6 +266,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                         toPartyId: me.toPartyId,
                         partyRole: me.partyRole,
                         securityRoles: me.securityRoles,
+                        formFields: me.formFields,
                         toRole: me.toRole,
                         skipUserActivationEmail: me.skipUserActivationEmail,
                         relationshipTypeToCreate: me.relationshipTypeToCreate,
