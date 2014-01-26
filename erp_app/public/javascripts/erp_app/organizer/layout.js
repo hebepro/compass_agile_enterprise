@@ -252,24 +252,20 @@ Compass.ErpApp.Organizer.Layout = function (config) {
             var cardHolder = Ext.getCmp(cardHolderId),
                 menuPanel = cardHolder.down('#menuItems');
 
-            //if(cardHolder.getLayout().getActiveItem().itemId != 'menuItems'){
-                var itemId = newCard.itemId;
-                result = Ext.Array.findBy(config.menuItems, function (item) {
-                    if (item.tabItemId == itemId) {
-                        return true;
-                    }
-                });
-
-                if (Ext.isEmpty(result.filterPanel)) {
-                    cardHolder.getLayout().setActiveItem(menuPanel);
+            var itemId = newCard.itemId;
+            result = Ext.Array.findBy(config.menuItems, function (item) {
+                if (item.tabItemId == itemId) {
+                    return true;
                 }
-                else {
-                    var filterPanel = cardHolder.down('#filterPanel' + "_" + result.tabItemId);
-                    cardHolder.getLayout().setActiveItem(filterPanel, {transitionType: 'crossFade'});
-                }
-           // }
+            });
 
-
+            if (Ext.isEmpty(result.filterPanel)) {
+                cardHolder.getLayout().setActiveItem(menuPanel, {transitionType: 'crossFade'});
+            }
+            else {
+                var filterPanel = cardHolder.down('#filterPanel' + "_" + result.tabItemId);
+                cardHolder.getLayout().setActiveItem(filterPanel, {transitionType: 'crossFade'});
+            }
         });
     };
 
