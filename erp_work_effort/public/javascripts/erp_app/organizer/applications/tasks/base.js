@@ -67,7 +67,7 @@ Compass.ErpApp.Organizer.Applications.Tasks.Base = function (config) {
                         ],
                         buttons: [
                             {
-                                text: 'Filter'
+                                text: 'Filter Tasks'
                             }
                         ]
                     }
@@ -75,7 +75,29 @@ Compass.ErpApp.Organizer.Applications.Tasks.Base = function (config) {
                 {
                     title: 'Manage Workers',
                     tabItemId: 'workersPanel',
-                    imgSrc: '/images/erp_app/organizer/applications/crm/customer_360_64x64.png'
+                    imgSrc: '/images/erp_app/organizer/applications/crm/customer_360_64x64.png',
+                    filterPanel: {
+                        xtype: 'form',
+                        items: [
+                            {
+                                labelWidth: 50,
+                                width: 175,
+                                fieldLabel: 'Before',
+                                xtype: 'datefield'
+                            },
+                            {
+                                labelWidth: 50,
+                                width: 175,
+                                fieldLabel: 'After',
+                                xtype: 'datefield'
+                            }
+                        ],
+                        buttons: [
+                            {
+                                text: 'Filter Workers'
+                            }
+                        ]
+                    }
                 }
             ]
 
