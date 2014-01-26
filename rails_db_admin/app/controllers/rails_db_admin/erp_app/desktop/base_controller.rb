@@ -33,13 +33,13 @@ module RailsDbAdmin
               result_hash << {:isTable => true,
                               :text => table[:display],
                               :id => table[:display],
-                              :iconCls => 'icon-data',
+                              :iconCls => 'icon-db-table',
                               :leaf => false}
             end
           else
             columns = @database_connection_class.connection.columns(params[:node])
             columns.each do |column|
-              result_hash << {:text => "#{column.name} : #{column.type}", :iconCls => 'icon-gear', :leaf => true}
+              result_hash << {:text => "#{column.name} : #{column.type}", :iconCls => 'icon-db-column', :leaf => true}
             end
           end
 

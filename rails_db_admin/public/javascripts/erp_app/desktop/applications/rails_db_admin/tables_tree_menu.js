@@ -32,10 +32,10 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.TablesMenuTreePanel
                     url: '/rails_db_admin/erp_app/desktop/base/tables'
                 },
                 root: {
-                    text: 'Tables',
-                    expanded: false,
+                    text: 'Database Tables',
+                    expanded: true,
                     draggable: false,
-                    iconCls: 'icon-content'
+                    iconCls: 'icon-database'
                 },
                 fields: [
                     {
@@ -71,7 +71,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.TablesMenuTreePanel
                             items: [
                                 {
                                     text: "Select Top 50",
-                                    iconCls: 'icon-settings',
+                                    iconCls: 'icon-db-rowselect',
                                     listeners: {
                                         scope: record,
                                         'click': function () {
@@ -81,7 +81,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.TablesMenuTreePanel
                                 },
                                 {
                                     text: "Edit Table Data",
-                                    iconCls: 'icon-edit',
+                                    iconCls: 'icon-db-edit-data',
                                     listeners: {
                                         scope: record,
                                         'click': function () {

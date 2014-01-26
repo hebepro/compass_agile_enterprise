@@ -56,15 +56,16 @@ Ext.define("Ext.ux.desktop.Desktop", {
     app: null,
     shortcuts: null,
     shortcutItemSelector: "div.ux-desktop-shortcut",
+    mainNavTpl: ["<a href='/signout' style='vertical-align: middle; color: #eee; text-decoration: none; float:right; margin-top: 10px; margin-right: 25px; padding: 0px 0px 3px 0px;'><img src='/images/icons/exit/exit_16x16.png' style='display: none; margin: 3px 4px 0px 0px;'/>Logout</a>"],
     shortcutTpl: ['<tpl for=".">',
         '<tpl if="(xindex-1) % 6 === 0">', '</div>', '</tpl>',
-        '<tpl if="xindex == 1 || (xindex-1) % 6 === 0">', '<div style="float: left; width:66px;">', '</tpl>',
+        '<tpl if="xindex == 1 || (xindex-1) % 6 === 0">', '<div class="ux-desktop-shortcut-container">', '</tpl>',
         '<div class="ux-desktop-shortcut" id="{name}-shortcut">',
         '<div class="ux-desktop-shortcut-icon {iconCls}">',
         '<img src="', Ext.BLANK_IMAGE_URL, '" title="{name}">', "</div>",
         '<span class="ux-desktop-shortcut-text">{name}</span>', "</div>",
         '<tpl if="xindex == xcount">', '</div>', '</tpl>',
-        "</tpl>", '<div class="x-clear"></div>'],
+        '</tpl>', '<div class="x-clear"></div></div>'],
     taskbarConfig: null,
     windowMenu: null,
     initComponent: function () {
@@ -80,6 +81,7 @@ Ext.define("Ext.ux.desktop.Desktop", {
                 id: b.id + "_wallpaper"
             },
             b.createDataView()
+
         ];
         b.callParent();
         b.shortcutsView = b.items.getAt(1);
@@ -88,7 +90,7 @@ Ext.define("Ext.ux.desktop.Desktop", {
         b.wallpaper = b.items.getAt(0);
         if (a) {
             b.setWallpaper(a, b.wallpaperStretch)
-        }
+        };
     },
     afterRender: function () {
         var a = this;
@@ -109,6 +111,28 @@ Ext.define("Ext.ux.desktop.Desktop", {
             x: 0,
             y: 0,
             tpl: new Ext.XTemplate(a.shortcutTpl),
+            listeners: {
+                scope: this,
+                'itemcontextmenu': function (view, record, htmlItem, index, e, options) {
+                    e.stopEvent();
+                }
+            }
+        }
+    },
+    createMainNavLinks: function () {
+        var a = this;
+        return{
+            xtype: "dataview",
+            overItemCls: "x-view-over",
+            trackOver: true,
+            itemSelector: a.shortcutItemSelector,
+            store: a.shortcuts,
+            style: {
+                position: "absolute"
+            },
+            x: 10,
+            y: 10,
+            tpl: new Ext.XTemplate(a.mainNavTpl),
             listeners: {
                 scope: this,
                 'itemcontextmenu': function (view, record, htmlItem, index, e, options) {
@@ -825,7 +849,7 @@ Ext.define("Ext.ux.desktop.StartMenu", {
 
 Ext.define("Ext.ux.desktop.TaskBar", {
     extend: "Ext.toolbar.Toolbar",
-    ui: 'cleantoolbar-dark',
+    //ui: 'cleantoolbar-dark',
     requires: ["Ext.button.Button", "Ext.resizer.Splitter", "Ext.menu.Menu", "Ext.ux.desktop.StartMenu"],
     alias: "widget.taskbar",
     cls: "ux-taskbar",
@@ -838,7 +862,7 @@ Ext.define("Ext.ux.desktop.TaskBar", {
         a.items = [
             {
                 xtype: "button",
-                ui:'cleanbutton',
+                //ui:'cleanbutton',
                 cls: "ux-start-button",
                 iconCls: "ux-start-button-icon",
                 menu: a.startMenu,

@@ -145,7 +145,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.ReportsTreePanel", 
                     text:'Reports',
                     expanded:true,
                     draggable:false,
-                    iconCls:'icon-content'
+                    iconCls:'icon-reports'
                 },
                 fields:[
                     {

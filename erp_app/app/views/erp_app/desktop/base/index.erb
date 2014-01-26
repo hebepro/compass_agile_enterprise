@@ -6,21 +6,21 @@
       <%@desktop.applications.each do |application|%>
       .<%=application.shortcut_id%>-shortcut {
           background-image: url("/images/icons/<%=application.icon.split('-')[1]%>/<%=application.icon.split('-')[1]%>_48x48.png");
-          height: 48px;
-          width: 48px;
+          height: 64px;
+          width: 64px;
       }
 
       <%end%>
       .control-panel-win-shortcut {
           background-image: url("/images/icons/control_panel/control_panel_48x48.png");
-          height: 48px;
-          width: 48px;
+          height: 64px;
+          width: 64px;
       }
 
       .web-navigator-win-shortcut {
           background-image: url("/images/icons/globe/globe_48x48.png");
-          height: 48px;
-          width: 48px;
+          height: 64px;
+          width: 64px;
       }
 
       #loading-mask {
@@ -212,10 +212,10 @@
 
             var aboutWindow = Ext.create('Ext.window.Window', {
                 title: 'About Your Compass AE Instance',
-                height: 200,
+                height: 400,
                 width: 400,
                 layout: 'fit',
-                resizable: false,
+                resizable: true,
                 autoScroll: true,
                 tpl: tpl,
                 data: compassAeInstance
