@@ -1,5 +1,60 @@
 /****Buttons Icons****/
 
+.icon-database {
+    background-image:url( /images/icons/database/database_16x16.png ) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/rails_db_admin/rails_db_admin_16x16.png', sizingMethod='crop');
+}
+
+.icon-db-tables {
+    background-image:url( /images/icons/tables/tables_16x16.png ) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/rails_db_admin/rails_db_admin_16x16.png', sizingMethod='crop');
+}
+
+.icon-db-table {
+    background-image:url( /images/icons/db_table/db_table_16x16.png ) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/rails_db_admin/rails_db_admin_16x16.png', sizingMethod='crop');
+}
+
+.icon-db-column {
+    background-image:url( /images/icons/database_column/database_column_16x16.png ) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/rails_db_admin/rails_db_admin_16x16.png', sizingMethod='crop');
+}
+
+.icon-db-rowselect {
+    background-image:url( /images/icons/rowselect/rowselect_16x16.png ) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/rails_db_admin/rails_db_admin_16x16.png', sizingMethod='crop');
+}
+
+.icon-db-edit-data {
+    background-image:url( /images/icons/db_edit_data/db_edit_data_16x16.png ) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/rails_db_admin/rails_db_admin_16x16.png', sizingMethod='crop');
+}
+
+.icon-reports {
+    background-image:url( /images/icons/report/report_16x16.png ) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/rails_db_admin/rails_db_admin_16x16.png', sizingMethod='crop');
+}
+
+.icon-query {
+    background-image:url( /images/icons/query/query_16x16.png ) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/rails_db_admin/rails_db_admin_16x16.png', sizingMethod='crop');
+}
+
+.icon-sql {
+     background-image:url( /images/icons/sql/sql_16x16.png ) !important;
+     filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/rails_db_admin/rails_db_admin_16x16.png', sizingMethod='crop');
+ }
+
+.icon-playpause {
+    background-image:url( /images/icons/play/play_16x16.png) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/rails_db_admin/rails_db_admin_16x16.png', sizingMethod='crop');
+}
+
+.icon-attribute {
+    background-image:url( /images/icons/attribute/attribute_16x16.png ) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/rails_db_admin/rails_db_admin_16x16.png', sizingMethod='crop');
+}
+
 
 .btn-right-panel {
     background-image: url(/images/btn/right_panel/right_panel_16x16.png) !important;
@@ -33,6 +88,11 @@
 
 .btn-save-all-light {
     background-image: url(/images/btn_light/save_all/save_all_16x16.png) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/btn/save_all/save_all_16x16.png', sizingMethod='crop');
+}
+
+.btn-add-light {
+    background-image: url(/images/btn_light/add/add_16x16.png) !important;
     filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/btn/save_all/save_all_16x16.png', sizingMethod='crop');
 }
 
@@ -154,6 +214,11 @@
 
 .icon-user {
     background-image:url( /images/icons/user/user_16x16.png ) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/user/user_16x16.png', sizingMethod='crop');
+}
+
+.icon-user-mgt {
+    background-image:url( /images/icons/user_mgt/user_mgt_16x16.png ) !important;
     filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/user/user_16x16.png', sizingMethod='crop');
 }
 

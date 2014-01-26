@@ -17,7 +17,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.QueriesMenuTreePane
           text: 'Queries',
           expanded: true,
           draggable:false,
-          iconCls:'icon-content'
+          iconCls:'icon-query'
         }
       }),
       animate:false,
@@ -36,7 +36,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.QueriesMenuTreePane
               items:[
               {
                 text:"Execute",
-                iconCls:'icon-settings',
+                iconCls:'icon-playpause',
                 listeners:{
                   scope:record,
                   'click':function(){
@@ -62,7 +62,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.QueriesMenuTreePane
               items:[
               {
                 text:"New Query",
-                iconCls:'icon-new',
+                iconCls:'icon-sql',
                 listeners:{
                   'click':function(){
                     self.initialConfig.module.addNewQueryTab();

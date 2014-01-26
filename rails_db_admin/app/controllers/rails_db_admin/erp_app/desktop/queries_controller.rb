@@ -37,7 +37,7 @@ module RailsDbAdmin
           queries = []
 
           queries = names.collect do |name|
-            {:text => name, :id => name, :iconCls => 'icon-document', :leaf => true}
+            {:text => name, :id => name, :iconCls => 'icon-sql', :leaf => true}
           end unless names.empty?
 
           render :json => queries

@@ -37,7 +37,7 @@
 .x-btn-default-toolbar-small {
     background-image: none !important;
     border-style: none !important;
-    background-color: #ffffff !important;
+    background-color: #fff;
 }
 
 .x-btn-toolbar {
@@ -90,6 +90,11 @@
 
 .ux-taskbar {
     padding-left: 4px !important;
+    background-color: #D8D8D8 !important;
+}
+
+.ux-start-button {
+    background-color: #D8D8D8 !important;
 }
 
 /*
@@ -100,6 +105,7 @@
     height: 28px;
     padding: 0px;
     display: block;
+    background-color: #aaa !important;
 }
 
 .ux-desktop-black .ux-start-button em {
@@ -116,6 +122,7 @@
     background-image: -moz-linear-gradient(center top , #E4F3FF, #D9EDFF 48%, #C2D8F2 52%, #C6DCF6);
     border-radius: 8px 8px 8px 8px;
     border-color: #81A4D0;
+    background-color: #D8D8D8 !important;
 }
 
 /*----------------------------------------------------
@@ -210,24 +217,34 @@
     background-color: #000;
     background-image: url(/images/art/compass-ae-logo-reverse-1.png) !important;
     background-repeat: no-repeat;
-    background-position: center;
+    background-position: 50% 15%;
 }
 
 .ux-wallpaper-tiled {
     background-repeat: repeat;
 }
 
+
+.ux-desktop-shortcut-container {
+
+    width: 550px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20%;
+}
+
 .ux-desktop-shortcut {
+    display: inline-table;
     cursor: pointer;
     text-align: center;
     padding: 8px;
-    width: 64px;
-    margin: 8px 0 8px 8px;
+    width: 80px;
+    margin: 20px 0 8px 30px;
 }
 
 .ux-desktop-shortcut-icon {
-    width: 48px;
-    height: 48px;
+    width: 64px;
+    height: 64px;
     background-color: transparent;
     background-repeat: no-repeat;
 }
