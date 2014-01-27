@@ -59,6 +59,10 @@ module ErpApp
             def setSessionTimeout(warn_milli_seconds=((ErpApp::Config.session_warn_after*60)*1000),
                 redirect_milli_seconds=((ErpApp::Config.session_redirect_after*60)*1000),
                 redirect_to='/session/sign_out')
+
+              #warn_milli_seconds = 3000
+              #redirect_milli_seconds = 9000
+
               raw "<script type='text/javascript'>Compass.ErpApp.Utility.SessionTimeout.setupSessionTimeout(#{warn_milli_seconds}, #{redirect_milli_seconds}, '#{redirect_to}') </script>" if current_user
             end
 

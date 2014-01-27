@@ -10,6 +10,8 @@ Compass.ErpApp.Organizer.Applications.Tasks.Base = function (config) {
         {
             xtype: 'tasksgridpanel',
             itemId: 'tasksGridPanel',
+            canAddTask: false,
+            canDeleteTask: false,
             allTasks: currentUser.hasRole('admin')
         },
         {
@@ -37,6 +39,42 @@ Compass.ErpApp.Organizer.Applications.Tasks.Base = function (config) {
                             comp.store.load();
                         }
                     }
+
+                }
+            ],
+            menuItems: [
+                {
+                    title: 'Tasks',
+                    tabItemId: 'tasksGridPanel',
+                    imgSrc: '/images/icons/erp_work_effort/tasks50x50.png',
+                    filterPanel: {
+                        xtype: 'form',
+                        items: [
+                            {
+                                labelWidth: 50,
+                                width: 175,
+                                fieldLabel: 'Before',
+                                xtype: 'datefield'
+                            },
+                            {
+                                labelWidth: 50,
+                                width: 175,
+                                fieldLabel: 'After',
+                                xtype: 'datefield'
+                            }
+                        ],
+                        buttons: [
+                            {
+                                text: 'Filter Tasks'
+                            }
+                        ]
+                    }
+                },
+                {
+                    title: 'Manage Workers',
+                    tabItemId: 'workersPanel',
+                    imgSrc: '/images/erp_app/organizer/applications/crm/customer_360_64x64.png'
+
                 }
             ]
         },

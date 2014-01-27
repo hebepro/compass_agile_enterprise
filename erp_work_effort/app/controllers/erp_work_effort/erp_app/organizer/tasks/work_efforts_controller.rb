@@ -48,13 +48,13 @@ module ErpWorkEffort
             party = params[:party_id].blank? ? nil : Party.find(params[:party_id])
             all_tasks = params[:all_tasks].blank? ? false : true
 
-            if all_tasks
+            #if all_tasks
               work_efforts_statement = WorkEffort
-            elsif party
-              work_efforts_statement = WorkEffort.work_efforts_for_party(party)
-            else
-              work_efforts_statement = WorkEffort.work_efforts_for_party(current_user.party)
-            end
+            #elsif party
+            #  work_efforts_statement = WorkEffort.work_efforts_for_party(party)
+            #else
+            #  work_efforts_statement = WorkEffort.work_efforts_for_party(current_user.party)
+            #end
 
             total = work_efforts_statement.count
             work_efforts = work_efforts_statement.limit(limit).offset(offset)

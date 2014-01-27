@@ -26,7 +26,7 @@ Compass.ErpApp.Organizer.Layout = function (config) {
                         title: 'Profile',
                         iconCls: 'icon-user',
                         items: [
-                            {xtype: 'shared_profilemanagementpanel', title: '', height: 250}
+                            {xtype: 'shared_profilemanagementpanel', title: ''}
                         ]
                     });
                     win.show();
@@ -35,9 +35,17 @@ Compass.ErpApp.Organizer.Layout = function (config) {
         ]
     });
 
-    var toolbar = Ext.create("Ext.toolbar.Toolbar", {
+    this.toolBar = Ext.create("Ext.toolbar.Toolbar", {
+        ui: 'cleantoolbar-dark',
+        dock: 'top',
+        height: 50,
+        style: {
+            paddingLeft: '22px',
+            paddingRight: '15px'
+        },
         items: [
             {
+                ui: 'cleanbutton',
                 text: 'Menu',
                 iconCls: 'icon-info',
                 menu: menu
@@ -45,21 +53,21 @@ Compass.ErpApp.Organizer.Layout = function (config) {
             ' ',
             {
                 xtype: 'label',
+                style: 'color:white;',
                 text: 'Welcome',
                 itemId: 'organizerWelcomeMsg'
             }
         ]
     });
 
-    this.ToolBar = toolbar;
-
     this.addToToolBar = function (item) {
-        toolbar.add(item);
+        this.toolBar.add(item);
     };
 
     this.setupLogoutButton = function () {
-        toolbar.add("->");
-        toolbar.add({
+        this.toolBar.add("->");
+        this.toolBar.add({
+            ui: 'cleanbutton',
             text: 'Logout',
             xtype: 'button',
             iconCls: "icon-exit",
@@ -86,82 +94,216 @@ Compass.ErpApp.Organizer.Layout = function (config) {
         });
     };
 
-    this.CenterPanel = Ext.create("Ext.Panel", {
+    this.centerPanel = Ext.create("Ext.Panel", {
+        cls: 'masterPanel',
         id: 'erp_app_viewport_center',
+        style: {
+            marginRight: '20px',
+            borderBottomLeftRadius: '5px',
+            borderBottomRightRadius: '5px'
+        },
         region: 'center',
-        margins: '0 0 0 0',
         layout: 'card',
         activeItem: 0,
-        frame: false,
-        minsize: 300,
         items: []
     });
 
-    this.NorthPanel = Ext.create("Ext.Panel", {
-        region: 'north',
-        height: 29,
-        layout: 'anchor',
-        margins: '0 0 0 0',
-        cmargins: '0 0 0 0',
-        items: [toolbar]
-    });
-
-    this.EastPanel = Ext.create("Ext.Panel", {
-        region: 'east',
-        hidden: true
-    });
-
-    var southToolbar = Ext.create("Ext.toolbar.Toolbar", {
+    this.bottomBar = Ext.create("Ext.toolbar.Toolbar", {
+        ui: 'cleantoolbar-dark',
+        dock: 'bottom',
+        height: 50,
+        style: {
+            paddingLeft: '22px',
+            paddingRight: '15px'
+        },
         items: [
             "->",
             {
+                ui: 'cleanbutton',
                 xtype: "trayclock"
             }
         ]
     });
 
-    this.SouthToolBar = southToolbar;
+    this.addApplication = function (config) {
+        var menuItems = [],
+            cardHolderId = 'cardHolder' + '_' + config.id;
 
-    this.SouthPanel = Ext.create("Ext.Panel", {
-        region: 'south',
-        height: 29,
-        layout: 'anchor',
-        margins: '0 0 0 0',
-        cmargins: '0 0 0 0',
-        items: [
-            southToolbar
-        ]
-    });
+        Ext.each(config.menuItems, function (menuItem) {
+            menuItems.push({
+                    xtype: 'image',
+                    style: {
+                        cursor: 'pointer'
+                    },
+                    filtersPanelId: 'customerFilters',
+                    src: menuItem.imgSrc,
+                    height: 50,
+                    width: 50,
+                    cls: 'shortcut-image-button',
+                    listeners: {
+                        render: function (component) {
+                            component.getEl().on('click', function (e) {
+                                var cardHolder = Ext.getCmp(cardHolderId);
 
-    this.addApplication = function (menuPanel, components) {
+                                /*
+                                if (menuItem.filterPanel) {
+                                    var filterPanel = cardHolder.down('#filterPanel' + "_" + menuItem.tabItemId);
+
+                                    cardHolder.getLayout().setActiveItem(filterPanel, {transitionType: 'crossFade'});
+                                }
+                                */
+
+                                var masterPanel = Ext.getCmp(config.id),
+                                    tab = masterPanel.down('#' + menuItem.tabItemId);
+
+                                masterPanel.setActiveTab(tab);
+
+                            }, component);
+                        }
+                    }
+                },
+                {
+                    html: menuItem.title,
+                    style: {
+                        cursor: 'pointer'
+                    }
+                });
+
+            if (menuItem.filterPanel) {
+                menuItems.push({
+                    xtype: 'panel',
+                    hidden: true,
+                    itemId: 'filterPanel' + "_" + menuItem.tabItemId,
+                    frame: true,
+                    bodyPadding: '5px',
+                    style: {
+                        borderRadius: '5px'
+                    },
+                    dockedItems: [
+                        {
+                            xtype: 'toolbar',
+                            ui: 'cleantoolbar-dark',
+                            dock: 'top',
+                            items: [
+                                {
+                                    ui: 'cleanbutton',
+                                    text: 'Back',
+                                    handler: function (btn) {
+                                        var cardHolder = Ext.getCmp(cardHolderId),
+                                            menuPanel = cardHolder.down('#menuItems');
+
+                                        cardHolder.getLayout().setActiveItem(menuPanel, {transitionType: 'crossFade'});
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    items: menuItem.filterPanel
+                });
+            }
+        });
+
+        var menuPanel = {
+            xtype: 'panel',
+            title: config.title,
+            layout: 'transitioncard',
+            id: cardHolderId,
+            listeners: {
+                render: function (c) {
+                    /*
+                     *  We want a listener on each DOM element within this menu to ensure the center panel is set
+                     *  properly when they are clicked. This is because this custom panel does not use the default
+                     *  menu tree panel type, and hence does not inherit the switching behavior automatically.
+                     */
+                    c.items.each(function (item) {
+                        // Wait until each item is rendered to add the click listener, as the panel usually renders before the items within the panel
+                        item.on('render', function () {
+                            this.getEl().on('click', function () {
+                                Compass.ErpApp.Organizer.Layout.setActiveCenterItem(config.id);
+                            });
+                        });
+                    });
+                }
+            },
+            items: [
+                {
+                    xtype: 'container',
+                    itemId: 'menuItems',
+                    layout: {
+                        type: "vbox",
+                        align: "center"
+                    },
+                    items: menuItems
+                }
+            ]
+        };
+
         accordionMenuItems.push(menuPanel);
-        for (var i = 0; i < components.length; i++) {
-            this.CenterPanel.add(components[i]);
-        }
+
+        //Create the main tab panel which will house instances of the main Task Types
+        var masterPanel = Ext.create('Ext.tab.Panel', {
+            id: config.id,
+            itemId: config.id,
+            //These tasks we always want open
+            items: config.tabs
+        });
+
+        this.centerPanel.add(masterPanel);
+
+        masterPanel.addListener('tabchange', function (tabPanel, newCard, oldCard, eOpt) {
+            var cardHolder = Ext.getCmp(cardHolderId),
+                menuPanel = cardHolder.down('#menuItems');
+
+            var itemId = newCard.itemId;
+            result = Ext.Array.findBy(config.menuItems, function (item) {
+                if (item.tabItemId == itemId) {
+                    return true;
+                }
+            });
+
+            if (Ext.isEmpty(result.filterPanel)) {
+                cardHolder.getLayout().setActiveItem(menuPanel, {transitionType: 'crossFade'});
+            }
+            else {
+                var filterPanel = cardHolder.down('#filterPanel' + "_" + result.tabItemId);
+                cardHolder.getLayout().setActiveItem(filterPanel, {transitionType: 'crossFade'});
+            }
+        });
     };
 
     this.setup = function () {
-        this.WestPanel = {
-            region: 'west',
+        this.westPanel = {
             id: 'erp_app_viewport_west',
-            margins: '0 0 0 0',
-            cmargins: '0 0 0 0',
+            style: {
+                marginRight: '10px',
+                marginLeft: '20px',
+                borderRadius: '5px'
+            },
+            region: 'west',
             width: 200,
             split: true,
-            collapsible: true,
             layout: 'accordion',
             items: accordionMenuItems
         };
 
         this.viewPort = Ext.create('Ext.container.Viewport', {
-            layout: 'border',
             border: false,
+            layout: 'fit',
             items: [
-                this.NorthPanel,
-                this.WestPanel,
-                this.CenterPanel,
-                this.EastPanel,
-                this.SouthPanel
+                {
+                    xtype: 'panel',
+                    border: false,
+                    layout: 'border',
+                    dockedItems: [
+                        this.toolBar,
+                        this.bottomBar
+                    ],
+                    items: [
+                        this.westPanel,
+                        this.centerPanel,
+                        this.eastPanel
+                    ]
+                }
             ]
         });
 
@@ -185,7 +327,6 @@ Compass.ErpApp.Organizer.Layout.setActiveCenterItem = function (panel_id, menu_i
             panel.loadRemoteData();
         }
     }
-
 };
 
 
