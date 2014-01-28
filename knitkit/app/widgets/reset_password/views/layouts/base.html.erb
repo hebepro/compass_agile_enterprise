@@ -1,1 +1,10 @@
-<%= render_widget :reset_password, :params => {:login_url => "/login"}%>
+<div style="margin-top:10px;" class="container">
+  <div class="row">
+    <div class="col-lg-1" style="margin: 0 auto;float:none;width:500px;">
+      <h2><%= @website_section.title %></h2>
+
+      <%= render_widget :reset_password, :params => {:login_url => "/login"} %>
+
+    </div>
+  </div>
+</div>

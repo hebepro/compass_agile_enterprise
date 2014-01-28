@@ -1,0 +1,12 @@
+<%= form_tag @search_url, :class => "form-inline" do %>
+    <div class="form-group">
+      <%= label_tag :search_for, 'Search For', :class => "sr-only" %>
+      <%= text_field_tag :query, @query, class: 'form-control', required: true %>
+    </div>
+
+    <%= hidden_field_tag :section_unique_name, @section_unique_name %>
+    <%= hidden_field_tag :content_type, @content_type %>
+    <%= hidden_field_tag :per_page, @per_page %>
+
+    <%= submit_tag "Search", :disable_with => "Please wait...", :class => "btn btn-primary submit" %>
+<% end %>

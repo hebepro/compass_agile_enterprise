@@ -6,21 +6,21 @@
       <%@desktop.applications.each do |application|%>
       .<%=application.shortcut_id%>-shortcut {
           background-image: url("/images/icons/<%=application.icon.split('-')[1]%>/<%=application.icon.split('-')[1]%>_48x48.png");
-          height: 48px;
-          width: 48px;
+          height: 64px;
+          width: 64px;
       }
 
       <%end%>
       .control-panel-win-shortcut {
           background-image: url("/images/icons/control_panel/control_panel_48x48.png");
-          height: 48px;
-          width: 48px;
+          height: 64px;
+          width: 64px;
       }
 
       .web-navigator-win-shortcut {
           background-image: url("/images/icons/globe/globe_48x48.png");
-          height: 48px;
-          width: 48px;
+          height: 64px;
+          width: 64px;
       }
 
       #loading-mask {
@@ -55,7 +55,7 @@
   </style>
 
   <!--javascript-->
-  <%= include_extjs(:theme => @desktop.get_preference(:extjs_theme), :debug => (Rails.env != 'production')) %>
+  <%= include_extjs(:debug => (Rails.env != 'production')) %>
   <%= static_javascript_include_tag("extjs/overrides.js") %>
 
   <%= static_javascript_include_tag("erp_app/utility.js") %>
@@ -140,7 +140,7 @@
                         <%=raw @desktop.shortcuts.collect{|app| "{name:'#{app.description}',iconCls:'#{app.shortcut_id}-shortcut',module:'#{app.shortcut_id}'}"}.join(",")%>
                     ]
                 }),
-                wallpaper: "/images/wallpaper/<%=@desktop.get_preference(:desktop_background) %>",
+                //wallpaper: "/images/wallpaper/<%=@desktop.get_preference(:desktop_background) %>",
                 wallpaperStretch: true
             })
         },
@@ -174,6 +174,7 @@
             return Ext.apply(a, {
                 quickStart: [
                     {
+                        ui: 'buttonclean',
                         name: "Control Panel",
                         iconCls: "icon-control_panel",
                         module: "control-panel-win"
@@ -181,6 +182,7 @@
                 ],
                 trayItems: [
                     {
+                        ui: 'buttonclean',
                         xtype: "trayclock",
                         flex: 1
                     }
@@ -210,10 +212,10 @@
 
             var aboutWindow = Ext.create('Ext.window.Window', {
                 title: 'About Your Compass AE Instance',
-                height: 200,
+                height: 400,
                 width: 400,
                 layout: 'fit',
-                resizable: false,
+                resizable: true,
                 autoScroll: true,
                 tpl: tpl,
                 data: compassAeInstance
@@ -240,7 +242,7 @@
 
         // Push some history into this windows history to help prevent back button
         for (var i = 0; i < 10; i++) {
-            window.history.pushState("history", 'CompassAE Desktop', "#"+i*new Date().getMilliseconds());
+            window.history.pushState("history", 'CompassAE Desktop', "#" + i * new Date().getMilliseconds());
         }
     });
 </script>

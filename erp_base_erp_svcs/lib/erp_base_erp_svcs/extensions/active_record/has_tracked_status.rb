@@ -12,12 +12,26 @@ module ErpBaseErpSvcs
             include HasTrackedStatus::InstanceMethods
 
             has_many :status_applications, :as => :status_application_record, :dependent => :destroy
-          
+
             scope :with_status, lambda { |status_type_iids|
               joins(:status_applications => :tracked_status_type).
-              where("status_applications.thru_date IS NULL AND tracked_status_types.internal_identifier IN (?)", 
-                status_type_iids)
-            }          
+                  where("status_applications.thru_date IS NULL AND tracked_status_types.internal_identifier IN (?)",
+                        status_type_iids)
+            }
+
+            scope :with_current_status, lambda {
+              model_table = self.arel_table
+              status_applications_tbl = StatusApplication.arel_table
+
+              #determine status_application_record_type
+              status_application_record_type = (self.superclass == ::ActiveRecord::Base) ? self.name.to_s : self.superclass.to_s
+
+              current_status_select = status_applications_tbl.project(status_applications_tbl[:id].maximum)
+              .where(model_table[:id].eq(status_applications_tbl[:status_application_record_id])
+                     .and(status_applications_tbl[:status_application_record_type].eq(status_application_record_type)))
+
+              joins(:status_applications).where(status_applications_tbl[:id].in(current_status_select))
+            }
           end
         end
 

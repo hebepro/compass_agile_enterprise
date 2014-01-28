@@ -12,6 +12,12 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
     partyRole: 'customer',
 
     /**
+     * @cfg {String[]} securityRoles
+     * Array of SecurityRoles to add to users during creation.
+     */
+    securityRoles: [],
+
+    /**
      * @cfg {string} relationshipTypeToCreate
      * Relationship type to create parties with.
      */
@@ -46,6 +52,32 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
      * Type of party (Individual, Organization).
      */
     partyType: null,
+
+    /**
+     * @cfg {String | Array} formFields
+     * Optional Fields to show in edit and create forms, if set to 'All' all fields will be shown.
+     * if set to 'None' no fields are shown.
+     * If an array is passed only field names within array are shown
+     * field names are:
+     * - organizationTaxId
+     * - individualTitle
+     * - individualMiddleName
+     * - individualSuffix
+     * - individualNickname
+     * - individualPassportNumber
+     * - individualPassportExpirationDate
+     * - individualDateOfBirth
+     * - individualTotalYrsWorkExp
+     * - individualMaritalStatus
+     * - individualSocialSecurityNumber
+     */
+    formFields: 'None',
+
+    /**
+     * @cfg {Boolean} skipUserActivationEmail
+     * true to skip activation email for user and allow user manually active users.
+     */
+    skipUserActivationEmail: true,
 
     /**
      * @cfg {String} applicationContainerId
@@ -96,8 +128,10 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
         this.items = [
             {
                 xtype: 'crmpartyform',
-                allowedPartyType: (me.partyType || me.allowedPartyType),
-                width: 300,
+                formFields: me.formFields,
+                allowedPartyType: me.allowedPartyType,
+                partyType: me.partyType,
+                width: 400,
                 listeners: {
                     'partytypechange': function (comp, partyType) {
                         if (partyType == 'Individual') {
@@ -110,19 +144,28 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
                 }
             },
             {
-                width: 300,
+                width: 400,
                 xtype: 'crmuserform',
+                securityRoles: me.securityRoles,
                 allowFormToggle: true,
-                applicationContainerId: me.applicationContainerId
+                applicationContainerId: me.applicationContainerId,
+                skipUserActivationEmail: me.skipUserActivationEmail
             },
             {
                 xtype: 'container',
-                width: 300,
-                layout: 'hbox',
+                width: 400,
+                layout: {
+                    type: "hbox",
+                    pack: "center",
+                    align: "middle"
+                },
                 items: [
                     {
                         xtype: 'button',
-                        flex: 1,
+                        width: 150,
+                        style:{
+                            marginRight: '5px'
+                        },
                         text: 'Save',
                         handler: function (btn) {
                             var crmPartyFormPanel = btn.up('crmpartyformpanel'),
@@ -252,7 +295,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
                     },
                     {
                         xtype: 'button',
-                        flex: 1,
+                        width: 150,
                         text: 'Cancel',
                         handler: function (btn) {
                             btn.up('crmpartyformpanel').close();
@@ -268,7 +311,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
             this.down('crmpartyform').loadParty(me.partyId);
         }
 
-        if (!Ext.isEmpty(me.partyType) && me.partyType == 'Individual') {
+        if (!Ext.isEmpty(me.partyType) && me.partyType == 'Individual' && !Ext.isEmpty(me.partyId)) {
             this.down('crmuserform').loadUser(me.partyId, me.userId);
         }
 

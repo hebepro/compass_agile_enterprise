@@ -5,9 +5,13 @@ class Theme < ActiveRecord::Base
   attr_protected :created_at, :updated_at
 
   THEME_STRUCTURE = ['stylesheets', 'javascripts', 'images', 'templates']
-  class << self; attr_accessor :base_layouts_views_path, :knitkit_website_stylesheets_path, :knitkit_website_images_path  end
+  class << self
+    attr_accessor :base_layouts_views_path, :knitkit_website_stylesheets_path,
+                  :knitkit_website_images_path, :knitkit_website_javascripts_path
+  end
   @base_layouts_views_path = "#{Knitkit::Engine.root.to_s}/app/views"
   @knitkit_website_stylesheets_path = "#{Knitkit::Engine.root.to_s}/public/stylesheets/knitkit"
+  @knitkit_website_javascripts_path = "#{Knitkit::Engine.root.to_s}/public/javascripts/knitkit"
   @knitkit_website_images_path = "#{Knitkit::Engine.root.to_s}/public/images/knitkit"
 
   protected_with_capabilities
@@ -213,6 +217,7 @@ class Theme < ActiveRecord::Base
     file_support = ErpTechSvcs::FileSupport::Base.new
     create_theme_files_for_directory_node(file_support.build_tree(Theme.base_layouts_views_path, :preload => true), :templates, :path_to_replace => Theme.base_layouts_views_path)
     create_theme_files_for_directory_node(file_support.build_tree(Theme.knitkit_website_stylesheets_path, :preload => true), :stylesheets, :path_to_replace => Theme.knitkit_website_stylesheets_path)
+    create_theme_files_for_directory_node(file_support.build_tree(Theme.knitkit_website_javascripts_path, :preload => true), :javascripts, :path_to_replace => Theme.knitkit_website_javascripts_path)
     create_theme_files_for_directory_node(file_support.build_tree(Theme.knitkit_website_images_path, :preload => true), :images, :path_to_replace => Theme.knitkit_website_images_path)
   end
 
@@ -225,18 +230,40 @@ class Theme < ActiveRecord::Base
   end
 
   def save_theme_file(path, type, options)
-    contents = IO.read(path)
-    contents.gsub!("../../images/knitkit","../images") unless path.scan('style.css').empty?
-    contents.gsub!("<%= static_stylesheet_link_tag('knitkit/style.css') %>","<%= theme_stylesheet_link_tag('#{self.theme_id}','style.css') %>") unless path.scan('base.html.erb').empty?
+    ignored_css = [
+        'bootstrap.min.css',
+        'bootstrap-responsive.min.css',
+        'datepicker.css',
+        'inline_editing.css',
+    ]
 
-    path = case type
-    when :widgets
-      path.gsub(options[:path_to_replace], "#{self.url}/widgets/#{options[:widget_name]}")
-    else
-      path.gsub(options[:path_to_replace], "#{self.url}/#{type.to_s}")
+    ignored_js = [
+        'bootstrap.min.js',
+        'bootstrap-datepicker.js',
+        'confirm-bootstrap.js',
+        'inline_editing.js',
+        'jquery.maskedinput.min.js',
+        'Main.js',
+        'View.js'
+    ]
+
+    ignored_files = (ignored_css | ignored_js).flatten
+
+    unless ignored_files.any? { |w| path =~ /#{w}/ }
+      contents = IO.read(path)
+      contents.gsub!("<%= static_stylesheet_link_tag 'knitkit/custom.css' %>","<%= theme_stylesheet_link_tag '#{self.theme_id}','custom.css' %>") unless path.scan('base.html.erb').empty?
+      contents.gsub!("<%= static_javascript_include_tag 'knitkit/theme.js' %>","<%= theme_javascript_include_tag '#{self.theme_id}','theme.js' %>") unless path.scan('base.html.erb').empty?
+
+      path = case type
+               when :widgets
+                 path.gsub(options[:path_to_replace], "#{self.url}/widgets/#{options[:widget_name]}")
+               else
+                 path.gsub(options[:path_to_replace], "#{self.url}/#{type.to_s}")
+             end
+
+      self.add_file(contents, path)
     end
 
-    self.add_file(contents, path)
   end
 
 end

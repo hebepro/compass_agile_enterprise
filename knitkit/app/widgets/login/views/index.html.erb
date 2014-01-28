@@ -1,35 +1,55 @@
-<div id="<%=widget_result_id%>"></div>
-<div>
-  <%= form_tag '/session/sign_in', :remote => true, :id => 'login_form' do %>
-    <div class="form_settings">
-      <p>
-        <span style="width:175px">Username or Email Address</span>
-        <%= text_field_tag "login"%>
-      </p>
-      <p>
-        <span style="width:175px">Password</span>
-        <%= password_field_tag "password"%>
-      </p>
-      <input type="hidden" name="logout_to" value="<%=@logout_to%>" />
-      <input type="hidden" name="login_to" value="<%=@login_to%>" />
-      <p style="padding-top: 15px">
-        <span style="width:175px">&nbsp;</span>
-        <%= submit_tag "Login", :disable_with => "Please wait...", :class => "submit", :style => 'margin:0px;'%>
-        <%unless @signup_url.blank?%> | <%= link_to 'Sign Up', @signup_url %> <%end%> <%unless @reset_password_url.blank?%> | <%= link_to 'Reset Password', @reset_password_url %> <%end%>
-      </p>
-    </div>
+<div style="width:500px;" id="<%= widget_result_id %>">
+  <% if @message %>
+      <div class="alert alert-info">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <%= @message %>
+      </div>
   <% end %>
 </div>
+<div>
+  <%= form_tag '/session/sign_in', :remote => true, :id => 'login_form' do %>
+
+      <div class="form-group">
+        <label for="login">Username or Email address</label>
+        <%= text_field_tag "login", nil, :class => "form-control", :placeholder => "Login or email" %>
+      </div>
+
+      <div class="form-group">
+        <%= password_field_tag "password", nil, :class => "form-control", :placeholder => "**********" %>
+      </div>
+
+      <input type="hidden" name="logout_to" value="<%= @logout_to %>"/>
+      <input type="hidden" name="login_to" value="<%= @login_to %>"/>
+
+      <p class="text-center">
+        <%= submit_tag "Login", :disable_with => "Please wait...", :class => "btn btn-primary submit", :style => '' %>
+        <% unless @signup_url.blank? %> | <%= link_to 'Sign Up', @signup_url %>
+        <% end %>
+        <% unless @reset_password_url.blank? %> | <%= link_to 'Reset Password', @reset_password_url %>
+        <% end %>
+      </p>
+
+  <% end %>
+</div>
+
 <script type="text/javascript">
-jQuery('#login_form').bind('ajaxComplete', function(e, xhr, settings){
-  var response = jQuery.parseJSON(xhr.responseText);
-  if(response.success){
-    window.location = response.login_to;
-  }
-  else{
-    jQuery('#<%=widget_result_id%>').html('<div class="sexyerror">'+response.errors.reason+'</div>');
-  }
-});
+    jQuery('#login_form').bind('ajax:success', function (e, response) {
+        var html = '';
+
+        if (response.success) {
+            window.location = response.login_to;
+        }
+        else {
+            html = [
+                '<div class="alert alert-danger" >',
+                '<button type="button" class="close" data-dismiss="alert">&times;</button>',
+                response.errors.reason,
+                '</div>'
+            ].join('');
+        }
+
+        jQuery('#<%=widget_result_id%>').html(html);
+    });
 </script>
 
 

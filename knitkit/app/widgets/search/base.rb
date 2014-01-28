@@ -5,40 +5,35 @@ module Widgets
       include Rails.application.routes.url_helpers
       include WillPaginate::ActionView
 
-      def set_variables
-        @results_permalink = params[:results_permalink]
-        @section_permalink = params[:section_permalink]
-        @content_type = params[:content_type]
-        @per_page = params[:per_page]
-        @css_class = params[:class]
-
-        if @results_permalink.nil? or @results_permalink.blank?
-          @ajax_results = true
-        else
-          @ajax_results = false
-        end
-      end
-
       def index
-        set_variables
+        @section_unique_name = params[:section_unique_name]
+        @content_type = params[:content_type]
+        @search_url = params[:search_url]
+        @per_page = params[:per_page] || 10
+        @redirect_results = params[:redirect_results] || false
+        @inline = params[:inline]
+        @results = nil
+
+        if params[:query].present?
+          query = params[:query].strip
+          page = params[:page] || 1
+
+          @results = self.perform_search(query, @content_type, @section_unique_name, @per_page, page)
+        end
+
         render
       end
 
-      def new
-        set_variables
-        @website = Website.find_by_host(request.host_with_port)
+      def search
+        @query = params[:query].strip
+        @content_type = params[:content_type]
+        @section_unique_name = params[:section_unique_name]
+        @per_page = params[:per_page]
+        page = params[:page] || 1
 
-        options = {
-          :website_id => @website.id,
-          :query => params[:query],
-          :content_type => params[:content_type],
-          :section_permalink => params[:section_permalink],
-          :page => (params[:page] || 1),
-          :per_page => (params[:per_page] || 20)
-        }
-        @results = Content.do_search(options)
+        @results = self.perform_search(@query, @content_type, @section_unique_name, @per_page, page)
 
-        if @ajax_results
+        if request.xhr?
           render :update => {:id => "#{@uuid}_result", :view => :show}
         else
           render :view => :show
@@ -68,6 +63,23 @@ module Widgets
             return nil
           end
         end
+      end
+
+      protected
+
+      def perform_search(query, content_type, section_unique_name, per_page, page)
+        website = Website.find_by_host(request.host_with_port)
+
+        options = {
+            :website_id => website.id,
+            :section_unique_name => section_unique_name,
+            :query => query,
+            :content_type => content_type,
+            :page => page,
+            :per_page => per_page
+        }
+
+        Content.do_search(options)
       end
 
     end

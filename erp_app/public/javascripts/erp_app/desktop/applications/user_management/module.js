@@ -4,7 +4,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement", {
     init: function () {
         this.launcher = {
             text: 'User Management',
-            iconCls: 'icon-user',
+            iconCls: 'icon-user-mgt',
             handler: this.createWindow,
             scope: this
         };
@@ -21,7 +21,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement", {
                 title: 'User Management',
                 width: 1100,
                 height: 550,
-                iconCls: 'icon-user',
+                iconCls: 'icon-user-mgt',
                 shim: false,
                 animCollapse: false,
                 constrainHeader: true,
@@ -218,7 +218,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
                 width: 50,
                 items: [
                     {
-                        icon: '/images/icons/document_view/document_view_16x16.png',
+                        icon: '/images/icons/person/person_16x16.png',
                         tooltip: 'View',
                         handler: function (grid, rowIndex, colIndex) {
                             var rec = grid.getStore().getAt(rowIndex);
@@ -238,7 +238,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
                 width: 50,
                 items: [
                     {
-                        icon: '/images/icons/key/key_16x16.png',
+                        icon: '/images/icons/secure/secure_16x16.png',
                         tooltip: 'Reset Password',
                         handler: function (grid, rowIndex, colIndex) {
                             Ext.MessageBox.confirm('Confirm', "Are you sure you want to reset this users's password?", function (btn) {
@@ -287,7 +287,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
         if (currentUser.hasCapability('create', 'User')) {
             toolBarItems.push({
                 text: 'Add User',
-                iconCls: 'icon-add',
+                iconCls: 'btn-add-light',
                 handler: function () {
                     var addUserWindow = Ext.create("Ext.window.Window", {
                         width: 325,
@@ -439,10 +439,14 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
         config = Ext.apply({
             width: 460,
             region: 'west',
+            split:true,
+            collapsible: true,
+            header: false,
             store: usersStore,
             loadMask: false,
             columns: columns,
             tbar: {
+                ui: 'ide-main',
                 items: toolBarItems
             },
             bbar: Ext.create("Ext.toolbar.Paging", {

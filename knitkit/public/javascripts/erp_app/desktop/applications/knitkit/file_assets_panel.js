@@ -1,6 +1,7 @@
 Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.FileAssetsPanel",{
   extend:"Ext.tab.Panel",
   alias:'widget.knitkit_FileAssetsPanel',
+  cls: 'file-assets-panel',
 
   constructor : function(config) {
     this.websiteId = null;

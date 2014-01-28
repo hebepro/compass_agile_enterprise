@@ -1,15 +1,15 @@
-<div class="sexyerror">
+<div class="alert alert-danger">
   <h2>There was an error.</h2>
-<%if !@user.errors.empty?%>
-  <h3>Please address the following issues</h3>
-<hr>
-  <ul>
-    <%  @user.errors.each do |attribute,error| %>
- 	<li class="error_text"><%=  attribute.to_s.capitalize %> : <%=  error %> </li>
-    <%end%>
-  </ul>
-<%end%>
+  <% if !@user.errors.empty? %>
+      <h3>Please address the following issues</h3>
+      <hr>
+      <ul>
+        <% @user.errors.each do |attribute, error| %>
+            <li class="error_text"><%= attribute.to_s.capitalize %> : <%= error %> </li>
+        <% end %>
+      </ul>
+  <% end %>
 </div>
-<br />
+<br/>
 <%= render "/signup_form" %>
 

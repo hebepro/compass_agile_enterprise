@@ -1,0 +1,50 @@
+<style>
+  .summary-title {
+      font-size: 16px;
+      margin: 10px 0px 20px 20px;
+  }
+  .summary-title label {
+      font-weight: bold;
+  }
+  .summary-panel {
+      width: 70%;
+      background-color: #eee;
+      border-radius: 3px;
+      padding: 20px;
+      margin-left: auto;
+      margin-right: auto;
+  }
+  .field-group {
+      width: 500px;
+      padding: 2px;
+  }
+  .label {
+      display: inline-block;
+      width: 200px;
+      text-align: right;
+      margin: 2px 5px 2px;
+      font-weight: bold;
+  }
+</style>
+
+<div>
+  <div class="summary-title">
+    <label>Inventory Entry Description:</label>
+    <span><%= @inventory_entry.current_storage_facility.description rescue "Storage facility not defined." %></span>
+  </div>
+  <div class="summary-panel">
+    <div class='field-group'>
+      <label class="label">Facility: </label>
+      <span><%= @inventory_entry.current_storage_facility.description rescue "Storage facility not defined." %></span>
+    </div>
+    <div class='field-group'>
+      <label class="label">Number Available:</label>
+      <span><%= @inventory_entry.number_available rescue "No availability information." %></span>
+    </div>
+    <div class='field-group'>
+      <label class="label">SKU:</label>
+      <span><%= @inventory_entry.sku rescue "No SKU information." %></span>
+    </div>
+  </div>
+
+</div>

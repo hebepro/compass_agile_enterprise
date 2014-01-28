@@ -1,0 +1,165 @@
+<div style="margin-top:5px;" id="phoneMessageArea"></div>
+<table class="table table-striped" id="phoneNumbersTable">
+  <thead>
+  <tr>
+    <th>Phone Number</th>
+    <th>Contact Type</th>
+    <th>&nbsp;</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @phone_numbers.each do |p| %>
+      <tr id="phone<%= p.id %>">
+        <td><%= p.phone_number %></td>
+        <td><%= p.contact.contact_purposes.first.description %></td>
+        <td>
+          <button type="button"
+                  class="phoneDeleteBtn btn btn-danger"
+                  data-id="<%= p.id %>">Delete
+          </button>
+        </td>
+      </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<button type="button" id="addPhoneBtn" class="btn btn-success">Add Phone Number</button>
+
+<div id="addPhoneDiv" style="display:none;">
+  <%= form_tag build_widget_url(:add_phone_number), :remote => true, :id => 'phone_number_form', :role => 'form' do %>
+      <div class="form-group">
+        <%= label_tag :phone_number %>
+        <%= text_field_tag :phone_number, nil, class: 'form-control', required: true %>
+
+        <%= label_tag :contact_purpose  %>
+        <%= select_tag("contact_purpose", options_for_select(@purpose_hash, :selected => "default"), :class => "form-control") %>
+
+      </div>
+      <button id="submitPhoneBtn" type="submit" class="btn btn-primary">Submit</button>
+      <button id="cancelPhoneBtn" type="button" class="btn btn-default">Cancel</button>
+  <% end %>
+</div>
+
+<script type="text/javascript">
+
+    jQuery('#phone_number').mask("(999) 999-9999");
+
+    phonesPanel = {
+        setup: function () {
+            jQuery('#addPhoneBtn').click(function () {
+                var addBtn = jQuery(this);
+
+                addBtn.css('display', 'none');
+                jQuery('#addPhoneDiv').css('display', '');
+            });
+
+            jQuery('#cancelPhoneBtn').click(function () {
+                var addBtn = jQuery('#addPhoneBtn');
+
+                addBtn.css('display', '');
+                jQuery('#addPhoneDiv').css('display', 'none');
+            });
+
+            jQuery('#phone_number_form').bind('ajax:success', function (e, response) {
+                var html = '';
+
+                if (response.success) {
+                    html = [
+                        '<div class="alert alert-success" >',
+                        '<button type="button" class="close" data-dismiss="alert">&times;</button>',
+                        response.message,
+                        '</div>'
+                    ].join('');
+
+                    var newRowHtml = [
+                        '<tr id="phone' + response.phone.id + '">',
+                        '<td>' + response.phone.phone_number + '</td>',
+                        '<td>' + response.phone.contact_purpose + '</td>',
+                        '<td>',
+                        '<button type="button" class="phoneDeleteBtn btn btn-danger" data-id="' + response.phone.id + '" >Delete</button>',
+                        '</td>',
+                        '</tr>'
+                    ].join('');
+
+                    jQuery('#phoneNumbersTable > tbody:last').append(newRowHtml);
+
+                    var newDeleteBtn = jQuery('#phoneNumbersTable > tbody:last > tr:last > td:last > button');
+
+                    newDeleteBtn.confirmModal({
+                        confirmCallback: phonesPanel.deletePhone,
+                        confirmMessage   : 'Are you sure you want to remove this phone number ?'
+                    });
+
+
+                    jQuery('#addPhoneBtn').css('display', '');
+                    jQuery('#addPhoneDiv').css('display', 'none');
+                    jQuery('#phone_number_form')[0].reset();
+                }
+                else {
+                    html = [
+                        '<div class="alert alert-danger" >',
+                        '<button type="button" class="close" data-dismiss="alert">&times;</button>',
+                        response.message,
+                        '</div>'
+                    ].join('');
+                }
+
+                jQuery('#phoneMessageArea').html(html);
+            });
+
+            window['phonesPanel'].bindDeleteBtn();
+        },
+
+        bindDeleteBtn: function () {
+            jQuery('.phoneDeleteBtn').confirmModal({
+                confirmCallback: phonesPanel.deletePhone,
+                confirmMessage   : 'Are you sure you want to remove this phone number ?'
+            });
+        },
+
+        deletePhone: function (link, data) {
+            var id = data.id;
+
+            jQuery.ajax({
+                url: '<%= build_widget_url(:remove_phone_number) %>',
+                data: {phone_number_id: id},
+                success: function (data) {
+                    if (data.success) {
+                        html = [
+                            '<div class="alert alert-success" >',
+                            '<button type="button" class="close" data-dismiss="alert">&times;</button>',
+                            data.message,
+                            '</div>'
+                        ].join('');
+
+                        jQuery('#phoneMessageArea').html(html);
+
+                        jQuery('#phone' + id).remove();
+                    }
+                    else {
+                        html = [
+                            '<div class="alert alert-danger" >',
+                            '<button type="button" class="close" data-dismiss="alert">&times;</button>',
+                            data.message,
+                            '</div>'
+                        ].join('');
+
+                        jQuery('#phoneMessageArea').html(html);
+                    }
+                },
+                error: function () {
+                    html = [
+                        '<div class="alert alert-danger" >',
+                        '<button type="button" class="close" data-dismiss="alert">&times;</button>',
+                        'Could not remove phone number',
+                        '</div>'
+                    ].join('');
+
+                    jQuery('#phoneMessageArea').html(html);
+                }
+            });
+        }
+    };
+
+    phonesPanel.setup();
+</script>

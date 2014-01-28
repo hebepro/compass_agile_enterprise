@@ -194,9 +194,10 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
             tabPanels.push({
                 xtype: 'crmpartygrid',
                 title: partyRelationship.title,
+                securityRoles: partyRelationship.securityRoles || [],
                 allowedPartyType: partyRelationship.allowedPartyType || 'Both',
                 applicationContainerId: me.applicationContainerId,
-                addBtnDescription: 'Add ' + Ext.String.capitalize(partyRelationship.fromRoleType),
+                addBtnDescription: partyRelationship.addBtnDescription || ('Add ' + Ext.String.capitalize(partyRelationship.fromRoleType)),
                 searchDescription: 'Search ' + partyRelationship.title,
                 toRole: partyRelationship.toRoleType,
                 toPartyId: me.partyId,

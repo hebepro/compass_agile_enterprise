@@ -1,7 +1,10 @@
-<% links.each do |link| %>
-<% unless link[:title] == links.first[:title]%>
->
-<%end %>
-<a href="<%= link[:url] %>"><%=link[:title]%></a>
-<%  end %>
-<br/>
+<ol class="breadcrumb">
+  <% links.each do |link| %>
+      <% if link[:title] == links.last[:title] %>
+          <li class="active"><%= link[:title] %></li>
+      <% else %>
+          <li><a href="<%= link[:url] %>"><%= link[:title] %></a></li>
+      <% end %>
+  <% end %>
+  <br/>
+</ol>

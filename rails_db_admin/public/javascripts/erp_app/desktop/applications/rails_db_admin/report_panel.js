@@ -64,7 +64,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.ReportPanel", {
                 },
                 {
                     text:'Execute Report',
-                    iconCls:'icon-settings',
+                    iconCls:'icon-playpause',
                     handler:function(btn){
                         var webNavigator = window.compassDesktop.getModule('web-navigator-win');
                         webNavigator.createWindow('/reports/display/'+me.initialConfig.internalIdentifier);

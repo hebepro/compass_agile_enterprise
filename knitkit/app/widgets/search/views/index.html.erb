@@ -1,3 +1,5 @@
-<p>
-  <%=render :partial => '/search' %>
-</p>
+<% if @inline %>
+    <%= render :partial => 'inline_search_form' %>
+<% else %>
+    <%= render :partial => 'search_form' %>
+<% end %>

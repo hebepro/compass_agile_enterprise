@@ -3,10 +3,12 @@ Ext.define("Compass.ErpApp.Login.Window", {
     alias: "compass.erpapp.login.window",
     requires: ["Ext.Window"],
     layout: 'fit',
+    width: 400,
     defaultButton: 'login',
     buttonAlign: 'center',
     closable: false,
     plain: true,
+    ui: 'main-login-window',
     submitForm: function () {
         var form = this.query('form')[0];
         var basicForm = form.getForm();
@@ -39,7 +41,7 @@ Ext.define("Compass.ErpApp.Login.Window", {
     },
     constructor: function (config) {
         this.applicationContainerCombo = Ext.create('Ext.form.field.ComboBox', {
-            width: 250,
+            width: 375,
             fieldLabel: 'Login To',
             allowBlank: false,
             forceSelection: true,
@@ -68,7 +70,7 @@ Ext.define("Compass.ErpApp.Login.Window", {
                 {
                     xtype: 'textfield',
                     fieldLabel: 'Username or Email Address',
-                    width: 250,
+                    width: 375,
                     allowBlank: false,
                     id: 'login',
                     name: 'login',
@@ -84,7 +86,7 @@ Ext.define("Compass.ErpApp.Login.Window", {
                     xtype: 'textfield',
                     fieldLabel: 'Password',
                     inputType: 'password',
-                    width: 250,
+                    width: 375,
                     allowBlank: false,
                     id: 'password',
                     name: 'password',

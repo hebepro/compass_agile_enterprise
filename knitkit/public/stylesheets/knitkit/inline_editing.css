@@ -46,7 +46,7 @@ div.modal-container{
     left:35%;
     width: 455px;
     height: 55px;
-    overflow: hidden;
+    overflow: auto;
     padding: 10px;
     text-align: center;
 }
@@ -59,6 +59,7 @@ div.modal-container{
     font: 100% arial;
     border: 1px solid;
     width: 60px;
+    height: 15px;
     padding: 2px 0 3px 0;
     cursor: pointer;
     background: #263C56;
@@ -85,3 +86,4 @@ div.ckeditor_wrapper{
     filter: alpha(opacity=80);
 }
 /* end inline editing */
+

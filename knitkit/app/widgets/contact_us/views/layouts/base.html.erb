@@ -1,7 +1,10 @@
-<h2><%=h @website_section.title %></h2>
+<div style="margin-top:10px;" class="container">
+  <div class="row">
+    <div class="col-lg-1" style="margin: 0 auto;float:none;width:500px;">
+      <h2><%= @website_section.title %></h2>
 
-<% @contents.each do |content| %>
-  <%=raw content.body_html %>
-<% end %>
-  
-<%= render_widget :contact_us %>
+      <%= render_widget :contact_us %>
+
+    </div>
+  </div>
+</div>

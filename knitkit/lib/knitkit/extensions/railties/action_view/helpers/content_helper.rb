@@ -6,13 +6,15 @@ module Knitkit
           module ContentHelper
 
             def setup_inline_editing
-                if can_inline_edit?
-                  raw "<script type='text/javascript'>
-                      jQuery(document).ready(function() {
-                          Knitkit.InlineEditing.setup(#{@website.id});
+              if can_inline_edit?
+                raw "<script type='text/javascript'>
+                     jQuery(document).ready(function() {
+                         new OnDemandLoadByAjax().load('/javascripts/erp_app/ckeditor/ckeditor.js', function(){
+                            Knitkit.InlineEditing.setup(#{@website.id});
+                          });
                       });
                     </script>"
-                end
+              end
             end
 
             def render_editable_content(content_version, additional_css_classes=[])
@@ -41,8 +43,8 @@ module Knitkit
               html = ''
 
               section_contents = WebsiteSectionContent.includes(:content).
-                                 where(:website_section_id => @website_section.id, :content_area => name.to_s).
-                                 order(:position).all
+                  where(:website_section_id => @website_section.id, :content_area => name.to_s).
+                  order(:position).all
               published_contents = []
               section_contents.each do |sc|
                 content_version = Content.get_published_version(@active_publication, sc.content) unless @active_publication.nil?
@@ -63,7 +65,7 @@ module Knitkit
             end
 
             private
-            
+
             def can_inline_edit?
               result = false
               unless (current_user.nil? or current_user === false)

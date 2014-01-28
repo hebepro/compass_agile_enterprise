@@ -27,10 +27,5 @@ module ErpApp
     ErpBaseErpSvcs.register_as_compass_ae_engine(config, self)
     ::ErpApp::Widgets::Loader.load_root_widgets(config)
 
-  	config.to_prepare do
-      #will_paginate patch
-      require 'erp_app/extensions/will_paginate_patch'
-    end
-
   end
 end

@@ -1,34 +1,39 @@
-<%= form_remote_tag build_widget_url(:new), :success => "call_success" do %>
+<%= form_remote_tag build_widget_url(:new), :class => "form-signin", :style => 'max-width: 500px;' do %>
     <div class="form_settings">
-      <p>
-        <span> <%= label_tag :first_name,'First Name' %> </span>
-        <%= text_field_tag :first_name, params[:first_name] %>
+
+      <div class="form-group">
+        <label for="first_name">Enter your name</label>
+        <%= text_field_tag :first_name, nil, :class => "form-control", :placeholder => "First Name", :required => true %>
+      </div>
+      <div class="form-group">
+
+        <%= text_field_tag :last_name, nil, :class => "form-control", :placeholder => "Last Name", :required => true %>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <%= text_field_tag :email, params[:email], :class => "form-control", :placeholder => "Enter a valid email address", :required => true, :type => 'email' %>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Create a user name to log on to the system</label>
+        <%= text_field_tag :username, params[:username], :class => "form-control", :placeholder => "Enter a username", :required => true %>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Enter a password</label>
+        <%= password_field_tag :password, nil, :class => "form-control", :placeholder => "", :required => true %>
+      </div>
+
+      <div class="form-group">
+        <label for="password_confirmation">Confirm your password</label>
+        <%= password_field_tag :password_confirmation, nil, :class => "form-control", :placeholder => "", :required => true %>
+      </div>
+
+      <p class="text-center">
+        <%= submit_tag "Sign up", :disable_with => "Please wait...", :class => "btn btn-primary submit", :style => ''%>
       </p>
-      <p>
-        <span> <%= label_tag :last_name, 'Last Name' %> </span>
-        <%= text_field_tag :last_name, params[:last_name] %>
-      </p>
-      <p>
-        <span> <%= label_tag :email, 'Email' %>  </span>
-        <%= text_field_tag :email, params[:email] %>
-      </p>
-      <p>
-        <span> <%= label_tag :username, 'Username' %> </span>
-        <%= text_field_tag :username, params[:username] %>
-      </p>
-      <p>
-        <span> <%= label_tag :password, 'Password'  %> </span>
-        <%= password_field_tag :password,  nil%>
-      </p>
-      <p>
-        <span> <%= label_tag :password_confirmation , 'Confirm Password' %>  </span>
-        <%= password_field_tag :password_confirmation, nil %>
-      </p>
-      <p style="padding-top: 15px">
-        <span>&nbsp;</span>
-        <%=  submit_tag "Sign Up", :disable_with => "Please wait...", :class => "submit", :style => 'margin: 0 0 0 0px;' %>
-      </p>
+
     </div>
     <input type="hidden" value="<%=@login_url%>" name="login_url" />
 <% end %>
- 

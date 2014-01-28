@@ -1,4 +1,6 @@
-<div id="document_content">
+<div style="margin-top:10px;" class="container">
+  <div id="document_content">
+  </div>
 </div>
 
 <script type="text/javascript" charset="utf-8">
@@ -213,7 +215,6 @@
             width: 800,
             header: false,
             defaults: {
-                collapsible: true,
                 split: true
             },
             renderTo: 'document_content',
@@ -229,7 +230,7 @@
         Ext.Ajax.request({
             url: '/online_document_sections/get_content',
             params: {
-                document_section_id:'<%= @root.internal_identifier %>',
+                document_section_id: '<%= @root.internal_identifier %>',
                 section_id:<%= @root.id %>
             },
             success: function (response) {

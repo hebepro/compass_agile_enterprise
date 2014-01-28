@@ -1,6 +1,24 @@
-Ext.ns("Compass.ErpApp.Utility");
+var Compass = window['Compass'] || {};
+Compass['ErpApp'] = Compass['ErpApp'] || {};
+Compass.ErpApp['Utility'] = Compass.ErpApp['Utility'] || {};
 
 //handle session timeout
+Compass.ErpApp.Utility.createNamespace = function (namespaces) {
+    var spaces = namespaces.split('.'),
+        currentNamespace = null;
+
+    for (var i = 0; i < spaces.length; i++) {
+        var space = spaces[i];
+
+        if (currentNamespace) {
+            currentNamespace = currentNamespace[space] = currentNamespace[space] || {}
+        }
+        else {
+            currentNamespace = window[space] = window[space] || {};
+        }
+    }
+};
+
 Compass.ErpApp.Utility.SessionTimeout = {
     enabled: false,
     redirectTo: null,
@@ -27,20 +45,64 @@ Compass.ErpApp.Utility.SessionTimeout = {
             case 'start':
                 var self = this;
                 this.warnTimer = window.setTimeout(function () {
-                    Ext.MessageBox.confirm('Confirm', 'Your session is about to expire due to inactivity. Do you wish to continue this session?', function (btn) {
-                        if (btn == 'no') {
+                    if (window['Ext']) {
+                        Ext.MessageBox.confirm('Confirm', 'Your session is about to expire due to inactivity. Do you wish to continue this session?', function (btn) {
+                            if (btn == 'no') {
+                                window.location = self.redirectTo;
+                            }
+                            else if (btn == 'yes') {
+                                Ext.Ajax.request({
+                                    method: 'POST',
+                                    url: '/session/keep_alive',
+                                    success: function (result, request) {
+                                        self.reset();
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    else {
+                        var warningModal = jQuery('<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>'),
+                            modalDialog = jQuery('<div class="modal-dialog"></div>'),
+                            modalContent = jQuery('<div class="modal-content"></div>'),
+                            modalHeader = jQuery('<div class="modal-header"><h4 class="modal-title" id="myModalLabel">Please Confirm</h4></div>'),
+                            modalBody = jQuery('<div class="modal-body">Your session is about to expire due to inactivity. Do you wish to continue this session?</div>'),
+                            footer = jQuery('<div class="modal-footer"></div>'),
+                            yesBtn = jQuery('<button type="button" class="btn btn-default" data-dismiss="modal">Yes</button>'),
+                            noBtn = jQuery('<button type="button" class="btn btn-primary" data-dismiss="modal">No</button>');
+
+                        footer.append(yesBtn);
+                        footer.append(noBtn);
+                        modalContent.append(modalHeader);
+                        modalContent.append(modalBody);
+                        modalContent.append(footer);
+                        modalDialog.append(modalContent);
+                        warningModal.append(modalDialog);
+
+                        noBtn.bind('click', function () {
+                            warningModal.modal('hide');
+                            warningModal.remove();
                             window.location = self.redirectTo;
-                        }
-                        else if (btn == 'yes') {
-                            Ext.Ajax.request({
+                        });
+
+                        yesBtn.bind('click', function () {
+                            warningModal.modal('hide');
+                            warningModal.remove();
+
+                            jQuery.ajax({
                                 method: 'POST',
                                 url: '/session/keep_alive',
                                 success: function (result, request) {
                                     self.reset();
                                 }
                             });
-                        }
-                    });
+                        });
+
+                        jQuery("body").append(warningModal);
+
+                        warningModal.modal({backdrop: false});
+                    }
+
                 }, this.warnInMilliseconds);
                 break;
             case 'stop':
@@ -49,8 +111,9 @@ Compass.ErpApp.Utility.SessionTimeout = {
         }
     },
     setupSessionTimeout: function (warnInMilliseconds, redirectInMilliseconds, redirectTo) {
-        var self = this;
-        Ext.Ajax.addListener('requestcomplete', this.reset, this);
+        if (window['Ext']) {
+            Ext.Ajax.addListener('requestcomplete', this.reset, this);
+        }
 
         this.enabled = true;
         this.redirectTo = redirectTo;
@@ -70,16 +133,18 @@ Compass.ErpApp.Utility.SessionTimeout = {
 };
 //end handle session timeout
 
-Compass.ErpApp.Utility.confirmBrowserNavigation = function (additionalmessage) {
-    additionalmessage = additionalmessage || null;
+Compass.ErpApp.Utility.confirmBrowserNavigation = function (additionalMessage) {
+    var me = this;
+
+    additionalMessage = additionalMessage || null;
     window.onbeforeunload = function () {
-        return Ext.isEmpty(additionalmessage) ? '' : additionalmessage;
+        return me.isBlank(additionalMessage) ? '' : additionalMessage;
     }
 };
 
 Compass.ErpApp.Utility.disableEnterSubmission = function () {
-    $(function () {
-        $("form").bind("keypress", function (e) {
+    jQuery(function () {
+        jQuery("form").bind("keypress", function (e) {
             if (e.keyCode == 13) return false;
         });
     });
@@ -93,26 +158,30 @@ Compass.ErpApp.Utility.evaluateScriptTags = function (element) {
 };
 
 Compass.ErpApp.Utility.promptReload = function () {
-    Ext.MessageBox.confirm('Confirm', 'Page must reload for changes to take affect. Reload now?', function (btn) {
-        if (btn == 'no') {
-            return false;
-        }
-        else {
-            window.location.reload();
-        }
-    });
+    if (window['Ext']) {
+        Ext.MessageBox.confirm('Confirm', 'Page must reload for changes to take affect. Reload now?', function (btn) {
+            if (btn == 'no') {
+                return false;
+            }
+            else {
+                window.location.reload();
+            }
+        });
+    }
 };
 
 Compass.ErpApp.Utility.handleFormFailure = function (action) {
-    switch (action.failureType) {
-        case Ext.form.action.Action.CLIENT_INVALID:
-            Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid values');
-            break;
-        case Ext.form.action.Action.CONNECT_FAILURE:
-            Ext.Msg.alert('Failure', 'Ajax communication failed');
-            break;
-        case Ext.form.action.Action.SERVER_INVALID:
-            Ext.Msg.alert('Failure', action.result.msg);
+    if (window['Ext']) {
+        switch (action.failureType) {
+            case Ext.form.action.Action.CLIENT_INVALID:
+                Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid values');
+                break;
+            case Ext.form.action.Action.CONNECT_FAILURE:
+                Ext.Msg.alert('Failure', 'Ajax communication failed');
+                break;
+            case Ext.form.action.Action.SERVER_INVALID:
+                Ext.Msg.alert('Failure', action.result.msg);
+        }
     }
 };
 
@@ -170,30 +239,6 @@ Compass.ErpApp.Utility.numbersOnly = function (e, decimal) {
         return false;
 };
 
-//FIXME: This is broken; missing the Ext.ux.util.clone file
-Compass.ErpApp.Utility.clone = function (o) {
-    if (!o || 'object' !== typeof o) {
-        return o;
-    }
-    if ('function' === typeof o.clone) {
-        return o.clone();
-    }
-    var c = '[object Array]' === Object.prototype.toString.call(o) ? [] : {};
-    var p, v;
-    for (p in o) {
-        if (o.hasOwnProperty(p)) {
-            v = o[p];
-            if (v && 'object' === typeof v) {
-                c[p] = Ext.ux.util.clone(v);
-            }
-            else {
-                c[p] = v;
-            }
-        }
-    }
-    return c;
-};
-
 Compass.ErpApp.Utility.addCommas = function (nStr) {
     nStr += '';
     var x = nStr.split('.');
@@ -206,12 +251,17 @@ Compass.ErpApp.Utility.addCommas = function (nStr) {
     return x1 + x2;
 };
 
-Compass.ErpApp.Utility.isBlank = function (value) {
-    return Ext.isEmpty(value);
+Compass.ErpApp.Utility.isBlank = function (obj) {
+    if (window['Ext']) {
+        return Ext.isEmpty(obj);
+    }
+    else {
+        return(!obj || jQuery.trim(obj) === "" || obj.length == 0);
+    }
 };
 
 Compass.ErpApp.Utility.removeDublicates = function (arrayName) {
-    var newArray = new Array();
+    var newArray = [];
     label:for (var i = 0; i < arrayName.length; i++) {
         for (var j = 0; j < newArray.length; j++) {
             if (newArray[j].unit_id == arrayName[i].unit_id)
@@ -256,20 +306,20 @@ Compass.ErpApp.Utility.formatCurrency = function (num) {
     return (((sign) ? '' : '-') + '$' + num + '.' + cents);
 };
 
-Compass.ErpApp.Utility.addEventHandler = function(obj, evt, handler) {
-    if(obj.addEventListener) {
+Compass.ErpApp.Utility.addEventHandler = function (obj, evt, handler) {
+    if (obj.addEventListener) {
         // W3C method
         obj.addEventListener(evt, handler, false);
-    } else if(obj.attachEvent) {
+    } else if (obj.attachEvent) {
         // IE method.
-        obj.attachEvent('on'+evt, handler);
+        obj.attachEvent('on' + evt, handler);
     } else {
         // Old school method.
-        obj['on'+evt] = handler;
+        obj['on' + evt] = handler;
     }
 };
 
-function OnDemandLoadByAjax(){
+function OnDemandLoadByAjax() {
     this.load = function (components, callback) {
         this.components = components;
         this.successCallBack = callback;
@@ -335,7 +385,7 @@ function OnDemandLoadByAjax(){
     };
 
     this.onSuccess = function () {
-        if (!Ext.isEmpty(this.successCallBack) && this.successCallBack) {
+        if (this.successCallBack) {
             this.successCallBack();
         }
     };
@@ -462,13 +512,13 @@ String.prototype.titleize = function () {
 //Function Extensions
 
 Function.prototype.bindToEventHandler = function bindToEventHandler() {
-  var handler = this;
-  var boundParameters = Array.prototype.slice.call(arguments);
-  //create closure
-  return function(e) {
-      e = e || window.event; // get window.event if e argument missing (in IE)   
-      boundParameters.unshift(e);
-      handler.apply(this, boundParameters);
-  }
+    var handler = this;
+    var boundParameters = Array.prototype.slice.call(arguments);
+    //create closure
+    return function (e) {
+        e = e || window.event; // get window.event if e argument missing (in IE)
+        boundParameters.unshift(e);
+        handler.apply(this, boundParameters);
+    }
 };
 

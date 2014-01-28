@@ -10,6 +10,12 @@ Ext.define('Compass.ErpApp.Shared.Crm.UserForm', {
      */
     addPartyBtn: '/images/erp_app/organizer/applications/crm/customer_360_64x64.png',
 
+    /**
+     * @cfg {String[]} securityRoles
+     * Array of SecurityRoles to add to users during creation.
+     */
+    securityRoles: [],
+
     initComponent: function () {
         var me = this;
 
@@ -20,8 +26,11 @@ Ext.define('Compass.ErpApp.Shared.Crm.UserForm', {
                 checkboxName: 'userEnabled',
                 title: 'User Information',
                 flex: 1,
-                defaultType: 'textfield',
                 style: 'padding: 10px',
+                defaults: {
+                    xtype: 'textfield',
+                    width: 350
+                },
                 items: [
                     {
                         fieldLabel: 'Username',
@@ -59,7 +68,7 @@ Ext.define('Compass.ErpApp.Shared.Crm.UserForm', {
                         itemId: 'statusContainer',
                         fieldLabel: 'Status',
                         defaultType: 'radiofield',
-                        columns: [100, 100, 100],
+                        columns: [120, 120, 120],
                         items: [
                             {
                                 boxLabel: 'Active',
@@ -83,12 +92,28 @@ Ext.define('Compass.ErpApp.Shared.Crm.UserForm', {
                         xtype: 'hidden',
                         itemId: 'userId',
                         name: 'id'
+                    },
+                    {
+                        xtype: 'hidden',
+                        itemId: 'skipUserActivationEmail',
+                        name: 'skip_activation_email',
+                        value: false
+                    },
+                    {
+                        xtype: 'hidden',
+                        name: 'security_roles',
+                        value: me.securityRoles.join()
                     }
                 ]
             }
         ];
 
         this.callParent(arguments);
+
+        if (me.skipUserActivationEmail) {
+            me.down('#statusContainer').show();
+            me.down('#skipUserActivationEmail').setValue(true);
+        }
     },
 
     loadUser: function (partyId, userId) {
@@ -96,6 +121,9 @@ Ext.define('Compass.ErpApp.Shared.Crm.UserForm', {
 
         me.partyId = partyId;
         me.userId = userId;
+
+        var myMask = new Ext.LoadMask(me, {msg: "Please wait..."});
+        myMask.hide();
 
         // Load user details
         Ext.Ajax.request({
@@ -105,6 +133,7 @@ Ext.define('Compass.ErpApp.Shared.Crm.UserForm', {
                 party_id: me.partyId
             },
             success: function (response) {
+                myMask.hide();
                 var responseObj = Ext.JSON.decode(response.responseText);
 
                 if (responseObj.success) {

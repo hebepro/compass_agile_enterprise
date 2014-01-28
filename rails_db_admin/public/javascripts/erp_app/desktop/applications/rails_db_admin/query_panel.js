@@ -32,7 +32,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.QueryPanel", {
         var tbarItems = [
             {
                 text: 'Execute',
-                iconCls: 'icon-settings',
+                iconCls: 'icon-playpause',
                 handler: function (button) {
                     var textarea = self.query('.codemirror')[0];
                     var sql = textarea.getValue();

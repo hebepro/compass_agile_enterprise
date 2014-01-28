@@ -1,3 +1,5 @@
+Compass.ErpApp.Utility.createNamespace("Knitkit");
+
 Knitkit.InlineEditing = {
     contentDiv: null,
     websiteId: null,
@@ -26,29 +28,43 @@ Knitkit.InlineEditing = {
 
     closeEditorClick: function () {
         //make sure modal is not already showing
-        if ($("#warning-modal").length === 0) {
+        if (jQuery("#warning-modal").length === 0) {
             var editor = CKEDITOR.instances['inlineEditTextarea'];
             if (editor.checkDirty()) {
                 jQuery('#editableContentOverlay').css('z-index', '1003');
 
-                var warningModal = jQuery("<div id='warning-modal'></div>");
-                warningModal.append('<span>You have unsaved changes. Are you sure you want to exit?</span><br/><br/>');
+                var warningModal = jQuery('<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>'),
+                    modalDialog = jQuery('<div class="modal-dialog"></div>'),
+                    modalContent = jQuery('<div class="modal-content"></div>'),
+                    modalHeader = jQuery('<div class="modal-header"><h4 class="modal-title" id="myModalLabel">Please Confirm</h4></div>'),
+                    modalBody = jQuery('<div class="modal-body">You have unsaved changes. Are you sure you want to exit?</div>'),
+                    footer = jQuery('<div class="modal-footer"></div>'),
+                    yesBtn = jQuery('<button type="button" class="btn btn-default" data-dismiss="modal">Yes</button>'),
+                    noBtn = jQuery('<button type="button" class="btn btn-primary" data-dismiss="modal">No</button>');
 
-                var noBtn = jQuery('<input class="warning-btn" type="button" value="No" />');
+                footer.append(yesBtn);
+                footer.append(noBtn);
+                modalContent.append(modalHeader);
+                modalContent.append(modalBody);
+                modalContent.append(footer);
+                modalDialog.append(modalContent);
+                warningModal.append(modalDialog);
+
                 noBtn.bind('click', function () {
+                    warningModal.modal('hide');
                     warningModal.remove();
                     jQuery('#editableContentOverlay').css('z-index', '1001');
                 });
 
-                var yesBtn = jQuery('<input class="warning-btn" type="button" value="Yes" />');
                 yesBtn.bind('click', function () {
                     Knitkit.InlineEditing.closeEditor(editor);
+                    warningModal.modal('hide');
                     warningModal.remove();
                 });
 
-                warningModal.append(noBtn);
-                warningModal.append(yesBtn);
                 jQuery("body").append(warningModal);
+
+                warningModal.modal({backdrop:false});
             }
             else {
                 Knitkit.InlineEditing.closeEditor(editor);
@@ -58,19 +74,22 @@ Knitkit.InlineEditing = {
     },
 
     setup: function (websiteId) {
+        var content = jQuery('div.knitkit_content'),
+            body = jQuery("body");
+
         this.websiteId = websiteId;
 
-        jQuery('div.knitkit_content').bind('mouseenter', function () {
+        content.bind('mouseenter', function () {
             var div = jQuery(this);
             div.addClass('knitkit-inlineedit-editable');
         });
 
-        jQuery('div.knitkit_content').bind('mouseleave', function () {
+        content.bind('mouseleave', function () {
             var div = jQuery(this);
             div.removeClass('knitkit-inlineedit-editable');
         });
 
-        jQuery('div.knitkit_content').bind('click', function () {
+        content.bind('click', function () {
             var self = Knitkit.InlineEditing;
             var div = jQuery(this);
             self.contentId = div.attr('contentid');
@@ -78,7 +97,7 @@ Knitkit.InlineEditing = {
             var data = div.html();
 
             var textarea = jQuery('<textarea name="inline-edit-textarea" id="inlineEditTextarea" ></textarea>');
-            var closeLink = jQuery("<a class='inline-edit-close'><img src='images/knitkit/close.png' /></a>");
+            var closeLink = jQuery("<a class='inline-edit-close'><img src='images/knitkit/close_window.png' /></a>");
             var messageSpan = jQuery("<span class='inline-edit-message' id='inlineEditMessage'>Last Update: <span id='inlineEditLastUpdate'>" + self.lastUpdate + "</span><span id='inlineEditSaveResult'></span></span>");
 
             var editableContentContainer = jQuery("<div id='editableContentContainer' style='font-size:12px;' class='modal-container'></div>");
@@ -93,8 +112,8 @@ Knitkit.InlineEditing = {
 
             var overlay = jQuery("<div id='editableContentOverlay' class='modal-overlay'></div>");
 
-            jQuery("body").append(editableContentContainer);
-            jQuery("body").append(overlay);
+            body.append(editableContentContainer);
+            body.append(overlay);
 
             closeLink.bind('click', self.closeEditorClick);
 

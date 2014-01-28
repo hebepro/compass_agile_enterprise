@@ -7,13 +7,10 @@ class CreateTailDesktopApplication
       :internal_identifier => 'tail',
       :shortcut_id => 'tail-win'
     )
-    pt1 = PreferenceType.iid('desktop_shortcut')
-    pt1.preferenced_records << app
-    pt1.save
-
-    pt2 = PreferenceType.iid('autoload_application')
-    pt2.preferenced_records << app
-    pt2.save
+    
+    app.preference_types << PreferenceType.iid('desktop_shortcut')
+    app.preference_types << PreferenceType.iid('autoload_application')
+    app.save
   end
 
   def self.down

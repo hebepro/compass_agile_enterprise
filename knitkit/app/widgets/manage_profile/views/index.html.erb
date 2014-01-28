@@ -1,54 +1,52 @@
 <div id="<%= widget_result_id %>">
   <% if @message %>
-    <div class="<%=@message_cls || 'sexynotice'%>">
-      <%= @message %>
-    </div>
+      <div class="alert alert-success">
+        <%= @message %>
+      </div>
   <% end %>
-  <div>
+</div>
 
-    <!-- *************************************** Update User Information ************************************* -->
-
-    <a href="#" onclick="var state = document.getElementById('user_info_hide_show').style.display;
-            if (state == 'block') {
-                    document.getElementById('user_info_hide_show').style.display = 'none';
-                    } else {
-                    document.getElementById('user_info_hide_show').style.display = 'block';
-                    }
-            return false;
-    "><h2 style="border-width: 0px 0px 1px; border-style: solid;">User Information</h2></a>
-
-    <div id="user_info_hide_show">
-      <%= render :partial => '/user_information_form' %>
+<div class="panel-group" id="accordion">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#userInformation">
+          User Information
+        </a>
+      </h4>
     </div>
-
-    <!-- *************************************** Update Password ************************************* -->
-
-    <a href="#" onclick="var state = document.getElementById('password_hide_show').style.display;
-            if (state == 'block') {
-                    document.getElementById('password_hide_show').style.display = 'none';
-                    } else {
-                    document.getElementById('password_hide_show').style.display = 'block';
-                    }
-            return false;
-    "><h2 style="border-width: 0px 0px 1px; border-style: solid;">Password</h2></a>
-
-    <div id="password_hide_show" style="display: none;">
-      <%= render :partial => '/password_form' %>
+    <div id="userInformation" class="panel-collapse collapse in">
+      <div class="panel-body">
+        <%= render :partial => '/user_information_form' %>
+      </div>
     </div>
-
-    <!-- *************************************** Update Contact Information ************************************* -->
-
-    <a href="#" onclick="var state = document.getElementById('contact_info_hide_show').style.display;
-            if (state == 'block') {
-                    document.getElementById('contact_info_hide_show').style.display = 'none';
-                    } else {
-                    document.getElementById('contact_info_hide_show').style.display = 'block';
-                    }
-            return false;
-    "><h2 style="border-width: 0px 0px 1px; border-style: solid;">Contact Information</h2></a>
-
-    <div id="contact_info_hide_show" style="display: none;">
-      <%= render :partial => '/contact_information_form' %>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#password">
+          Password
+        </a>
+      </h4>
+    </div>
+    <div id="password" class="panel-collapse collapse">
+      <div class="panel-body">
+        <%= render :partial => '/password_form' %>
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#contactInformation">
+          Contact Information
+        </a>
+      </h4>
+    </div>
+    <div id="contactInformation" class="panel-collapse collapse">
+      <div class="panel-body">
+        <%= render :partial => '/contact_information_form' %>
+      </div>
     </div>
   </div>
 </div>
