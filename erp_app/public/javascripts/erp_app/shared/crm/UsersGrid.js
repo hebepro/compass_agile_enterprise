@@ -142,6 +142,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
         this.store = Ext.create('Ext.data.Store', {
             autoLoad: false,
             autoSync: true,
+            remoteSort: true,
             proxy: {
                 type: 'ajax',
                 url: '/erp_app/organizer/crm/users',
@@ -237,7 +238,8 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
                 columns.push({
                     header: relationship.title,
                     dataIndex: relationship.toRoleType,
-                    width: 150
+                    width: 150,
+                    sortable: false
                 })
             });
         }
@@ -251,7 +253,8 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
             {
                 header: 'Full Name',
                 dataIndex: 'partyDescription',
-                width: 200
+                width: 200,
+                sortable: false
             },
             {
                 header: 'Email',

@@ -12,6 +12,11 @@ module ErpApp
           included_party_to_relationships = ActiveSupport::JSON.decode params[:included_party_to_relationships]
           query_filter = params[:query_filter] || nil
 
+          # determine sorting
+          sort_hash = params[:sort].present? ? ActiveSupport::JSON.decode(params[:sort]).first : {}
+          order_by = sort_hash['property'] || 'created_at'
+          direction = sort_hash['direction'] || 'desc'
+
           user_table = User.arel_table
 
           statement = User.joins(:party => :party_roles).where(:party_roles => {:role_type_id => RoleType.iid(party_role).id})
@@ -43,7 +48,7 @@ module ErpApp
           end
 
           total = statement.uniq.count
-          users = statement.uniq.limit(limit).offset(offset).all
+          users = statement.uniq.order("#{order_by} #{direction}").limit(limit).offset(offset).all
 
           data = {
               :success => true,
