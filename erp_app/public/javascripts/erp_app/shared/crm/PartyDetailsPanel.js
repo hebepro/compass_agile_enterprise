@@ -110,6 +110,10 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
             items: [
                 {
                     xtype: 'panel',
+                    style:{
+                        borderRight: 'solid 2px black'
+                    },
+                    header: false,
                     collapsible: true,
                     region: 'west',
                     width: 155,

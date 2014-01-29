@@ -16,6 +16,7 @@ Compass.ErpApp.Organizer.Applications.Crm.Base = function (config) {
                     partyRelationships: [
                         {
                             title: 'Employees',
+                            allowedPartyType: 'Individual',
                             relationshipType: 'employee_customer',
                             toRoleType: 'customer',
                             fromRoleType: 'employee'
@@ -48,7 +49,7 @@ Compass.ErpApp.Organizer.Applications.Crm.Base = function (config) {
                                         style: {
                                             marginRight: '5px'
                                         },
-                                        handler:function(btn){
+                                        handler: function (btn) {
                                             btn.up('form').getForm().reset();
                                         }
                                     },
@@ -56,7 +57,7 @@ Compass.ErpApp.Organizer.Applications.Crm.Base = function (config) {
                                         xtype: 'button',
                                         text: 'Go!',
                                         width: 50,
-                                        handler:function(btn){
+                                        handler: function (btn) {
                                             Ext.getCmp('crmTaskTabPanel').down('#customersPanel').getStore().load();
                                         }
                                     }
