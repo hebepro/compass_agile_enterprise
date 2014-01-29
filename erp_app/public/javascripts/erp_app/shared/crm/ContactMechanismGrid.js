@@ -83,8 +83,8 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
             autoLoad: false,
             autoSync: true,
             proxy: {
-                type: 'rest',
-                url: config['url'] || '/erp_app/organizer/crm/contact_mechanisms',
+                type: 'ajax',
+                url: '/erp_app/organizer/crm/contact_mechanisms',
                 extraParams: {
                     party_id: config['partyId'],
                     contact_type: config['contactMechanism']
@@ -96,48 +96,6 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
                     root: 'data',
                     totalProperty: 'totalCount',
                     messageProperty: 'message'
-                },
-                writer: {
-                    type: 'json',
-                    writeAllFields: true,
-                    root: 'data'
-                },
-                listeners: {
-                    exception: function (proxy, response, operation) {
-                        Ext.MessageBox.show({
-                            title: 'REMOTE EXCEPTION',
-                            msg: 'Make sure an Individual or Organization is selected' + config.title,
-                            icon: Ext.MessageBox.ERROR,
-                            buttons: Ext.Msg.OK
-                        });
-
-                        me.setLoading(false);
-                    }
-                }
-            },
-            listeners: {
-                'beforesync': function () {
-                    me.setLoading(true);
-                },
-                'datachanged': function () {
-                    me.setLoading(false);
-                },
-                'write': function (store, operation) {
-                    var record = operation.getRecords()[0];
-
-                    switch (operation.action) {
-                        case 'create':
-                            me.fireEvent('contactcreated', me, config['contactMechanism'], record);
-                            break;
-                        case 'update':
-                            me.fireEvent('contactupdated', me, config['contactMechanism'], record);
-                            break;
-                        case 'destroy':
-                            me.fireEvent('contactdestroyed', me, config['contactMechanism'], record);
-                            break;
-                    }
-
-                    me.store.load();
                 }
             }
         });
@@ -167,37 +125,26 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
                 dataIndex: 'contact_purpose_id',
                 renderer: function () {
                     var record = arguments[2];
-                    if (!Compass.ErpApp.Utility.isBlank(record.data['contact_purpose_id'])) {
-                        return config['contactPurposeStore'].getAt(config['contactPurposeStore'].find("id", record.data['contact_purpose_id'])).get("description");
+                    if (!Compass.ErpApp.Utility.isBlank(record.data.contact_purpose_id)) {
+                        return config['contactPurposeStore'].getAt(config['contactPurposeStore'].find("id", record.data.contact_purpose_id)).get("description");
                     }
                     else {
                         return '';
                     }
                 },
-                editor: {
-                    xtype: 'combo',
-                    forceSelection: true,
-                    typeAhead: false,
-                    queryMode: 'local',
-                    displayField: 'description',
-                    valueField: 'id',
-                    value: 1,
-                    store: config['contactPurposeStore'],
-                    selectOnFocus: true
-                },
-                width: 200
+                flex: 1
             },
             {
                 header: 'Created',
                 dataIndex: 'created_at',
                 renderer: Ext.util.Format.dateRenderer('m/d/Y g:i a'),
-                width: 200
+                flex: 1
             },
             {
                 header: 'Last Update',
                 dataIndex: 'updated_at',
                 renderer: Ext.util.Format.dateRenderer('m/d/Y g:i a'),
-                width: 200
+                flex: 1
             }
         ]);
 
@@ -212,6 +159,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
 
         config.columns.unshift({
             header: 'Primary',
+            flex: 0.5,
             dataIndex: 'is_primary',
             renderer: function (v) {
                 if (v) {
@@ -227,18 +175,8 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
             }
         });
 
-        if (!config.validations)
-            config.validations = [];
-        config.validations = config.validations.concat({
-            type: 'presence',
-            field: 'contact_purpose_id'
-        });
 
-        if (config.fields === undefined) {
-            config.fields = [];
-        }
-
-        config.fields = config.fields.concat([
+        config.fields = config.dataFields.concat([
             {
                 name: 'contact_purpose_id'
             },
@@ -260,37 +198,92 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
             }
         ]);
 
-        var Model = Ext.define(config.title, {
-            extend: 'Ext.data.Model',
-            fields: config.fields,
-            validations: config.validations
-        });
-
-        this.editing = Ext.create('Ext.grid.plugin.RowEditing', {
-            clicksToMoveEditor: 1
-        });
-
         var toolBarItems = [
             {
                 text: 'Add',
                 xtype: 'button',
                 iconCls: 'icon-add',
                 handler: function (button) {
-                    var grid = button.findParentByType('contactmechanismgrid');
-                    var edit = grid.editing;
-                    var model = null;
+                    var grid = button.up('grid'),
+                        fields = config.formFields;
 
-                    if (grid.initialConfig.contactMechanism == 'PostalAddress') {
-                        model = new Model({
-                            country: 'USA'
-                        });
-                    }
-                    else {
-                        model = new Model();
-                    }
+                    Ext.create('widget.window', {
+                        closable: false,
+                        modal: true,
+                        buttonAlign: 'center',
+                        title: config.addFormTitle,
+                        layout: 'fit',
+                        items: [
+                            {
+                                xtype: 'form',
+                                url: '/erp_app/organizer/crm/contact_mechanisms',
+                                bodyPadding: 5,
+                                width: 250,
+                                layout: 'anchor',
+                                defaults: {
+                                    anchor: '100%'
+                                },
+                                defaultType: 'textfield',
+                                items: fields
+                            }
+                        ],
+                        buttons: [
+                            {
+                                text: 'Add',
+                                handler: function (btn) {
+                                    var window = btn.up('window'),
+                                        form = window.down('form');
 
-                    grid.store.insert(0, model);
-                    edit.startEdit(0, 0);
+                                    if (form.isValid()) {
+                                        form.submit({
+                                            waitMsg: 'Saving...',
+                                            method: 'POST',
+                                            params: {
+                                                party_id: config['partyId'],
+                                                contact_type: config['contactMechanism']
+                                            },
+                                            success: function (form, action) {
+                                                if (action.result.success) {
+                                                    window.close();
+
+                                                    grid.getView().getSelectionModel().deselectAll();
+                                                    grid.store.load();
+
+                                                    grid.fireEvent('contactcreated', me, config['contactMechanism'], action.result.data);
+                                                }
+                                                else {
+                                                    Ext.Msg.alert('Failed', action.result.msg);
+                                                }
+                                            },
+                                            failure: function (form, action) {
+                                                Ext.Msg.alert('Failed', action.result.msg);
+                                            }
+                                        })
+                                    }
+                                }
+                            },
+                            {
+                                text: 'Cancel',
+                                handler: function (btn) {
+                                    btn.up('window').close();
+                                }
+                            }
+                        ]
+                    }).show();
+                }
+            },
+            '-',
+            {
+                text: 'Edit',
+                type: 'button',
+                iconCls: 'icon-edit',
+                handler: function (button) {
+                    var grid = button.up('grid'),
+                        selection = grid.getView().getSelectionModel().getSelection()[0];
+
+                    if (selection) {
+                        grid.editContact(selection);
+                    }
                 }
             },
             '-',
@@ -302,11 +295,36 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
                     var grid = button.findParentByType('contactmechanismgrid');
                     var selection = grid.getView().getSelectionModel().getSelection()[0];
                     if (selection) {
-                        var messageBox = Ext.MessageBox.confirm(
+
+                        Ext.MessageBox.confirm(
                             'Confirm', 'Are you sure?',
                             function (btn) {
                                 if (btn == 'yes') {
-                                    grid.store.remove(selection);
+                                    Ext.Ajax.request({
+                                        url: '/erp_app/organizer/crm/contact_mechanisms/' + selection.get('id'),
+                                        params: {
+                                            party_id: config['partyId'],
+                                            contact_type: config['contactMechanism']
+                                        },
+                                        method: 'DELETE',
+                                        success: function (response) {
+                                            responseObj = Ext.JSON.decode(response.responseText);
+
+                                            if (responseObj.success) {
+                                                grid.getView().getSelectionModel().deselectAll();
+                                                grid.store.load();
+
+                                                grid.fireEvent('contactdestroyed', me, config['contactMechanism'], selection);
+                                            }
+                                            else {
+                                                Ext.Msg.alert('Failed', 'Could not remove');
+                                            }
+
+                                        },
+                                        failure: function () {
+                                            Ext.Msg.alert('Failed', 'Could not remove');
+                                        }
+                                    });
                                 }
                             }
                         );
@@ -319,12 +337,36 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
             toolBarItems = toolBarItems.concat(config.toolbarItems);
         }
 
+        config.formFields.unshift({
+            name: 'description',
+            fieldLabel: 'Description'
+        });
+
+        config.formFields.unshift({
+            name: 'is_primary',
+            fieldLabel: 'Primary Contact',
+            xtype: 'checkbox'
+        });
+
+        config.formFields.push({
+            xtype: 'combo',
+            fieldLabel: 'Contact Purpose',
+            name: 'contact_purpose_id',
+            forceSelection: true,
+            typeAhead: false,
+            queryMode: 'local',
+            displayField: 'description',
+            valueField: 'id',
+            value: 1,
+            store: config['contactPurposeStore'],
+            selectOnFocus: true
+        });
+
         config = Ext.apply({
             layout: 'fit',
             frame: false,
             region: 'center',
             loadMask: true,
-            plugins: [this.editing],
             dockedItems: {
                 xtype: 'toolbar',
                 docked: 'top',
@@ -332,20 +374,90 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
             }
         }, config);
 
+        var listeners = {
+            itemdblclick: function(grid, record, item, index){
+                grid.ownerCt.editContact(record);
+            }
+        };
+
+        config['listeners'] = Ext.apply(listeners, config['listeners']);
+
         this.callParent([config]);
+    },
 
-        this.on('edit', function (editor, e) {
-            if (!e.record.isValid()) {
-                Ext.Msg.alert('Error', 'Please complete all required fields');
-                return false;
-            }
-        });
+    editContact: function (selection) {
+        var grid = this,
+            config = this.initialConfig,
+            fields = config.formFields;
 
-        this.on('canceledit', function (editor, e) {
-            if (Ext.isEmpty(e.record.data.id)) {
-                e.grid.store.remove(e.record);
+        Ext.create('widget.window', {
+            closable: false,
+            modal: true,
+            buttonAlign: 'center',
+            title: config.addFormTitle,
+            layout: 'fit',
+            items: [
+                {
+                    xtype: 'form',
+                    bodyPadding: 5,
+                    width: 250,
+                    layout: 'anchor',
+                    defaults: {
+                        anchor: '100%'
+                    },
+                    defaultType: 'textfield',
+                    items: fields
+                }
+            ],
+            buttons: [
+                {
+                    text: 'Update',
+                    handler: function (btn) {
+                        var window = btn.up('window'),
+                            form = window.down('form');
+
+                        if (form.isValid()) {
+                            form.submit({
+                                url: '/erp_app/organizer/crm/contact_mechanisms/' + selection.get('id'),
+                                waitMsg: 'Saving...',
+                                method: 'PUT',
+                                params: {
+                                    party_id: config['partyId'],
+                                    contact_type: config['contactMechanism']
+                                },
+                                success: function (form, action) {
+                                    if (action.result.success) {
+                                        window.close();
+
+                                        grid.getView().getSelectionModel().deselectAll();
+                                        grid.store.load();
+
+                                        grid.fireEvent('contactupdated', me, config['contactMechanism'], action.result.data);
+                                    }
+                                    else {
+                                        Ext.Msg.alert('Failed', action.result.msg);
+                                    }
+                                },
+                                failure: function (form, action) {
+                                    Ext.Msg.alert('Failed', action.result.msg);
+                                }
+                            })
+                        }
+                    }
+                },
+                {
+                    text: 'Cancel',
+                    handler: function (btn) {
+                        btn.up('window').close();
+                    }
+                }
+            ],
+            listeners: {
+                show: function () {
+                    this.down('form').getForm().setValues(selection.data);
+                }
             }
-        });
+        }).show();
     }
 });
 
@@ -357,34 +469,35 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
 Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid.PhoneNumberGrid", {
     extend: "Compass.ErpApp.Shared.Crm.ContactMechanismGrid",
     alias: 'widget.phonenumbergrid',
-    initComponent: function () {
-        this.callParent(arguments);
-    },
+
     constructor: function (config) {
-        config.title = 'Phone Numbers';
-        config.contactMechanism = 'PhoneNumber';
-        config.columns = [
-            {
-                header: 'Phone Number',
-                dataIndex: 'phone_number',
-                editor: {
-                    xtype: 'textfield'
-                },
-                width: 200
-            }
-        ];
-        config.fields = [
-            {
-                name: 'phone_number'
-            }
-        ];
-        config.validations = [
-            {
-                type: 'presence',
-                field: 'phone_number'
-            }
-        ];
-        this.callParent([config]);
+
+        this.callParent([Ext.apply(config, {
+            title: 'Phone Numbers',
+            contactMechanism: 'PhoneNumber',
+            columns: [
+                {
+                    header: 'Phone Number',
+                    dataIndex: 'phone_number',
+                    flex: 1,
+                    width: 200
+                }
+            ],
+            dataFields: [
+                {
+                    name: 'phone_number'
+                }
+            ],
+            addFormTitle: 'Add Phone Number',
+            editFormTitle: 'Edit Phone Number',
+            formFields: [
+                {
+                    fieldLabel: 'Phone Number',
+                    name: 'phone_number',
+                    allowBlank: false
+                }
+            ]
+        })]);
     }
 });
 
@@ -396,141 +509,144 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid.PhoneNumberGrid", {
 Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid.EmailAddressGrid", {
     extend: "Compass.ErpApp.Shared.Crm.ContactMechanismGrid",
     alias: 'widget.emailaddressgrid',
-    initComponent: function () {
-        this.callParent(arguments);
-    },
+
     constructor: function (config) {
-        config.title = 'Email Addresses';
-        config.contactMechanism = 'EmailAddress';
-        config.columns = [
-            {
-                header: 'Email Address',
-                dataIndex: 'email_address',
-                editor: {
-                    xtype: 'textfield'
-                },
-                width: 200
-            }
-        ];
-        config.fields = [
-            {
-                name: 'email_address'
-            }
-        ];
-        config.validations = [
-            {
-                type: 'presence',
-                field: 'email_address'
-            }
 
-        ];
-        config.toolbarItems = [
-            '-',
-            {
-                xtype: 'button',
-                text: 'Send Email',
-                iconCls: 'icon-mail',
-                handler: function (btn) {
-                    var required = '<span style="color:red;font-weight:bold" data-qtip="Required">*</span>',
-                        grid = btn.findParentByType('emailaddressgrid'),
-                        selection = grid.getView().getSelectionModel().getSelection()[0],
-                        sendEmailWindow = null;
+        this.callParent([Ext.apply(config, {
+            title: 'Email Addresses',
+            contactMechanism: 'EmailAddress',
+            columns: [
+                {
+                    header: 'Email Address',
+                    dataIndex: 'email_address',
+                    flex: 1,
+                    editor: {
+                        xtype: 'textfield'
+                    },
+                    width: 200
+                }
+            ],
+            dataFields: [
+                {
+                    name: 'email_address'
+                }
+            ],
+            toolbarItems: [
+                '-',
+                {
+                    xtype: 'button',
+                    text: 'Send Email',
+                    iconCls: 'icon-mail',
+                    handler: function (btn) {
+                        var required = '<span style="color:red;font-weight:bold" data-qtip="Required">*</span>',
+                            grid = btn.findParentByType('emailaddressgrid'),
+                            selection = grid.getView().getSelectionModel().getSelection()[0],
+                            sendEmailWindow = null;
 
-                    if (selection) {
-                        if (!sendEmailWindow) {
-                            var form = Ext.widget('form', {
-                                layout: {
-                                    type: 'vbox',
-                                    align: 'stretch'
-                                },
-                                border: false,
-                                bodyPadding: 10,
-                                buttonAlign: 'center',
-                                fieldDefaults: {
-                                    labelAlign: 'top',
-                                    labelWidth: 100,
-                                    labelStyle: 'font-weight:bold'
-                                },
-                                items: [
-                                    {
-                                        xtype: 'displayfield',
-                                        fieldLabel: 'Send To',
-                                        width: 300,
-                                        value: selection.get('email_address')
+                        if (selection) {
+                            if (!sendEmailWindow) {
+                                var form = Ext.widget('form', {
+                                    layout: {
+                                        type: 'vbox',
+                                        align: 'stretch'
                                     },
-                                    {
-                                        xtype: 'textfield',
-                                        fieldLabel: 'CC',
-                                        width: 300,
-                                        vtype: 'email',
-                                        name: 'cc_email'
+                                    border: false,
+                                    bodyPadding: 10,
+                                    buttonAlign: 'center',
+                                    fieldDefaults: {
+                                        labelAlign: 'top',
+                                        labelWidth: 100,
+                                        labelStyle: 'font-weight:bold'
                                     },
-                                    {
-                                        xtype: 'textfield',
-                                        fieldLabel: 'Subject',
-                                        name: 'subject',
-                                        width: 300,
-                                        afterLabelTextTpl: required,
-                                        allowBlank: false
-                                    },
-                                    {
-                                        xtype: 'htmleditor',
-                                        name: 'message',
-                                        fieldLabel: 'Biography',
-                                        height: 200,
-                                        allowBlank: false
-                                    }
-                                ],
+                                    items: [
+                                        {
+                                            xtype: 'displayfield',
+                                            fieldLabel: 'Send To',
+                                            width: 300,
+                                            value: selection.get('email_address')
+                                        },
+                                        {
+                                            xtype: 'textfield',
+                                            fieldLabel: 'CC',
+                                            width: 300,
+                                            vtype: 'email',
+                                            name: 'cc_email'
+                                        },
+                                        {
+                                            xtype: 'textfield',
+                                            fieldLabel: 'Subject',
+                                            name: 'subject',
+                                            width: 300,
+                                            afterLabelTextTpl: required,
+                                            allowBlank: false
+                                        },
+                                        {
+                                            xtype: 'htmleditor',
+                                            name: 'message',
+                                            fieldLabel: 'Biography',
+                                            height: 200,
+                                            allowBlank: false
+                                        }
+                                    ],
 
-                                buttons: [
-                                    {
-                                        text: 'Send',
-                                        handler: function (btn) {
-                                            if (this.up('form').getForm().isValid()) {
-                                                this.up('form').getForm().submit({
-                                                    waitMsg: 'sending email',
-                                                    url: '/erp_app/organizer/crm/contact_mechanisms/' + selection.get('id') + '/send_email',
-                                                    success: function (form, result) {
-                                                        btn.up('form').getForm().reset();
-                                                        btn.up('window').hide();
-                                                        Ext.Msg.alert('Email Sent!', 'Your emails has been sent.');
-                                                    },
-                                                    failure: function (form, result) {
-                                                        Ext.Msg.alert('Error', 'Could not send email.');
-                                                    }
-                                                });
+                                    buttons: [
+                                        {
+                                            text: 'Send',
+                                            handler: function (btn) {
+                                                if (this.up('form').getForm().isValid()) {
+                                                    this.up('form').getForm().submit({
+                                                        waitMsg: 'sending email',
+                                                        url: '/erp_app/organizer/crm/contact_mechanisms/' + selection.get('id') + '/send_email',
+                                                        success: function (form, result) {
+                                                            btn.up('form').getForm().reset();
+                                                            btn.up('window').hide();
+                                                            Ext.Msg.alert('Email Sent!', 'Your emails has been sent.');
+                                                        },
+                                                        failure: function (form, result) {
+                                                            Ext.Msg.alert('Error', 'Could not send email.');
+                                                        }
+                                                    });
 
 
+                                                }
+                                            }
+                                        },
+                                        {
+                                            text: 'Cancel',
+                                            handler: function () {
+                                                this.up('form').getForm().reset();
+                                                this.up('window').hide();
                                             }
                                         }
-                                    },
-                                    {
-                                        text: 'Cancel',
-                                        handler: function () {
-                                            this.up('form').getForm().reset();
-                                            this.up('window').hide();
-                                        }
-                                    }
-                                ]
-                            });
+                                    ]
+                                });
 
-                            sendEmailWindow = Ext.widget('window', {
-                                title: 'Send Email',
-                                closeAction: 'hide',
-                                layout: 'fit',
-                                resizable: true,
-                                modal: true,
-                                items: form,
-                                defaultFocus: 'firstName'
-                            });
+                                sendEmailWindow = Ext.widget('window', {
+                                    title: 'Send Email',
+                                    closeAction: 'hide',
+                                    layout: 'fit',
+                                    resizable: true,
+                                    modal: true,
+                                    items: form,
+                                    defaultFocus: 'firstName'
+                                });
+                            }
+                            sendEmailWindow.show();
                         }
-                        sendEmailWindow.show();
                     }
+                }],
+            addFormTitle: 'Add Email Address',
+            editFormTitle: 'Edit Email Address',
+            formFields: [
+                {
+                    fieldLabel: 'Email Address',
+                    name: 'email_address',
+                    vType: 'email',
+                    allowBlank: false
                 }
-            }
-        ];
+            ]
+        })]);
 
-        this.callParent([config]);
     }
 });
 
@@ -542,157 +658,147 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid.EmailAddressGrid", {
 Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid.PostalAddressGrid", {
     extend: "Compass.ErpApp.Shared.Crm.ContactMechanismGrid",
     alias: 'widget.postaladdressgrid',
-    initComponent: function () {
-        this.callParent(arguments);
-    },
+
     constructor: function (config) {
-        config.title = 'Postal Addresses';
-        config.contactMechanism = 'PostalAddress';
-        config.columns = [
-            {
-                header: 'Address Line 1',
-                dataIndex: 'address_line_1',
-                editor: {
-                    xtype: 'textfield'
+        this.callParent([Ext.apply(config, {
+            title: 'Postal Addresses',
+            contactMechanism: 'PostalAddress',
+            columns: [
+                {
+                    header: 'Address Line 1',
+                    flex: 1,
+                    dataIndex: 'address_line_1'
                 },
-                width: 200
-            },
-            {
-                header: 'Address Line 2',
-                dataIndex: 'address_line_2',
-                editor: {
-                    xtype: 'textfield'
+                {
+                    header: 'Address Line 2',
+                    flex: 1,
+                    dataIndex: 'address_line_2'
                 },
-                width: 200
-            },
-            {
-                header: 'City',
-                dataIndex: 'city',
-                editor: {
-                    xtype: 'textfield'
+                {
+                    header: 'City',
+                    flex: 1,
+                    dataIndex: 'city'
                 },
-                width: 200
-            },
-            {
-                header: 'State',
-                dataIndex: 'state',
-                editor: {
+                {
+                    header: 'State',
+                    flex: 1,
+                    dataIndex: 'state'
+                },
+                {
+                    header: 'Zip',
+                    flex: 0.5,
+                    dataIndex: 'zip'
+                },
+                {
+                    header: 'Country',
+                    flex: 0.5,
+                    dataIndex: 'country'
+                }
+            ],
+            dataFields: [
+                {
+                    name: 'address_line_1'
+                },
+                {
+                    name: 'address_line_2'
+                },
+                {
+                    name: 'city'
+                },
+                {
+                    name: 'state'
+                },
+                {
+                    name: 'zip'
+                },
+                {
+                    name: 'country'
+                }
+
+            ],
+            toolbarItems: [
+                '-',
+                {
+                    xtype: 'button',
+                    text: 'Map It',
+                    iconCls: 'icon-map',
+                    handler: function (button) {
+                        var grid = button.up('postaladdressgrid');
+                        var selection = grid.getView().getSelectionModel().getSelection()[0];
+                        if (selection) {
+                            var addressLines;
+                            if (Compass.ErpApp.Utility.isBlank(selection.get('address_line_2'))) {
+                                addressLines = selection.get('address_line_1');
+                            }
+                            else {
+                                addressLines = selection.get('address_line_1') + ' ,' + selection.get('address_line_2');
+                            }
+
+                            var fullAddress = addressLines + ' ,' + selection.get('city') + ' ,' + selection.get('state') + ' ,' + selection.get('zip') + ' ,' + selection.get('country');
+                            var mapwin = Ext.create('Ext.Window', {
+                                layout: 'fit',
+                                title: addressLines,
+                                width: 450,
+                                height: 450,
+                                border: false,
+                                items: {
+                                    xtype: 'googlemappanel',
+                                    zoomLevel: 17,
+                                    mapType: 'hybrid',
+                                    dropPins: [
+                                        {
+                                            address: fullAddress,
+                                            center: true,
+                                            title: addressLines
+                                        }
+                                    ]
+                                }
+                            });
+                            mapwin.show();
+                        }
+                    }
+                }
+            ],
+            addFormTitle: 'Add Postal Address',
+            editFormTitle: 'Edit Postal Address',
+            formFields: [
+                {
+                    fieldLabel: 'Address Line 1',
+                    name: 'address_line_1',
+                    allowBlank: false
+                },
+                {
+                    fieldLabel: 'Address Line 2',
+                    name: 'address_line_2'
+                },
+                {
+                    fieldLabel: 'City',
+                    name: 'city',
+                    allowBlank: false
+                },
+                {
+                    fieldLabel: 'State',
+                    name: 'state',
                     xtype: 'combo',
                     forceSelection: true,
                     typeAhead: true,
                     queryMode: 'local',
                     displayField: 'state',
                     valueField: 'geo_zone_code',
-                    store: statesStore
+                    store: statesStore,
+                    allowBlank: false
                 },
-                width: 200
-            },
-            {
-                header: 'Zip',
-                dataIndex: 'zip',
-                editor: {
-                    xtype: 'textfield'
+                {
+                    fieldLabel: 'Zip',
+                    name: 'zip',
+                    allowBlank: false
                 },
-                width: 200
-            },
-            {
-                header: 'Country',
-                dataIndex: 'country',
-                editor: {
-                    xtype: 'textfield'
-                },
-                width: 200
-            }
-        ];
-        config.fields = [
-            {
-                name: 'address_line_1'
-            },
-            {
-                name: 'address_line_2'
-            },
-            {
-                name: 'city'
-            },
-            {
-                name: 'state'
-            },
-            {
-                name: 'zip'
-            },
-            {
-                name: 'country'
-            }
-        ];
-        config.validations = [
-            {
-                type: 'presence',
-                field: 'address_line_1'
-            },
-
-            {
-                type: 'presence',
-                field: 'city'
-            },
-
-            {
-                type: 'presence',
-                field: 'state'
-            },
-
-            {
-                type: 'presence',
-                field: 'zip'
-            },
-
-            {
-                type: 'presence',
-                field: 'country'
-            }
-        ];
-        config.toolbarItems = [
-            '-',
-            {
-                xtype: 'button',
-                text: 'Map It',
-                iconCls: 'icon-map',
-                handler: function (button) {
-                    var grid = button.up('postaladdressgrid');
-                    var selection = grid.getView().getSelectionModel().getSelection()[0];
-                    if (selection) {
-                        var addressLines;
-                        if (Compass.ErpApp.Utility.isBlank(selection.get('address_line_2'))) {
-                            addressLines = selection.get('address_line_1');
-                        }
-                        else {
-                            addressLines = selection.get('address_line_1') + ' ,' + selection.get('address_line_2');
-                        }
-
-                        var fullAddress = addressLines + ' ,' + selection.get('city') + ' ,' + selection.get('state') + ' ,' + selection.get('zip') + ' ,' + selection.get('country');
-                        var mapwin = Ext.create('Ext.Window', {
-                            layout: 'fit',
-                            title: addressLines,
-                            width: 450,
-                            height: 450,
-                            border: false,
-                            items: {
-                                xtype: 'googlemappanel',
-                                zoomLevel: 17,
-                                mapType: 'hybrid',
-                                dropPins: [
-                                    {
-                                        address: fullAddress,
-                                        center: true,
-                                        title: addressLines
-                                    }
-                                ]
-                            }
-                        });
-                        mapwin.show();
-                    }
+                {
+                    fieldLabel: 'Country',
+                    name: 'country',
+                    allowBlank: false
                 }
-            }
-        ];
-        this.callParent([config]);
+            ]
+        })]);
     }
 });
