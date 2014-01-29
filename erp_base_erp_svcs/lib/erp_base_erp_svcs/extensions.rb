@@ -15,4 +15,6 @@ require 'erp_base_erp_svcs/extensions/active_record/has_contact'
 require 'erp_base_erp_svcs/extensions/active_record/sti_instantiation'
 require 'erp_base_erp_svcs/extensions/active_record/to_hash'
 require 'erp_base_erp_svcs/extensions/active_record/migration'
+require 'erp_base_erp_svcs/extensions/active_record/acts_as_fixed_asset'
+require 'erp_base_erp_svcs/extensions/active_record/acts_as_facility'
 
