@@ -796,6 +796,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid.PostalAddressGrid", {
                 {
                     fieldLabel: 'Country',
                     name: 'country',
+                    value: 'USA',
                     allowBlank: false
                 }
             ]
