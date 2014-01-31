@@ -9,10 +9,7 @@ module RoutingFilter
       if website
         paths = paths_for_website(website)
 
-        # if mobile is enabled and this is a mobile browser redirect to mobile site
-        if path.to_sym == :/ and mobile_browser?(env)
-          path.sub!(path, "/#{$1}knitkit_mobile#{$3}")
-        elsif path.to_sym == :/
+        if path.to_sym == :/
           home_page_url = website.configurations.first.get_configuration_item(ConfigurationItemType.find_by_internal_identifier('homepage_url')).options.first.value
           valid_section = website.website_sections.detect { |website_section| website_section.path == home_page_url }
           type = valid_section.type.pluralize.downcase
@@ -66,8 +63,5 @@ module RoutingFilter
       %r((#{types})/([\w]+(/?))(\.?)) # ?(?=\b)?
     end
 
-    def mobile_browser?(env)
-      env["HTTP_USER_AGENT"] && env["HTTP_USER_AGENT"][/(iPhone|iPod|iPad|Android)/]
-    end
   end
 end
