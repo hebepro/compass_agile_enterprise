@@ -439,6 +439,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                                 editPartyForm = Ext.create('widget.crmpartyformpanel', {
                                     title: title,
                                     itemId: itemId,
+                                    formFields: me.formFields,
                                     applicationContainerId: me.applicationContainerId,
                                     partyType: record.get('model'),
                                     partyId: record.get('id'),

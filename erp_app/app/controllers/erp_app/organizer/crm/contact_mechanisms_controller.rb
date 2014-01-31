@@ -43,14 +43,23 @@ module ErpApp
         def create
           party_id = params[:party_id]
           contact_type = params[:contact_type]
-          contact_purpose_id = params[:data][:contact_purpose_id]
-          params[:data].delete(:contact_purpose_id)
+          contact_purpose_id = params[:contact_purpose_id]
+
+          params[:is_primary] = (params[:is_primary] == 'on') ? true : nil
+
+          #remove additional attributes
+          params.delete(:action)
+          params.delete(:controller)
+          params.delete(:authenticity_token)
+          params.delete(:party_id)
+          params.delete(:contact_type)
+          params.delete(:contact_purpose_id)
 
           contact_mechanism_class = contact_type.constantize
           party = Party.find(party_id)
 
           contact_purpose = contact_purpose_id.blank? ? ContactPurpose.find_by_internal_identifier('default') : ContactPurpose.find(contact_purpose_id)
-          contact_mechanism = party.add_contact(contact_mechanism_class, params[:data], contact_purpose)
+          contact_mechanism = party.add_contact(contact_mechanism_class, params, contact_purpose)
 
           data = contact_mechanism.to_hash({
                                                contact_purpose_id: (contact_mechanism.contact_purpose_id),
@@ -65,11 +74,21 @@ module ErpApp
           party_id = params[:party_id]
           contact_type = params[:contact_type]
           contact_mechanism_id = params[:id]
-          contact_purpose_id = params[:data][:contact_purpose_id]
-          params[:data].delete(:id)
-          params[:data].delete(:contact_purpose_id)
-          params[:data].delete(:updated_at)
-          params[:data].delete(:created_at)
+          contact_purpose_id = params[:contact_purpose_id]
+
+          params[:is_primary] = (params[:is_primary] == 'on') ? true : nil
+
+          #remove additional attributes
+
+          params.delete(:action)
+          params.delete(:controller)
+          params.delete(:authenticity_token)
+          params.delete(:id)
+          params.delete(:party_id)
+          params.delete(:contact_type)
+          params.delete(:contact_purpose_id)
+          params.delete(:updated_at)
+          params.delete(:created_at)
 
           contact_mechanism = contact_type.constantize.find(contact_mechanism_id)
 
@@ -79,7 +98,7 @@ module ErpApp
           contact_mechanism.contact.save
 
           party = Party.find(party_id)
-          party.update_contact_with_purpose(contact_type.constantize, contact_purpose, params[:data])
+          party.update_contact_with_purpose(contact_type.constantize, contact_purpose, params)
 
           data = contact_mechanism.to_hash({
                                                contact_purpose_id: (contact_mechanism.contact_purpose_id),

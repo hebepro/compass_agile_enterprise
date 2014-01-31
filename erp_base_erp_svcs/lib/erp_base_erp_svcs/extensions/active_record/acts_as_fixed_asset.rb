@@ -1,4 +1,4 @@
-module ErpWorkEffort
+module ErpBaseErpSvcs
   module Extensions
     module ActiveRecord
       module ActsAsFixedAsset
