@@ -20,6 +20,8 @@ class InventoryEntry < ActiveRecord::Base
 
   alias_method :storage_facilities, :facilities
 
+  delegate :description, :sku, :unit_of_measurement, :to => :product_type, :prefix => true
+
   def current_location
     self.inventory_entry_locations
   end
@@ -48,19 +50,36 @@ class InventoryEntry < ActiveRecord::Base
         :description => self.description,
         :number_available => self.number_available,
         :number_in_stock => self.number_in_stock,
-        :sku => self.sku,
-        :unit_of_measurement_id => self.unit_of_measurement_id,
-        :unit_of_measurement_description => self.unit_of_measurement.description,
+        :sku => self.get_sku,
+        :unit_of_measurement_id => (self.get_uom.id rescue nil),
+        :unit_of_measurement_description => (self.get_uom.description rescue nil),
         :inventory_storage_facility_id => (self.current_storage_facility.id rescue nil),
         :inventory_storage_facility_description => (self.current_storage_facility.description rescue nil),
         :created_at => self.created_at,
-        :updated_at => self.updated_at
+        :updated_at => self.updated_at,
+        :product_type_id =>self.product_type_id,
+        :product_type_description => (self.product_type_description rescue nil)
     }
   end
 
-	 
   def to_label
     "#{description}"
+  end
+
+  def get_sku
+    if self.sku.blank?
+      self.product_type_sku
+    else
+      self.sku
+    end
+  end
+
+  def get_uom
+    if self.unit_of_measurement.nil?
+      self.product_type_unit_of_measurement
+    else
+      self.unit_of_measurement
+    end
   end
 
 end
