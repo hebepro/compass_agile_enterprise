@@ -59,7 +59,7 @@ Ext.define("Ext.ux.desktop.Desktop", {
     mainNavTpl: ["<a href='/signout' style='vertical-align: middle; color: #eee; text-decoration: none; float:right; margin-top: 10px; margin-right: 25px; padding: 0px 0px 3px 0px;'><img src='/images/icons/exit/exit_16x16.png' style='display: none; margin: 3px 4px 0px 0px;'/>Logout</a>"],
     shortcutTpl: ['<tpl for=".">',
         '<tpl if="(xindex-1) % 6 === 0">', '</div>', '</tpl>',
-        '<tpl if="xindex == 1 || (xindex-1) % 6 === 0">', '<div class="ux-desktop-shortcut-container">', '</tpl>',
+        '<tpl if="xindex == 1 || (xindex-1) % 6 === 0">', '<div id="desktop-shortcut-container" class="ux-desktop-shortcut-container">', '</tpl>',
         '<div class="ux-desktop-shortcut" id="{name}-shortcut">',
         '<div class="ux-desktop-shortcut-icon {iconCls}">',
         '<img src="', Ext.BLANK_IMAGE_URL, '" title="{name}">', "</div>",
@@ -812,7 +812,7 @@ Ext.define("Ext.ux.desktop.StartMenu", {
         delete a.toolItems;
         a.on("deactivate", function () {
             a.hide()
-        })
+        });
     },
     addMenuItem: function () {
         var a = this.menu;
@@ -849,6 +849,9 @@ Ext.define("Ext.ux.desktop.StartMenu", {
 
 Ext.define("Ext.ux.desktop.TaskBar", {
     extend: "Ext.toolbar.Toolbar",
+
+    id: 'desktop-start-menu',
+
     //ui: 'cleantoolbar-dark',
     requires: ["Ext.button.Button", "Ext.resizer.Splitter", "Ext.menu.Menu", "Ext.ux.desktop.StartMenu"],
     alias: "widget.taskbar",
@@ -880,6 +883,7 @@ Ext.define("Ext.ux.desktop.TaskBar", {
             "-",
             a.tray
         ];
+
         a.callParent()
     },
     afterLayout: function () {
