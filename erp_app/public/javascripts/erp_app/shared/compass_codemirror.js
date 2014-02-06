@@ -10,6 +10,7 @@
 
 Ext.define("Compass.ErpApp.Shared.CodeMirror", {
     extend: "Ext.panel.Panel",
+    header: false,
     alias: 'widget.codemirror',
     codeMirrorInstance: null,
 

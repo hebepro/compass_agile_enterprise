@@ -64,14 +64,24 @@
 /* including package ext-theme-neptune */
 /* including package compass-ae-default */
 /* including package compass-ae-default */
-/* line 3, ../../sass/var/Component.scss */
+/* line 4, ../../sass/var/Component.scss */
 .x-border-layout-ct {
   background-color: #537697 !important;
 }
 
-/* line 7, ../../sass/var/Component.scss */
+/* line 8, ../../sass/var/Component.scss */
 .masterPanel .x-tab-bar-strip-default-top {
   border-top-right-radius: 5px;
+}
+
+/* line 12, ../../sass/var/Component.scss */
+.x-form-field {
+  border-radius: 3px;
+}
+
+/* line 24, ../../sass/var/Component.scss */
+.x-tool-img {
+  background-color: inherit !important;
 }
 
 /** @class Ext.tab.Tab */
@@ -24314,12 +24324,4 @@ a.x-color-picker-item:hover {
 .x-panel-header-light-framed-collapsed-top-mr {
   zoom: 1;
   background-image: url(images/panel-header/panel-header-light-framed-collapsed-top-corners.gif);
-}
-
-/* line 418, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
-.x-panel-header-light-framed-collapsed-top-ml,
-.x-panel-header-light-framed-collapsed-top-mr {
-  zoom: 1;
-  background-image: url(images/panel-header/panel-header-light-framed-collapsed-top-sides.gif);
-  background-repeat: repeat-y;
 }

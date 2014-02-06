@@ -32,7 +32,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.ControlPanel.DesktopManagementPa
           editable:false,
           forceSelection:true,
           id:preferenceType.internal_identifier + '_id',
-          width:150,
+          width:250,
           triggerAction: 'all',
           store:store,
           name:preferenceType.internal_identifier,
@@ -54,7 +54,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.ControlPanel.DesktopManagementPa
           fieldLabel:preferenceType.description,
           name:preferenceType.internal_identifier,
           valueField:'field1',
-          width:150,
+          width:250,
           triggerAction: 'all',
           store:store
         });

@@ -195,6 +195,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
         var node = this.sitesTree.getStore().getNodeById("website_" + websiteId);
         if (node.data.iconCls != 'icon-globe') {
             node.set('iconCls', 'icon-globe');
+            node.expand(true);
             node.commit();
         }
         node.parentNode.eachChild(function (child) {
@@ -369,7 +370,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
                 'load':function(store, node, records){
                   if(records.length > 0){
 					var websiteId = records[0].id.split('_')[1];
-                  		westRegion = Ext.ComponentQuery.query('#knitkitWestRegion').first();
+                  	westRegion = Ext.ComponentQuery.query('#knitkitWestRegion').first();
                   	westRegion.selectWebsite(websiteId);
 				  }	
                 }
@@ -963,8 +964,9 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
             region:'south',
             header: false,
             split:true,
-            height:300,
-            collapsible:true
+            height:200,
+            collapsible:true,
+            collapsed: false
         });
 
         var tbarItems = [];
@@ -1190,7 +1192,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
         config = Ext.apply({
             region:'west',
             split:true,
-            width:350,
+            width:320,
             collapsible:true
         }, config);
 

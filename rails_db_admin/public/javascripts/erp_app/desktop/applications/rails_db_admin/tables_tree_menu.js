@@ -61,6 +61,16 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.TablesMenuTreePanel
             }),
             animate: false,
             listeners: {
+
+                'itemclick' : function( view, record, item, index, e, eOpts ) {
+
+                    e.stopEvent();
+                    if (!record.data['isTable']) {
+                        return false;
+                    }
+                    self.initialConfig.module.getTableData(record.data.id);
+                },
+
                 'itemcontextmenu': function (view, record, item, index, e) {
                     e.stopEvent();
                     if (!record.data['isTable']) {

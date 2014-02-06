@@ -63,7 +63,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.ControlPanel", {
                 title: 'Control Panel',
                 width: 550,
                 height: 550,
-                iconCls: 'icon-control_panel',
+                iconCls: 'icon-control_panel-light',
                 shim: false,
                 animCollapse: false,
                 constrainHeader: true,

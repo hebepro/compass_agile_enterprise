@@ -783,7 +783,7 @@ Ext.define("Ext.ux.desktop.StartMenu", {
     ariaRole: "menu",
     cls: "x-menu ux-start-menu",
     defaultAlign: "bl-tl",
-    iconCls: "user",
+    iconCls: "gear",
     floating: true,
     shadow: true,
     width: 300,

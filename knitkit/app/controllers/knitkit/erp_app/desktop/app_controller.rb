@@ -39,7 +39,7 @@ module Knitkit
             website_hash[:children] << hosts_hash
 
             #handle sections
-            sections_hash = {:text => 'Sections', :isSectionRoot => true, :websiteId => website.id, :iconCls => 'icon-content', :leaf => false, :children => []}
+            sections_hash = {:text => 'Sections/Web Pages', :isSectionRoot => true, :websiteId => website.id, :iconCls => 'icon-content', :leaf => false, :children => []}
             website.website_sections.positioned.each do |website_section|
               sections_hash[:children] << build_section_hash(website_section, website)
             end
