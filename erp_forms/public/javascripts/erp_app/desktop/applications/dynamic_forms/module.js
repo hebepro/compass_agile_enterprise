@@ -27,7 +27,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.DynamicForms",{
     init : function(){
         this.launcher = {
             text: 'Dynamic Forms',
-            iconCls:'icon-document',
+            iconCls:'icon-form',
             handler: this.createWindow,
             scope: this
         };
@@ -42,7 +42,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.DynamicForms",{
                 id: 'dynamic_forms',
                 title:'Dynamic Forms',
                 maximized:true,
-                iconCls: 'icon-document',
+                iconCls: 'icon-form-light',
                 shim:false,
                 animCollapse:false,
                 constrainHeader:true,

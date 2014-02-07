@@ -239,13 +239,13 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SectionArticlesGridPanel
             menuDisabled:true,
             resizable:false,
             xtype:'actioncolumn',
-            header:'HTML',
+            ui: 'wysiwyg',
             align:'center',
-            width:40,
+            width:30,
             items:[{
                 icon:'/images/icons/edit/edit_16x16.png',
 								iconCls:'actioncolumn_hover',
-                tooltip:'Edit',
+                tooltip:'Edit the article content',
                 handler :function(grid, rowIndex, colIndex){
                     var rec = grid.getStore().getAt(rowIndex);
                     self.initialConfig['centerRegion'].editContent(rec.get('title'), rec.get('id'), rec.get('body_html'), grid.ownerCt.initialConfig.siteId, grid.ownerCt.initialConfig.contentType, grid.getStore());
@@ -260,13 +260,13 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SectionArticlesGridPanel
                 menuDisabled:true,
                 resizable:false,
                 xtype:'actioncolumn',
-                header:'Edit',
+                ui: 'attributes',
                 align:'center',
-                width:40,
+                width:30,
                 items:[{
-                    icon:'/images/icons/edit/edit_16x16.png',
+                    icon:'/images/icons/doc_settings/doc_settings_16x16.png',
                     iconCls:'actioncolumn_hover',
-                    tooltip:'Edit Attributes',
+                    tooltip:'Edit Content Attributes',
                     handler :function(grid, rowIndex, colIndex){
                         var rec = grid.getStore().getAt(rowIndex);
                         self.editArticle(rec);
@@ -282,9 +282,9 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SectionArticlesGridPanel
                 menuDisabled:true,
                 resizable:false,
                 xtype:'actioncolumn',
-                header:'Detach',
+                //ui: 'detach',
                 align:'center',
-                width:40,
+                width:30,
                 items:[{
                     icon:'/images/icons/delete/delete_16x16.png',
 										iconCls:'actioncolumn_hover',
@@ -350,13 +350,13 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SectionArticlesGridPanel
         {
             tbarItems.push(
             {
-                text: 'New Article',
+                text: 'Create New Article',
                 iconCls: 'icon-add',
                 handler : function(){
                     var addArticleWindow = new Ext.Window({
                         layout:'fit',
                         width:375,
-                        title:'New Article',
+                        title:'Create New Article',
                         plain: true,
                         buttonAlign:'center',
                         items: new Ext.FormPanel({
@@ -414,7 +414,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SectionArticlesGridPanel
         {
             tbarItems.push(
             {
-                text: 'Attach Article',
+                text: 'Use Existing Article',
                 iconCls: 'icon-copy',
                 handler : function(){
                     var addExistingArticleWindow = new Ext.Window({
@@ -619,7 +619,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.PageArticlesGridPanel",{
       columns:[{
         sortable:true,
         resizable:false,
-        header:'Content Area',
+        header:'Area',
         dataIndex:'content_area',
         width:80,
         editable:false,
@@ -630,11 +630,12 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.PageArticlesGridPanel",{
       {
         menuDisabled:true,
         resizable:false,
-        header:'Pos',
         sortable:true,
+        ui: 'ordered-list',
         dataIndex:'position',
         width:30,
         editable:false,
+        tooltip: "Edit article attributes to change order of article rendering",
         editor: new fm.TextField({
           allowBlank: true
         })

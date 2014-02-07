@@ -938,6 +938,12 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
             }
         });
 
+        startupPanel = Ext.createWidget('knitkit_splash_screen', {
+            closable: true
+        });
+        this.workArea.add(startupPanel);
+        this.workArea.setActiveTab(startupPanel);
+
         config = Ext.apply({
             id: 'knitkitCenterRegion',
             autoDestroy: true,

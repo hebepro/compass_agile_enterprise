@@ -57,6 +57,7 @@
   <!--javascript-->
   <%= include_extjs(:debug => (Rails.env != 'production')) %>
   <%= static_javascript_include_tag("extjs/overrides.js") %>
+  <%= static_javascript_include_tag("extjs/callout.js") %>
 
   <%= static_javascript_include_tag("erp_app/utility.js") %>
   <%= static_javascript_include_tag("erp_app/desktop/ext_ux_desktop_module.js") %>
@@ -82,6 +83,7 @@
 
   <!--stylesheets-->
   <%= static_stylesheet_link_tag('erp_app/desktop/base.css') %>
+  <%= static_stylesheet_link_tag('extjs/resources/css/callout-default.css') %>
   <!-- shared application resources -->
   <%= load_shared_application_resources(:stylesheets) %>
   <!-- end application resources -->
@@ -110,10 +112,11 @@
 <script type="text/javascript">
     Ext.define("MyDesktop.App", {
         extend: "Ext.ux.desktop.App",
-        requires: ["Ext.window.MessageBox", "Ext.ux.desktop.ShortcutModel"],
+        requires: ["Ext.window.MessageBox", "Ext.ux.desktop.ShortcutModel", "Ext.ux.callout.Callout"],
         init: function () {
             this.callParent()
         },
+
         getModules: function () {
             return[
                 new Compass.ErpApp.Desktop.Applications.ControlPanel(),
@@ -148,7 +151,7 @@
             var b = this, a = b.callParent();
             return Ext.apply(a, {
                 title: '<%=@user.party.description%>',
-                iconCls: "icon-user",
+                iconCls: "icon-user-light",
                 height: 300,
                 toolConfig: {
                     width: 100,
@@ -238,12 +241,67 @@
             <% @desktop.autoloads.each do |application| %>
             compassDesktop.getModule('<%=application.shortcut_id%>').createWindow();
             <% end %>
+
         }, 250);
+
+        listeners: {
+            afterlayout: {
+
+                Ext.defer( function () {
+
+                    var arr = Ext.ComponentQuery.query('dataview');
+                    var comp = arr[0];
+
+                    Ext.widget( 'callout', {
+                        cls: 'default',
+                        target: comp,
+                        calloutArrowLocation: 'bottom',
+                        relativePosition: 'c-c',
+                        dismissDelay: 0,
+                        width: 500,
+                        relativeOffsets: [0, -100],
+                        html: "<p>Welcome to Compass Agile Enterprise. These are desktop shortcuts</p>",
+
+                        listeners: {
+                            hide: function () {
+                                this.destroy();
+                            }
+                        }
+                    }).show();
+
+                    var arr2 = Ext.ComponentQuery.query('toolbar[cls~=ux-start-menu-toolbar]');
+                    var comp2 = arr2[0];
+
+                    //debugger;
+
+                    Ext.widget( 'callout', {
+                        cls: 'default',
+                        target: comp,
+                        calloutArrowLocation: 'bottom-left',
+                        relativePosition: 'bl-bl',
+                        dismissDelay: 0,
+                        width: 400,
+                        relativeOffsets: [5, -15],
+                        html: "<p>The task bar includes a start menu and and application icons.</p>",
+
+                        listeners: {
+                            hide: function () {
+                                this.destroy();
+                            }
+                        }
+                    }).show();
+
+
+                }, 35000000 );
+
+            }
+        }
 
         // Push some history into this windows history to help prevent back button
         for (var i = 0; i < 10; i++) {
             window.history.pushState("history", 'CompassAE Desktop', "#" + i * new Date().getMilliseconds());
         }
+
     });
 </script>
 <div id="loading-mask"></div>

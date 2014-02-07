@@ -28,7 +28,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
                 width: 1200,
                 height: 550,
                 maximized: true,
-                iconCls: 'icon-knitkit',
+                iconCls: 'icon-knitkit-light',
                 shim: false,
                 animCollapse: false,
                 constrainHeader: true,

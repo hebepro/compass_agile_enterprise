@@ -25,7 +25,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Scaffold", {
     init:function () {
         this.launcher = {
             text:'Scaffold',
-            iconCls:'icon-data',
+            iconCls:'icon-scaffold',
             handler:this.createWindow,
             scope:this
         }
@@ -43,7 +43,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Scaffold", {
                 title:'Scaffold',
                 width:1000,
                 height:550,
-                iconCls:'icon-data',
+                iconCls:'icon-scaffold-light',
                 shim:false,
                 animCollapse:false,
                 constrainHeader:true,

@@ -127,8 +127,63 @@
     filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/calendar/calendar_16x16.png', sizingMethod='crop');
 }
 
+.icon-file-manager {
+    background-image: url(/images/icons/file_manager/file_manager_16x16.png) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/calendar/calendar_16x16.png', sizingMethod='crop');
+}
+
+.icon-file-manager-light {
+    background-image: url(/images/icons/file_manager/file_manager_light_16x16.png) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/calendar/calendar_16x16.png', sizingMethod='crop');
+}
+
 .icon-history {
     background-image: url(/images/icons/history/history_16x16.png) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/history/history_16x16.png', sizingMethod='crop');
+}
+
+.icon-history-light {
+    background-image: url(/images/icons/history/history_light_16x16.png) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/history/history_16x16.png', sizingMethod='crop');
+}
+
+.icon-footprints {
+     background-image: url(/images/icons/footprints/footprints_16x16.png) !important;
+     filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/history/history_16x16.png', sizingMethod='crop');
+ }
+
+.icon-footprints-light {
+    background-image: url(/images/icons/footprints/footprints_light_16x16.png) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/history/history_16x16.png', sizingMethod='crop');
+}
+
+.icon-form {
+    background-image: url(/images/icons/form/form_16x16.png) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/history/history_16x16.png', sizingMethod='crop');
+}
+
+.icon-form-light {
+    background-image: url(/images/icons/form/form_light_16x16.png) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/history/history_16x16.png', sizingMethod='crop');
+}
+
+.icon-crm {
+    background-image: url(/images/icons/crm/crm_16x16.png) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/history/history_16x16.png', sizingMethod='crop');
+}
+
+.icon-crm-light {
+    background-image: url(/images/icons/crm/crm_light_16x16.png) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/history/history_16x16.png', sizingMethod='crop');
+}
+
+.icon-scaffold {
+    background-image: url(/images/icons/scaffold/scaffold_16x16.png) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/history/history_16x16.png', sizingMethod='crop');
+}
+
+.icon-scaffold-light {
+    background-image: url(/images/icons/scaffold/scaffold_light_16x16.png) !important;
     filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/history/history_16x16.png', sizingMethod='crop');
 }
 
@@ -217,13 +272,28 @@
     filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/user/user_16x16.png', sizingMethod='crop');
 }
 
+.icon-user-light {
+    background-image:url( /images/icons/user/user_light_16x16.png ) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/user/user_16x16.png', sizingMethod='crop');
+}
+
 .icon-user-mgt {
     background-image:url( /images/icons/user_mgt/user_mgt_16x16.png ) !important;
     filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/user/user_16x16.png', sizingMethod='crop');
 }
 
+.icon-user-mgt-light {
+    background-image:url( /images/icons/user_mgt/user_mgt_light_16x16.png ) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/user/user_16x16.png', sizingMethod='crop');
+}
+
 .icon-search {
     background-image:url( /images/icons/search/search_16x16.png ) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/search/search_16x16.png', sizingMethod='crop');
+}
+
+.icon-search-light {
+    background-image:url( /images/icons/search/search_light_16x16.png ) !important;
     filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/search/search_16x16.png', sizingMethod='crop');
 }
 
@@ -332,6 +402,12 @@
     filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/settings/settings_16x16.png', sizingMethod='crop');
 }
 
+.icon-settings-light {
+    background-image:url( /images/icons/settings/settings_light_16x16.png ) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/settings/settings_16x16.png', sizingMethod='crop');
+}
+
+
 .icon-new {
     background-image:url( /images/icons/new/new_16x16.png ) !important;
     filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/new/new_16x16.png', sizingMethod='crop');
@@ -434,7 +510,12 @@
 }
 
 .icon-control_panel {
-    background-image:url( /images/icons/control_panel/control_panel_16x16.png ) !important;
+    background-image:url( /images/icons/gear/gear_16x16.png ) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/control_panel/control_panel_16x16.png', sizingMethod='crop');
+}
+
+.icon-control_panel-light {
+    background-image:url( /images/icons/gear/gear_light_16x16.png ) !important;
     filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/control_panel/control_panel_16x16.png', sizingMethod='crop');
 }
 
@@ -453,8 +534,18 @@
     filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/product/product_16x16.png', sizingMethod='crop');
 }
 
+.icon-product-light{
+    background-image:url( /images/icons/product/product_light_16x16.png ) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/product/product_16x16.png', sizingMethod='crop');
+}
+
 .icon-package{
     background-image:url( /images/icons/package/package_16x16.png ) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/package/package_16x16.png', sizingMethod='crop');
+}
+
+.icon-package-light{
+    background-image:url( /images/icons/package/package_light_16x16.png ) !important;
     filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/package/package_16x16.png', sizingMethod='crop');
 }
 

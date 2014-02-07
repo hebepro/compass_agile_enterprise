@@ -19,9 +19,9 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement", {
             win = desktop.createWindow({
                 id: 'user_management',
                 title: 'User Management',
-                width: 1100,
+                width: 1150,
                 height: 550,
-                iconCls: 'icon-user-mgt',
+                iconCls: 'icon-user-mgt-light',
                 shim: false,
                 animCollapse: false,
                 constrainHeader: true,
@@ -416,7 +416,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
         });
         toolBarItems.push({
             text: 'Search',
-            iconCls: 'icon-search',
+            iconCls: 'icon-search-light',
             handler: function (button) {
                 var username = Ext.getCmp('user_search_field').getValue();
                 usersStore.setProxy({

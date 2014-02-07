@@ -1,0 +1,1313 @@
+/* line 418, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-top-ml,
+.x-window-header-login-window-collapsed-top-mr {
+  zoom: 1;
+  background-image: url(images/window-header/window-header-login-window-collapsed-top-sides.gif);
+  background-repeat: repeat-y;
+}
+
+/* line 430, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-top-mc {
+  padding: 5px 5px 5px 5px;
+}
+
+/* line 439, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-strict .x-ie7 .x-window-header-login-window-collapsed-top-tl,
+.x-strict .x-ie7 .x-window-header-login-window-collapsed-top-bl {
+  position: relative;
+  right: 0;
+}
+
+/*<if slicer>*/
+/* line 78, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/slicer.scss */
+.x-window-header-login-window-collapsed-top:after {
+  display: none;
+  content: "x-slicer:corners:url(images/window-header/window-header-login-window-collapsed-top-corners.gif), sides:url(images/window-header/window-header-login-window-collapsed-top-sides.gif)";
+}
+
+/*</if slicer>*/
+/* */
+/* line 137, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-right {
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -o-border-radius: 4px;
+  border-radius: 4px;
+  padding: 5px 5px 5px 5px;
+  border-width: 5px;
+  border-style: solid;
+  background-color: #6c8aa6;
+}
+
+/* line 187, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-right-mc {
+  background-color: #6c8aa6;
+}
+
+/* line 234, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-nbr .x-window-header-login-window-collapsed-right {
+  padding: 0 !important;
+  border-width: 0 !important;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  -ms-border-radius: 0px;
+  -o-border-radius: 0px;
+  border-radius: 0px;
+  background-color: transparent;
+}
+
+/* line 249, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-right-frameInfo {
+  font-family: dh-4-4-4-4-5-5-5-5-5-5-5-5;
+}
+
+/* line 315, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-right-tl {
+  background-position: 0 -10px;
+}
+
+/* line 319, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-right-tr {
+  background-position: right -15px;
+}
+
+/* line 323, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-right-bl {
+  background-position: 0 -20px;
+}
+
+/* line 327, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-right-br {
+  background-position: right -25px;
+}
+
+/* line 331, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-right-ml {
+  background-position: 0 top;
+}
+
+/* line 335, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-right-mr {
+  background-position: right top;
+}
+
+/* line 339, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-right-tc {
+  background-position: 0 0;
+}
+
+/* line 343, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-right-bc {
+  background-position: 0 -5px;
+}
+
+/* line 350, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-right-tr,
+.x-window-header-login-window-collapsed-right-br,
+.x-window-header-login-window-collapsed-right-mr {
+  padding-right: 5px;
+}
+
+/* line 356, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-right-tl,
+.x-window-header-login-window-collapsed-right-bl,
+.x-window-header-login-window-collapsed-right-ml {
+  padding-left: 5px;
+}
+
+/* line 360, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-right-tc {
+  height: 5px;
+}
+
+/* line 363, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-right-bc {
+  height: 5px;
+}
+
+/* line 374, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-right-tl,
+.x-window-header-login-window-collapsed-right-bl,
+.x-window-header-login-window-collapsed-right-tr,
+.x-window-header-login-window-collapsed-right-br,
+.x-window-header-login-window-collapsed-right-tc,
+.x-window-header-login-window-collapsed-right-bc,
+.x-window-header-login-window-collapsed-right-ml,
+.x-window-header-login-window-collapsed-right-mr {
+  zoom: 1;
+  background-image: url(images/window-header/window-header-login-window-collapsed-right-corners.gif);
+}
+
+/* line 418, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-right-ml,
+.x-window-header-login-window-collapsed-right-mr {
+  zoom: 1;
+  background-image: url(images/window-header/window-header-login-window-collapsed-right-sides.gif);
+  background-repeat: repeat-y;
+}
+
+/* line 430, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-right-mc {
+  padding: 5px 5px 5px 5px;
+}
+
+/* line 439, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-strict .x-ie7 .x-window-header-login-window-collapsed-right-tl,
+.x-strict .x-ie7 .x-window-header-login-window-collapsed-right-bl {
+  position: relative;
+  right: 0;
+}
+
+/*<if slicer>*/
+/* line 78, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/slicer.scss */
+.x-window-header-login-window-collapsed-right:after {
+  display: none;
+  content: "x-slicer:corners:url(images/window-header/window-header-login-window-collapsed-right-corners.gif), sides:url(images/window-header/window-header-login-window-collapsed-right-sides.gif)";
+}
+
+/*</if slicer>*/
+/* */
+/* line 137, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-bottom {
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -o-border-radius: 4px;
+  border-radius: 4px;
+  padding: 5px 5px 5px 5px;
+  border-width: 5px;
+  border-style: solid;
+  background-color: #6c8aa6;
+}
+
+/* line 187, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-bottom-mc {
+  background-color: #6c8aa6;
+}
+
+/* line 234, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-nbr .x-window-header-login-window-collapsed-bottom {
+  padding: 0 !important;
+  border-width: 0 !important;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  -ms-border-radius: 0px;
+  -o-border-radius: 0px;
+  border-radius: 0px;
+  background-color: transparent;
+}
+
+/* line 249, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-bottom-frameInfo {
+  font-family: dh-4-4-4-4-5-5-5-5-5-5-5-5;
+}
+
+/* line 315, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-bottom-tl {
+  background-position: 0 -10px;
+}
+
+/* line 319, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-bottom-tr {
+  background-position: right -15px;
+}
+
+/* line 323, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-bottom-bl {
+  background-position: 0 -20px;
+}
+
+/* line 327, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-bottom-br {
+  background-position: right -25px;
+}
+
+/* line 331, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-bottom-ml {
+  background-position: 0 top;
+}
+
+/* line 335, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-bottom-mr {
+  background-position: right top;
+}
+
+/* line 339, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-bottom-tc {
+  background-position: 0 0;
+}
+
+/* line 343, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-bottom-bc {
+  background-position: 0 -5px;
+}
+
+/* line 350, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-bottom-tr,
+.x-window-header-login-window-collapsed-bottom-br,
+.x-window-header-login-window-collapsed-bottom-mr {
+  padding-right: 5px;
+}
+
+/* line 356, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-bottom-tl,
+.x-window-header-login-window-collapsed-bottom-bl,
+.x-window-header-login-window-collapsed-bottom-ml {
+  padding-left: 5px;
+}
+
+/* line 360, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-bottom-tc {
+  height: 5px;
+}
+
+/* line 363, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-bottom-bc {
+  height: 5px;
+}
+
+/* line 374, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-bottom-tl,
+.x-window-header-login-window-collapsed-bottom-bl,
+.x-window-header-login-window-collapsed-bottom-tr,
+.x-window-header-login-window-collapsed-bottom-br,
+.x-window-header-login-window-collapsed-bottom-tc,
+.x-window-header-login-window-collapsed-bottom-bc,
+.x-window-header-login-window-collapsed-bottom-ml,
+.x-window-header-login-window-collapsed-bottom-mr {
+  zoom: 1;
+  background-image: url(images/window-header/window-header-login-window-collapsed-bottom-corners.gif);
+}
+
+/* line 418, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-bottom-ml,
+.x-window-header-login-window-collapsed-bottom-mr {
+  zoom: 1;
+  background-image: url(images/window-header/window-header-login-window-collapsed-bottom-sides.gif);
+  background-repeat: repeat-y;
+}
+
+/* line 430, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-bottom-mc {
+  padding: 5px 5px 5px 5px;
+}
+
+/* line 439, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-strict .x-ie7 .x-window-header-login-window-collapsed-bottom-tl,
+.x-strict .x-ie7 .x-window-header-login-window-collapsed-bottom-bl {
+  position: relative;
+  right: 0;
+}
+
+/*<if slicer>*/
+/* line 78, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/slicer.scss */
+.x-window-header-login-window-collapsed-bottom:after {
+  display: none;
+  content: "x-slicer:corners:url(images/window-header/window-header-login-window-collapsed-bottom-corners.gif), sides:url(images/window-header/window-header-login-window-collapsed-bottom-sides.gif)";
+}
+
+/*</if slicer>*/
+/* */
+/* line 137, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-left {
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -o-border-radius: 4px;
+  border-radius: 4px;
+  padding: 5px 5px 5px 5px;
+  border-width: 5px;
+  border-style: solid;
+  background-color: #6c8aa6;
+}
+
+/* line 187, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-left-mc {
+  background-color: #6c8aa6;
+}
+
+/* line 234, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-nbr .x-window-header-login-window-collapsed-left {
+  padding: 0 !important;
+  border-width: 0 !important;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  -ms-border-radius: 0px;
+  -o-border-radius: 0px;
+  border-radius: 0px;
+  background-color: transparent;
+}
+
+/* line 249, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-left-frameInfo {
+  font-family: dh-4-4-4-4-5-5-5-5-5-5-5-5;
+}
+
+/* line 315, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-left-tl {
+  background-position: 0 -10px;
+}
+
+/* line 319, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-left-tr {
+  background-position: right -15px;
+}
+
+/* line 323, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-left-bl {
+  background-position: 0 -20px;
+}
+
+/* line 327, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-left-br {
+  background-position: right -25px;
+}
+
+/* line 331, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-left-ml {
+  background-position: 0 top;
+}
+
+/* line 335, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-left-mr {
+  background-position: right top;
+}
+
+/* line 339, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-left-tc {
+  background-position: 0 0;
+}
+
+/* line 343, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-left-bc {
+  background-position: 0 -5px;
+}
+
+/* line 350, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-left-tr,
+.x-window-header-login-window-collapsed-left-br,
+.x-window-header-login-window-collapsed-left-mr {
+  padding-right: 5px;
+}
+
+/* line 356, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-left-tl,
+.x-window-header-login-window-collapsed-left-bl,
+.x-window-header-login-window-collapsed-left-ml {
+  padding-left: 5px;
+}
+
+/* line 360, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-left-tc {
+  height: 5px;
+}
+
+/* line 363, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-left-bc {
+  height: 5px;
+}
+
+/* line 374, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-left-tl,
+.x-window-header-login-window-collapsed-left-bl,
+.x-window-header-login-window-collapsed-left-tr,
+.x-window-header-login-window-collapsed-left-br,
+.x-window-header-login-window-collapsed-left-tc,
+.x-window-header-login-window-collapsed-left-bc,
+.x-window-header-login-window-collapsed-left-ml,
+.x-window-header-login-window-collapsed-left-mr {
+  zoom: 1;
+  background-image: url(images/window-header/window-header-login-window-collapsed-left-corners.gif);
+}
+
+/* line 418, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-left-ml,
+.x-window-header-login-window-collapsed-left-mr {
+  zoom: 1;
+  background-image: url(images/window-header/window-header-login-window-collapsed-left-sides.gif);
+  background-repeat: repeat-y;
+}
+
+/* line 430, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-window-header-login-window-collapsed-left-mc {
+  padding: 5px 5px 5px 5px;
+}
+
+/* line 439, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-strict .x-ie7 .x-window-header-login-window-collapsed-left-tl,
+.x-strict .x-ie7 .x-window-header-login-window-collapsed-left-bl {
+  position: relative;
+  right: 0;
+}
+
+/*<if slicer>*/
+/* line 78, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/slicer.scss */
+.x-window-header-login-window-collapsed-left:after {
+  display: none;
+  content: "x-slicer:corners:url(images/window-header/window-header-login-window-collapsed-left-corners.gif), sides:url(images/window-header/window-header-login-window-collapsed-left-sides.gif)";
+}
+
+/*</if slicer>*/
+/* */
+/* line 373, ../../../../ext/packages/ext-theme-neutral/sass/src/window/Window.scss */
+.x-window-header-login-window .x-window-header-icon {
+  width: 16px;
+  height: 16px;
+  color: white;
+  font-size: 16px;
+  line-height: 16px;
+  background-position: center center;
+}
+/* line 382, ../../../../ext/packages/ext-theme-neutral/sass/src/window/Window.scss */
+.x-window-header-login-window .x-window-header-glyph {
+  color: white;
+  font-size: 16px;
+  line-height: 16px;
+  opacity: 0.5;
+}
+/* line 399, ../../../../ext/packages/ext-theme-neutral/sass/src/window/Window.scss */
+.x-ie8m .x-window-header-login-window .x-window-header-glyph {
+  color: #b5c4d2;
+}
+
+/* line 408, ../../../../ext/packages/ext-theme-neutral/sass/src/window/Window.scss */
+.x-window-header-login-window-horizontal .x-window-header-icon-before-title {
+  margin: 0 6px 0 0;
+}
+/* line 418, ../../../../ext/packages/ext-theme-neutral/sass/src/window/Window.scss */
+.x-window-header-login-window-horizontal .x-window-header-icon-after-title {
+  margin: 0 0 0 6px;
+}
+
+/* line 430, ../../../../ext/packages/ext-theme-neutral/sass/src/window/Window.scss */
+.x-window-header-login-window-vertical .x-window-header-icon-before-title {
+  margin: 0 0 6px 0;
+}
+/* line 440, ../../../../ext/packages/ext-theme-neutral/sass/src/window/Window.scss */
+.x-window-header-login-window-vertical .x-window-header-icon-after-title {
+  margin: 6px 0 0 0;
+}
+
+/* line 453, ../../../../ext/packages/ext-theme-neutral/sass/src/window/Window.scss */
+.x-window-header-login-window-horizontal .x-tool-after-title {
+  margin: 0 0 0 6px;
+}
+/* line 463, ../../../../ext/packages/ext-theme-neutral/sass/src/window/Window.scss */
+.x-window-header-login-window-horizontal .x-tool-before-title {
+  margin: 0 6px 0 0;
+}
+
+/* line 475, ../../../../ext/packages/ext-theme-neutral/sass/src/window/Window.scss */
+.x-window-header-login-window-vertical .x-tool-after-title {
+  margin: 6px 0 0 0;
+}
+/* line 485, ../../../../ext/packages/ext-theme-neutral/sass/src/window/Window.scss */
+.x-window-header-login-window-vertical .x-tool-before-title {
+  margin: 0 0 6px 0;
+}
+
+/* line 499, ../../../../ext/packages/ext-theme-neutral/sass/src/window/Window.scss */
+.x-window-header-login-window {
+  border-width: 5px !important;
+}
+
+/* line 509, ../../../../ext/packages/ext-theme-neutral/sass/src/window/Window.scss */
+.x-nbr .x-window-login-window-collapsed .x-window-header {
+  border-width: 0 !important;
+}
+
+/* line 520, ../../../../ext/packages/ext-theme-neutral/sass/src/window/Window.scss */
+.x-window-login-window-resizable {
+  overflow: visible;
+}
+/* line 525, ../../../../ext/packages/ext-theme-neutral/sass/src/window/Window.scss */
+.x-window-login-window-resizable .x-window-handle-north-br {
+  top: -5px;
+}
+/* line 528, ../../../../ext/packages/ext-theme-neutral/sass/src/window/Window.scss */
+.x-window-login-window-resizable .x-window-handle-south-br {
+  bottom: -5px;
+}
+/* line 531, ../../../../ext/packages/ext-theme-neutral/sass/src/window/Window.scss */
+.x-window-login-window-resizable .x-window-handle-east-br {
+  right: -5px;
+}
+/* line 534, ../../../../ext/packages/ext-theme-neutral/sass/src/window/Window.scss */
+.x-window-login-window-resizable .x-window-handle-west-br {
+  left: -5px;
+}
+/* line 537, ../../../../ext/packages/ext-theme-neutral/sass/src/window/Window.scss */
+.x-window-login-window-resizable .x-window-handle-northwest-br {
+  left: -5px;
+  top: -5px;
+}
+/* line 541, ../../../../ext/packages/ext-theme-neutral/sass/src/window/Window.scss */
+.x-window-login-window-resizable .x-window-handle-northeast-br {
+  right: -5px;
+  top: -5px;
+}
+/* line 545, ../../../../ext/packages/ext-theme-neutral/sass/src/window/Window.scss */
+.x-window-login-window-resizable .x-window-handle-southeast-br {
+  right: -5px;
+  bottom: -5px;
+}
+/* line 549, ../../../../ext/packages/ext-theme-neutral/sass/src/window/Window.scss */
+.x-window-login-window-resizable .x-window-handle-southwest-br {
+  left: -5px;
+  bottom: -5px;
+}
+
+/* line 2, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/border-management.scss */
+.x-window-login-window-outer-border-l {
+  border-left-color: #6c8aa6 !important;
+  border-left-width: 1px !important;
+}
+
+/* line 6, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/border-management.scss */
+.x-window-login-window-outer-border-b {
+  border-bottom-color: #6c8aa6 !important;
+  border-bottom-width: 1px !important;
+}
+
+/* line 10, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/border-management.scss */
+.x-window-login-window-outer-border-bl {
+  border-bottom-color: #6c8aa6 !important;
+  border-bottom-width: 1px !important;
+  border-left-color: #6c8aa6 !important;
+  border-left-width: 1px !important;
+}
+
+/* line 16, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/border-management.scss */
+.x-window-login-window-outer-border-r {
+  border-right-color: #6c8aa6 !important;
+  border-right-width: 1px !important;
+}
+
+/* line 20, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/border-management.scss */
+.x-window-login-window-outer-border-rl {
+  border-right-color: #6c8aa6 !important;
+  border-right-width: 1px !important;
+  border-left-color: #6c8aa6 !important;
+  border-left-width: 1px !important;
+}
+
+/* line 26, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/border-management.scss */
+.x-window-login-window-outer-border-rb {
+  border-right-color: #6c8aa6 !important;
+  border-right-width: 1px !important;
+  border-bottom-color: #6c8aa6 !important;
+  border-bottom-width: 1px !important;
+}
+
+/* line 32, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/border-management.scss */
+.x-window-login-window-outer-border-rbl {
+  border-right-color: #6c8aa6 !important;
+  border-right-width: 1px !important;
+  border-bottom-color: #6c8aa6 !important;
+  border-bottom-width: 1px !important;
+  border-left-color: #6c8aa6 !important;
+  border-left-width: 1px !important;
+}
+
+/* line 40, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/border-management.scss */
+.x-window-login-window-outer-border-t {
+  border-top-color: #6c8aa6 !important;
+  border-top-width: 1px !important;
+}
+
+/* line 44, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/border-management.scss */
+.x-window-login-window-outer-border-tl {
+  border-top-color: #6c8aa6 !important;
+  border-top-width: 1px !important;
+  border-left-color: #6c8aa6 !important;
+  border-left-width: 1px !important;
+}
+
+/* line 50, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/border-management.scss */
+.x-window-login-window-outer-border-tb {
+  border-top-color: #6c8aa6 !important;
+  border-top-width: 1px !important;
+  border-bottom-color: #6c8aa6 !important;
+  border-bottom-width: 1px !important;
+}
+
+/* line 56, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/border-management.scss */
+.x-window-login-window-outer-border-tbl {
+  border-top-color: #6c8aa6 !important;
+  border-top-width: 1px !important;
+  border-bottom-color: #6c8aa6 !important;
+  border-bottom-width: 1px !important;
+  border-left-color: #6c8aa6 !important;
+  border-left-width: 1px !important;
+}
+
+/* line 64, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/border-management.scss */
+.x-window-login-window-outer-border-tr {
+  border-top-color: #6c8aa6 !important;
+  border-top-width: 1px !important;
+  border-right-color: #6c8aa6 !important;
+  border-right-width: 1px !important;
+}
+
+/* line 70, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/border-management.scss */
+.x-window-login-window-outer-border-trl {
+  border-top-color: #6c8aa6 !important;
+  border-top-width: 1px !important;
+  border-right-color: #6c8aa6 !important;
+  border-right-width: 1px !important;
+  border-left-color: #6c8aa6 !important;
+  border-left-width: 1px !important;
+}
+
+/* line 78, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/border-management.scss */
+.x-window-login-window-outer-border-trb {
+  border-top-color: #6c8aa6 !important;
+  border-top-width: 1px !important;
+  border-right-color: #6c8aa6 !important;
+  border-right-width: 1px !important;
+  border-bottom-color: #6c8aa6 !important;
+  border-bottom-width: 1px !important;
+}
+
+/* line 86, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/border-management.scss */
+.x-window-login-window-outer-border-trbl {
+  border-color: #6c8aa6 !important;
+  border-width: 1px !important;
+}
+
+/* line 1, ../../../../ext/packages/ext-theme-neptune/sass/src/form/field/Trigger.scss */
+.x-form-trigger {
+  height: 22px;
+}
+
+/* line 9, ../../../../ext/packages/ext-theme-neptune/sass/src/form/field/Trigger.scss */
+.x-form-trigger-wrap {
+  border: 1px solid;
+  border-color: silver #d9d9d9 #d9d9d9;
+}
+/* line 12, ../../../../ext/packages/ext-theme-neptune/sass/src/form/field/Trigger.scss */
+.x-form-trigger-wrap .x-form-text {
+  border-width: 0;
+  height: 22px;
+}
+/* line 16, ../../../../ext/packages/ext-theme-neptune/sass/src/form/field/Trigger.scss */
+.x-content-box .x-form-trigger-wrap .x-form-text {
+  height: 15px;
+}
+/* line 22, ../../../../ext/packages/ext-theme-neptune/sass/src/form/field/Trigger.scss */
+.x-form-trigger-wrap-focus .x-form-trigger-wrap {
+  border-color: #3892d3;
+}
+/* line 26, ../../../../ext/packages/ext-theme-neptune/sass/src/form/field/Trigger.scss */
+.x-form-invalid .x-form-trigger-wrap {
+  border-color: #cf4c35;
+}
+
+/* line 3, ../../../../ext/packages/ext-theme-neptune/sass/src/form/field/File.scss */
+.x-form-file-wrap .x-form-trigger-wrap {
+  border: 0;
+}
+
+/* line 7, ../../../../ext/packages/ext-theme-neptune/sass/src/form/field/File.scss */
+.x-form-file-wrap .x-form-trigger-wrap .x-form-text {
+  border: 1px solid;
+  border-color: silver #d9d9d9 #d9d9d9;
+  height: 24px;
+}
+/* line 13, ../../../../ext/packages/ext-theme-neptune/sass/src/form/field/File.scss */
+.x-content-box .x-form-file-wrap .x-form-trigger-wrap .x-form-text {
+  height: 15px;
+}
+
+/* line 1, ../../../../ext/packages/ext-theme-neptune/sass/src/form/field/HtmlEditor.scss */
+.x-html-editor-container {
+  border: 1px solid;
+  border-color: silver #d9d9d9 #d9d9d9;
+}
+
+/* line 1, ../../../../ext/packages/ext-theme-neptune/sass/src/grid/header/Container.scss */
+.x-grid-header-ct {
+  border: 1px solid silver;
+}
+
+/* line 6, ../../../../ext/packages/ext-theme-neptune/sass/src/grid/column/Column.scss */
+.x-column-header-trigger {
+  background-image: url(images/grid/hd-pop.png);
+  border-left: 1px solid silver;
+}
+
+/* line 18, ../../../../ext/packages/ext-theme-neptune/sass/src/grid/column/Column.scss */
+.x-column-header-last {
+  border-right-width: 0;
+}
+/* line 20, ../../../../ext/packages/ext-theme-neptune/sass/src/grid/column/Column.scss */
+.x-column-header-last .x-column-header-over .x-column-header-trigger {
+  border-right: 1px solid silver;
+}
+
+/* line 2, ../../../../ext/packages/ext-theme-neptune/sass/src/layout/container/Accordion.scss */
+.x-accordion-hd .x-tool-img {
+  background-image: url(images/tools/tool-sprites-dark.png);
+}
+
+/* line 6, ../../../../ext/packages/ext-theme-neptune/sass/src/layout/container/Accordion.scss */
+.x-accordion-item .x-accordion-hd-over {
+  background-color: #ecf0f3;
+}
+
+/* line 1, ../../../../ext/packages/ext-theme-neptune/sass/src/resizer/Resizer.scss */
+.x-resizable-handle {
+  background-color: #537697;
+  background-repeat: no-repeat;
+}
+
+/* line 10, ../../../../ext/packages/ext-theme-neptune/sass/src/resizer/Resizer.scss */
+.x-resizable-over .x-resizable-handle-east,
+.x-resizable-over .x-resizable-handle-west,
+.x-resizable-pinned .x-resizable-handle-east,
+.x-resizable-pinned .x-resizable-handle-west {
+  background-position: center;
+}
+/* line 15, ../../../../ext/packages/ext-theme-neptune/sass/src/resizer/Resizer.scss */
+.x-resizable-over .x-resizable-handle-south,
+.x-resizable-over .x-resizable-handle-north,
+.x-resizable-pinned .x-resizable-handle-south,
+.x-resizable-pinned .x-resizable-handle-north {
+  background-position: center;
+}
+/* line 19, ../../../../ext/packages/ext-theme-neptune/sass/src/resizer/Resizer.scss */
+.x-resizable-over .x-resizable-handle-southeast,
+.x-resizable-pinned .x-resizable-handle-southeast {
+  background-position: -2px -2px;
+}
+/* line 23, ../../../../ext/packages/ext-theme-neptune/sass/src/resizer/Resizer.scss */
+.x-resizable-over .x-resizable-handle-northwest,
+.x-resizable-pinned .x-resizable-handle-northwest {
+  background-position: 2px 2px;
+}
+/* line 27, ../../../../ext/packages/ext-theme-neptune/sass/src/resizer/Resizer.scss */
+.x-resizable-over .x-resizable-handle-northeast,
+.x-resizable-pinned .x-resizable-handle-northeast {
+  background-position: -2px 2px;
+}
+/* line 31, ../../../../ext/packages/ext-theme-neptune/sass/src/resizer/Resizer.scss */
+.x-resizable-over .x-resizable-handle-southwest,
+.x-resizable-pinned .x-resizable-handle-southwest {
+  background-position: 2px -2px;
+}
+
+/* including package compass-ae-default */
+/* line 255, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small {
+  border-color: #537697;
+}
+
+/* line 137, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-btn-cleanbutton-toolbar-small {
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  -o-border-radius: 3px;
+  border-radius: 3px;
+  padding: 3px 3px 3px 3px;
+  border-width: 1px;
+  border-style: solid;
+  background-color: #537697;
+}
+
+/* line 187, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-btn-cleanbutton-toolbar-small-mc {
+  background-color: #537697;
+}
+
+/* line 234, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-nbr .x-btn-cleanbutton-toolbar-small {
+  padding: 0 !important;
+  border-width: 0 !important;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  -ms-border-radius: 0px;
+  -o-border-radius: 0px;
+  border-radius: 0px;
+  background-color: transparent;
+}
+
+/* line 249, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-btn-cleanbutton-toolbar-small-frameInfo {
+  font-family: th-3-3-3-3-1-1-1-1-3-3-3-3;
+}
+
+/* line 315, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-btn-cleanbutton-toolbar-small-tl {
+  background-position: 0 -6px;
+}
+
+/* line 319, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-btn-cleanbutton-toolbar-small-tr {
+  background-position: right -9px;
+}
+
+/* line 323, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-btn-cleanbutton-toolbar-small-bl {
+  background-position: 0 -12px;
+}
+
+/* line 327, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-btn-cleanbutton-toolbar-small-br {
+  background-position: right -15px;
+}
+
+/* line 331, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-btn-cleanbutton-toolbar-small-ml {
+  background-position: 0 top;
+}
+
+/* line 335, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-btn-cleanbutton-toolbar-small-mr {
+  background-position: right top;
+}
+
+/* line 339, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-btn-cleanbutton-toolbar-small-tc {
+  background-position: 0 0;
+}
+
+/* line 343, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-btn-cleanbutton-toolbar-small-bc {
+  background-position: 0 -3px;
+}
+
+/* line 350, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-btn-cleanbutton-toolbar-small-tr,
+.x-btn-cleanbutton-toolbar-small-br,
+.x-btn-cleanbutton-toolbar-small-mr {
+  padding-right: 3px;
+}
+
+/* line 356, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-btn-cleanbutton-toolbar-small-tl,
+.x-btn-cleanbutton-toolbar-small-bl,
+.x-btn-cleanbutton-toolbar-small-ml {
+  padding-left: 3px;
+}
+
+/* line 360, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-btn-cleanbutton-toolbar-small-tc {
+  height: 3px;
+}
+
+/* line 363, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-btn-cleanbutton-toolbar-small-bc {
+  height: 3px;
+}
+
+/* line 374, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-btn-cleanbutton-toolbar-small-tl,
+.x-btn-cleanbutton-toolbar-small-bl,
+.x-btn-cleanbutton-toolbar-small-tr,
+.x-btn-cleanbutton-toolbar-small-br,
+.x-btn-cleanbutton-toolbar-small-tc,
+.x-btn-cleanbutton-toolbar-small-bc,
+.x-btn-cleanbutton-toolbar-small-ml,
+.x-btn-cleanbutton-toolbar-small-mr {
+  zoom: 1;
+  background-image: url(images/btn/btn-cleanbutton-toolbar-small-corners.gif);
+}
+
+/* line 418, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-btn-cleanbutton-toolbar-small-ml,
+.x-btn-cleanbutton-toolbar-small-mr {
+  zoom: 1;
+  background-image: url(images/btn/btn-cleanbutton-toolbar-small-sides.gif);
+  background-repeat: repeat-y;
+}
+
+/* line 430, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-btn-cleanbutton-toolbar-small-mc {
+  padding: 1px 1px 1px 1px;
+}
+
+/* line 439, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/frame.scss */
+.x-strict .x-ie7 .x-btn-cleanbutton-toolbar-small-tl,
+.x-strict .x-ie7 .x-btn-cleanbutton-toolbar-small-bl {
+  position: relative;
+  right: 0;
+}
+
+/*<if slicer>*/
+/* line 78, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/slicer.scss */
+.x-btn-cleanbutton-toolbar-small:after {
+  display: none;
+  content: "x-slicer:corners:url(images/btn/btn-cleanbutton-toolbar-small-corners.gif), sides:url(images/btn/btn-cleanbutton-toolbar-small-sides.gif)";
+}
+
+/*</if slicer>*/
+/* */
+/* line 262, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small .x-btn-inner {
+  font-size: 12px;
+  font-weight: bold;
+  font-family: helvetica, arial, verdana, sans-serif;
+  color: white;
+  padding: 0 5px;
+}
+/* line 270, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small .x-btn-arrow {
+  background-image: url(images/button/cleanbutton-toolbar-small-arrow.png);
+}
+/* line 278, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small .x-btn-arrow-right {
+  padding-right: 21px;
+}
+/* line 289, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small .x-btn-arrow-bottom {
+  padding-bottom: 18px;
+}
+/* line 293, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small .x-btn-glyph {
+  font-size: 16px;
+  line-height: 16px;
+  color: #666666;
+  opacity: 0.5;
+}
+/* line 313, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-ie8m .x-btn-cleanbutton-toolbar-small .x-btn-glyph {
+  color: #5c6e7e;
+}
+
+/* line 320, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-disabled {
+  background-image: none;
+  background-color: #537697;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #6483a1), color-stop(50%, #537697), color-stop(51%, #4e708f), color-stop(100%, #537697));
+  background-image: -webkit-linear-gradient(top, #6483a1, #537697 50%, #4e708f 51%, #537697);
+  background-image: -moz-linear-gradient(top, #6483a1, #537697 50%, #4e708f 51%, #537697);
+  background-image: -o-linear-gradient(top, #6483a1, #537697 50%, #4e708f 51%, #537697);
+  background-image: -ms-linear-gradient(top, #6483a1, #537697 50%, #4e708f 51%, #537697);
+  background-image: linear-gradient(top, #6483a1, #537697 50%, #4e708f 51%, #537697);
+}
+
+/* line 346, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-icon .x-btn-button,
+.x-btn-cleanbutton-toolbar-small-noicon .x-btn-button {
+  height: 16px;
+}
+/* line 350, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-icon .x-btn-inner,
+.x-btn-cleanbutton-toolbar-small-noicon .x-btn-inner {
+  line-height: 16px;
+}
+
+/* line 360, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-icon .x-btn-arrow-right .x-btn-inner,
+.x-btn-cleanbutton-toolbar-small-noicon .x-btn-arrow-right .x-btn-inner,
+.x-btn-cleanbutton-toolbar-small-icon-text-left .x-btn-arrow-right .x-btn-inner {
+  padding-right: 0;
+}
+
+/* line 375, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-icon .x-btn-inner {
+  width: 16px;
+  padding: 0;
+}
+/* line 381, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-icon .x-btn-icon-el {
+  width: 16px;
+  height: 16px;
+}
+
+/* line 388, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-icon-text-left .x-btn-button {
+  height: 16px;
+}
+/* line 393, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-icon-text-left .x-btn-inner {
+  line-height: 16px;
+  padding-left: 21px;
+}
+/* line 409, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-icon-text-left .x-btn-icon-el {
+  width: 16px;
+  right: auto;
+}
+/* line 415, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-ie6 .x-btn-cleanbutton-toolbar-small-icon-text-left .x-btn-icon-el, .x-quirks .x-ie .x-btn-cleanbutton-toolbar-small-icon-text-left .x-btn-icon-el {
+  height: 16px;
+}
+
+/* line 430, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-icon-text-right .x-btn-button {
+  height: 16px;
+}
+/* line 435, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-icon-text-right .x-btn-inner {
+  line-height: 16px;
+  padding-right: 21px;
+}
+/* line 447, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-icon-text-right .x-btn-icon-el {
+  width: 16px;
+  left: auto;
+}
+/* line 453, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-ie6 .x-btn-cleanbutton-toolbar-small-icon-text-right .x-btn-icon-el, .x-quirks .x-ie .x-btn-cleanbutton-toolbar-small-icon-text-right .x-btn-icon-el {
+  height: 16px;
+}
+
+/* line 468, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-icon-text-top .x-btn-inner {
+  padding-top: 21px;
+}
+/* line 472, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-icon-text-top .x-btn-icon-el {
+  height: 16px;
+  bottom: auto;
+}
+/* line 480, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-ie6 .x-btn-cleanbutton-toolbar-small-icon-text-top .x-btn-icon-el, .x-quirks .x-ie .x-btn-cleanbutton-toolbar-small-icon-text-top .x-btn-icon-el {
+  width: 100%;
+}
+
+/* line 488, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-icon-text-bottom .x-btn-inner {
+  padding-bottom: 21px;
+}
+/* line 492, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-icon-text-bottom .x-btn-icon-el {
+  height: 16px;
+  top: auto;
+}
+/* line 500, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-ie6 .x-btn-cleanbutton-toolbar-small-icon-text-bottom .x-btn-icon-el, .x-quirks .x-ie .x-btn-cleanbutton-toolbar-small-icon-text-bottom .x-btn-icon-el {
+  width: 100%;
+}
+
+/* line 507, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-focus {
+  background-image: none;
+  background-color: #4f7190;
+}
+
+/* line 531, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-over {
+  background-image: none;
+  background-color: #537697;
+}
+
+/* line 556, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-menu-active,
+.x-btn-cleanbutton-toolbar-small-pressed {
+  background-image: none;
+  background-color: #537697;
+}
+
+/* line 588, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-focus .x-frame-tl,
+.x-btn-cleanbutton-toolbar-small-focus .x-frame-bl,
+.x-btn-cleanbutton-toolbar-small-focus .x-frame-tr,
+.x-btn-cleanbutton-toolbar-small-focus .x-frame-br,
+.x-btn-cleanbutton-toolbar-small-focus .x-frame-tc,
+.x-btn-cleanbutton-toolbar-small-focus .x-frame-bc {
+  background-image: url(images/btn/btn-cleanbutton-toolbar-small-focus-corners.gif);
+}
+/* line 592, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-focus .x-frame-ml,
+.x-btn-cleanbutton-toolbar-small-focus .x-frame-mr {
+  background-image: url(images/btn/btn-cleanbutton-toolbar-small-focus-sides.gif);
+}
+/* line 595, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-focus .x-frame-mc {
+  background-color: #4f7190;
+  background-image: url(images/btn/btn-cleanbutton-toolbar-small-focus-fbg.gif);
+}
+
+/* line 610, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-over .x-frame-tl,
+.x-btn-cleanbutton-toolbar-small-over .x-frame-bl,
+.x-btn-cleanbutton-toolbar-small-over .x-frame-tr,
+.x-btn-cleanbutton-toolbar-small-over .x-frame-br,
+.x-btn-cleanbutton-toolbar-small-over .x-frame-tc,
+.x-btn-cleanbutton-toolbar-small-over .x-frame-bc {
+  background-image: url(images/btn/btn-cleanbutton-toolbar-small-over-corners.gif);
+}
+/* line 614, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-over .x-frame-ml,
+.x-btn-cleanbutton-toolbar-small-over .x-frame-mr {
+  background-image: url(images/btn/btn-cleanbutton-toolbar-small-over-sides.gif);
+}
+/* line 617, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-over .x-frame-mc {
+  background-color: #537697;
+  background-image: url(images/btn/btn-cleanbutton-toolbar-small-over-fbg.gif);
+}
+
+/* line 633, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-menu-active .x-frame-tl,
+.x-btn-cleanbutton-toolbar-small-menu-active .x-frame-bl,
+.x-btn-cleanbutton-toolbar-small-menu-active .x-frame-tr,
+.x-btn-cleanbutton-toolbar-small-menu-active .x-frame-br,
+.x-btn-cleanbutton-toolbar-small-menu-active .x-frame-tc,
+.x-btn-cleanbutton-toolbar-small-menu-active .x-frame-bc,
+.x-btn-cleanbutton-toolbar-small-pressed .x-frame-tl,
+.x-btn-cleanbutton-toolbar-small-pressed .x-frame-bl,
+.x-btn-cleanbutton-toolbar-small-pressed .x-frame-tr,
+.x-btn-cleanbutton-toolbar-small-pressed .x-frame-br,
+.x-btn-cleanbutton-toolbar-small-pressed .x-frame-tc,
+.x-btn-cleanbutton-toolbar-small-pressed .x-frame-bc {
+  background-image: url(images/btn/btn-cleanbutton-toolbar-small-pressed-corners.gif);
+}
+/* line 637, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-menu-active .x-frame-ml,
+.x-btn-cleanbutton-toolbar-small-menu-active .x-frame-mr,
+.x-btn-cleanbutton-toolbar-small-pressed .x-frame-ml,
+.x-btn-cleanbutton-toolbar-small-pressed .x-frame-mr {
+  background-image: url(images/btn/btn-cleanbutton-toolbar-small-pressed-sides.gif);
+}
+/* line 640, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-menu-active .x-frame-mc,
+.x-btn-cleanbutton-toolbar-small-pressed .x-frame-mc {
+  background-color: #537697;
+  background-image: url(images/btn/btn-cleanbutton-toolbar-small-pressed-fbg.gif);
+}
+
+/* line 655, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-disabled .x-frame-tl,
+.x-btn-cleanbutton-toolbar-small-disabled .x-frame-bl,
+.x-btn-cleanbutton-toolbar-small-disabled .x-frame-tr,
+.x-btn-cleanbutton-toolbar-small-disabled .x-frame-br,
+.x-btn-cleanbutton-toolbar-small-disabled .x-frame-tc,
+.x-btn-cleanbutton-toolbar-small-disabled .x-frame-bc {
+  background-image: url(images/btn/btn-cleanbutton-toolbar-small-disabled-corners.gif);
+}
+/* line 659, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-disabled .x-frame-ml,
+.x-btn-cleanbutton-toolbar-small-disabled .x-frame-mr {
+  background-image: url(images/btn/btn-cleanbutton-toolbar-small-disabled-sides.gif);
+}
+/* line 662, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-disabled .x-frame-mc {
+  background-color: #537697;
+  background-image: url(images/btn/btn-cleanbutton-toolbar-small-disabled-fbg.gif);
+}
+
+/* line 674, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-nlg .x-btn-cleanbutton-toolbar-small-focus {
+  background-image: url(images/btn/btn-cleanbutton-toolbar-small-focus-bg.gif);
+}
+
+/* line 682, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-nlg .x-btn-cleanbutton-toolbar-small-over {
+  background-image: url(images/btn/btn-cleanbutton-toolbar-small-over-bg.gif);
+}
+
+/* line 691, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-nlg .x-btn-cleanbutton-toolbar-small-menu-active,
+.x-nlg .x-btn-cleanbutton-toolbar-small-pressed {
+  background-image: url(images/btn/btn-cleanbutton-toolbar-small-pressed-bg.gif);
+}
+
+/* line 699, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-nlg .x-btn-cleanbutton-toolbar-small-disabled {
+  background-image: url(images/btn/btn-cleanbutton-toolbar-small-disabled-bg.gif);
+}
+
+/* line 707, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-nbr .x-btn-cleanbutton-toolbar-small {
+  background-image: none;
+}
+
+/* line 722, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small .x-btn-split-right {
+  background-image: url(images/button/cleanbutton-toolbar-small-s-arrow.png);
+  padding-right: 23px;
+}
+/* line 735, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small .x-btn-split-bottom {
+  background-image: url(images/button/cleanbutton-toolbar-small-s-arrow-b.png);
+  padding-bottom: 20px;
+}
+
+/* line 758, ../../../../ext/packages/ext-theme-neutral/sass/src/button/Button.scss */
+.x-btn-cleanbutton-toolbar-small-disabled {
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
+  opacity: 0.5;
+}
+
+/*<if slicer>*/
+/* line 78, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/slicer.scss */
+.x-btn-cleanbutton-toolbar-small-focus:after {
+  display: none;
+  content: "x-slicer:stretch:bottom, corners:url(images/btn/btn-cleanbutton-toolbar-small-focus-corners.gif), sides:url(images/btn/btn-cleanbutton-toolbar-small-focus-sides.gif), frame-bg:url(images/btn/btn-cleanbutton-toolbar-small-focus-fbg.gif), bg:url(images/btn/btn-cleanbutton-toolbar-small-focus-bg.gif)";
+}
+
+/*</if slicer>*/
+/* */
+/*<if slicer>*/
+/* line 78, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/slicer.scss */
+.x-btn-cleanbutton-toolbar-small-over:after {
+  display: none;
+  content: "x-slicer:stretch:bottom, corners:url(images/btn/btn-cleanbutton-toolbar-small-over-corners.gif), sides:url(images/btn/btn-cleanbutton-toolbar-small-over-sides.gif), frame-bg:url(images/btn/btn-cleanbutton-toolbar-small-over-fbg.gif), bg:url(images/btn/btn-cleanbutton-toolbar-small-over-bg.gif)";
+}
+
+/*</if slicer>*/
+/* */
+/*<if slicer>*/
+/* line 78, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/slicer.scss */
+.x-btn-cleanbutton-toolbar-small-pressed:after {
+  display: none;
+  content: "x-slicer:stretch:bottom, corners:url(images/btn/btn-cleanbutton-toolbar-small-pressed-corners.gif), sides:url(images/btn/btn-cleanbutton-toolbar-small-pressed-sides.gif), frame-bg:url(images/btn/btn-cleanbutton-toolbar-small-pressed-fbg.gif), bg:url(images/btn/btn-cleanbutton-toolbar-small-pressed-bg.gif)";
+}
+
+/*</if slicer>*/
+/* */
+/*<if slicer>*/
+/* line 78, ../../../../ext/packages/ext-theme-base/sass/etc/mixins/slicer.scss */
+.x-btn-cleanbutton-toolbar-small-disabled:after {
+  display: none;
+  content: "x-slicer:stretch:bottom, corners:url(images/btn/btn-cleanbutton-toolbar-small-disabled-corners.gif), sides:url(images/btn/btn-cleanbutton-toolbar-small-disabled-sides.gif), frame-bg:url(images/btn/btn-cleanbutton-toolbar-small-disabled-fbg.gif), bg:url(images/btn/btn-cleanbutton-toolbar-small-disabled-bg.gif)";
+}
+
+/*</if slicer>*/
+/* */
+/* line 45, ../../../../ext/packages/ext-theme-neutral/sass/src/toolbar/Toolbar.scss */
+.x-toolbar-cleantoolbar-dark {
+  border-color: silver;
+  border-width: 1px;
+  background-image: none;
+  background-color: #537697;
+}
+/* line 51, ../../../../ext/packages/ext-theme-neutral/sass/src/toolbar/Toolbar.scss */
+.x-toolbar-cleantoolbar-dark .x-box-scroller {
+  cursor: pointer;
+}
+/* line 55, ../../../../ext/packages/ext-theme-neutral/sass/src/toolbar/Toolbar.scss */
+.x-toolbar-cleantoolbar-dark .x-box-scroller-disabled {
+  cursor: default;
+}
+/* line 65, ../../../../ext/packages/ext-theme-neutral/sass/src/toolbar/Toolbar.scss */
+.x-toolbar-cleantoolbar-dark .x-tool-img {
+  background-image: url(images/tools/tool-sprites-dark.png);
+  background-color: #537697;
+}
+
+/* line 45, ../../../../ext/packages/ext-theme-neutral/sass/src/toolbar/Toolbar.scss */
+.x-toolbar-cleantoolbar-light {
+  border-color: silver;
+  border-width: 1px;
+  background-image: none;
+  background-color: #c2cfda;
+}
+/* line 51, ../../../../ext/packages/ext-theme-neutral/sass/src/toolbar/Toolbar.scss */
+.x-toolbar-cleantoolbar-light .x-box-scroller {
+  cursor: pointer;
+}
+/* line 55, ../../../../ext/packages/ext-theme-neutral/sass/src/toolbar/Toolbar.scss */
+.x-toolbar-cleantoolbar-light .x-box-scroller-disabled {
+  cursor: default;
+}
+/* line 65, ../../../../ext/packages/ext-theme-neutral/sass/src/toolbar/Toolbar.scss */
+.x-toolbar-cleantoolbar-light .x-tool-img {
+  background-image: url(images/tools/tool-sprites-dark.png);
+  background-color: #c2cfda;
+}
