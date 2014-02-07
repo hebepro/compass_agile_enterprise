@@ -38,6 +38,7 @@
   <%= static_stylesheet_link_tag(@organizer.applications.collect { |app| app.locate_resources('stylesheets') }.flatten) %>
   <!-- end application resources -->
 
+  <%= include_compass_ae_instance %>
 </head>
 <body scroll="no">
 <script type="text/javascript">

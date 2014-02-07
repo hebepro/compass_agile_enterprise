@@ -75,7 +75,7 @@
   <!-- application resources -->
   <%= static_javascript_include_tag(@desktop.applications.collect { |app| app.locate_resources('javascripts') }.flatten) %>
   <!-- end application resources -->
-  <%= include_compass_ae_instance_about %>
+  <%= include_compass_ae_instance %>
   <%= set_max_file_upload %>
   <%= set_file_upload_types %>
   <%= set_email_regex %>

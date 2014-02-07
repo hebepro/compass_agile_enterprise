@@ -246,28 +246,16 @@ Compass.ErpApp.Organizer.Layout = function (config) {
         });
 
         this.viewPort.down('#organizerWelcomeMsg').setText('Welcome: ' + currentUser.description);
-
-        var shadow = Ext.create('Ext.Shadow', {
-            mode: 'drop',
-            offset: 10,
-            style:{
-                boxShadow:'rgb(0,0,0) 0px 0px 12px;'
-            }
-        });
-
-        shadow.show( Ext.ComponentQuery.query('#erp_app_viewport_west')[0].el );
-        //shadow.show( Ext.ComponentQuery.query('#erp_app_viewport_center')[0].el );
-
     };
 };
 
 Compass.ErpApp.Organizer.Layout.setActiveCenterItem = function (panel_id, menu_id, loadRemoteData) {
     // set panel as active
-    var panel = Ext.ComponentMgr.get('erp_app_viewport_center').down('#' + panel_id);
+    var panel = Ext.getCmp('erp_app_viewport_center').down('#' + panel_id);
     if (panel)
-        Ext.ComponentMgr.get('erp_app_viewport_center').layout.setActiveItem(panel);
+        Ext.getCmp('erp_app_viewport_center').layout.setActiveItem(panel);
 
-    var menu = Ext.ComponentMgr.get('erp_app_viewport_west').down('#' + menu_id);
+    var menu = Ext.getCmp('erp_app_viewport_west').down('#' + menu_id);
     if (menu)
         menu.expand();
 

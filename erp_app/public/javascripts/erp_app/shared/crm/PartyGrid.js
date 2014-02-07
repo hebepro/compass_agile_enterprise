@@ -253,13 +253,6 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                     // open tab with create user form.
                     var tabPanel = button.up('crmpartygrid').up('#' + me.applicationContainerId);
 
-                    // check and see if tab already open
-                    var tab = tabPanel.down('crmpartyformpanel');
-                    if (tab) {
-                        tabPanel.setActiveTab(tab);
-                        return;
-                    }
-
                     var crmPartyFormPanel = Ext.create("widget.crmpartyformpanel", {
                         title: me.addBtnDescription,
                         applicationContainerId: me.applicationContainerId,

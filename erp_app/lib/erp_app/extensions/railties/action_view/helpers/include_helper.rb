@@ -44,7 +44,7 @@ module ErpApp
               resources
             end
 
-            def include_compass_ae_instance_about
+            def include_compass_ae_instance
               compass_ae_instance = CompassAeInstance.find_by_internal_identifier('base')
               json_hash = {
                   :version => compass_ae_instance.version,

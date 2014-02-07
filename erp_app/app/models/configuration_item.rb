@@ -26,6 +26,14 @@ class ConfigurationItem < ActiveRecord::Base
     self.save
   end
 
+  def value
+    if options.count == 1
+      options.first.value
+    else
+      options
+    end
+  end
+
   def set_options(internal_identifiers_or_value)
     if self.configuration_item_type.allow_user_defined_options?
       value = internal_identifiers_or_value.first

@@ -9,6 +9,7 @@ class CompassAeInstance < ActiveRecord::Base
       where('role_type_id = ?', RoleType.compass_ae_instance_owner.id)
     end
   end
+  validates :guid, :uniqueness => true
   validates :internal_identifier, :presence => {:message => 'internal_identifier cannot be blank'}, :uniqueness => {:case_sensitive => false}
 
   def installed_engines
@@ -33,4 +34,5 @@ class CompassAeInstance < ActiveRecord::Base
     set_guid(guid)
     guid
   end
+
 end
