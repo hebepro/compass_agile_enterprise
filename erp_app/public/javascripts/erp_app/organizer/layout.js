@@ -144,19 +144,10 @@ Compass.ErpApp.Organizer.Layout = function (config) {
                     listeners: {
                         render: function (component) {
                             component.getEl().on('click', function (e) {
-                                var cardHolder = Ext.getCmp(cardHolderId);
-
-                                if (menuItem.filterPanel) {
-                                    var filterPanel = cardHolder.down('#filterPanel' + "_" + menuItem.tabItemId);
-
-                                    cardHolder.getLayout().setActiveItem(filterPanel, {transitionType: 'crossFade'});
-                                }
-
                                 var masterPanel = Ext.getCmp(config.id),
                                     tab = masterPanel.down('#' + menuItem.tabItemId);
 
                                 masterPanel.setActiveTab(tab);
-
                             }, component);
                         }
                     }
@@ -167,46 +158,15 @@ Compass.ErpApp.Organizer.Layout = function (config) {
                         cursor: 'pointer'
                     }
                 });
-
-            if (menuItem.filterPanel) {
-                menuItems.push({
-                    xtype: 'panel',
-                    hidden: true,
-                    itemId: 'filterPanel' + "_" + menuItem.tabItemId,
-                    frame: false,
-                    header:false,
-                    bodyPadding: '5px',
-                    style: {
-                        borderRadius: '5px'
-                    },
-                    dockedItems: [
-                        {
-                            xtype: 'toolbar',
-
-                            dock: 'top',
-                            items: [
-                                {
-                                    ui: '',
-                                    text: '<',
-                                    handler: function (btn) {
-                                        var cardHolder = Ext.getCmp(cardHolderId),
-                                            menuPanel = cardHolder.down('#menuItems');
-
-                                        cardHolder.getLayout().setActiveItem(menuPanel, {transitionType: 'crossFade'});
-                                    }
-                                }
-                            ]
-                        }
-                    ],
-                    items: menuItem.filterPanel
-                });
-            }
         });
 
         var menuPanel = {
             xtype: 'panel',
             title: config.title,
-            layout: 'transitioncard',
+            layout: {
+                type: "vbox",
+                align: "center"
+            },
             id: cardHolderId,
             listeners: {
                 render: function (c) {
@@ -225,17 +185,7 @@ Compass.ErpApp.Organizer.Layout = function (config) {
                     });
                 }
             },
-            items: [
-                {
-                    xtype: 'container',
-                    itemId: 'menuItems',
-                    layout: {
-                        type: "vbox",
-                        align: "center"
-                    },
-                    items: menuItems
-                }
-            ]
+            items: menuItems
         };
 
         accordionMenuItems.push(menuPanel);
@@ -249,26 +199,6 @@ Compass.ErpApp.Organizer.Layout = function (config) {
         });
 
         this.centerPanel.add(masterPanel);
-
-        masterPanel.addListener('tabchange', function (tabPanel, newCard, oldCard, eOpt) {
-            var cardHolder = Ext.getCmp(cardHolderId),
-                menuPanel = cardHolder.down('#menuItems');
-
-            var itemId = newCard.itemId;
-            result = Ext.Array.findBy(config.menuItems, function (item) {
-                if (item.tabItemId == itemId) {
-                    return true;
-                }
-            });
-
-            if (Ext.isEmpty(result.filterPanel)) {
-                cardHolder.getLayout().setActiveItem(menuPanel, {transitionType: 'crossFade'});
-            }
-            else {
-                var filterPanel = cardHolder.down('#filterPanel' + "_" + result.tabItemId);
-                cardHolder.getLayout().setActiveItem(filterPanel, {transitionType: 'crossFade'});
-            }
-        });
     };
 
     this.setup = function () {
