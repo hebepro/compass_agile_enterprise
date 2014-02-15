@@ -4,9 +4,9 @@ Ext.define('Compass.ErpApp.Desktop.Applications.JobTracker.Model', {
         {name: 'id', type: 'int'},
         {name: 'job_name', type: 'string'},
         {name: 'run_time', type: 'string'},
-        {name: 'scheduled', type: 'boolean', mapping: 'additional_values.scheduled'},
-        {name: 'last_run_at', type: 'date', dateFormat: 'm-d-Y H:i:s', mapping: 'additional_values.last_run_at'},
-        {name: 'next_run_at', type: 'date', dateFormat: 'm-d-Y H:i:s', mapping: 'additional_values.next_run_at'}
+        {name: 'scheduled', type: 'boolean', mapping: 'scheduled'},
+        {name: 'last_run_at', type: 'date', dateFormat: 'c', mapping: 'last_run_at'},
+        {name: 'next_run_at', type: 'date', dateFormat: 'c', mapping: 'next_run_at'}
     ]
 });
 
