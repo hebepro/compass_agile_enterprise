@@ -22,7 +22,7 @@ module ErpApp
       IGNORED_PARAMS = %w{action controller uuid widget_name widget_action dynamic_form_id dynamic_form_model_id
                           model_name use_dynamic_form authenticity_token is_html_form commit utf8}
 
-      delegate :config, :params, :session, :request, :logger, :logged_in?, :current_user,
+      delegate :config, :params, :session, :request, :logger, :logged_in?, :current_user, :login,
                :flash, :update_div_id, :update_html, :current_theme_paths, :request, :send_data, :to => :proxy_controller
 
       attr_reader   :state_name
