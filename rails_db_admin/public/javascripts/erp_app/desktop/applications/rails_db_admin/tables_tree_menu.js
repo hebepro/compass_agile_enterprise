@@ -16,10 +16,10 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.TablesMenuTreePanel
                             xtype: 'textfield',
                             flex: 1,
                             emptyText: 'Table Name',
-                            listeners:{
-                                change:function(comp, newValue, oldValue){
+                            listeners: {
+                                change: function (comp, newValue, oldValue) {
                                     var store = comp.up('treepanel').getStore();
-                                    store.load({params:{name:newValue}});
+                                    store.load({params: {name: newValue}});
                                 }
                             }
                         }
@@ -62,13 +62,13 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.TablesMenuTreePanel
             animate: false,
             listeners: {
 
-                'itemclick' : function( view, record, item, index, e, eOpts ) {
+                'itemclick': function (view, record, item, index, e, eOpts) {
 
                     e.stopEvent();
                     if (!record.data['isTable']) {
                         return false;
                     }
-                    self.initialConfig.module.getTableData(record.data.id);
+                    self.initialConfig.module.getTableData(record.data.text);
                 },
 
                 'itemcontextmenu': function (view, record, item, index, e) {
@@ -85,7 +85,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.TablesMenuTreePanel
                                     listeners: {
                                         scope: record,
                                         'click': function () {
-                                            self.initialConfig.module.selectTopFifty(this.data.id);
+                                            self.initialConfig.module.selectTopFifty(this.data.text);
                                         }
                                     }
                                 },
@@ -95,7 +95,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.TablesMenuTreePanel
                                     listeners: {
                                         scope: record,
                                         'click': function () {
-                                            self.initialConfig.module.getTableData(this.data.id);
+                                            self.initialConfig.module.getTableData(this.data.text);
                                         }
                                     }
                                 }
