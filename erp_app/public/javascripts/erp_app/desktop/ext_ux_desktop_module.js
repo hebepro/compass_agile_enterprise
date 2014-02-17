@@ -91,6 +91,7 @@ Ext.define("Ext.ux.desktop.Desktop", {
         if (a) {
             b.setWallpaper(a, b.wallpaperStretch)
         };
+
     },
     afterRender: function () {
         var a = this;
@@ -663,6 +664,7 @@ Ext.define("Ext.ux.desktop.App", {
         })
     },
     getModule: function (d) {
+
         var c = this.modules;
         for (var e = 0, b = c.length; e < b; e++) {
             var a = c[e];

@@ -1,23 +1,20 @@
-Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SplashScreen",{
-    extend:"Ext.panel.Panel",
-    alias:'widget.knitkit_splash_screen',
+Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.SplashScreen", {
     title: 'Startup',
+    extend: "Ext.panel.Panel",
+    alias: 'widget.railsdbadmin_splash_screen',
+    autoScroll: true,
     items: [
         {
-            html: "<div style='margin: 15px 50px 5px 50px;'><hr /><h2 style='margin: 3px 0px 0px 0px; color: #555; text-align: center'>Website Builder Home</h2><hr /></div>"
+            html: "<div style='margin: 15px 50px 5px 50px;'><hr /><h2 style='margin: 3px 0px 0px 0px; color: #555; text-align: center'>Database Navigator</h2><hr /></div>"
         },
-
         {
             xtype: 'image',
-            style: 'padding-left: 50%; margin-left: -300px;',
-             //src: 'http://placehold.it/600x250'
-            src: '/images/knitkit/splash/splash.png'
+            style: 'padding-left: 50%; margin-left: -400px;',
+            src: '/images/splash/splash.png'   // src: 'http://placehold.it/800x250'
         },
-
         {
             html: "<div style='margin: 15px 50px 5px 50px;'><p style='margin: 0px; color: #222; text-align: center; font-size: 16px; font-weight: 300;'>Click on the shortcuts below to get started.</p></div>"
         },
-
         {
             xtype: 'panel',
             layout: 'column',
@@ -37,7 +34,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SplashScreen",{
                     items: [
                         {
                             xtype: 'image',
-                            src: '/images/knitkit/splash/images/browse-site.png',
+                            src: '/images/splash/images/data-model-icon.png',
                             height: 80,
                             width: 80,
                             style: 'margin: 0px 0px 5px 10px;',
@@ -45,18 +42,19 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SplashScreen",{
                                 render: function (component) {
                                     component.getEl().on('click', function (e) {
 
-                                        alert('Browse current site');
+                                        self.initialConfig.module.setWindowStatus('Retrieving Docs...');
+                                        self.initialConfig.module.openIframeInTab('Data Models', 'http://documentation.compassagile.com');
+                                        self.initialConfig.module.clearWindowStatus();
 
                                     }, component);
                                 }
                             }
                         },
                         {
-                            html: "<p style='background-color: #ddd; margin: 0px; text-align: center'>View the current site in a browser</p>"
+                            html: "<p style='background-color: #ddd; margin: 0px; text-align: center'>Browse the DB models</p>"
                         }
                     ]
                 },
-
                 {
                     xtype: 'panel',
                     border: false,
@@ -70,7 +68,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SplashScreen",{
                     items: [
                         {
                             xtype: 'image',
-                            src: '/images/knitkit/splash/images/find-themes.png',
+                            src: '/images/splash/images/console-icon.png',
                             height: 80,
                             width: 80,
                             style: 'margin: 0px 0px 5px 10px;',
@@ -78,25 +76,28 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SplashScreen",{
                                 render: function (component) {
                                     component.getEl().on('click', function (e) {
 
-                                        //Which of these is cooler? Which is more useful?
-                                        //window.open("http://themes.compassagile.com");
+//Launch a console in a tab in the current app
 
-                                        self.initialConfig['centerRegion'].setWindowStatus('Finding themes...');
-                                        self.initialConfig['centerRegion'].openIframeInTab('Find Themes', 'http://themes.compassagile.com');
-                                        self.initialConfig['centerRegion'].clearWindowStatus();
+                                        self.initialConfig.module.addConsolePanel();
 
-
-
+//****** Launch a console as a separate desktop application ***********
+//
+//                                        var desktop = this.findParentByType('desktop');
+//                                        var module = desktop.app.getModule('compass_console-win');
+//
+//                                        if (module) {
+//                                            module.createWindow();
+//                                        }
+//********************************************************************
                                     }, component);
                                 }
                             }
                         },
                         {
-                            html: "<p style='background-color: #ddd; margin: 0px; text-align: center'>Find themes</p>"
+                            html: "<p style='background-color: #ddd; margin: 0px; text-align: center'>Open a console</p>"
                         }
                     ]
                 },
-
                 {
                     xtype: 'panel',
                     border: false,
@@ -118,16 +119,16 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SplashScreen",{
                                 render: function (component) {
                                     component.getEl().on('click', function (e) {
 
-                                        self.initialConfig['centerRegion'].setWindowStatus('Retrieving Docs...');
-                                        self.initialConfig['centerRegion'].openIframeInTab('Tutorials', 'http://tutorials.compassagile.com');
-                                        self.initialConfig['centerRegion'].clearWindowStatus();
+                                        self.initialConfig.module.setWindowStatus('Retrieving Docs...');
+                                        self.initialConfig.module.openIframeInTab('Tutorials', 'http://tutorials.compassagile.com');
+                                        self.initialConfig.module.clearWindowStatus();
 
                                     }, component);
                                 }
                             }
                         },
                         {
-                            html: "<p style='background-color: #ddd; margin: 0px; text-align: center'>Learn more!</p>"
+                            html: "<p style='background-color: #ddd; margin: 0px; text-align: center'>Learn More!</p>"
                         }
                     ]
                 }
@@ -138,12 +139,9 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SplashScreen",{
         self = this;
 
         config = Ext.apply({
-
-           centerRegion : this.findParentByType('window')
-
+            //placeholder
         }, config);
         this.callParent([config]);
     }
+
 });
-
-

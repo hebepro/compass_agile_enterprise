@@ -106,7 +106,7 @@
         footer_height = Ext.get("footer").getHeight();
         document_content_height = window_height - header_height - footer_height;
         Ext.get("document_content").setHeight(document_content_height);
-        Ext.getCmp("fittedPanelDiv").setHeight(document_content_height - 20);
+        Ext.getCmp("fittedPanelDiv").setHeight(document_content_height);
     }
 
     Ext.onReady(function () {
@@ -212,7 +212,7 @@
         Ext.createWidget('panel', {
             id: 'fittedPanelDiv',
             layout: 'border',
-            width: 800,
+            //width: 800,
             header: false,
             defaults: {
                 split: true
@@ -244,6 +244,7 @@
                     });
 
                     tabPanel.add(panel).show();
+                    tabPanel.setActiveTab(panel);
                 }
                 else {
                     Ext.Msg.alert('Error', 'Could not load content');

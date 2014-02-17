@@ -1,5 +1,10 @@
 /****Buttons Icons****/
 
+.icon-book {
+    background-image:url( /images/icons/book/book_16x16.png ) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/rails_db_admin/rails_db_admin_16x16.png', sizingMethod='crop');
+}
+
 .icon-database {
     background-image:url( /images/icons/database/database_16x16.png ) !important;
     filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/rails_db_admin/rails_db_admin_16x16.png', sizingMethod='crop');
@@ -227,6 +232,11 @@
     filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/globe/globe_16x16.png', sizingMethod='crop');
 }
 
+.icon-globe-light {
+    background-image:url( /images/icons/globe/globe_light_16x16.png ) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/globe/globe_16x16.png', sizingMethod='crop');
+}
+
 .icon-globe_disconnected {
     background-image:url( /images/icons/globe_disconnected/globe_disconnected_16x16.png ) !important;
     filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/globe_disconnected/globe_disconnected_16x16.png', sizingMethod='crop');
@@ -374,6 +384,10 @@
 
 .icon-calendar {
     background-image:url( /images/icons/calendar/calendar_16x16.png ) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/calendar/calendar_16x16.png', sizingMethod='crop');
+}
+.icon-calendar-light {
+    background-image:url( /images/icons/calendar/calendar_light_16x16.png ) !important;
     filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/calendar/calendar_16x16.png', sizingMethod='crop');
 }
 

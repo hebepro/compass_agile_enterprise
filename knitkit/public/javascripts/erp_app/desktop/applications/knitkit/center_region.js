@@ -521,6 +521,20 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
         this.workArea.setActiveTab(item);
     },
 
+    openIframeInTab : function( title, url ) {
+
+        var item = Ext.create('Ext.panel.Panel', {
+            iframeId:'themes_iframe',
+            closable: true,
+            layout: 'fit',
+            title: title,
+            html:'<iframe id="themes_iframe" height="100%" width="100%" frameBorder="0" src="'+url+'"></iframe>'
+        });
+
+        this.workArea.add(item);
+        this.workArea.setActiveTab(item);
+    },
+
     editContent: function (title, id, content, siteId, contentType, contentGridStore) {
         var self = this;
         var itemId = 'editContent-' + id;
@@ -939,7 +953,8 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
         });
 
         startupPanel = Ext.createWidget('knitkit_splash_screen', {
-            closable: true
+            closable: true,
+            centerRegion: region
         });
         this.workArea.add(startupPanel);
         this.workArea.setActiveTab(startupPanel);

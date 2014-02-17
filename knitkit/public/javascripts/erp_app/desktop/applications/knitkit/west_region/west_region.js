@@ -1192,7 +1192,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
         config = Ext.apply({
             region:'west',
             split:true,
-            width:320,
+            width:310,
             collapsible:true
         }, config);
 

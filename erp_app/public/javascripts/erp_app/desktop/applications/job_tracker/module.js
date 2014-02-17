@@ -19,7 +19,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.JobTracker",{
                 title:'Job Tracker',
                 width:730,
                 height:350,
-                iconCls: 'icon-calendar',
+                iconCls: 'icon-calendar-light',
                 shim:false,
                 animCollapse:false,
                 constrainHeader:true,
