@@ -311,8 +311,8 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
             this.down('crmpartyform').loadParty(me.partyId);
         }
 
-        if (!Ext.isEmpty(me.partyType) && me.partyType == 'Individual' && !Ext.isEmpty(me.partyId)) {
-            this.down('crmuserform').loadUser(me.partyId, me.userId);
+        if (!Ext.isEmpty(me.partyType) && me.partyType == 'Individual' && !Ext.isEmpty(me.userId)) {
+            this.down('crmuserform').loadUser(me.userId);
         }
 
         if (me.allowedPartyType == 'Organization' || (!Ext.isEmpty(me.partyType) && me.partyType == 'Organization')) {

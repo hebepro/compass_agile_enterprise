@@ -8,13 +8,13 @@ namespace :compass_ae do
   	TIMESTAMP_FORMAT = "%Y-%m-%d_%Hh%Mm%Ss" # keep a single underscore or the purge_old task will break
   	@purge_dumps_older_than = 2.weeks.ago
 
-    db_config = Rails.configuration.database_configuration[Rails.env]
-    host = db_config['host'].blank? ? 'localhost' : db_config['host']
-    username = db_config['username'].blank? ? 'postgres' : db_config['username']
-    pgpw = ENV['PGPASSWORD'].nil? ? '' : "PGPASSWORD=#{ENV['PGPASSWORD']}"
-
   	desc 'backup all postgres databases'
     task :postgres => :environment do
+      db_config = Rails.configuration.database_configuration[Rails.env]
+      host = db_config['host'].blank? ? 'localhost' : db_config['host']
+      username = db_config['username'].blank? ? 'postgres' : db_config['username']
+      pgpw = ENV['PGPASSWORD'].nil? ? '' : "PGPASSWORD=#{ENV['PGPASSWORD']}"
+
       create_directory(PG_BACKUP_DIR)
 
       databases = ActiveRecord::Base.connection.select_values('SELECT datname FROM pg_database;')
@@ -37,6 +37,11 @@ namespace :compass_ae do
     namespace :postgres do
       # age should be in days
       task :purge_old, [:age] => :environment do |t,args|
+        db_config = Rails.configuration.database_configuration[Rails.env]
+        host = db_config['host'].blank? ? 'localhost' : db_config['host']
+        username = db_config['username'].blank? ? 'postgres' : db_config['username']
+        pgpw = ENV['PGPASSWORD'].nil? ? '' : "PGPASSWORD=#{ENV['PGPASSWORD']}"
+
         age = (args.age.blank? ? @purge_dumps_older_than : args.age.to_i.days.ago)
         puts "Purging postgres dumps older than #{age}"
         puts green("Default is 2 weeks. You can pass in number of days if you want something different.") if args.age.blank?
@@ -77,7 +82,7 @@ namespace :compass_ae do
       FileUtils.mkdir_p(foldername) unless File.directory?(foldername)
     end
 
-    def green(text); 
+    def green(text)
       colorize(text, "\033[32m")
     end
 

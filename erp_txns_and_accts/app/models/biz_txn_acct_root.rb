@@ -22,6 +22,9 @@ class BizTxnAcctRoot < ActiveRecord::Base
     biz_txn_acct_pty_rtype = BizTxnAcctPtyRtype.iid(biz_txn_acct_pty_rtype) if biz_txn_acct_pty_rtype.is_a? String
     raise "BizTxnAcctPtyRtype #{biz_txn_acct_pty_rtype.to_s} does not exist" if biz_txn_acct_pty_rtype.nil?
 
+    # get description from biz_txn_acct_pty_rtype if not passed
+    description = biz_txn_acct_pty_rtype.description unless description
+
     self.biz_txn_acct_party_roles << BizTxnAcctPartyRole.create(:party => party, :description => description, :biz_txn_acct_pty_rtype => biz_txn_acct_pty_rtype)
     self.save
   end
