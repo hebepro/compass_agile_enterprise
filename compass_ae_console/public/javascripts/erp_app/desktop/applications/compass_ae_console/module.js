@@ -27,7 +27,8 @@ Ext.define("Compass.ErpApp.Desktop.Applications.CompassAeConsole", {
                 layout: 'fit',
                 items: [
                     {
-                      xtype: 'compass_ae_console_console_panel'
+                      xtype: 'compass_ae_console_console_panel',
+                      header: false
                     }
                 ]
             });
