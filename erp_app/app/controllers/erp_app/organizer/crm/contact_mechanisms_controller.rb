@@ -90,7 +90,9 @@ module ErpApp
           params.delete(:updated_at)
           params.delete(:created_at)
 
-          contact_mechanism = contact_type.constantize.find(contact_mechanism_id)
+          klass = contact_type.constantize
+
+          contact_mechanism = klass.find(contact_mechanism_id)
 
           contact_purpose = ContactPurpose.find(contact_purpose_id)
           contact_mechanism.contact.contact_purposes.destroy_all
@@ -98,7 +100,7 @@ module ErpApp
           contact_mechanism.contact.save
 
           party = Party.find(party_id)
-          party.update_contact_with_purpose(contact_type.constantize, contact_purpose, params)
+          party.update_contact(klass, contact_mechanism.contact, params)
 
           data = contact_mechanism.to_hash({
                                                contact_purpose_id: (contact_mechanism.contact_purpose_id),
