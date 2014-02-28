@@ -9,11 +9,12 @@ class Facility < ActiveRecord::Base
     {
         :id => self.id,
         :description => self.description,
-        :address_line_1 => self.postal_address.address_line_1,
-        :address_line_2 => self.postal_address.address_line_2,
-        :city => self.postal_address.city,
-        :state => self.postal_address.state,
-        :zip => self.postal_address.zip,
+        :postal_address_id => self.postal_address_id,
+        :address_line_1 => (self.postal_address.address_line_1 rescue nil),
+        :address_line_2 => (self.postal_address.address_line_2 rescue nil),
+        :city => (self.postal_address.city rescue nil),
+        :state => (self.postal_address.state rescue nil),
+        :zip => (self.postal_address.zip rescue nil),
         :created_at => self.created_at,
         :updated_at => self.updated_at,
     }
