@@ -58,6 +58,11 @@ module ErpTxnsAndAccts
         end
 
         module SingletonMethods
+
+          def join_account_root
+            joins(:biz_txn_acct_root).uniq
+          end
+
         end
 
       end#ActsAsBizTxnAccount

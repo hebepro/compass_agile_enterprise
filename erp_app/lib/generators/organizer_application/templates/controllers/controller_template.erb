@@ -3,8 +3,7 @@ module ErpApp
     module <%= class_name %>
       class BaseController < ::ErpApp::Organizer::BaseController
 
-        def menu
-          render :json => [{:text => 'Menu Item', :leaf => true, :iconCls => '<%=icon %>', :applicationCardId => "<%= file_name %>_example_panel"}]
+        def index
         end
 
       end #BaseController

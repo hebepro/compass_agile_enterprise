@@ -143,33 +143,49 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
         }
      */
     partyRelationships: [],
+
     /**
      * @cfg {Boolean} canAddParty
      * True to allow party creation.
      */
     canAddParty: true,
+
     /**
      * @cfg {Boolean} canEditParty
      * True to allow party to be edited.
      */
     canEditParty: true,
+
     /**
      * @cfg {Boolean} canDeleteParty
      * True to allow party to be deleted.
      */
     canDeleteParty: true,
+
     /**
      * @cfg {Array} additionalTabs
      * Array of additional tab panels to add.
      */
     additionalTabs: [],
 
+    /**
+     * @cfg {Array} partyIds
+     * Array of partyIds to load
+     */
+    partyIds: null,
+
+    /**
+     * @cfg {boolean} showSearch
+     * false to hide search box
+     */
+    showSearch: true,
+
     constructor: function (config) {
         var listeners = {
             activate: function () {
                 this.store.load();
             },
-            itemdblclick: function(grid, record, item, index){
+            itemdblclick: function (grid, record, item, index) {
                 grid.ownerCt.showDetails(index);
             }
         };
@@ -281,39 +297,41 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
             }, '|');
         }
 
-        toolBarItems.push('Search',
-            {
-                xtype: 'textfield',
-                emptyText: me.searchDescription,
-                width: 200,
-                listeners: {
-                    specialkey: function (field, e) {
-                        if (e.getKey() == e.ENTER) {
-                            var button = field.up('toolbar').down('button');
-                            button.fireEvent('click', button);
+        if (me.showSearch) {
+            toolBarItems.push('Search',
+                {
+                    xtype: 'textfield',
+                    emptyText: me.searchDescription,
+                    width: 200,
+                    listeners: {
+                        specialkey: function (field, e) {
+                            if (e.getKey() == e.ENTER) {
+                                var button = field.up('toolbar').down('button');
+                                button.fireEvent('click', button);
+                            }
                         }
                     }
-                }
-            },
-            {
-                xtype: 'button',
-                itemId: 'searchbutton',
-                icon: '/images/erp_app/organizer/applications/crm/toolbar_find.png',
-                listeners: {
-                    click: function (button, e, eOpts) {
-                        var grid = button.up('crmpartygrid'),
-                            value = grid.down('toolbar').down('textfield').getValue();
+                },
+                {
+                    xtype: 'button',
+                    itemId: 'searchbutton',
+                    icon: '/images/erp_app/organizer/applications/crm/toolbar_find.png',
+                    listeners: {
+                        click: function (button, e, eOpts) {
+                            var grid = button.up('crmpartygrid'),
+                                value = grid.down('toolbar').down('textfield').getValue();
 
-                        grid.store.load({
-                            params: {
-                                query_filter: value,
-                                start: 0,
-                                limit: 25
-                            }
-                        });
+                            grid.store.load({
+                                params: {
+                                    query_filter: value,
+                                    start: 0,
+                                    limit: 25
+                                }
+                            });
+                        }
                     }
-                }
-            });
+                });
+        }
 
         var store = Ext.create('Ext.data.Store', {
             fields: [
@@ -330,7 +348,8 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                 extraParams: {
                     party_role: me.partyRole,
                     to_role: me.toRole,
-                    to_party_id: me.toPartyId
+                    to_party_id: me.toPartyId,
+                    party_ids: (Ext.isEmpty(me.partyIds) ? null : me.partyIds.join())
                 },
                 reader: {
                     type: 'json',
@@ -343,12 +362,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
 
         me.store = store;
 
-        me.dockedItems = [
-            {
-                xtype: 'toolbar',
-                docked: 'top',
-                items: toolBarItems
-            },
+        var dockedItems = [
             {
                 xtype: 'pagingtoolbar',
                 store: store,
@@ -356,6 +370,16 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                 displayInfo: true
             }
         ];
+
+        if(!Ext.isEmpty(toolBarItems)){
+            dockedItems.push({
+                xtype: 'toolbar',
+                docked: 'top',
+                items: toolBarItems
+            });
+        }
+
+        me.dockedItems = dockedItems;
 
         // setup columns
 
@@ -508,7 +532,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
         me.callParent(arguments);
     },
 
-    showDetails: function(index){
+    showDetails: function (index) {
         var me = this,
             record = me.getStore().getAt(index),
             crmTaskTabPanel = me.up('#' + me.applicationContainerId),

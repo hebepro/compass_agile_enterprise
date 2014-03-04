@@ -14,3 +14,6 @@ Gemfile.lock
 */spec/dummy/log
 */spec/dummy/tmp
 *pkg
+
+# Ignore .idea rubymine file
+.idea

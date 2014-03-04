@@ -228,6 +228,11 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
         });
 
         Ext.each(me.additionalTabs, function (tab) {
+
+            //
+            // Pass party id to each additional tab...
+            //
+            Ext.apply(tab, {partyId: me.partyId});
             tabPanels.push(tab);
         });
 
