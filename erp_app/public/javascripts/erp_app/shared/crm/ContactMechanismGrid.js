@@ -348,7 +348,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
             xtype: 'checkbox'
         });
 
-        config.formFields.push({
+       /* config.formFields.push({
             xtype: 'combo',
             fieldLabel: 'Contact Purpose',
             name: 'contact_purpose_id',
@@ -360,7 +360,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
             value: 1,
             store: config['contactPurposeStore'],
             selectOnFocus: true
-        });
+        }); */
 
         config = Ext.apply({
             layout: 'fit',
@@ -802,7 +802,36 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid.PostalAddressGrid", {
                     name: 'country',
                     value: 'USA',
                     allowBlank: false
+                },
+                {
+                    //
+                    // CONTACT PURPOSES
+                    //
+                    // TODO: NEED TO PASS CHECKBOXES DYNAMICALLY BASED ON CONFIGURATION (passed in PartyDetailsPanel.js) AND ONLY SHOW FIELD SET IF MORE THAN ONE
+                    //
+                    xtype: 'fieldset',
+                    title: 'Use Address For:',
+                    items: [
+                        {
+                            xtype: 'checkboxgroup',
+                            columns: 1,
+                            items: [
+                                {
+                                    boxLabel: 'Shipping Address',
+                                    name: 'contact_purpose_id[]',
+                                    inputValue: '14',
+                                    checked: true
+                                },
+                                {
+                                    boxLabel: 'Billing Address',
+                                    name: 'contact_purpose_id[]',
+                                    inputValue: '4'
+                                }
+                            ]
+                        }
+                    ]
                 }
+
             ]
         })]);
     }
