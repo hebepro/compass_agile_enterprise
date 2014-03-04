@@ -43,6 +43,8 @@
 <body scroll="no">
 <script type="text/javascript">
     Ext.onReady(function () {
+        Ext.QuickTips.init();
+
         var organizerLayout = Ext.create("Compass.ErpApp.Organizer.Layout", {logout_url: '/session/sign_out'});
 
         <%@organizer.applications.each do |application|%>
