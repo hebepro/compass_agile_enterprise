@@ -1,0 +1,6 @@
+.shortcut-image-button {
+    margin-top: 10px;
+}
+.shortcut-image-button:hover {
+    opacity: 0.7;
+}

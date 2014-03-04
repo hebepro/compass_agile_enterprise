@@ -1,5 +1,15 @@
 /****Buttons Icons****/
 
+.icon-article {
+    background-image:url( /images/icons/article/article_16x16.png ) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/knitkit/knitkit_16x16.png', sizingMethod='crop');
+}
+
+.icon-ia {
+    background-image:url( /images/icons/ia/ia_16x16.png ) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/knitkit/knitkit_16x16.png', sizingMethod='crop');
+}
+
 .icon-book {
     background-image:url( /images/icons/book/book_16x16.png ) !important;
     filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/rails_db_admin/rails_db_admin_16x16.png', sizingMethod='crop');
@@ -264,6 +274,11 @@
 
 .icon-add {
     background-image:url( /images/icons/add/add_16x16.png ) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/add/add_16x16.png', sizingMethod='crop');
+}
+
+.icon-add-light {
+    background-image:url( /images/icons/add/add_light_16x16.png ) !important;
     filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/add/add_16x16.png', sizingMethod='crop');
 }
 

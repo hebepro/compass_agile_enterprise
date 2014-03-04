@@ -190,7 +190,11 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
             html: 'Party Details',
             border: false,
             frame: false,
-            region: 'center',
+            region: 'north',
+            height: 200,
+            header: false,
+            split: true,
+            collapsible: true,
             autoScroll: true
         });
 
@@ -229,9 +233,8 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
 
         me.partyDetailsTabPanel = Ext.create('widget.tabpanel', {
             //flex: 1,
-            height: 400,
-            collapsible: true,
-            region: 'south',
+            //height: 400,
+            region: 'center',
             items: tabPanels
         });
 
