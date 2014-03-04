@@ -96,18 +96,21 @@ Knitkit.InlineEditing = {
             self.lastUpdate = div.attr('lastupdate');
             var data = div.html();
 
+            var dialogHeader = jQuery("<div style='color: white; border: 1px solid white; padding: 3px 7px; border-top-left-radius: 5px; border-top-right-radius: 5px;'>Edit content: </div>");
+            var closeLink = jQuery("<a class='inline-edit-close'><img src='/images/icons/close/close_light_16x16.png' /></a><br />");
             var textarea = jQuery('<textarea name="inline-edit-textarea" id="inlineEditTextarea" ></textarea>');
-            var closeLink = jQuery("<a class='inline-edit-close'><img src='images/knitkit/close_window.png' /></a>");
+            //var closeLink = jQuery("<a class='inline-edit-close'><img src='images/knitkit/close_window.png' /></a>");
             var messageSpan = jQuery("<span class='inline-edit-message' id='inlineEditMessage'>Last Update: <span id='inlineEditLastUpdate'>" + self.lastUpdate + "</span><span id='inlineEditSaveResult'></span></span>");
 
             var editableContentContainer = jQuery("<div id='editableContentContainer' style='font-size:12px;' class='modal-container'></div>");
             var ckeditorWrapper = jQuery("<div class='ckeditor_wrapper'></div>");
             var actionResultDiv = jQuery("<div class='editable-content-actionresult'></div>");
 
+            dialogHeader.append(closeLink);
+            editableContentContainer.append(dialogHeader);
             editableContentContainer.append(ckeditorWrapper);
             ckeditorWrapper.append(textarea);
             editableContentContainer.append(actionResultDiv);
-            actionResultDiv.append(closeLink);
             actionResultDiv.append(messageSpan);
 
             var overlay = jQuery("<div id='editableContentOverlay' class='modal-overlay'></div>");
@@ -119,25 +122,18 @@ Knitkit.InlineEditing = {
 
             CKEDITOR.replace('inline-edit-textarea',
                 {
-                    height: 320,
+                    height: 300,
                     enterMode: CKEDITOR.ENTER_BR,
                     extraPlugins: 'inlineeditsave,jwplayer,codemirror',
                     toolbar: [
-                        { name: 'document', items: [ 'Source', '-', 'InlineEditSave', 'NewPage', 'DocProps', 'Preview', 'Print', '-', 'Templates' ] },
-                        { name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
-                        { name: 'editing', items: [ 'Find', 'Replace', '-', 'SelectAll', '-', 'SpellChecker', 'Scayt' ] },
-                        { name: 'forms', items: [ 'Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton',
-                            'HiddenField' ] },
-                        '/',
-                        { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat' ] },
-                        { name: 'paragraph', items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv',
-                            '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl' ] },
+                        { name: 'document', items: [ 'Source', '-', 'InlineEditSave' ] },
+                        { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline' ] },
+                        { name: 'paragraph', items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent',
+                            '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock' ] },
                         { name: 'links', items: [ 'Link', 'Unlink', 'Anchor' ] },
-                        { name: 'insert', items: [ 'Image', 'Flash', 'jwplayer', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe' ] },
                         '/',
                         { name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
-                        { name: 'colors', items: [ 'TextColor', 'BGColor' ] },
-                        { name: 'tools', items: [ 'Maximize', 'ShowBlocks', '-', 'About' ] }
+                        { name: 'colors', items: [ 'TextColor', 'BGColor' ] }
                     ],
                     on: {
                         instanceReady: function (ev) {

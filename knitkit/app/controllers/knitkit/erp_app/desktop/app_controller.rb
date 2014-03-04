@@ -8,61 +8,6 @@ module Knitkit
           render :json => {:success => true, :availableRoles => SecurityRole.order('description ASC').all.collect{|role| role.to_hash(:only => [:internal_identifier, :description])}}
         end
 
-        def websites
-          websites = Website.order('name ASC').all
-
-          tree = []
-          websites.each do |website|
-            @website_primary_host = website.config_value('primary_host')
-
-            website_hash = {
-              :text => website.name,
-              :configurationId => website.configurations.first.id,
-              :iconCls => 'icon-globe_disconnected',
-              :id => "website_#{website.id}",
-              :leaf => false,
-              :url => "http://#{@website_primary_host}",
-              :name => website.name,
-              :title => website.title,
-              :subtitle => website.subtitle,
-              :isWebsite => true,
-              :siteName => website.name,
-              :children => []
-            }
-
-            #handle hosts
-            hosts_hash = {:text => 'Hosts', :iconCls => 'icon-gear', :isHostRoot => true, :websiteId => website.id, :leaf => false, :children => []}
-            website.hosts.each do |website_host|
-              hosts_hash[:children] << {:text => website_host.attributes['host'], :websiteHostId => website_host.id, :host => website_host.attributes['host'], :iconCls => 'icon-globe', :url => "http://#{website_host.attributes['host']}", :isHost => true, :leaf => true, :children => []}
-            end
-
-            website_hash[:children] << hosts_hash
-
-            #handle sections
-            sections_hash = {:text => 'Sections/Web Pages', :isSectionRoot => true, :websiteId => website.id, :iconCls => 'icon-content', :leaf => false, :children => []}
-            website.website_sections.positioned.each do |website_section|
-              sections_hash[:children] << build_section_hash(website_section, website)
-            end
-
-            website_hash[:children] << sections_hash
-
-            #handle menus
-            menus_hash = {:text => 'Menus', :iconCls => 'icon-content', :isMenuRoot => true, :websiteId => website.id, :leaf => false, :children => []}
-            website.website_navs.each do |website_nav|
-              menu_hash = {:text => website_nav.name, :websiteNavId => website_nav.id, :websiteId => website.id, :canAddMenuItems => true, :iconCls => 'icon-index', :isWebsiteNav => true, :leaf => false, :children => []}
-              menu_hash[:children] = website_nav.website_nav_items.positioned.map{|item|build_menu_item_hash(website, item)}
-              menus_hash[:children] << menu_hash
-            end
-
-            website_hash[:children] << menus_hash
-
-            #added website to main tree
-            tree << website_hash
-          end
-
-          render :json => tree
-        end
-
         protected
 
         def page
@@ -98,9 +43,7 @@ module Knitkit
             :isWebsiteNavItem => true,
             :leaf => false
           }
-
           menu_item_hash[:children] = item.positioned_children.map{ |child| build_menu_item_hash(website, child)}
-
           menu_item_hash
         end
 
@@ -122,7 +65,9 @@ module Knitkit
             :id => "section_#{website_section.id}",
             :url => "http://#{@website_primary_host}#{website_section.path}",
             :internal_identifier => website_section.internal_identifier
+
           }
+
           if (website_section.is_a?(OnlineDocumentSection) || website_section.type == 'OnlineDocumentSection')
             document_section = OnlineDocumentSection.find(website_section.id)
             if document_section.documented_item and document_section.documented_item_content
@@ -131,6 +76,7 @@ module Knitkit
           end  
 
           if website_section.is_a?(Blog) || website_section.type == 'Blog'
+            website_section_hash[:objectType] = 'Blog'
             website_section_hash[:isBlog] = true
             website_section_hash[:iconCls] = 'icon-blog'
             website_section_hash[:leaf] = true
@@ -144,6 +90,21 @@ module Knitkit
             website_section_hash[:iconCls] = 'icon-document_info'
           end
 
+          if (website_section.type == 'Page')
+
+            website_section.contents.each do |content_object |
+              website_section_hash[:children] << {  :objectType => "Article",
+                                                    :id => content_object.id,
+                                                    :siteId => website.id,
+                                                    :parentItemId => website_section.id,
+                                                    :text => content_object.title,
+                                                    :display_title => content_object.display_title,
+                                                    :bodyHtml => content_object.body_html,
+                                                    :internal_identifier => content_object.internal_identifier,
+                                                    :iconCls => 'x-column-header-wysiwyg',
+                                                    :leaf => true}
+            end
+          end
           website_section_hash
         end
         

@@ -136,6 +136,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.VersionsGridPanel", {
 Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.VersionsArticleGridPanel", {
     extend:"Compass.ErpApp.Desktop.Applications.Knitkit.VersionsGridPanel",
     alias:'widget.knitkit_versionsarticlegridpanel',
+    collapsed: true,
     viewVersionedContent:function (rec) {
         this.initialConfig['centerRegion'].viewContent(rec.get('title') + " - Revision " + rec.get('version'), rec.get('body_html'));
     },

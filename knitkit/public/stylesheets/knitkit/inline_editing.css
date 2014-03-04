@@ -2,16 +2,19 @@
 
 /*hightlight editable areas*/
 div.knitkit-inlineedit-editable{
-    -moz-box-shadow:    3px 3px 5px 6px #ccc;
-    -webkit-box-shadow: 3px 3px 5px 6px #ccc;
-    box-shadow:         3px 3px 5px 6px #ccc;
     cursor: pointer;
+    border: 2px dotted red;
+    border-radius: 5px;
 }
 
 a.inline-edit-close{
     float:right;
     cursor:pointer;
 }
+a.inline-edit-close img {
+    margin-bottom: 7px;
+}
+
 
 span.inline-edit-message{
     float:left;

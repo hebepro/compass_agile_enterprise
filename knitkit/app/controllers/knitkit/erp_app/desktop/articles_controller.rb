@@ -22,7 +22,17 @@ module Knitkit
                   website_section = WebsiteSection.find(website_section_id)
                   article.website_sections << website_section
                   article.update_content_area_and_position_by_section(website_section, params['content_area'], params['position'])
+                  site_id = website_section.website_id
                 end
+
+                result[:node] = {:text => params[:title],
+                                 :id => article.id,
+                                 :objectType => 'Article',
+                                 :parentItemId => params[:section_id],
+                                 :siteId => site_id,
+                                 :iconCls => 'x-column-header-wysiwyg',
+                                 :leaf => true
+                                }
 
                 result[:success] = true
               else
@@ -92,6 +102,11 @@ module Knitkit
 
         def existing_articles
           render :inline => Article.all.to_json(:only => [:internal_identifier, :id])
+        end
+
+        def show
+          article = Article.find(params[:section_id])
+          render :json => article.to_json
         end
 
         def get

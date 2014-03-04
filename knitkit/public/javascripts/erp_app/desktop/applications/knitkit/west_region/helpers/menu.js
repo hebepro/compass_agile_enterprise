@@ -18,18 +18,20 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addMenuOptions = function (self, ite
                             bodyStyle:'padding:5px 5px 0',
                             url:'/knitkit/erp_app/desktop/website_nav/add_menu_item',
                             defaults:{
-                                width:225
+                                width:375
                             },
                             items:[
                                 {
                                     xtype:'textfield',
                                     fieldLabel:'Title',
+                                    width: 320,
                                     allowBlank:false,
                                     name:'title'
                                 },
                                 {
                                     xtype:'combo',
                                     fieldLabel:'Link to',
+                                    width: 320,
                                     name:'link_to',
                                     id:'knitkit_nav_item_link_to',
                                     allowBlank:false,
@@ -64,7 +66,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addMenuOptions = function (self, ite
                                     id:'knitkit_create_website_nav_item_section',
                                     hiddenName:'website_section_id',
                                     name:'website_section_id',
-                                    width:300,
+                                    width:320,
                                     loadingText:'Retrieving Sections...',
                                     store:Ext.create("Ext.data.Store", {
                                         proxy:{
@@ -125,11 +127,11 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addMenuOptions = function (self, ite
                                     'click':function (button) {
                                         var window = button.findParentByType('window'),
                                         	formPanel = window.query('form')[0];
-                                        self.setWindowStatus('Creating menu item...');
+                                        //self.setWindowStatus('Creating menu item...');
                                         formPanel.getForm().submit({
                                             reset:true,
                                             success:function (form, action) {
-                                                self.clearWindowStatus();
+                                                //self.clearWindowStatus();
                                                 var obj = Ext.decode(action.response.responseText);
                                                 if (obj.success) {
                                                     record.appendChild(obj.node);
@@ -140,7 +142,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addMenuOptions = function (self, ite
 												window.close();
                                             },
                                             failure:function (form, action) {
-                                                self.clearWindowStatus();
+                                                //self.clearWindowStatus();
                                                 if (action.response === null) {
                                                     Ext.Msg.alert("Error", 'Could not create menu item');
                                                 }

@@ -1,10 +1,110 @@
 Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, items, record) {
+
     items.push({
-        text:'View Articles',
+        text:'Add Article',
         iconCls:'icon-document',
         listeners:{
             'click':function () {
-                self.getArticles(record);
+
+                var addFormItems = [
+                    {
+                        xtype:'textfield',
+                        fieldLabel:'Title',
+                        allowBlank:false,
+                        name:'title'
+                    },
+                    {
+                        xtype:'radiogroup',
+                        fieldLabel:'Display title?',
+                        name:'display_title',
+                        columns:2,
+                        items:[
+                            {
+                                boxLabel:'Yes',
+                                name:'display_title',
+                                inputValue: 'yes',
+                                checked:true
+                            },
+
+                            {
+                                boxLabel:'No',
+                                name:'display_title',
+                                inputValue: 'no'
+                            }]
+                    },
+                    {
+                        xtype:'textfield',
+                        fieldLabel:'Internal ID',
+                        allowBlank:true,
+                        name:'internal_identifier'
+                    }
+                ];
+
+                var addArticleWindow = new Ext.Window({
+                    layout:'fit',
+                    width:375,
+                    title:'Create New Article',
+                    plain: true,
+                    buttonAlign:'center',
+                    items: new Ext.FormPanel({
+                        labelWidth: 110,
+                        frame:false,
+                        bodyStyle:'padding:5px 5px 0',
+                        width: 425,
+                        url:'/knitkit/erp_app/desktop/articles/new/'+ record.data.id.split('_')[1],
+                        defaults: {
+                            width: 257
+                        },
+                        items: addFormItems
+                    }),
+                    buttons: [{
+                                  text:'Submit',
+                                  listeners:{
+                                      'click':function(button){
+                                          var window = button.findParentByType('window');
+                                          var formPanel = window.query('form')[0];
+
+                                          formPanel.getForm().submit({
+                                              reset:true,
+                                              success:function(form, action){
+
+                                                  var obj =  Ext.decode(action.response.responseText);
+                                                  if(obj.success){
+
+                                                      var obj = Ext.decode(action.response.responseText);
+                                                      if (obj.success) {
+                                                          //debugger;
+                                                          var childNode = {
+                                                              id: obj.node.id,
+                                                              text: obj.node.text,
+                                                              objectType: obj.node.objectType,
+                                                              parentItemId: obj.node.parentItemId,
+                                                              siteId: obj.node.siteId,
+                                                              iconCls: obj.node.iconCls,
+                                                              leaf: true
+                                                          }
+                                                          record.appendChild(childNode);
+                                                      }
+                                                  }
+                                                  else{
+                                                      Ext.Msg.alert("Error", obj.msg);
+                                                  }
+                                                  addArticleWindow.close();
+                                              },
+                                              failure:function(form, action){
+                                                  Ext.Msg.alert("Error", "Error creating article");
+                                              }
+                                          });
+                                      }
+                                  }
+                              },{
+                                  text: 'Close',
+                                  handler: function(){
+                                      addArticleWindow.close();
+                                  }
+                              }]
+                });
+                addArticleWindow.show();
             }
         }
     });
@@ -126,11 +226,11 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
                                     'click':function (button) {
                                         var window = button.findParentByType('window');
                                         var formPanel = window.query('.form')[0];
-                                        self.setWindowStatus('Creating section...');
+                                        //self.setWindowStatus('Creating section...');
                                         formPanel.getForm().submit({
                                             reset:true,
                                             success:function (form, action) {
-                                                self.clearWindowStatus();
+                                                //self.clearWindowStatus();
                                                 var obj = Ext.decode(action.response.responseText);
                                                 if (obj.success) {
                                                     record.appendChild(obj.node);
@@ -140,7 +240,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
                                                 }
                                             },
                                             failure:function (form, action) {
-                                                self.clearWindowStatus();
+                                                //self.clearWindowStatus();
                                                 var obj = Ext.decode(action.response.responseText);
                                                 if (obj.message) {
                                                     Ext.Msg.alert("Error", obj.message);
@@ -185,18 +285,20 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
                             bodyStyle:'padding:5px 5px 0',
                             url:'/knitkit/erp_app/desktop/section/update',
                             defaults:{
-                                width:225
+                                width:375
                             },
                             items:[
                                 {
                                     xtype:'textfield',
                                     fieldLabel:'Title',
+                                    width: 320,
                                     value:record.data.text,
                                     name:'title'
                                 },
                                 {
                                     xtype:'textfield',
                                     fieldLabel:'Internal ID',
+                                    width: 320,
                                     allowBlank:true,
                                     name:'internal_identifier',
                                     value:record.data.internal_identifier
@@ -204,6 +306,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
                                 {
                                     xtype:'radiogroup',
                                     fieldLabel:'Display in menu?',
+                                    width: 220,
                                     name:'in_menu',
                                     columns:2,
                                     items:[
@@ -225,6 +328,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
                                 {
                                     xtype:'radiogroup',
                                     fieldLabel:'Render with Base Layout?',
+                                    width: 220,
                                     name:'render_with_base_layout',
                                     columns:2,
                                     items:[
@@ -246,6 +350,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
                                 {
                                     xtype:'displayfield',
                                     fieldLabel:'Path',
+                                    width: 320,
                                     name:'path',
                                     value:record.data.path
                                 },
@@ -263,10 +368,10 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
                                     'click':function (button) {
                                         var window = button.findParentByType('window');
                                         var formPanel = window.query('.form')[0];
-                                        self.setWindowStatus('Updating section...');
+                                        //self.setWindowStatus('Updating section...');
                                         formPanel.getForm().submit({
                                             success:function (form, action) {
-                                                self.clearWindowStatus();
+                                                //self.clearWindowStatus();
                                                 var values = formPanel.getValues();
                                                 record.set('title', values.title);
                                                 record.set('text', values.title);
@@ -277,7 +382,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
                                                 updateSectionWindow.close();
                                             },
                                             failure:function (form, action) {
-                                                self.clearWindowStatus();
+                                                //self.clearWindowStatus();
                                                 var obj = Ext.decode(action.response.responseText);
                                                 Ext.Msg.alert("Error", obj.msg);
                                             }
@@ -307,7 +412,8 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
                 iconCls:'icon-edit',
                 listeners:{
                     'click':function () {
-                        self.editSectionLayout(record.data.text, record.data.id.split('_')[1], record.data.siteId);
+                        var sectionPanel = Ext.ComponentQuery.query('#knitkitSiteContentsTreePanel').first();
+                        sectionPanel.editSectionLayout(record.data.text, record.data.id.split('_')[1], record.data.siteId);
                     }
                 }
             });
@@ -353,11 +459,39 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
             iconCls:'icon-delete',
             listeners:{
                 'click':function () {
-                    self.deleteSection(record);
+                    Ext.MessageBox.confirm('Confirm', 'Are you sure you want to delete this section?<br> NOTE: Articles belonging to this section will be orphaned.<br><br>', function (btn) {
+                        if (btn == 'no') {
+                            return false;
+                        }
+                        else if (btn == 'yes') {
+                            //self.setWindowStatus('Deleting Section...');
+                            Ext.Ajax.request({
+                                url:'/knitkit/erp_app/desktop/section/delete',
+                                method:'POST',
+                                params:{
+                                    id: record.data.id.split('_')[1]
+                                },
+                                success:function (response) {
+                                    //self.clearWindowStatus();
+                                    var obj = Ext.decode(response.responseText);
+                                    if (obj.success) {
+                                        debugger;
+                                        record.remove();
+                                    }
+                                    else {
+                                        Ext.Msg.alert('Error', 'Error deleting section');
+                                    }
+                                },
+                                failure:function (response) {
+                                    //self.clearWindowStatus();
+                                    Ext.Msg.alert('Error', 'Error deleting section');
+                                }
+                            });
+                        }
+                    });
                 }
             }
         });
     }
-
     return items;
 };

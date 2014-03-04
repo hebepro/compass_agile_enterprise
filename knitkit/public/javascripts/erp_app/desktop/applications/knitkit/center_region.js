@@ -1,5 +1,6 @@
 Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
     extend: "Ext.panel.Panel",
+    id: 'knitkitCenterRegion',
     alias: 'widget.knitkit_centerregion',
     ckEditorExtraPlugins: 'jwplayer,knitkitthemes,codemirror',
     ckEditorToolbar: [
@@ -481,9 +482,8 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                         if (!Ext.isEmpty(versionsGrid)) {
                             versionsGrid.getStore().load();
                         }
-
                     }
-                    comp.ckEditorInstance.focus();
+                    //comp.ckEditorInstance.focus();
                 }
                 else {
                     Ext.Msg.alert('Error', 'Error saving contents');
@@ -629,8 +629,9 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                     xtype: 'knitkit_versions' + contentType + 'gridpanel',
                     contentId: id,
                     region: 'south',
-                    height: 150,
+                    height: 200,
                     collapsible: true,
+                    collapsed: true,
                     centerRegion: self,
                     siteId: siteId
                 });
@@ -640,8 +641,9 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                     xtype: 'knitkit_nonpublishedversionswebsitesectiongridpanel',
                     contentId: id,
                     region: 'south',
-                    height: 150,
+                    height: 200,
                     collapsible: true,
+                    collapsed: true,
                     centerRegion: self
                 });
             }
@@ -673,14 +675,10 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                     }
                 }
             });
-
             this.workArea.add(item);
         }
-
         this.workArea.setActiveTab(item);
     },
-
-    /* comment */
 
     showComment: function (comment) {
         var activeTab = this.workArea.getActiveTab();

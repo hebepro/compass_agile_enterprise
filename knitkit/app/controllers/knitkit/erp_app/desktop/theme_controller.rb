@@ -8,8 +8,15 @@ module Knitkit
         IGNORED_PARAMS = %w{action controller node_id theme_data}
 
         def index
+
+          if params[:site_id]
+            site_id = params[:site_id]
+          else
+            site_id = Website.first.id
+          end
+
           if params[:node] == ROOT_NODE
-            setup_tree
+            setup_tree( site_id )
           else
             theme = get_theme(params[:node])
             unless theme.nil?
@@ -309,9 +316,11 @@ module Knitkit
           theme.files.where('name = ? and directory = ?', ::File.basename(path), file_dir).first
         end
 
-        def setup_tree
+        def setup_tree( site_id )
           tree = []
-          sites = Website.all
+          sites = []
+          current_site = Website.find( site_id )
+          sites << current_site
           sites.each do |site|
             site_hash = {
               :text => site.name,
@@ -333,12 +342,12 @@ module Knitkit
                 theme_hash[:iconCls] = 'icon-delete'
               end
               ['stylesheets', 'javascripts', 'images', 'templates', 'widgets'].each do |resource_folder|
-                theme_hash[:children] << {:text => resource_folder, :iconCls => 'icon-content', :id => "#{theme.url}/#{resource_folder}"}
+                theme_hash[:children] << {:text => resource_folder.capitalize, :iconCls => 'icon-content', :id => "#{theme.url}/#{resource_folder}"}
               end
               themes_hash[:children] << theme_hash
             end
             site_hash[:children] << themes_hash
-            tree << site_hash
+            tree << themes_hash
           end
 
           render :json => tree

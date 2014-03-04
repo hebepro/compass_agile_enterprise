@@ -122,6 +122,5 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addHostOptions = function (self, ite
             }
         });
     }
-
     return items;
 };

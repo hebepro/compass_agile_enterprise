@@ -17,12 +17,13 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addWebsiteNavItemOptions = function 
                         bodyStyle: 'padding:5px 5px 0',
                         url: '/knitkit/erp_app/desktop/website_nav/update_menu_item',
                         defaults: {
-                            width: 225
+                            width: 375
                         },
                         items: [
                             {
                                 xtype: 'textfield',
                                 fieldLabel: 'Title',
+                                width: 320,
                                 value: record.data.text,
                                 allowBlank: false,
                                 name: 'title'
@@ -30,6 +31,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addWebsiteNavItemOptions = function 
                             {
                                 xtype: 'combo',
                                 fieldLabel: 'Link to',
+                                width: 320,
                                 name: 'link_to',
                                 id: 'knitkit_nav_item_link_to',
                                 allowBlank: false,
@@ -70,7 +72,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addWebsiteNavItemOptions = function 
                             },
                             {
                                 xtype: 'combo',
-                                width: 300,
+                                width: 320,
                                 itemId: 'knitkit_website_nav_item_section',
                                 hiddenName: 'website_section_id',
                                 name: 'website_section_id',
@@ -205,7 +207,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addWebsiteNavItemOptions = function 
                         return false;
                     }
                     else if (btn == 'yes') {
-                        self.setWindowStatus('Deleting menu item...');
+                        //self.setWindowStatus('Deleting menu item...');
                         Ext.Ajax.request({
                             url: '/knitkit/erp_app/desktop/website_nav/delete_menu_item',
                             method: 'POST',
@@ -213,7 +215,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addWebsiteNavItemOptions = function 
                                 id: record.data.websiteNavItemId
                             },
                             success: function (response) {
-                                self.clearWindowStatus();
+                                //self.clearWindowStatus();
                                 var obj = Ext.decode(response.responseText);
                                 if (obj.success) {
                                     record.remove(true);
@@ -223,7 +225,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addWebsiteNavItemOptions = function 
                                 }
                             },
                             failure: function (response) {
-                                self.clearWindowStatus();
+                                //self.clearWindowStatus();
                                 Ext.Msg.alert('Error', 'Error deleting menu item');
                             }
                         });

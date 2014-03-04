@@ -2,6 +2,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SplashScreen",{
     extend:"Ext.panel.Panel",
     alias:'widget.knitkit_splash_screen',
     title: 'Startup',
+    closable: true,
     items: [
         {
             html: "<div style='margin: 15px 50px 5px 50px;'><hr /><h2 style='margin: 3px 0px 0px 0px; color: #555; text-align: center'>Website Builder Home</h2><hr /></div>"
@@ -78,12 +79,14 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SplashScreen",{
                                 render: function (component) {
                                     component.getEl().on('click', function (e) {
 
-                                        //Which of these is cooler? Which is more useful?
-                                        //window.open("http://themes.compassagile.com");
+//                                        Which of these is cooler? Which is more useful?
+//                                        window.open("http://themes.compassagile.com");
 
-                                        self.initialConfig['centerRegion'].setWindowStatus('Finding themes...');
-                                        self.initialConfig['centerRegion'].openIframeInTab('Find Themes', 'http://themes.compassagile.com');
-                                        self.initialConfig['centerRegion'].clearWindowStatus();
+                                        var cr = this.findParentByType('knitkit_centerregion');
+
+                                        cr.setWindowStatus('Finding themes...');
+                                        cr.openIframeInTab('Find Themes', 'http://themes.compassagile.com');
+                                        cr.clearWindowStatus();
 
 
 
@@ -118,9 +121,11 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SplashScreen",{
                                 render: function (component) {
                                     component.getEl().on('click', function (e) {
 
-                                        self.initialConfig['centerRegion'].setWindowStatus('Retrieving Docs...');
-                                        self.initialConfig['centerRegion'].openIframeInTab('Tutorials', 'http://tutorials.compassagile.com');
-                                        self.initialConfig['centerRegion'].clearWindowStatus();
+                                        var cr = this.findParentByType('knitkit_centerregion');
+
+                                        cr.setWindowStatus('Retrieving Docs...');
+                                        cr.openIframeInTab('Tutorials', 'http://tutorials.compassagile.com');
+                                        cr.clearWindowStatus();
 
                                     }, component);
                                 }
@@ -135,14 +140,14 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SplashScreen",{
         }
     ],
     constructor: function (config) {
-        self = this;
+
+        var self = this;
 
         config = Ext.apply({
-
-           centerRegion : this.findParentByType('window')
-
+            //placeholder
         }, config);
-        this.callParent([config]);
+
+        self.callParent(config);
     }
 });
 
