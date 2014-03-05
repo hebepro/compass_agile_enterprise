@@ -360,8 +360,6 @@ Ext.define("Compass.ErpApp.Desktop.Applications.ThemesTreePanel", {
                                 knitkitWin = compassDesktop.getModule('knitkit-win'),
                                 websiteId = knitkitWin.currentWebsiteId;
 
-                            alert(websiteId)
-
                             var addThemeWindow = Ext.create("Ext.window.Window", {
                                 layout: 'fit',
                                 width: 375,
