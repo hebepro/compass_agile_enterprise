@@ -22,9 +22,10 @@ Gem::Specification.new do |s|
   #compass dependencies
   s.add_dependency 'erp_base_erp_svcs', "~> 3.1"
   s.add_development_dependency 'erp_dev_svcs', "~> 3.1"
+
+  s.add_dependency "chronic", "0.10.2"
   s.add_dependency "aasm", "3.0.14"
   s.add_dependency 'dynamic_attributes','~> 1.2.0'
-  
   s.add_dependency('aws-sdk','1.6.0')
   s.add_dependency('delayed_job_active_record','0.3.3')
   s.add_dependency('paperclip','3.3.1')

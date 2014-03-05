@@ -72,6 +72,23 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
      */
     partyRelationships: [],
 
+    /**
+     * @cfg {Array} contactPurposes
+     * Array of contactPurposes that can be added to a contact.
+     *
+     * @example
+     * {
+     *   fieldLabel: 'Default',
+     *   internalIdentifier: 'default'
+     * }
+     */
+    contactPurposes: [
+        {
+            fieldLabel: 'Default',
+            internalIdentifier: 'default'
+        }
+    ],
+
     initComponent: function () {
         var me = this,
             tabPanels = [];
@@ -158,21 +175,36 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
                     region: 'center',
                     layout: 'card',
                     items: [
-                        {xtype: 'phonenumbergrid', partyId: me.partyId, listeners: {
-                            contactcreated: {fn: me.contactCreated, scope: me},
-                            contactupdated: {fn: me.contactUpdated, scope: me},
-                            contactdestroyed: {fn: me.contactDestroyed, scope: me}
-                        }},
-                        {xtype: 'emailaddressgrid', partyId: me.partyId, listeners: {
-                            contactcreated: {fn: me.contactCreated, scope: me},
-                            contactupdated: {fn: me.contactUpdated, scope: me},
-                            contactdestroyed: {fn: me.contactDestroyed, scope: me}
-                        }},
-                        {xtype: 'postaladdressgrid', partyId: me.partyId, listeners: {
-                            contactcreated: {fn: me.contactCreated, scope: me},
-                            contactupdated: {fn: me.contactUpdated, scope: me},
-                            contactdestroyed: {fn: me.contactDestroyed, scope: me}
-                        }}
+                        {
+                            xtype: 'phonenumbergrid',
+                            contactPurposes: me.contactPurposes,
+                            partyId: me.partyId,
+                            listeners: {
+                                contactcreated: {fn: me.contactCreated, scope: me},
+                                contactupdated: {fn: me.contactUpdated, scope: me},
+                                contactdestroyed: {fn: me.contactDestroyed, scope: me}
+                            }
+                        },
+                        {
+                            xtype: 'emailaddressgrid',
+                            contactPurposes: me.contactPurposes,
+                            partyId: me.partyId,
+                            listeners: {
+                                contactcreated: {fn: me.contactCreated, scope: me},
+                                contactupdated: {fn: me.contactUpdated, scope: me},
+                                contactdestroyed: {fn: me.contactDestroyed, scope: me}
+                            }
+                        },
+                        {
+                            xtype: 'postaladdressgrid',
+                            contactPurposes: me.contactPurposes,
+                            partyId: me.partyId,
+                            listeners: {
+                                contactcreated: {fn: me.contactCreated, scope: me},
+                                contactupdated: {fn: me.contactUpdated, scope: me},
+                                contactdestroyed: {fn: me.contactDestroyed, scope: me}
+                            }
+                        }
                     ]
                 }
             ]
@@ -194,6 +226,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
             tabPanels.push({
                 xtype: 'crmpartygrid',
                 title: partyRelationship.title,
+                contactPurposes: partyRelationship.contactPurposes || [{fieldLabel: 'Default',internalIdentifier: 'default'}],
                 formFields: partyRelationship.formFields || 'none',
                 securityRoles: partyRelationship.securityRoles || [],
                 allowedPartyType: partyRelationship.allowedPartyType || 'Both',

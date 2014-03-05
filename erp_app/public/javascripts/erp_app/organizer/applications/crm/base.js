@@ -6,12 +6,40 @@ Compass.ErpApp.Organizer.Applications.Crm.Base = function (config) {
             xtype: 'crmpartygrid',
             applicationContainerId: 'crmTaskTabPanel',
             itemId: 'customersPanel',
+            contactPurposes: [
+                {
+                    fieldLabel: 'Home',
+                    internalIdentifier: 'home'
+                },
+                {
+                    fieldLabel: 'Work',
+                    internalIdentifier: 'work'
+                },
+                {
+                    fieldLabel: 'Billing',
+                    internalIdentifier: 'billing'
+                }
+            ],
             partyRelationships: [
                 {
                     title: 'Employees',
                     relationshipType: 'employee_customer',
                     toRoleType: 'customer',
-                    fromRoleType: 'employee'
+                    fromRoleType: 'employee',
+                    contactPurposes: [
+                        {
+                            fieldLabel: 'Home',
+                            internalIdentifier: 'home'
+                        },
+                        {
+                            fieldLabel: 'Work',
+                            internalIdentifier: 'work'
+                        },
+                        {
+                            fieldLabel: 'Billing',
+                            internalIdentifier: 'billing'
+                        }
+                    ]
                 }
             ]
         }

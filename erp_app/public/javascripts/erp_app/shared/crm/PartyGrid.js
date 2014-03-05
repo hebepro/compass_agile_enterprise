@@ -142,34 +142,56 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
             canDeleteParty: true
         }
      */
+
     partyRelationships: [],
+
     /**
      * @cfg {Boolean} canAddParty
      * True to allow party creation.
      */
     canAddParty: true,
+
     /**
      * @cfg {Boolean} canEditParty
      * True to allow party to be edited.
      */
     canEditParty: true,
+
     /**
      * @cfg {Boolean} canDeleteParty
      * True to allow party to be deleted.
      */
     canDeleteParty: true,
+
     /**
      * @cfg {Array} additionalTabs
      * Array of additional tab panels to add.
      */
     additionalTabs: [],
 
+    /**
+     * @cfg {Array} contactPurposes
+     * Array of contactPurposes that can be added to a contact.
+     *
+     * @example
+     * {
+     *   fieldLabel: 'Default',
+     *   internalIdentifier: 'default'
+     * }
+     */
+    contactPurposes: [
+        {
+            fieldLabel: 'Default',
+            internalIdentifier: 'default'
+        }
+    ],
+
     constructor: function (config) {
         var listeners = {
             activate: function () {
                 this.store.load();
             },
-            itemdblclick: function(grid, record, item, index){
+            itemdblclick: function (grid, record, item, index) {
                 grid.ownerCt.showDetails(index);
             }
         };
@@ -515,7 +537,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
         me.callParent(arguments);
     },
 
-    showDetails: function(index){
+    showDetails: function (index) {
         var me = this,
             record = me.getStore().getAt(index),
             crmTaskTabPanel = me.up('#' + me.applicationContainerId),
@@ -529,6 +551,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
             partyDetailsPanel = Ext.create('widget.crmpartydetailspanel', {
                 title: title,
                 itemId: itemId,
+                contactPurposes: me.contactPurposes,
                 applicationContainerId: me.applicationContainerId,
                 partyId: partyId,
                 partyModel: record.get('model'),

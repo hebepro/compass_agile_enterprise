@@ -3,10 +3,6 @@ module ErpApp
     module Crm
       class ContactMechanismsController < ErpApp::Organizer::BaseController
 
-        def contact_purposes
-          render :json => {success: true, types: ContactPurpose.all.collect(&:to_hash)}
-        end
-
         def states
           country_id = 223
 
@@ -32,7 +28,8 @@ module ErpApp
 
           data = contact_mechanisms.collect do |contact_mechanism|
             contact_mechanism.to_hash({
-                                          contact_purpose_id: (contact_mechanism.contact_purpose_id),
+                                          contact_purposes: (contact_mechanism.contact_purposes_to_s),
+                                          contact_purpose_iids: (contact_mechanism.contact_purpose_iids),
                                           is_primary: (contact_mechanism.is_primary),
                                       })
           end
@@ -43,7 +40,7 @@ module ErpApp
         def create
           party_id = params[:party_id]
           contact_type = params[:contact_type]
-          contact_purpose_id = params[:contact_purpose_id]
+          contact_purposes = params[:contact_purpose] || []
 
           params[:is_primary] = (params[:is_primary] == 'on') ? true : nil
 
@@ -53,16 +50,16 @@ module ErpApp
           params.delete(:authenticity_token)
           params.delete(:party_id)
           params.delete(:contact_type)
-          params.delete(:contact_purpose_id)
+          params.delete(:contact_purpose)
 
           contact_mechanism_class = contact_type.constantize
           party = Party.find(party_id)
 
-          contact_purpose = contact_purpose_id.blank? ? ContactPurpose.find_by_internal_identifier('default') : ContactPurpose.find(contact_purpose_id)
-          contact_mechanism = party.add_contact(contact_mechanism_class, params, contact_purpose)
+          contact_purposes = contact_purposes.collect{|item| ContactPurpose.find_by_internal_identifier(item)}
+          contact_mechanism = party.add_contact(contact_mechanism_class, params, contact_purposes)
 
           data = contact_mechanism.to_hash({
-                                               contact_purpose_id: (contact_mechanism.contact_purpose_id),
+                                               contact_purposes: (contact_mechanism.contact_purposes_to_s),
                                                is_primary: (contact_mechanism.is_primary),
                                            })
 
@@ -74,7 +71,7 @@ module ErpApp
           party_id = params[:party_id]
           contact_type = params[:contact_type]
           contact_mechanism_id = params[:id]
-          contact_purpose_id = params[:contact_purpose_id]
+          contact_purposes = params[:contact_purpose] || []
 
           params[:is_primary] = (params[:is_primary] == 'on') ? true : nil
 
@@ -86,7 +83,7 @@ module ErpApp
           params.delete(:id)
           params.delete(:party_id)
           params.delete(:contact_type)
-          params.delete(:contact_purpose_id)
+          params.delete(:contact_purpose)
           params.delete(:updated_at)
           params.delete(:created_at)
 
@@ -94,16 +91,15 @@ module ErpApp
 
           contact_mechanism = klass.find(contact_mechanism_id)
 
-          contact_purpose = ContactPurpose.find(contact_purpose_id)
-          contact_mechanism.contact.contact_purposes.destroy_all
-          contact_mechanism.contact.contact_purposes << contact_purpose
+          contact_purposes = contact_purposes.collect{|item| ContactPurpose.find_by_internal_identifier(item)}
+          contact_mechanism.contact.contact_purposes = contact_purposes
           contact_mechanism.contact.save
 
           party = Party.find(party_id)
           party.update_contact(klass, contact_mechanism.contact, params)
 
           data = contact_mechanism.to_hash({
-                                               contact_purpose_id: (contact_mechanism.contact_purpose_id),
+                                               contact_purposes: (contact_mechanism.contact_purposes_to_s),
                                                is_primary: (contact_mechanism.is_primary),
                                            })
 
@@ -126,7 +122,7 @@ module ErpApp
 
           data = contact_mechanisms.collect do |_contact_mechanism_|
             _contact_mechanism_.to_hash({
-                                            contact_purpose_id: (contact_mechanism.contact_purpose_id),
+                                            contact_purposes: (contact_mechanism.contact_purposes_to_s),
                                             is_primary: (contact_mechanism.is_primary),
                                         })
           end

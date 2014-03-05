@@ -56,7 +56,6 @@ ErpApp::Engine.routes.draw do
 
       resources :contact_mechanisms do
         collection do
-          get 'contact_purposes'
           get 'states'
         end
 
