@@ -4,8 +4,8 @@ module Knitkit
       class WebsiteController < Knitkit::ErpApp::Desktop::AppController
         IGNORED_PARAMS = %w{action controller id}
 
-        before_filter :set_website, :only => [:export, :website_publications, :set_viewing_version,
-                                              :activate_publication, :publish, :update, :delete]
+        before_filter :set_website, :only => [:build_content_tree, :export, :website_publications, :set_viewing_version,
+                                              :build_host_hash, :activate_publication, :publish, :update, :delete]
 
         def index
           render :json => {:sites => Website.all}
@@ -61,7 +61,7 @@ module Knitkit
             hosts_hash = {:text => 'Host mappings', :iconCls => 'icon-gear',
                           :isHostRoot => true, :websiteId => @website.id,
                           :leaf => false, :children => []}
-            website.hosts.each do |website_host|
+            @website.hosts.each do |website_host|
 
               hosts_hash[:children] << {:text => website_host.attributes['host'], :websiteHostId => website_host.id,
                                         :host => website_host.attributes['host'], :iconCls => 'icon-globe',
@@ -300,10 +300,10 @@ module Knitkit
           if params[:id]
             @website = Website.find(params[:id])
           else
-            @website = Website.count > 1 ? Website.first : nil
+            @website = Website.count > 0 ? Website.first : nil
           end
 
-          @website_primary_host = @website.nil? ? nil : website.config_value('primary_host')
+          @website_primary_host = @website.nil? ? nil : @website.config_value('primary_host')
         end
 
       end #WebsiteController

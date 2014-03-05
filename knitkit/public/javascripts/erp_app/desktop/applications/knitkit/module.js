@@ -147,7 +147,9 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
                                                                             //self.clearWindowStatus();
                                                                             var obj = Ext.decode(action.response.responseText);
                                                                             if (obj.success) {
-                                                                                self.siteContentsTree.getStore().load();
+                                                                                debugger
+                                                                                var westRegion = Ext.ComponentQuery.query('#knitkitWestRegion').first();
+                                                                                westRegion.selectWebsite(websiteId, websiteName);
                                                                                 addWebsiteWindow.close();
                                                                             }
                                                                         },

@@ -355,7 +355,7 @@ module Knitkit
           if params[:id]
             @website = Website.find(params[:id])
           else
-            @website = Website.count > 1 ? Website.first : nil
+            @website = Website.count > 0 ? Website.first : nil
           end
         end
 
