@@ -10,6 +10,13 @@ module Knitkit
 
         protected
 
+        def set_website
+          if params[:website_id]
+            @website = Website.find(params[:website_id])
+            @website_primary_host = @website.nil? ? nil : @website.config_value('primary_host')
+          end
+        end
+
         def page
           offset = params[:start].to_f
           offset > 0 ? ((offset / params[:limit].to_f).to_i + 1) : 1
@@ -33,7 +40,6 @@ module Knitkit
             :text => item.title,
             :linkToType => link_to_type,
             :canAddMenuItems => true,
-            :websiteId => @website.id,
             :isSecured => item.is_secured?,
             :roles => item.roles.collect{|item| item.internal_identifier},
             :linkedToId => linked_to_item_id,
@@ -43,7 +49,9 @@ module Knitkit
             :isWebsiteNavItem => true,
             :leaf => false
           }
+
           menu_item_hash[:children] = item.positioned_children.map{ |child| build_menu_item_hash(child)}
+
           menu_item_hash
         end
 

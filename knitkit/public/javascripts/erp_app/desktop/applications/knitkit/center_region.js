@@ -118,12 +118,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                         centerRegion: self,
                         siteId: websiteId
                     }
-                ],
-                listeners: {
-                    'show': function (panel) {
-                        Ext.getCmp('knitkitWestRegion').selectWebsite(websiteId);
-                    }
-                }
+                ]
             });
 
             this.workArea.add(item);
@@ -207,12 +202,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                         centerRegion: self,
                         siteId: websiteId
                     }
-                ],
-                listeners: {
-                    'show': function (panel) {
-                        Ext.getCmp('knitkitWestRegion').selectWebsite(websiteId);
-                    }
-                }
+                ]
             });
 
             this.workArea.add(item);
@@ -413,14 +403,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                         currentUser.showInvalidAccess();
                     }
                 },
-                itemId: itemId,
-                listeners: {
-                    'show': function (panel) {
-                        if (!Compass.ErpApp.Utility.isBlank(siteId)) {
-                            Ext.getCmp('knitkitWestRegion').selectWebsite(siteId);
-                        }
-                    }
-                }
+                itemId: itemId
             });
 
             this.workArea.add(item);
@@ -666,13 +649,6 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                     } else {
                         currentUser.showInvalidAccess();
                     }
-                },
-                listeners: {
-                    'show': function (panel) {
-                        if (!Compass.ErpApp.Utility.isBlank(siteId)) {
-                            Ext.getCmp('knitkitWestRegion').selectWebsite(siteId);
-                        }
-                    }
                 }
             });
             this.workArea.add(item);
@@ -755,12 +731,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                         collapsible: true,
                         centerRegion: self
                     }
-                ],
-                listeners: {
-                    'show': function (panel) {
-                        Ext.getCmp('knitkitWestRegion').selectWebsite(websiteId);
-                    }
-                }
+                ]
             });
 
             this.workArea.add(item);

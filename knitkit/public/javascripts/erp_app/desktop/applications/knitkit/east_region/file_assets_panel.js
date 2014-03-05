@@ -289,9 +289,9 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.FileAssetsPanel",{
       }
     });
 
-    this.selectWebsite = function(websiteId, websiteName){
-      this.websiteId = websiteId;
-      this.websiteName = websiteName;
+    this.selectWebsite = function(website){
+      this.websiteId = website.id;
+      this.websiteName = website.name;
     };
 
     this.reloadWebsiteFileAssetsTreePanel = function(websiteId){

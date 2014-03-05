@@ -317,7 +317,7 @@ class Website < ActiveRecord::Base
     def import(file, current_user)
       file_support = ErpTechSvcs::FileSupport::Base.new(:storage => Rails.application.config.erp_tech_svcs.file_storage)
       message = ''
-      success = true
+      website = nil
 
       file = ActionController::UploadedTempfile.new("uploaded-theme").tap do |f|
         f.puts file.read
@@ -448,13 +448,11 @@ class Website < ActiveRecord::Base
         end
 
         website.save
-        success = true
       else
         message = 'Website already exists with that internal_identifier'
-        success = false
       end
 
-      return success, message
+      return website, message
     end
 
     protected

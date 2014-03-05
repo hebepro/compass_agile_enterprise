@@ -8,7 +8,8 @@ module Knitkit
                                               :build_host_hash, :activate_publication, :publish, :update, :delete]
 
         def index
-          render :json => {:sites => Website.all}
+          render :json => {:sites => Website.all.collect { |item| item.to_hash(:only => [:id, :name],
+                                                                               :configuration_id => item.configurations.first.id) }}
         end
 
         def build_content_tree
@@ -23,50 +24,6 @@ module Knitkit
 
           end
 
-          render :json => tree
-        end
-
-        def build_host_hash
-
-          tree = []
-
-          if @website
-            #handle hosts
-            hosts_hash = {:text => 'Host mappings', :iconCls => 'icon-gear',
-                          :isHostRoot => true, :websiteId => @website.id,
-                          :leaf => false, :children => []}
-            @website.hosts.each do |website_host|
-
-              hosts_hash[:children] << {:text => website_host.attributes['host'], :websiteHostId => website_host.id,
-                                        :host => website_host.attributes['host'], :iconCls => 'icon-globe',
-                                        :url => "http://#{website_host.attributes['host']}",
-                                        :isHost => true, :leaf => true, :children => []}
-            end
-            tree << hosts_hash
-
-          end
-
-          render :json => tree
-        end
-
-        def build_menu_tree
-
-          tree = []
-
-          if @website
-            menus_hash = {:text => 'Menus', :iconCls => 'icon-content', :isMenuRoot => true,
-                          :websiteId => @website.id, :leaf => false, :children => []}
-
-            website.website_navs.each do |website_nav|
-              menu_hash = {:text => website_nav.name, :websiteNavId => website_nav.id, :websiteId => @website.id, :canAddMenuItems => true,
-                           :iconCls => 'icon-index', :isWebsiteNav => true, :leaf => false, :children => []}
-
-              menu_hash[:children] = website_nav.website_nav_items.positioned.map { |item| build_menu_item_hash(website) }
-              menus_hash[:children] << menu_hash
-
-            end
-            tree << menus_hash
-          end
           render :json => tree
         end
 
@@ -169,7 +126,8 @@ module Knitkit
 
                 PublishedWebsite.activate(website, 1, current_user)
 
-                render :json => {:success => true}
+                render :json => {:success => true, :website => website.to_hash(:only => [:id, :name],
+                                                                               :configuration_id => item.configurations.first.id)}
               end
             end
           rescue Exception => ex
@@ -210,77 +168,21 @@ module Knitkit
 
         # TODO add role restriction to this
         def import
-          result, message = Website.import(params[:website_data], current_user)
+          website, message = Website.import(params[:website_data], current_user)
 
-          render :inline => {:success => result, :message => message}.to_json
+          if website
+            render :inline => {:success => true, :website => website.to_hash(:only => [:id, :name],
+                                                                             :configuration_id => item.configurations.first.id)}.to_json
+          else
+            render :inline => {:success => false, :message => message}.to_json
+          end
+
+
         ensure
           FileUtils.rm_r File.dirname(zip_path) rescue nil
         end
 
-        def add_host
-          begin
-            current_user.with_capability('create', 'WebsiteHost') do
-              website = Website.find(params[:id])
-              website_host = WebsiteHost.create(:host => params[:host])
-              website.hosts << website_host
-              website.save
-
-              render :json => {
-                  :success => true,
-                  :node => {
-                      :text => website_host.attributes['host'],
-                      :websiteHostId => website_host.id,
-                      :host => website_host.attributes['host'],
-                      :iconCls => 'icon-globe',
-                      :url => "http://#{website_host.attributes['host']}",
-                      :isHost => true,
-                      :leaf => true,
-                      :children => []}
-              }
-            end
-          rescue Exception => ex
-            Rails.logger.error("#{ex.message} + #{ex.backtrace}")
-            render :json => {:success => false, :message => ex.message}
-          end
-        end
-
-        def update_host
-          begin
-            current_user.with_capability('edit', 'WebsiteHost') do
-              website_host = WebsiteHost.find(params[:id])
-              website_host.host = params[:host]
-              website_host.save
-
-              render :json => {:success => true}
-            end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
-            render :json => {:success => false, :message => ex.message}
-          end
-        end
-
-        def delete_host
-          begin
-            current_user.with_capability('delete', 'WebsiteHost') do
-              render :json => WebsiteHost.destroy(params[:id]) ? {:success => true} : {:success => false}
-            end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
-            render :json => {:success => false, :message => ex.message}
-          end
-        end
-
-        protected
-
-        def set_website
-          if params[:id]
-            @website = Website.find(params[:id])
-          else
-            @website = Website.count > 0 ? Website.first : nil
-          end
-
-          @website_primary_host = @website.nil? ? nil : @website.config_value('primary_host')
-        end
-
-      end #WebsiteController
-    end #Desktop
-  end #ErpApp
-end #Knitkit
+      end # WebsiteController
+    end # Desktop
+  end # ErpApp
+end # Knitkit

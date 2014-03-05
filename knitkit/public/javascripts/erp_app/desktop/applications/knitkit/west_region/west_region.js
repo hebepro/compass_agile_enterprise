@@ -1,48 +1,48 @@
 Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
-    extend:"Ext.tab.Panel",
-    id:'knitkitWestRegion',
-    alias:'widget.knitkit_westregion',
+    extend: "Ext.tab.Panel",
+    id: 'knitkitWestRegion',
+    alias: 'widget.knitkit_westregion',
 
-    setWindowStatus:function (status) {
+    setWindowStatus: function (status) {
         this.findParentByType('statuswindow').setStatus(status);
     },
 
-    clearWindowStatus:function () {
+    clearWindowStatus: function () {
         this.findParentByType('statuswindow').clearStatus();
     },
 
-    getArticles:function (node) {
+    getArticles: function (node) {
         this.contentsCardPanel.removeAll(true);
         var xtype = 'knitkit_' + node.data.type.toLowerCase() + 'articlesgridpanel';
         this.contentsCardPanel.add({
-            xtype:xtype,
-            title:node.data.siteName + ' - ' + node.data.text + ' - Articles',
-            sectionId:node.data.id.split('_')[1],
-            centerRegion:this.initialConfig['module'].centerRegion,
-            siteId:node.data.siteId
+            xtype: xtype,
+            title: node.data.siteName + ' - ' + node.data.text + ' - Articles',
+            sectionId: node.data.id.split('_')[1],
+            centerRegion: this.initialConfig['module'].centerRegion,
+            siteId: node.data.siteId
         });
         this.contentsCardPanel.getLayout().setActiveItem(this.contentsCardPanel.items.length - 1);
     },
 
-    getPublications:function (node) {
+    getPublications: function (node) {
         this.contentsCardPanel.removeAll(true);
         this.contentsCardPanel.add({
-            xtype:'knitkit_publishedgridpanel',
-            title:node.data.siteName + ' Publications',
-            siteId:node.data.id.split('_')[1],
-            centerRegion:this.initialConfig['module'].centerRegion
+            xtype: 'knitkit_publishedgridpanel',
+            title: node.data.siteName + ' Publications',
+            siteId: node.data.id.split('_')[1],
+            centerRegion: this.initialConfig['module'].centerRegion
         });
         this.contentsCardPanel.getLayout().setActiveItem(this.contentsCardPanel.items.length - 1);
     },
 
-    exportSite:function (id) {
+    exportSite: function (id) {
         var self = this;
         self.setWindowStatus('Exporting Website...');
         window.open('/knitkit/erp_app/desktop/site/export?id=' + id, 'mywindow', 'width=400,height=200');
         self.clearWindowStatus();
     },
 
-    deleteSite:function (node) {
+    deleteSite: function (node) {
         var self = this;
         Ext.MessageBox.confirm('Confirm', 'Are you sure you want to delete this Website?', function (btn) {
             if (btn == 'no') {
@@ -51,23 +51,23 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
             else if (btn == 'yes') {
                 self.setWindowStatus('Deleting Website...');
                 Ext.Ajax.request({
-                    url:'/knitkit/erp_app/desktop/site/delete',
-                    method:'POST',
-                    params:{
-                        id:node.data.id.split('_')[1]
+                    url: '/knitkit/erp_app/desktop/site/delete',
+                    method: 'POST',
+                    params: {
+                        id: node.data.id.split('_')[1]
                     },
-                    success:function (response) {
+                    success: function (response) {
                         self.clearWindowStatus();
                         var obj = Ext.decode(response.responseText);
                         if (obj.success) {
                             node.removeAll();
-							node.remove();
+                            node.remove();
                         }
                         else {
                             Ext.Msg.alert('Error', 'Error deleting Website');
                         }
                     },
-                    failure:function (response) {
+                    failure: function (response) {
                         self.clearWindowStatus();
                         Ext.Msg.alert('Error', 'Error deleting Website');
                     }
@@ -76,15 +76,15 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
         });
     },
 
-    publish:function (node) {
+    publish: function (node) {
         var self = this;
-        var publishWindow = Ext.create('Compass.ErpApp.Desktop.Applications.Knitkit.PublishWindow',{
-            baseParams:{
-                id:node.id.split('_')[1]
+        var publishWindow = Ext.create('Compass.ErpApp.Desktop.Applications.Knitkit.PublishWindow', {
+            baseParams: {
+                id: node.id.split('_')[1]
             },
-            url:'/knitkit/erp_app/desktop/site/publish',
-            listeners:{
-                'publish_success':function (window, response) {
+            url: '/knitkit/erp_app/desktop/site/publish',
+            listeners: {
+                'publish_success': function (window, response) {
                     if (response.success) {
                         self.getPublications(node);
                     }
@@ -92,7 +92,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
                         Ext.Msg.alert('Error', 'Error publishing Website');
                     }
                 },
-                'publish_failure':function (window, response) {
+                'publish_failure': function (window, response) {
                     Ext.Msg.alert('Error', 'Error publishing Website');
                 }
             }
@@ -101,62 +101,23 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
         publishWindow.show();
     },
 
-    editSectionLayout:function (sectionName, sectionId, websiteId) {
-        var self = this;
-        self.selectWebsite(websiteId);
-        self.setWindowStatus('Loading section template...');
+    changeSecurity: function (node, updateUrl, id) {
         Ext.Ajax.request({
-            url:'/knitkit/erp_app/desktop/section/get_layout',
-            method:'POST',
-            params:{
-                id:sectionId
-            },
-            success:function (response) {
-                self.initialConfig['centerRegion'].editSectionLayout(
-                    sectionName,
-                    websiteId,
-                    sectionId,
-                    response.responseText,
-                    [
-                        {
-                            text:'Insert Content Area',
-                            handler:function (btn) {
-                                var codeMirror = btn.findParentByType('codemirror');
-                                Ext.MessageBox.prompt('New File', 'Please enter content area name:', function (btn, text) {
-                                    if (btn == 'ok') {
-                                        codeMirror.insertContent('<%=render_content_area(:' + text + ')%>');
-                                    }
-
-                                });
-                            }
-                        }
-                    ]);
-                self.clearWindowStatus();
-            },
-            failure:function (response) {
-                self.clearWindowStatus();
-                Ext.Msg.alert('Error', 'Error loading section layout.');
-            }
-        });
-    },
-
-    changeSecurity:function (node, updateUrl, id) {
-        Ext.Ajax.request({
-            url:'/knitkit/erp_app/desktop/available_roles',
-            method:'POST',
-            success:function (response) {
+            url: '/knitkit/erp_app/desktop/available_roles',
+            method: 'POST',
+            success: function (response) {
                 var obj = Ext.decode(response.responseText);
                 if (obj.success) {
-                    Ext.create('widget.knikit_selectroleswindow',{
-                        baseParams:{
-                            id:id,
-                            site_id:node.get('siteId')
+                    Ext.create('widget.knikit_selectroleswindow', {
+                        baseParams: {
+                            id: id,
+                            site_id: node.get('siteId')
                         },
                         url: updateUrl,
-                        currentRoles:node.get('roles'),
-                        availableRoles:obj.availableRoles,
-                        listeners:{
-                            success:function(window, response){
+                        currentRoles: node.get('roles'),
+                        availableRoles: obj.availableRoles,
+                        listeners: {
+                            success: function (window, response) {
                                 node.set('roles', response.roles);
                                 if (response.secured) {
                                     node.set('iconCls', 'icon-document_lock');
@@ -167,7 +128,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
                                 node.set('isSecured', response.secured);
                                 node.commit();
                             },
-                            failure:function(){
+                            failure: function () {
                                 Ext.Msg.alert('Error', 'Could not update security');
                             }
                         }
@@ -177,13 +138,13 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
                     Ext.Msg.alert('Error', 'Could not load available roles');
                 }
             },
-            failure:function (response) {
+            failure: function (response) {
                 Ext.Msg.alert('Error', 'Could not load available roles');
             }
         });
     },
 
-    selectWebsite:function (websiteId, websiteName) {
+    selectWebsite: function (websiteId, websiteName) {
 
         var siteContentsPanel = Ext.ComponentQuery.query('#knitkitSiteContentsTreePanel').first();
         siteContentsPanel.selectWebsite(websiteId, websiteName);
@@ -196,7 +157,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
         themePanel.selectWebsite(websiteId, websiteName);
 
         Compass.ErpApp.Shared.FileManagerTree.extraPostData = {
-            website_id:websiteId
+            website_id: websiteId
         };
 
         var menuPanel = Ext.ComponentQuery.query('#knitkitMenuTreePanel').first();
@@ -207,95 +168,76 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
 
     },
 
-    updateWebsiteConfiguration:function (rec) {
-        var configurationWindow = Ext.create("Ext.window.Window", {
-            layout:'fit',
-            width:600,
-            title:'Configuration',
-            height:400,
-            autoScroll:true,
-            plain:true,
-            items:[
-                {
-                    xtype:'sharedconfigurationpanel',
-                    configurationId:rec.get('configurationId')
-                }
-            ]
-        });
-
-        configurationWindow.show();
-    },
-
-    initComponent:function () {
+    initComponent: function () {
 
         var self = this;
 
-        this.contentsCardPanel = Ext.create('Ext.Panel',{
-            layout:'card',
-            region:'south',
+        this.contentsCardPanel = Ext.create('Ext.Panel', {
+            layout: 'card',
+            region: 'south',
             header: false,
-            split:true,
-            height:200,
-            collapsible:true,
+            split: true,
+            height: 200,
+            collapsible: true,
             collapsed: false
         });
 
         var tbarItems = [];
 
-        if (currentUser.hasCapability('create','Website')) {
+        if (currentUser.hasCapability('create', 'Website')) {
             tbarItems.push({
-                    text:'New Website',
-                    iconCls:'icon-add',
-                    handler:function (btn) {
+                    text: 'New Website',
+                    iconCls: 'icon-add',
+                    handler: function (btn) {
                         var addWebsiteWindow = Ext.create("Ext.window.Window", {
-                            title:'New Website',
-                            plain:true,
-                            buttonAlign:'center',
-                            items:new Ext.FormPanel({
-                                labelWidth:110,
-                                frame:false,
-                                bodyStyle:'padding:5px 5px 0',
-                                url:'/knitkit/erp_app/desktop/site/new',
-                                defaults:{
-                                    width:225
+                            title: 'New Website',
+                            plain: true,
+                            buttonAlign: 'center',
+                            items: new Ext.FormPanel({
+                                labelWidth: 110,
+                                frame: false,
+                                bodyStyle: 'padding:5px 5px 0',
+                                url: '/knitkit/erp_app/desktop/site/new',
+                                defaults: {
+                                    width: 225
                                 },
-                                items:[
+                                items: [
                                     {
-                                        xtype:'textfield',
-                                        fieldLabel:'Name',
-                                        allowBlank:false,
-                                        name:'name'
+                                        xtype: 'textfield',
+                                        fieldLabel: 'Name',
+                                        allowBlank: false,
+                                        name: 'name'
                                     },
                                     {
-                                        xtype:'textfield',
-                                        fieldLabel:'Host',
-                                        allowBlank:false,
-                                        name:'host'
+                                        xtype: 'textfield',
+                                        fieldLabel: 'Host',
+                                        allowBlank: false,
+                                        name: 'host'
                                     },
                                     {
-                                        xtype:'textfield',
-                                        fieldLabel:'Title',
-                                        allowBlank:false,
-                                        name:'title'
+                                        xtype: 'textfield',
+                                        fieldLabel: 'Title',
+                                        allowBlank: false,
+                                        name: 'title'
                                     },
                                     {
-                                        xtype:'textfield',
-                                        fieldLabel:'Sub Title',
-                                        allowBlank:true,
-                                        name:'subtitle'
+                                        xtype: 'textfield',
+                                        fieldLabel: 'Sub Title',
+                                        allowBlank: true,
+                                        name: 'subtitle'
                                     }
                                 ]
                             }),
-                            buttons:[
+                            buttons: [
                                 {
-                                    text:'Submit',
-                                    listeners:{
-                                        'click':function (button) {
+                                    text: 'Submit',
+                                    listeners: {
+                                        'click': function (button) {
                                             var window = button.findParentByType('window');
                                             var formPanel = window.query('.form')[0];
                                             self.setWindowStatus('Creating website...');
                                             formPanel.getForm().submit({
-                                                success:function (form, action) {
+                                                success: function (form, action) {
                                                     self.clearWindowStatus();
                                                     var obj = Ext.decode(action.response.responseText);
                                                     if (obj.success) {
@@ -303,7 +245,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
                                                         addWebsiteWindow.close();
                                                     }
                                                 },
-                                                failure:function (form, action) {
+                                                failure: function (form, action) {
                                                     self.clearWindowStatus();
                                                     Ext.Msg.alert("Error", "Error creating website");
                                                 }
@@ -312,8 +254,8 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
                                     }
                                 },
                                 {
-                                    text:'Close',
-                                    handler:function () {
+                                    text: 'Close',
+                                    handler: function () {
                                         addWebsiteWindow.close();
                                     }
                                 }
@@ -325,48 +267,48 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
             );
         }
 
-        if (currentUser.hasCapability('import','Website')) {
+        if (currentUser.hasCapability('import', 'Website')) {
             tbarItems.push({
-                text:'Import Website',
-                iconCls:'icon-globe',
-                handler:function (btn) {
+                text: 'Import Website',
+                iconCls: 'icon-globe',
+                handler: function (btn) {
                     var importWebsiteWindow = Ext.create("Ext.window.Window", {
-                        layout:'fit',
-                        width:375,
-                        title:'Import Website',
-                        height:100,
-                        plain:true,
-                        buttonAlign:'center',
-                        items:new Ext.FormPanel({
-                            labelWidth:110,
-                            frame:false,
-                            fileUpload:true,
-                            bodyStyle:'padding:5px 5px 0',
-                            url:'/knitkit/erp_app/desktop/site/import',
-                            defaults:{
-                                width:225
+                        layout: 'fit',
+                        width: 375,
+                        title: 'Import Website',
+                        height: 100,
+                        plain: true,
+                        buttonAlign: 'center',
+                        items: new Ext.FormPanel({
+                            labelWidth: 110,
+                            frame: false,
+                            fileUpload: true,
+                            bodyStyle: 'padding:5px 5px 0',
+                            url: '/knitkit/erp_app/desktop/site/import',
+                            defaults: {
+                                width: 225
                             },
-                            items:[
+                            items: [
                                 {
-                                    xtype:'fileuploadfield',
-                                    fieldLabel:'Upload Website',
-                                    buttonText:'Upload',
-                                    buttonOnly:false,
-                                    allowBlank:false,
-                                    name:'website_data'
+                                    xtype: 'fileuploadfield',
+                                    fieldLabel: 'Upload Website',
+                                    buttonText: 'Upload',
+                                    buttonOnly: false,
+                                    allowBlank: false,
+                                    name: 'website_data'
                                 }
                             ]
                         }),
-                        buttons:[
+                        buttons: [
                             {
-                                text:'Submit',
-                                listeners:{
-                                    'click':function (button) {
+                                text: 'Submit',
+                                listeners: {
+                                    'click': function (button) {
                                         var window = button.findParentByType('window');
                                         var formPanel = window.query('form')[0];
                                         self.setWindowStatus('Importing website...');
                                         formPanel.getForm().submit({
-                                            success:function (form, action) {
+                                            success: function (form, action) {
                                                 self.clearWindowStatus();
                                                 var obj = Ext.decode(action.response.responseText);
                                                 if (obj.success) {
@@ -377,7 +319,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
                                                     Ext.Msg.alert("Error", obj.message);
                                                 }
                                             },
-                                            failure:function (form, action) {
+                                            failure: function (form, action) {
                                                 self.clearWindowStatus();
                                                 var obj = Ext.decode(action.response.responseText);
                                                 if (obj != null) {
@@ -392,8 +334,8 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
                                 }
                             },
                             {
-                                text:'Close',
-                                handler:function () {
+                                text: 'Close',
+                                handler: function () {
                                     importWebsiteWindow.close();
                                 }
                             }
@@ -407,9 +349,9 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
         var contentPanel = Ext.create('Ext.panel.Panel', {
             title: 'Site Contents',
 
-            items:[this.siteContentsTree],
-            tbar:{
-                items:tbarItems
+            items: [this.siteContentsTree],
+            tbar: {
+                items: tbarItems
             }
 
         });
@@ -419,10 +361,11 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
             autoScroll: true,
             items: [
                 {
-                    xtype:'knitkit_sitecontentstreepanel',
-                    centerRegion:this.initialConfig['module'].centerRegion,
+                    xtype: 'knitkit_sitecontentstreepanel',
+                    centerRegion: this.initialConfig['module'].centerRegion,
                     header: false
-                }]
+                }
+            ]
         });
 
         var themesPanel = Ext.create('Ext.panel.Panel', {
@@ -430,10 +373,11 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
             autoScroll: true,
             items: [
                 {
-                    xtype:'knitkit_themestreepanel',
-                    centerRegion:this.initialConfig['module'].centerRegion,
+                    xtype: 'knitkit_themestreepanel',
+                    centerRegion: this.initialConfig['module'].centerRegion,
                     header: false
-                }]
+                }
+            ]
 
         });
 
@@ -448,39 +392,39 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
         });
 
         var configPanel = Ext.create('Ext.panel.Panel', {
-            title: 'Configuration',
+            title: 'Hosts',
             autoScroll: true,
             items: [
                 {
-                    xtype: 'knitkit_configpanel'
+                    xtype: 'knitkit_hostspanel'
                 }
             ]
 
         });
 
-        var layout = Ext.create('Ext.panel.Panel',{
+        var layout = Ext.create('Ext.panel.Panel', {
             layout: 'accordion',
-            title:'Websites',
-            items:[siteContentsPanel, themesPanel, menuPanel, configPanel]
+            title: 'Websites',
+            items: [siteContentsPanel, themesPanel, menuPanel, configPanel]
 
         });
 
         this.items = [layout,
             {
-                xtype:'knitkit_articlesgridpanel',
-                centerRegion:this.initialConfig['module'].centerRegion
+                xtype: 'knitkit_articlesgridpanel',
+                centerRegion: this.initialConfig['module'].centerRegion
             }];
 
         this.callParent(arguments);
         this.setActiveTab(0);
     },
 
-    constructor:function (config) {
+    constructor: function (config) {
         config = Ext.apply({
-            region:'west',
-            split:true,
-            width:310,
-            collapsible:true
+            region: 'west',
+            split: true,
+            width: 310,
+            collapsible: true
         }, config);
 
         this.callParent([config]);

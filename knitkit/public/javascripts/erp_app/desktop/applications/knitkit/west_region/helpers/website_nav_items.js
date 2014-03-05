@@ -1,10 +1,12 @@
 Compass.ErpApp.Desktop.Applications.Knitkit.addWebsiteNavItemOptions = function (self, items, record) {
+    var websiteId = compassDesktop.getModule('knitkit-win').currentWebsite.id;
+
     if (currentUser.hasCapability('edit', 'WebsiteNavItem')) {
         items.push({
             text: 'Update Menu Item',
             iconCls: 'icon-edit',
             handler: function (btn) {
-                var addMenuItemWindow = Ext.create("Ext.window.Window", {
+                Ext.create("Ext.window.Window", {
                     layout: 'fit',
                     width: 375,
                     title: 'Update Menu Item',
@@ -15,7 +17,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addWebsiteNavItemOptions = function 
                         labelWidth: 50,
                         frame: false,
                         bodyStyle: 'padding:5px 5px 0',
-                        url: '/knitkit/erp_app/desktop/website_nav/update_menu_item',
+                        url: '/knitkit/erp_app/desktop/website_nav_item/' + record.data.websiteNavItemId,
                         defaults: {
                             width: 375
                         },
@@ -43,7 +45,6 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addWebsiteNavItemOptions = function 
                                 triggerAction: 'all',
                                 store: [
                                     ['website_section', 'Section'],
-                                    //['article','Article'],
                                     ['url', 'Url']
 
                                 ],
@@ -53,17 +54,14 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addWebsiteNavItemOptions = function 
                                         switch (newValue) {
                                             case 'website_section':
                                                 Ext.getCmp('knitkit_website_nav_item_section').show();
-                                                //Ext.getCmp('knitkit_website_nav_item_article').hide();
                                                 Ext.getCmp('knitkit_website_nav_item_url').hide();
                                                 break;
                                             case 'article':
                                                 Ext.getCmp('knitkit_website_nav_item_section').hide();
-                                                //Ext.getCmp('knitkit_website_nav_item_article').show();
                                                 Ext.getCmp('knitkit_website_nav_item_url').hide();
                                                 break;
                                             case 'url':
                                                 Ext.getCmp('knitkit_website_nav_item_section').hide();
-                                                //Ext.getCmp('knitkit_website_nav_item_article').hide();
                                                 Ext.getCmp('knitkit_website_nav_item_url').show();
                                                 break;
                                         }
@@ -85,7 +83,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addWebsiteNavItemOptions = function 
                                             type: 'json'
                                         },
                                         extraParams: {
-                                            website_id: record.data.websiteId
+                                            website_id: websiteId
                                         }
                                     },
                                     fields: [
@@ -99,10 +97,8 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addWebsiteNavItemOptions = function 
                                         }
                                     ]
                                 }),
-                                //forceSelection: true,
                                 editable: false,
                                 fieldLabel: 'Section',
-                                //autoSelect: true,
                                 typeAhead: false,
                                 queryMode: 'local',
                                 displayField: 'title_permalink',
@@ -116,11 +112,6 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addWebsiteNavItemOptions = function 
                                 id: 'knitkit_website_nav_item_url',
                                 hidden: (record.data.linkToType == 'website_section' || record.data.linkToType == 'article'),
                                 name: 'url'
-                            },
-                            {
-                                xtype: 'hidden',
-                                name: 'website_nav_item_id',
-                                value: record.data.websiteNavItemId
                             }
                         ]
                     }),
@@ -131,18 +122,17 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addWebsiteNavItemOptions = function 
                                 'click': function (button) {
                                     var window = button.findParentByType('window'),
                                         formPanel = window.query('form')[0];
-                                    self.setWindowStatus('Updating menu item...');
+
                                     formPanel.getForm().submit({
-                                        reset: false,
+                                        waitMsg: 'Please wait...',
+                                        method: 'PUT',
                                         success: function (form, action) {
-                                            self.clearWindowStatus();
                                             var obj = Ext.decode(action.response.responseText);
                                             if (obj.success) {
                                                 record.set('linkedToId', parseInt(obj.linkedToId));
                                                 record.set('linkToType', obj.linkToType);
                                                 record.set('url', obj.url);
                                                 record.set('text', obj.title);
-                                                record.commit();
                                                 window.close();
                                             }
                                             else {
@@ -150,7 +140,6 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addWebsiteNavItemOptions = function 
                                             }
                                         },
                                         failure: function (form, action) {
-                                            self.clearWindowStatus();
                                             if (action.response === null) {
                                                 Ext.Msg.alert("Error", 'Could not create menu item');
                                             }
@@ -165,8 +154,8 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addWebsiteNavItemOptions = function 
                         },
                         {
                             text: 'Close',
-                            handler: function () {
-                                addMenuItemWindow.close();
+                            handler: function (btn) {
+                                btn.up('window').close();
                             }
                         }
                     ],
@@ -191,7 +180,9 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addWebsiteNavItemOptions = function 
             iconCls: 'icon-document_lock',
             listeners: {
                 'click': function () {
-                    self.changeSecurity(record, '/knitkit/erp_app/desktop/website_nav/update_security', record.data.websiteNavItemId);
+                    var westRegion = Ext.ComponentQuery.query('#knitkitWestRegion').first();
+
+                    westRegion.changeSecurity(record, '/knitkit/erp_app/desktop/website_nav_item/' + record.data.websiteNavItemId + '/update_security', '');
                 }
             }
         });
@@ -207,25 +198,19 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addWebsiteNavItemOptions = function 
                         return false;
                     }
                     else if (btn == 'yes') {
-                        //self.setWindowStatus('Deleting menu item...');
                         Ext.Ajax.request({
-                            url: '/knitkit/erp_app/desktop/website_nav/delete_menu_item',
-                            method: 'POST',
-                            params: {
-                                id: record.data.websiteNavItemId
-                            },
+                            url: '/knitkit/erp_app/desktop/website_nav_item/' + record.get('websiteNavItemId'),
+                            method: 'DELETE',
                             success: function (response) {
-                                //self.clearWindowStatus();
                                 var obj = Ext.decode(response.responseText);
                                 if (obj.success) {
-                                    record.remove(true);
+                                    record.remove();
                                 }
                                 else {
                                     Ext.Msg.alert('Error', 'Error deleting menu item');
                                 }
                             },
                             failure: function (response) {
-                                //self.clearWindowStatus();
                                 Ext.Msg.alert('Error', 'Error deleting menu item');
                             }
                         });

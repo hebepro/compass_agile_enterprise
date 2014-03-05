@@ -1,19 +1,13 @@
 Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
     extend: "Ext.ux.desktop.Module",
     id: 'knitkit-win',
-    alias:'widget.knitkit_mainui',
+    alias: 'widget.knitkit_mainui',
 
     /**
-     * @cfg {Int} currentWebsiteId
-     * The id of the current Website being edited
+     * @cfg {Object} currentWebsite
+     * The currently selected website with params {id, name, configurationId}
      */
-    currentWebsiteId: null,
-
-    /**
-     * @cfg {String} currentWebsiteName
-     * The name of the current Website being edited
-     */
-    currentWebsiteName: null,
+    currentWebsite: null,
 
     init: function () {
         this.launcher = {
@@ -32,363 +26,65 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
              * @event websiteselected
              * Fires when a website is selected
              * @param {Compass.ErpApp.Desktop.Applications.Knitkit} this
-             * @param {id} Id of the selected website
+             * @param {Object} currentWebsite
              */
             'websiteselected'
         );
     },
 
-    selectWebsite:function (websiteId, websiteName) {
+    selectWebsite: function (website) {
+        website = website.data;
 
-        me = this;
-        me.fireEvent('websiteselected', me, websiteId, websiteName);
+        var self = this,
+            desktop = self.app.getDesktop(),
+            win = desktop.getWindow('knitkit'),
+            menuBar = win.down('toolbar');
 
-        this.currentWebsiteId = websiteId;
-        this.currentWebsiteName = websiteName;
+        self.fireEvent('websiteselected', self, website);
+
+        this.currentWebsite = website;
 
         var eastRegion = Ext.ComponentQuery.query('#knitkitEastRegion').first();
-        eastRegion.fileAssetsPanel.selectWebsite(websiteId, websiteName);
-        eastRegion.imageAssetsPanel.selectWebsite(websiteId, websiteName);
+        eastRegion.fileAssetsPanel.selectWebsite(website);
+        eastRegion.imageAssetsPanel.selectWebsite(website);
 
         var westRegion = Ext.ComponentQuery.query('#knitkitWestRegion').first();
-        westRegion.selectWebsite(websiteId, websiteName);
+        westRegion.selectWebsite(website);
 
         Compass.ErpApp.Shared.FileManagerTree.extraPostData = {
-            website_id:websiteId
+            website_id: website.id
         };
+
+        menuBar.down('#themeMenuItem').enable();
+        menuBar.down('#navigationMenuItem').enable();
+        menuBar.down('#hostsMenuItem').enable();
+
     },
 
     createWindow: function () {
-        var knitkitModule = this;
-        //***********************************************************
-        //Might get rid of this or make it an option you can select
-        var title = 'KnitKit-' + currentUser.description
-        //***********************************************************
+        var self = this;
+
         var desktop = this.app.getDesktop();
         var win = desktop.getWindow('knitkit');
+
         if (!win) {
             var centerRegion = Ext.create('Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion');
             this.centerRegion = centerRegion;
 
-
             var tbarItems = [];
 
-
-            if (currentUser.hasCapability('create','Website')) {
+            if (currentUser.hasCapability('create', 'Website')) {
                 tbarItems.push(
                     {
                         text: 'Main Menu',
                         menu: {
                             xtype: 'menu',
                             items: [
-                                {
-                                text: 'Websites',
-                                iconCls:'icon-globe',
-                                menu: {
-                                    xtype: 'menu',
-                                    items: [
-                                        {
-                                            text:'New Website',
-                                            iconCls:'icon-add',
-                                            handler:function (btn) {
-                                                var addWebsiteWindow = Ext.create("Ext.window.Window", {
-                                                    title:'New Website',
-                                                    plain:true,
-                                                    buttonAlign:'center',
-                                                    items:new Ext.FormPanel({
-                                                        labelWidth:110,
-                                                        frame:false,
-                                                        bodyStyle:'padding:5px 5px 0',
-                                                        url:'/knitkit/erp_app/desktop/site/new',
-                                                        defaults:{
-                                                            width:360
-                                                        },
-                                                        items:[
-                                                            {
-                                                                xtype:'textfield',
-                                                                fieldLabel:'Name *',
-                                                                width: 320,
-                                                                allowBlank:false,
-                                                                name:'name'
-                                                            },
-                                                            {
-                                                                xtype:'textfield',
-                                                                fieldLabel:'Host *',
-                                                                width: 320,
-                                                                allowBlank:false,
-                                                                name:'host'
-                                                            },
-                                                            {
-                                                                xtype:'textfield',
-                                                                fieldLabel:'Title *',
-                                                                width: 320,
-                                                                allowBlank:false,
-                                                                name:'title'
-                                                            },
-                                                            {
-                                                                xtype:'textfield',
-                                                                fieldLabel:'Sub Title',
-                                                                width: 320,
-                                                                allowBlank:true,
-                                                                name:'subtitle'
-                                                            }
-                                                        ]
-                                                    }),
-                                                    buttons:[
-                                                        {
-                                                            text:'Submit',
-                                                            listeners:{
-                                                                'click':function (button) {
-                                                                    var window = button.findParentByType('window');
-                                                                    var formPanel = window.query('.form')[0];
-                                                                    //self.setWindowStatus('Creating website...');
-                                                                    formPanel.getForm().submit({
-                                                                        success:function (form, action) {
-                                                                            //self.clearWindowStatus();
-                                                                            var obj = Ext.decode(action.response.responseText);
-                                                                            if (obj.success) {
-                                                                                debugger
-                                                                                var westRegion = Ext.ComponentQuery.query('#knitkitWestRegion').first();
-                                                                                westRegion.selectWebsite(websiteId, websiteName);
-                                                                                addWebsiteWindow.close();
-                                                                            }
-                                                                        },
-                                                                        failure:function (form, action) {
-                                                                            //self.clearWindowStatus();
-                                                                            Ext.Msg.alert("Error", "Error creating website");
-                                                                        }
-                                                                    });
-                                                                }
-                                                            }
-                                                        },
-                                                        {
-                                                            text:'Close',
-                                                            handler:function () {
-                                                                addWebsiteWindow.close();
-                                                            }
-                                                        }
-                                                    ]
-                                                });
-                                                addWebsiteWindow.show();
-                                            }
-                                        },
-                                        {
-                                            text:'Import Website',
-                                            iconCls:'icon-globe',
-                                            handler:function (btn) {
-                                                var importWebsiteWindow = Ext.create("Ext.window.Window", {
-                                                    layout:'fit',
-                                                    width:375,
-                                                    title:'Import Website',
-                                                    height:120,
-                                                    plain:true,
-                                                    buttonAlign:'center',
-                                                    items:new Ext.FormPanel({
-                                                        labelWidth:110,
-                                                        frame:false,
-                                                        fileUpload:true,
-                                                        bodyStyle:'padding:5px 5px 0',
-                                                        url:'/knitkit/erp_app/desktop/site/import',
-                                                        defaults:{
-                                                            width:320
-                                                        },
-                                                        items:[
-                                                            {
-                                                                xtype:'fileuploadfield',
-                                                                fieldLabel:'Upload Website',
-                                                                buttonText:'Upload',
-                                                                buttonOnly:false,
-                                                                allowBlank:false,
-                                                                name:'website_data'
-                                                            }
-                                                        ]
-                                                    }),
-                                                    buttons:[
-                                                        {
-                                                            text:'Submit',
-                                                            listeners:{
-                                                                'click':function (button) {
-                                                                    var window = button.findParentByType('window');
-                                                                    var formPanel = window.query('form')[0];
-                                                                    //self.setWindowStatus('Importing website...');
-                                                                    formPanel.getForm().submit({
-                                                                        success:function (form, action) {
-                                                                            //self.clearWindowStatus();
-                                                                            var obj = Ext.decode(action.response.responseText);
-                                                                            if (obj.success) {
-                                                                                self.siteContentsTree.getStore().load();
-                                                                                importWebsiteWindow.close();
-                                                                            }
-                                                                            else {
-                                                                                Ext.Msg.alert("Error", obj.message);
-                                                                            }
-                                                                        },
-                                                                        failure:function (form, action) {
-                                                                            //self.clearWindowStatus();
-                                                                            var obj = Ext.decode(action.response.responseText);
-                                                                            if (obj != null) {
-                                                                                Ext.Msg.alert("Error", obj.message);
-                                                                            }
-                                                                            else {
-                                                                                Ext.Msg.alert("Error", "Error importing website");
-                                                                            }
-                                                                        }
-                                                                    });
-                                                                }
-                                                            }
-                                                        },
-                                                        {
-                                                            text:'Close',
-                                                            handler:function () {
-                                                                importWebsiteWindow.close();
-                                                            }
-                                                        }
-                                                    ]
-                                                });
-                                                importWebsiteWindow.show();
-                                            }
-                                        }]
-                                    }
-                                },
-                                {
-                                text: 'Themes',
-                                iconCls: 'icon-picture',
-                                menu: {
-                                    xtype: 'menu',
-                                    items: [
-                                        {
-                                            text:'Add',
-                                            iconCls:'icon-add',
-                                            handler:function(btn){
-
-                                                var sitesJsonStore = Ext.create("Ext.data.Store",{
-                                                    proxy:{
-                                                        url:'/knitkit/erp_app/desktop/site/index',
-                                                        type:'ajax',
-                                                        reader:{
-                                                            type:'json',
-                                                            root:'sites'
-                                                        }
-                                                    },
-                                                    fields: [
-                                                        {
-                                                            name:'name'
-                                                        },
-                                                        {
-                                                            name:'id'
-                                                        }
-                                                    ]
-                                                });
-
-                                                sitesJsonStore.load();
-                                                var addThemeWindow = Ext.create("Ext.window.Window",{
-                                                    layout:'fit',
-                                                    width:375,
-                                                    title:'New Theme',
-                                                    plain: true,
-                                                    buttonAlign:'center',
-                                                    items: new Ext.FormPanel({
-                                                        labelWidth: 110,
-                                                        frame:false,
-                                                        bodyStyle:'padding:5px 5px 0',
-                                                        fileUpload: true,
-                                                        url:'/knitkit/erp_app/desktop/theme/new',
-                                                        defaults: {
-                                                            width: 225
-                                                        },
-                                                        items: [
-                                                            {
-                                                                xtype:'combo',
-                                                                hiddenName:'site_id',
-                                                                name:'site_id',
-                                                                store: sitesJsonStore,
-                                                                forceSelection:true,
-                                                                editable:false,
-                                                                fieldLabel:'Website',
-                                                                emptyText:'Select Site...',
-                                                                typeAhead: false,
-                                                                displayField:'name',
-                                                                valueField:'id',
-                                                                allowBlank:false
-                                                            },
-                                                            {
-                                                                xtype:'textfield',
-                                                                fieldLabel:'Name',
-                                                                allowBlank:false,
-                                                                name:'name'
-                                                            },
-                                                            {
-                                                                xtype:'textfield',
-                                                                fieldLabel:'Theme ID',
-                                                                allowBlank:false,
-                                                                name:'theme_id'
-                                                            },
-                                                            {
-                                                                xtype:'textfield',
-                                                                fieldLabel:'Version',
-                                                                allowBlank:true,
-                                                                name:'version'
-                                                            },
-                                                            {
-                                                                xtype:'textfield',
-                                                                fieldLabel:'Author',
-                                                                allowBlank:true,
-                                                                name:'author'
-                                                            },
-                                                            {
-                                                                xtype:'textfield',
-                                                                fieldLabel:'HomePage',
-                                                                allowBlank:true,
-                                                                name:'homepage'
-                                                            },
-                                                            {
-                                                                xtype:'textarea',
-                                                                fieldLabel:'Summary',
-                                                                allowBlank:true,
-                                                                name:'summary'
-                                                            }
-                                                        ]
-                                                    }),
-                                                    buttons: [{
-                                                        text:'Submit',
-                                                        listeners:{
-                                                            'click':function(button){
-                                                                var window = button.findParentByType('window');
-                                                                var formPanel = window.query('form')[0];
-                                                                self.initialConfig['centerRegion'].setWindowStatus('Creating theme...');
-                                                                formPanel.getForm().submit({
-                                                                    reset:true,
-                                                                    success:function(form, action){
-                                                                        self.initialConfig['centerRegion'].clearWindowStatus();
-                                                                        var obj = Ext.decode(action.response.responseText);
-                                                                        if(obj.success){
-                                                                            self.getStore().load({
-                                                                                node:self.getRootNode()
-                                                                            });
-                                                                        }
-                                                                    },
-                                                                    failure:function(form, action){
-                                                                        self.initialConfig['centerRegion'].clearWindowStatus();
-                                                                        Ext.Msg.alert("Error", "Error creating theme");
-                                                                    }
-                                                                });
-                                                            }
-                                                        }
-                                                    },{
-                                                        text: 'Close',
-                                                        handler: function(){
-                                                            addThemeWindow.close();
-                                                        }
-                                                    }]
-                                                });
-                                                addThemeWindow.show();
-                                            }
-                                        },
-                                        {
-                                            text: 'Import Theme'
-                                        }]
-                                    }
-                                }]
+                                Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu(),
+                                Compass.ErpApp.Desktop.Applications.Knitkit.ThemeMenu(),
+                                Compass.ErpApp.Desktop.Applications.Knitkit.NavigationMenu(),
+                                Compass.ErpApp.Desktop.Applications.Knitkit.HostsMenu()
+                            ]
                         }
                     }
                 );
@@ -415,12 +111,12 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
                 {
                     xtype: 'websitescombo',
                     width: 250,
-                    listeners:{
-                        'select':function(combo, record, index){
+                    listeners: {
+                        'select': function (combo, record, index) {
                             var websiteData = record[0].data;
-                            knitkitModule.selectWebsite(websiteData.id, websiteData.name)
+                            self.selectWebsite(websiteData)
                         },
-                        render:function(combo){
+                        render: function (combo) {
                             combo.getStore().load();
                         }
                     }
@@ -473,8 +169,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
 
             win = desktop.createWindow({
                 id: 'knitkit',
-                title: title,
-                autoDestroy: true,
+                title: 'KnitKit',
                 width: 1200,
                 height: 550,
                 maximized: true,
@@ -483,7 +178,9 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
                 animCollapse: false,
                 constrainHeader: true,
                 layout: 'border',
-                tbar: {
+                dockedItems: {
+                    xtype: 'toolbar',
+                    docked: 'top',
                     ui: 'ide-main',
                     items: tbarItems
                 },
@@ -503,6 +200,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
                 ]
             });
         }
+
         win.show();
     }
 });

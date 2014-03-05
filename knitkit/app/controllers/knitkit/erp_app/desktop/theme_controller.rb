@@ -3,7 +3,7 @@ module Knitkit
     module Desktop
       class ThemeController < ::ErpApp::Desktop::FileManager::BaseController
         before_filter :set_file_support
-        before_filter :set_website, :only => [:new, :change_status, :available_themes]
+        before_filter :set_website, :only => [:index, :new, :change_status, :available_themes]
         before_filter :set_theme, :only => [:delete, :change_status, :theme_widget, :available_widgets]
         IGNORED_PARAMS = %w{action controller node_id theme_data}
 
@@ -351,20 +351,18 @@ module Knitkit
           render :json => tree
         end
 
-        def set_website
-          if params[:id]
-            @website = Website.find(params[:id])
-          else
-            @website = Website.count > 0 ? Website.first : nil
-          end
-        end
-
         def set_theme
           @theme = Theme.find(params[:theme_id])
         end
 
         def set_file_support
           @file_support = ErpTechSvcs::FileSupport::Base.new(:storage => ErpTechSvcs::Config.file_storage)
+        end
+
+        def set_website
+          if params[:website_id]
+            @website = Website.find(params[:website_id])
+          end
         end
 
       end #ThemeController

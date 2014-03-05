@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   filter :section_router
-  
+
   get 'knitkit_mobile' => 'knitkit/mobile#index'
   match 'pages/:section_id' => 'knitkit/website_sections#index', :as => 'page'
   get 'onlinedocumentsections/:section_id' => 'knitkit/online_document_sections#index', :as => 'document'
@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   get 'blogs/:section_id(.:format)' => 'knitkit/blogs#index', :as => 'blogs'
   get 'blogs/:section_id/:id' => 'knitkit/blogs#show', :as => 'blog_article'
   get 'blogs/:section_id/tag/:tag_id(.:format)' => 'knitkit/blogs#tag', :as => 'blog_tag'
-  
+
   match '/comments/add' => 'knitkit/comments#add', :as => 'comments'
   match '/unauthorized' => 'knitkit/unauthorized#index', :as => 'knitkit/unauthorized'
   match '/view_current_publication' => 'knitkit/base#view_current_publication'
@@ -20,6 +20,15 @@ Knitkit::Engine.routes.draw do
   #knitkit
   namespace :erp_app do
     namespace :desktop do
+
+      resources :website_nav
+      resources :website_nav_item do
+        member do
+          post :update_security
+        end
+      end
+      resources :website_host
+
       match '/:action' => 'app'
       match '/image_assets/:context/:action' => 'image_assets'
       match '/file_assets/:context/:action' => 'file_assets'
@@ -41,8 +50,6 @@ Knitkit::Engine.routes.draw do
       match '/comments/:action(/:content_id)' => 'comments'
       #inquir
       match '/inquiries/:action(/:website_id)' => 'inquiries'
-      #websit
-      match '/website_nav/:action' => 'website_nav'
       #positi
       match '/position/:action' => 'position'
     end
