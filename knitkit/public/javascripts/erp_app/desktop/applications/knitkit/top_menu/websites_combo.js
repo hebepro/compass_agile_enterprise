@@ -25,8 +25,14 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WebsitesComboBox", {
 
         var me = this;
         websiteJsonStore.on('load', function (store) {
-            if (store.length > 0) {
+            if (store.data.length > 0) {
+                var record = store.first();
+
                 me.setValue(store.first().get('id'));
+
+                var knitkitWin = compassDesktop.getModule('knitkit-win');
+
+                knitkitWin.selectWebsite(record.get('id'), record.get('name'));
             }
         });
 
@@ -45,7 +51,9 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WebsitesComboBox", {
             forceSelection: true,
             listeners: {
                 'select': function (combo, record, index) {
-                    alert('template listener');
+                    var knitkitWin = compassDesktop.getModule('knitkit-win');
+
+                    knitkitWin.selectWebsite(record.get('id'), record.get('name'));
                 },
                 render: function (combo) {
                     combo.getStore().load();
