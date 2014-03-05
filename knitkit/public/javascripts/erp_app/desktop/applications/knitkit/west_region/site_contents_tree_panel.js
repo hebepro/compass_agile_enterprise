@@ -5,7 +5,8 @@ var siteContentsStore = Ext.create('Ext.data.TreeStore', {
         timeout:90000
     },
     root:{
-        text:'Websites',
+        text:'Sections/Web Pages',
+        iconCls: 'icon-ia',
         expanded:true
     },
     fields:[
@@ -55,9 +56,6 @@ var siteContentsStore = Ext.create('Ext.data.TreeStore', {
     listeners:{
         'load':function(store, node, records){
             store.getRootNode().expandChildren(true);
-//            store.getRootNode().eachChild(function(child){
-//                child.expandChildren();
-//            });
         }
     }
 });

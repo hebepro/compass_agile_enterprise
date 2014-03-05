@@ -17,35 +17,9 @@ module Knitkit
 
           if @website
 
-            @website_primary_host = @website.config_value('primary_host')
-
-            website_hash = {
-                :text => @website.name,
-                :configurationId => @website.configurations.first.id,
-                :iconCls => 'icon-globe_disconnected',
-                :id => "website_#{@website.id}",
-                :leaf => false,
-                :url => "http://#{@website_primary_host}",
-                :name => @website.name,
-                :title => @website.title,
-                :subtitle => @website.subtitle,
-                :isWebsite => true,
-                :siteName => @website.name,
-                :children => []
-            }
-
-            #handle sections
-            sections_hash = {:text => 'Sections/Web Pages', :isSectionRoot => true, :websiteId => @website.id,
-                             :iconCls => 'icon-ia', :leaf => false, :children => []}
-
             @website.website_sections.positioned.each do |website_section|
-              sections_hash[:children] << build_section_hash(website_section)
+              tree << build_section_hash(website_section)
             end
-
-            website_hash[:children] << sections_hash
-
-            #added website to main tree
-            tree << sections_hash
 
           end
 
