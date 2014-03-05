@@ -4,94 +4,90 @@ module Knitkit
       class WebsiteController < Knitkit::ErpApp::Desktop::AppController
         IGNORED_PARAMS = %w{action controller id}
 
-        before_filter :set_website, :only => [:export, :website_publications, :set_viewing_version, :activate_publication, :publish, :update, :delete]
-  
+        before_filter :set_website, :only => [:export, :website_publications, :set_viewing_version,
+                                              :activate_publication, :publish, :update, :delete]
+
         def index
           render :json => {:sites => Website.all}
         end
 
         def build_content_tree
 
-          websites = []
-          if params[:id]
-            websites << Website.find(params[:id])
-          else
-            websites << Website.first
-          end
-
           tree = []
-          websites.each do |website|
-            @website_primary_host = website.config_value('primary_host')
+
+          if @website
+
+            @website_primary_host = @website.config_value('primary_host')
 
             website_hash = {
-                :text => website.name,
-                :configurationId => website.configurations.first.id,
+                :text => @website.name,
+                :configurationId => @website.configurations.first.id,
                 :iconCls => 'icon-globe_disconnected',
-                :id => "website_#{website.id}",
+                :id => "website_#{@website.id}",
                 :leaf => false,
                 :url => "http://#{@website_primary_host}",
-                :name => website.name,
-                :title => website.title,
-                :subtitle => website.subtitle,
+                :name => @website.name,
+                :title => @website.title,
+                :subtitle => @website.subtitle,
                 :isWebsite => true,
-                :siteName => website.name,
+                :siteName => @website.name,
                 :children => []
             }
 
             #handle sections
-            sections_hash = {:text => 'Sections/Web Pages', :isSectionRoot => true, :websiteId => website.id, :iconCls => 'icon-ia', :leaf => false, :children => []}
+            sections_hash = {:text => 'Sections/Web Pages', :isSectionRoot => true, :websiteId => @website.id,
+                             :iconCls => 'icon-ia', :leaf => false, :children => []}
 
-            website.website_sections.positioned.each do |website_section|
-              sections_hash[:children] << build_section_hash(website_section, website)
+            @website.website_sections.positioned.each do |website_section|
+              sections_hash[:children] << build_section_hash(website_section)
             end
 
             website_hash[:children] << sections_hash
 
             #added website to main tree
             tree << sections_hash
+
           end
+
           render :json => tree
         end
 
         def build_host_hash
 
-          websites = []
-          if params[:id]
-            websites << Website.find(params[:id])
-          else
-            websites << Website.first
-          end
-
           tree = []
-          websites.each do |website|
-            @website_primary_host = website.config_value('primary_host')
 
+          if @website
             #handle hosts
-            hosts_hash = {:text => 'Host mappings', :iconCls => 'icon-gear', :isHostRoot => true, :websiteId => website.id, :leaf => false, :children => []}
+            hosts_hash = {:text => 'Host mappings', :iconCls => 'icon-gear',
+                          :isHostRoot => true, :websiteId => @website.id,
+                          :leaf => false, :children => []}
             website.hosts.each do |website_host|
-              hosts_hash[:children] << {:text => website_host.attributes['host'], :websiteHostId => website_host.id, :host => website_host.attributes['host'], :iconCls => 'icon-globe', :url => "http://#{website_host.attributes['host']}", :isHost => true, :leaf => true, :children => []}
+
+              hosts_hash[:children] << {:text => website_host.attributes['host'], :websiteHostId => website_host.id,
+                                        :host => website_host.attributes['host'], :iconCls => 'icon-globe',
+                                        :url => "http://#{website_host.attributes['host']}",
+                                        :isHost => true, :leaf => true, :children => []}
             end
             tree << hosts_hash
+
           end
+
           render :json => tree
         end
 
         def build_menu_tree
 
-          websites = []
-          if params[:id]
-            websites << Website.find(params[:id])
-          else
-            websites << Website.first
-          end
-
           tree = []
-          websites.each do |website|
 
-            menus_hash = {:text => 'Menus', :iconCls => 'icon-content', :isMenuRoot => true, :websiteId => website.id, :leaf => false, :children => []}
+          if @website
+            menus_hash = {:text => 'Menus', :iconCls => 'icon-content', :isMenuRoot => true,
+                          :websiteId => @website.id, :leaf => false, :children => []}
+
             website.website_navs.each do |website_nav|
-              menu_hash = {:text => website_nav.name, :websiteNavId => website_nav.id, :websiteId => website.id, :canAddMenuItems => true, :iconCls => 'icon-index', :isWebsiteNav => true, :leaf => false, :children => []}
-              menu_hash[:children] = website_nav.website_nav_items.positioned.map{|item|build_menu_item_hash(website, item)}
+              menu_hash = {:text => website_nav.name, :websiteNavId => website_nav.id, :websiteId => @website.id, :canAddMenuItems => true,
+                           :iconCls => 'icon-index', :isWebsiteNav => true, :leaf => false, :children => []}
+
+              menu_hash[:children] = website_nav.website_nav_items.positioned.map { |item| build_menu_item_hash(website) }
               menus_hash[:children] << menu_hash
 
             end
@@ -103,22 +99,23 @@ module Knitkit
         def website_publications
           sort_hash = params[:sort].blank? ? {} : Hash.symbolize_keys(JSON.parse(params[:sort]).first)
           sort = sort_hash[:property] || 'version'
-          dir  = sort_hash[:direction] || 'DESC'
+          dir = sort_hash[:direction] || 'DESC'
           limit = params[:limit] || 9
           start = params[:start] || 0
-    
+
           published_websites = @website.published_websites.order("#{sort} #{dir}").limit(limit).offset(start)
-    
+
           #set site_version. User can view different versions. Check if they are viewing another version
           site_version = @website.active_publication.version
           if !session[:website_version].blank? && !session[:website_version].empty?
-            site_version_hash = session[:website_version].find{|item| item[:website_id] == @website.id}
+            site_version_hash = session[:website_version].find { |item| item[:website_id] == @website.id }
             site_version = site_version_hash[:version].to_f unless site_version_hash.nil?
           end
 
           PublishedWebsite.class_exec(site_version) do
             cattr_accessor :site_version
             self.site_version = site_version
+
             def viewing
               self.version == self.site_version
             end
@@ -127,8 +124,8 @@ module Knitkit
           render :inline => "{\"success\":true, \"results\":#{published_websites.count},
                             \"totalCount\":#{@website.published_websites.count},
                             \"data\":#{published_websites.to_json(
-          :only => [:comment, :id, :version, :created_at, :active],
-          :methods => [:viewing, :published_by_username])} }"
+              :only => [:comment, :id, :version, :created_at, :active],
+              :methods => [:viewing, :published_by_username])} }"
         end
 
         def activate_publication
@@ -138,7 +135,7 @@ module Knitkit
 
               render :json => {:success => true}
             end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability=>ex
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
           end
         end
@@ -148,7 +145,7 @@ module Knitkit
             session[:website_version] = []
             session[:website_version] << {:website_id => @website.id, :version => params[:version]}
           else
-            session[:website_version].delete_if{|item| item[:website_id] == @website.id}
+            session[:website_version].delete_if { |item| item[:website_id] == @website.id }
             session[:website_version] << {:website_id => @website.id, :version => params[:version]}
           end
 
@@ -162,7 +159,7 @@ module Knitkit
 
               render :json => {:success => true}
             end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability=>ex
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
           end
         end
@@ -172,9 +169,9 @@ module Knitkit
             Website.transaction do
               current_user.with_capability('create', 'Website') do
                 website = Website.new
-                website.subtitle                  = params[:subtitle]
-                website.title                     = params[:title]
-                website.name                      = params[:name]
+                website.subtitle = params[:subtitle]
+                website.title = params[:title]
+                website.name = params[:name]
 
                 # create homepage
                 website_section = WebsiteSection.new
@@ -211,13 +208,13 @@ module Knitkit
         def update
           begin
             current_user.with_capability('edit', 'Website') do
-              @website.name                      = params[:name]
-              @website.title                     = params[:title]
-              @website.subtitle                  = params[:subtitle]
+              @website.name = params[:name]
+              @website.title = params[:title]
+              @website.subtitle = params[:subtitle]
 
               render :json => @website.save ? {:success => true} : {:success => false}
             end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability=>ex
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
           end
         end
@@ -227,7 +224,7 @@ module Knitkit
             current_user.with_capability('delete', 'Website') do
               render :json => @website.destroy ? {:success => true} : {:success => false}
             end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability=>ex
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
           end
         end
@@ -255,16 +252,16 @@ module Knitkit
               website.save
 
               render :json => {
-                :success => true,
-                :node => {
-                  :text => website_host.attributes['host'],
-                  :websiteHostId => website_host.id,
-                  :host => website_host.attributes['host'],
-                  :iconCls => 'icon-globe',
-                  :url => "http://#{website_host.attributes['host']}",
-                  :isHost => true,
-                  :leaf => true,
-                  :children => []}
+                  :success => true,
+                  :node => {
+                      :text => website_host.attributes['host'],
+                      :websiteHostId => website_host.id,
+                      :host => website_host.attributes['host'],
+                      :iconCls => 'icon-globe',
+                      :url => "http://#{website_host.attributes['host']}",
+                      :isHost => true,
+                      :leaf => true,
+                      :children => []}
               }
             end
           rescue Exception => ex
@@ -282,7 +279,7 @@ module Knitkit
 
               render :json => {:success => true}
             end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability=>ex
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
           end
         end
@@ -292,7 +289,7 @@ module Knitkit
             current_user.with_capability('delete', 'WebsiteHost') do
               render :json => WebsiteHost.destroy(params[:id]) ? {:success => true} : {:success => false}
             end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability=>ex
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
           end
         end
@@ -300,10 +297,16 @@ module Knitkit
         protected
 
         def set_website
-          @website = Website.find(params[:id])
+          if params[:id]
+            @website = Website.find(params[:id])
+          else
+            @website = Website.count > 1 ? Website.first : nil
+          end
+
+          @website_primary_host = @website.nil? ? nil : website.config_value('primary_host')
         end
-  
-      end#WebsiteController
-    end#Desktop
-  end#ErpApp
-end#Knitkit
+
+      end #WebsiteController
+    end #Desktop
+  end #ErpApp
+end #Knitkit

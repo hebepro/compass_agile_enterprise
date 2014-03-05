@@ -19,7 +19,7 @@ module Knitkit
           params[:limit].nil? ? 20 : params[:limit].to_i
         end
 
-        def build_menu_item_hash(website, item)
+        def build_menu_item_hash(item)
           url = item.url
           linked_to_item_id = nil
           link_to_type = 'url'
@@ -33,7 +33,7 @@ module Knitkit
             :text => item.title,
             :linkToType => link_to_type,
             :canAddMenuItems => true,
-            :websiteId => website.id,
+            :websiteId => @website.id,
             :isSecured => item.is_secured?,
             :roles => item.roles.collect{|item| item.internal_identifier},
             :linkedToId => linked_to_item_id,
@@ -43,16 +43,16 @@ module Knitkit
             :isWebsiteNavItem => true,
             :leaf => false
           }
-          menu_item_hash[:children] = item.positioned_children.map{ |child| build_menu_item_hash(website, child)}
+          menu_item_hash[:children] = item.positioned_children.map{ |child| build_menu_item_hash(child)}
           menu_item_hash
         end
 
-        def build_section_hash(website_section, website)
+        def build_section_hash(website_section)
           website_section_hash = {
             :text => website_section.title,
             :path => website_section.path,
-            :siteName => website.name,
-            :siteId => website.id,
+            :siteName => @website.name,
+            :siteId => @website.id,
             :type => website_section.type,
             :isSecured => website_section.is_secured?,
             :roles => website_section.roles.collect{|item| item.internal_identifier},
@@ -82,7 +82,7 @@ module Knitkit
             website_section_hash[:leaf] = true
           else
             website_section_hash[:leaf] = false
-            website_section_hash[:children] = website_section.positioned_children.map {|child| build_section_hash(child, website)}
+            website_section_hash[:children] = website_section.positioned_children.map {|child| build_section_hash(child)}
             website_section_hash[:isSecured] ? website_section_hash[:iconCls] = 'icon-document_lock' : website_section_hash[:iconCls] = 'icon-document'
           end
           
@@ -95,7 +95,7 @@ module Knitkit
             website_section.contents.each do |content_object |
               website_section_hash[:children] << {  :objectType => "Article",
                                                     :id => content_object.id,
-                                                    :siteId => website.id,
+                                                    :siteId => @website.id,
                                                     :parentItemId => website_section.id,
                                                     :text => content_object.title,
                                                     :display_title => content_object.display_title,
