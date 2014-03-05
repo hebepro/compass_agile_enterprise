@@ -1,24 +1,3 @@
-var contactPurposeStore = Ext.create('Ext.data.Store', {
-    autoLoad: true,
-    proxy: {
-        type: 'ajax',
-        url: '/erp_app/organizer/crm/contact_mechanisms/contact_purposes',
-        reader: {
-            type: 'json',
-            root: 'types'
-        }
-    },
-    fields: [
-        {
-            name: 'description'
-        },
-        {
-            name: 'id',
-            type: 'int'
-        }
-    ]
-});
-
 var statesStore = Ext.create('Ext.data.Store', {
     autoLoad: true,
     proxy: {
@@ -46,6 +25,23 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
     border: false,
     frame: false,
     header: false,
+
+    /**
+     * @cfg {Array} contactPurposes
+     * Array of contactPurposes that can be added to a contact.
+     *
+     * @example
+     * {
+     *   fieldLabel: 'Default',
+     *   internalIdentifier: 'default'
+     * }
+     */
+    contactPurposes: [
+        {
+            fieldLabel: 'Default',
+            internalIdentifier: 'default'
+        }
+    ],
 
     initComponent: function () {
         var me = this,
@@ -112,8 +108,9 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
 
         this.callParent(arguments);
     },
+
     constructor: function (config) {
-        config['contactPurposeStore'] = contactPurposeStore;
+        var me = this;
 
         if (config.columns === undefined) {
             config.columns = [];
@@ -121,17 +118,8 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
 
         config.columns = config.columns.concat([
             {
-                header: 'Contact Purpose',
-                dataIndex: 'contact_purpose_id',
-                renderer: function () {
-                    var record = arguments[2];
-                    if (!Compass.ErpApp.Utility.isBlank(record.data.contact_purpose_id)) {
-                        return config['contactPurposeStore'].getAt(config['contactPurposeStore'].find("id", record.data.contact_purpose_id)).get("description");
-                    }
-                    else {
-                        return '';
-                    }
-                },
+                header: 'Contact Purposes',
+                dataIndex: 'contact_purposes',
                 flex: 1
             },
             {
@@ -175,27 +163,17 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
             }
         });
 
-
         config.fields = config.dataFields.concat([
-            {
-                name: 'contact_purpose_id'
-            },
-            {
-                name: 'created_at'
-            },
-            {
-                name: 'updated_at'
-            },
-            {
-                name: 'id'
-            },
+            'contact_purpose_iids',
+            'contact_purposes',
+            'created_at' ,
+            'updated_at',
+            'id',
             {
                 name: 'is_primary',
                 type: 'boolean'
             },
-            {
-                name: 'description'
-            }
+            'description'
         ]);
 
         var toolBarItems = [
@@ -348,19 +326,29 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
             xtype: 'checkbox'
         });
 
-       /* config.formFields.push({
-            xtype: 'combo',
-            fieldLabel: 'Contact Purpose',
-            name: 'contact_purpose_id',
-            forceSelection: true,
-            typeAhead: false,
-            queryMode: 'local',
-            displayField: 'description',
-            valueField: 'id',
-            value: 1,
-            store: config['contactPurposeStore'],
-            selectOnFocus: true
-        }); */
+        // setup contact purposes
+
+        var contactPurposeCheckBoxes = [];
+        Ext.each(config.contactPurposes, function (contactPurpose) {
+            contactPurposeCheckBoxes.push({
+                boxLabel: contactPurpose.fieldLabel,
+                name: 'contact_purpose[]',
+                inputValue: contactPurpose.internalIdentifier
+            });
+        });
+
+        config.formFields.push({
+            xtype: 'fieldset',
+            title: 'Contact Purpose',
+            items: [
+                {
+                    xtype: 'checkboxgroup',
+                    itemId: 'contactPurposes',
+                    columns: 2,
+                    items: contactPurposeCheckBoxes
+                }
+            ]
+        });
 
         config = Ext.apply({
             layout: 'fit',
@@ -375,7 +363,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
         }, config);
 
         var listeners = {
-            itemdblclick: function(grid, record, item, index){
+            itemdblclick: function (grid, record, item, index) {
                 grid.ownerCt.editContact(record);
             }
         };
@@ -454,7 +442,19 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
             ],
             listeners: {
                 show: function () {
-                    this.down('form').getForm().setValues(selection.data);
+                    var form = this.down('form');
+                    form.getForm().setValues(selection.data);
+
+                    // check contact purposes
+                    Ext.each(selection.data.contact_purpose_iids.split(','), function (contactPurpose) {
+                        var checkboxes = form.query('#contactPurposes checkbox');
+                        for (i = 0; i < checkboxes.length; i++) {
+                            var checkbox = checkboxes[i];
+                            if (checkbox.initialConfig.inputValue == contactPurpose) {
+                                checkbox.setValue(true);
+                            }
+                        }
+                    });
                 }
             }
         }).show();
@@ -802,36 +802,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid.PostalAddressGrid", {
                     name: 'country',
                     value: 'USA',
                     allowBlank: false
-                },
-                {
-                    //
-                    // CONTACT PURPOSES
-                    //
-                    // TODO: NEED TO PASS CHECKBOXES DYNAMICALLY BASED ON CONFIGURATION (passed in PartyDetailsPanel.js) AND ONLY SHOW FIELD SET IF MORE THAN ONE
-                    //
-                    xtype: 'fieldset',
-                    title: 'Use Address For:',
-                    items: [
-                        {
-                            xtype: 'checkboxgroup',
-                            columns: 1,
-                            items: [
-                                {
-                                    boxLabel: 'Shipping Address',
-                                    name: 'contact_purpose_id[]',
-                                    inputValue: '14',
-                                    checked: true
-                                },
-                                {
-                                    boxLabel: 'Billing Address',
-                                    name: 'contact_purpose_id[]',
-                                    inputValue: '4'
-                                }
-                            ]
-                        }
-                    ]
                 }
-
             ]
         })]);
     }

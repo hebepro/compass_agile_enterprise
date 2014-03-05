@@ -180,6 +180,23 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
      */
     showSearch: true,
 
+    /**
+     * @cfg {Array} contactPurposes
+     * Array of contactPurposes that can be added to a contact.
+     *
+     * @example
+     * {
+     *   fieldLabel: 'Default',
+     *   internalIdentifier: 'default'
+     * }
+     */
+    contactPurposes: [
+        {
+            fieldLabel: 'Default',
+            internalIdentifier: 'default'
+        }
+    ],
+
     constructor: function (config) {
         var listeners = {
             activate: function () {
@@ -546,6 +563,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
             partyDetailsPanel = Ext.create('widget.crmpartydetailspanel', {
                 title: title,
                 itemId: itemId,
+                contactPurposes: me.contactPurposes,
                 applicationContainerId: me.applicationContainerId,
                 partyId: partyId,
                 partyModel: record.get('model'),
