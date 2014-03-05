@@ -242,6 +242,9 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SiteContentsTreePanel", {
                     }
                 });
             }
+            if(record.isRoot()){
+                items = Compass.ErpApp.Desktop.Applications.Knitkit.newSectionMenuItem;
+            }
             if (record.data['isDocument']) {
                 items = Compass.ErpApp.Desktop.Applications.Knitkit.addDocumentOptions(self, items, record);
             }
@@ -254,150 +257,6 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SiteContentsTreePanel", {
             }
             else if (record.data['isWebsite']) {
                 items = Compass.ErpApp.Desktop.Applications.Knitkit.addWebsiteOptions(self, items, record);
-            }
-            else if (record.data['isSectionRoot']) {
-                if (currentUser.hasCapability('create', 'WebsiteSection')) {
-                    items.push({
-                        text: 'Add Section',
-                        iconCls: 'icon-add',
-                        listeners: {
-                            'click': function () {
-                                var addSectionWindow = Ext.create("Ext.window.Window", {
-                                    layout: 'fit',
-                                    width: 375,
-                                    title: 'New Section',
-                                    plain: true,
-                                    buttonAlign: 'center',
-                                    items: Ext.create("Ext.form.Panel", {
-                                        labelWidth: 110,
-                                        frame: false,
-                                        bodyStyle: 'padding:5px 5px 0',
-                                        url: '/knitkit/erp_app/desktop/section/new',
-                                        defaults: {
-                                            width: 225
-                                        },
-                                        items: [
-                                            {
-                                                xtype: 'textfield',
-                                                fieldLabel: 'Title',
-                                                allowBlank: false,
-                                                name: 'title'
-                                            },
-                                            {
-                                                xtype: 'textfield',
-                                                fieldLabel: 'Internal ID',
-                                                allowBlank: true,
-                                                name: 'internal_identifier'
-                                            },
-                                            {
-                                                xtype: 'combo',
-                                                forceSelection: true,
-                                                store: [
-                                                    ['Page', 'Page'],
-                                                    ['Blog', 'Blog'],
-                                                    ['OnlineDocumentSection', 'Online Document Section']
-                                                ],
-                                                value: 'Page',
-                                                fieldLabel: 'Type',
-                                                name: 'type',
-                                                allowBlank: false,
-                                                triggerAction: 'all'
-                                            },
-                                            {
-                                                xtype: 'radiogroup',
-                                                fieldLabel: 'Display in menu?',
-                                                name: 'in_menu',
-                                                columns: 2,
-                                                items: [
-                                                    {
-                                                        boxLabel: 'Yes',
-                                                        name: 'in_menu',
-                                                        inputValue: 'yes',
-                                                        checked: true
-                                                    },
-
-                                                    {
-                                                        boxLabel: 'No',
-                                                        name: 'in_menu',
-                                                        inputValue: 'no'
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                xtype: 'radiogroup',
-                                                fieldLabel: 'Render with Base Layout?',
-                                                name: 'render_with_base_layout',
-                                                columns: 2,
-                                                items: [
-                                                    {
-                                                        boxLabel: 'Yes',
-                                                        name: 'render_with_base_layout',
-                                                        inputValue: 'yes',
-                                                        checked: true
-                                                    },
-
-                                                    {
-                                                        boxLabel: 'No',
-                                                        name: 'render_with_base_layout',
-                                                        inputValue: 'no'
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                xtype: 'hidden',
-                                                name: 'website_id',
-                                                value: record.data.websiteId
-                                            }
-                                        ]
-                                    }),
-                                    buttons: [
-                                        {
-                                            text: 'Submit',
-                                            listeners: {
-                                                'click': function (button) {
-                                                    var window = button.findParentByType('window');
-                                                    var formPanel = window.query('form')[0];
-                                                    //self.setWindowStatus('Creating section...');
-                                                    formPanel.getForm().submit({
-                                                        reset: true,
-                                                        success: function (form, action) {
-                                                            //self.clearWindowStatus();
-                                                            var obj = Ext.decode(action.response.responseText);
-                                                            if (obj.success) {
-                                                                record.appendChild(obj.node);
-                                                                addSectionWindow.close();
-                                                            }
-                                                            else {
-                                                                Ext.Msg.alert("Error", obj.msg);
-                                                            }
-                                                        },
-                                                        failure: function (form, action) {
-                                                            self.clearWindowStatus();
-                                                            var obj = Ext.decode(action.response.responseText);
-                                                            if (obj.message) {
-                                                                Ext.Msg.alert("Error", obj.message);
-                                                            }
-                                                            else {
-                                                                Ext.Msg.alert("Error", "Error creating section.");
-                                                            }
-                                                        }
-                                                    });
-                                                }
-                                            }
-                                        },
-                                        {
-                                            text: 'Close',
-                                            handler: function () {
-                                                addSectionWindow.close();
-                                            }
-                                        }
-                                    ]
-                                });
-                                addSectionWindow.show();
-                            }
-                        }
-                    });
-                }
             }
             if (items.length != 0) {
                 var contextMenu = Ext.create("Ext.menu.Menu", {

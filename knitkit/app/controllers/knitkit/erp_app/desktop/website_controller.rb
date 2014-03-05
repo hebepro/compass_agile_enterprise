@@ -127,7 +127,7 @@ module Knitkit
                 PublishedWebsite.activate(website, 1, current_user)
 
                 render :json => {:success => true, :website => website.to_hash(:only => [:id, :name],
-                                                                               :configuration_id => item.configurations.first.id)}
+                                                                               :configuration_id => website.configurations.first.id)}
               end
             end
           rescue Exception => ex

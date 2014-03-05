@@ -39,7 +39,7 @@ pluginItems.push({
 });
 
 var viewConfigItems = {
-    //markDirty: false,
+    markDirty: false,
     plugins: pluginItems,
     listeners: {
         'beforedrop': function (node, data, overModel, dropPosition, dropFunction, options) {
@@ -117,7 +117,10 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.MenuTreePanel", {
 
             items = Compass.ErpApp.Desktop.Applications.Knitkit.addMenuOptions(self, items, record);
 
-            if (record.data['isWebsiteNav']) {
+            if(record.isRoot()){
+                items.push(Compass.ErpApp.Desktop.Applications.Knitkit.newNavigationMenuItem);
+            }
+            else if (record.data['isWebsiteNav']) {
                 if (currentUser.hasCapability('edit', 'WebsiteNav')) {
                     items.push({
                         text: 'Update',

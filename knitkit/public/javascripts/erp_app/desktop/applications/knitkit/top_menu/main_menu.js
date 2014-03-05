@@ -190,6 +190,366 @@ Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu = function () {
     }
 }
 
+// New Section
+Compass.ErpApp.Desktop.Applications.Knitkit.newSectionMenuItem = {
+    text: 'Add Section',
+    iconCls: 'icon-add',
+    listeners: {
+        'click': function () {
+            if (currentUser.hasCapability('create', 'WebsiteSection')) {
+                var westRegion = Ext.ComponentQuery.query('#knitkitWestRegion').first(),
+                    knitkitSiteContentsTreePanel = westRegion.down('#knitkitSiteContentsTreePanel'),
+                    knitkitWin = compassDesktop.getModule('knitkit-win'),
+                    websiteId = knitkitWin.currentWebsite.id;
+
+                Ext.create("Ext.window.Window", {
+                    layout: 'fit',
+                    width: 375,
+                    title: 'New Section',
+                    plain: true,
+                    buttonAlign: 'center',
+                    items: Ext.create("Ext.form.Panel", {
+                        labelWidth: 110,
+                        frame: false,
+                        bodyStyle: 'padding:5px 5px 0',
+                        url: '/knitkit/erp_app/desktop/section/new',
+                        defaults: {
+                            width: 225
+                        },
+                        items: [
+                            {
+                                xtype: 'textfield',
+                                fieldLabel: 'Title',
+                                allowBlank: false,
+                                name: 'title'
+                            },
+                            {
+                                xtype: 'textfield',
+                                fieldLabel: 'Internal ID',
+                                allowBlank: true,
+                                name: 'internal_identifier'
+                            },
+                            {
+                                xtype: 'combo',
+                                forceSelection: true,
+                                store: [
+                                    ['Page', 'Page'],
+                                    ['Blog', 'Blog'],
+                                    ['OnlineDocumentSection', 'Online Document Section']
+                                ],
+                                value: 'Page',
+                                fieldLabel: 'Type',
+                                name: 'type',
+                                allowBlank: false,
+                                triggerAction: 'all'
+                            },
+                            {
+                                xtype: 'radiogroup',
+                                fieldLabel: 'Display in menu?',
+                                name: 'in_menu',
+                                columns: 2,
+                                items: [
+                                    {
+                                        boxLabel: 'Yes',
+                                        name: 'in_menu',
+                                        inputValue: 'yes',
+                                        checked: true
+                                    },
+
+                                    {
+                                        boxLabel: 'No',
+                                        name: 'in_menu',
+                                        inputValue: 'no'
+                                    }
+                                ]
+                            },
+                            {
+                                xtype: 'radiogroup',
+                                fieldLabel: 'Render with Base Layout?',
+                                name: 'render_with_base_layout',
+                                columns: 2,
+                                items: [
+                                    {
+                                        boxLabel: 'Yes',
+                                        name: 'render_with_base_layout',
+                                        inputValue: 'yes',
+                                        checked: true
+                                    },
+
+                                    {
+                                        boxLabel: 'No',
+                                        name: 'render_with_base_layout',
+                                        inputValue: 'no'
+                                    }
+                                ]
+                            },
+                            {
+                                xtype: 'hidden',
+                                name: 'website_id',
+                                value: websiteId
+                            }
+                        ]
+                    }),
+                    buttons: [
+                        {
+                            text: 'Submit',
+                            listeners: {
+                                'click': function (button) {
+                                    var window = button.findParentByType('window');
+                                    var formPanel = window.query('form')[0];
+
+                                    formPanel.getForm().submit({
+                                        reset: true,
+                                        success: function (form, action) {
+
+                                            var obj = Ext.decode(action.response.responseText);
+                                            if (obj.success) {
+                                                knitkitSiteContentsTreePanel.getRootNode().appendChild(obj.node);
+                                                window.close();
+                                            }
+                                            else {
+                                                Ext.Msg.alert("Error", obj.msg);
+                                            }
+                                        },
+                                        failure: function (form, action) {
+                                            self.clearWindowStatus();
+                                            var obj = Ext.decode(action.response.responseText);
+                                            if (obj.message) {
+                                                Ext.Msg.alert("Error", obj.message);
+                                            }
+                                            else {
+                                                Ext.Msg.alert("Error", "Error creating section.");
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        },
+                        {
+                            text: 'Close',
+                            handler: function (btn) {
+                                btn.up('window').close();
+                            }
+                        }
+                    ]
+                }).show();
+            }
+            else {
+                Ext.Msg.alert('Error', 'Your do not have permission to perform this action');
+            }
+
+        }
+    }
+}
+
+Compass.ErpApp.Desktop.Applications.Knitkit.SectionsMenu = function () {
+    return {
+        text: 'Sections / Pages',
+        iconCls: 'icon-ia',
+        disabled: true,
+        itemId: 'sectionsPagesMenuItem',
+        menu: {
+            xtype: 'menu',
+            items: [
+                Compass.ErpApp.Desktop.Applications.Knitkit.newSectionMenuItem
+            ]
+        }
+    }
+}
+
+// New Theme
+Compass.ErpApp.Desktop.Applications.Knitkit.newThemeMenuItem = {
+    text: 'New Theme',
+    iconCls: 'icon-add',
+    handler: function (btn) {
+        var westRegion = Ext.ComponentQuery.query('#knitkitWestRegion').first(),
+            themesTreePanel = westRegion.down('#themesTreePanel'),
+            knitkitWin = compassDesktop.getModule('knitkit-win'),
+            websiteId = knitkitWin.currentWebsite.id;
+
+        Ext.create("Ext.window.Window", {
+            layout: 'fit',
+            modal: true,
+            title: 'New Theme',
+            plain: true,
+            buttonAlign: 'center',
+            items: Ext.create('widget.form', {
+                labelWidth: 110,
+                frame: false,
+                bodyStyle: 'padding:5px 5px 0',
+                fileUpload: true,
+                url: '/knitkit/erp_app/desktop/theme/new',
+                defaults: {
+                    width: 225
+                },
+                items: [
+                    {
+                        xtype: 'hidden',
+                        name: 'site_id',
+                        value: websiteId
+                    },
+                    {
+                        xtype: 'textfield',
+                        fieldLabel: 'Name',
+                        allowBlank: false,
+                        name: 'name'
+                    },
+                    {
+                        xtype: 'textfield',
+                        fieldLabel: 'Theme ID',
+                        allowBlank: false,
+                        name: 'theme_id'
+                    },
+                    {
+                        xtype: 'textfield',
+                        fieldLabel: 'Version',
+                        allowBlank: true,
+                        name: 'version'
+                    },
+                    {
+                        xtype: 'textfield',
+                        fieldLabel: 'Author',
+                        allowBlank: true,
+                        name: 'author'
+                    },
+                    {
+                        xtype: 'textfield',
+                        fieldLabel: 'HomePage',
+                        allowBlank: true,
+                        name: 'homepage'
+                    },
+                    {
+                        xtype: 'textarea',
+                        fieldLabel: 'Summary',
+                        allowBlank: true,
+                        name: 'summary'
+                    }
+                ]
+            }),
+            buttons: [
+                {
+                    text: 'Submit',
+                    listeners: {
+                        'click': function (button) {
+                            var window = button.findParentByType('window'),
+                                formPanel = window.query('form')[0];
+
+                            var loading = new Ext.LoadMask(window, {msg: 'Please wait...'});
+                            loading.show();
+
+                            formPanel.getForm().submit({
+                                reset: true,
+                                success: function (form, action) {
+                                    loading.hide();
+                                    window.close();
+
+                                    var obj = Ext.decode(action.response.responseText);
+                                    if (obj.success) {
+                                        themesTreePanel.getStore().load({
+                                            node: themesTreePanel.getRootNode()
+                                        });
+                                    }
+                                },
+                                failure: function (form, action) {
+                                    loading.hide();
+
+                                    Ext.Msg.alert("Error", "Error creating theme");
+                                }
+                            });
+                        }
+                    }
+                },
+                {
+                    text: 'Close',
+                    handler: function (btn) {
+                        btn.up('window').close();
+                    }
+                }
+            ]
+        }).show();
+    }
+};
+
+// Upload Theme
+Compass.ErpApp.Desktop.Applications.Knitkit.uploadThemeMenuItem = {
+    text: 'Upload',
+    iconCls: 'icon-upload',
+    handler: function (btn) {
+        var westRegion = Ext.ComponentQuery.query('#knitkitWestRegion').first(),
+            themesTreePanel = westRegion.down('#themesTreePanel'),
+            knitkitWin = compassDesktop.getModule('knitkit-win'),
+            websiteId = knitkitWin.currentWebsite.id;
+
+        Ext.create("Ext.window.Window", {
+            layout: 'fit',
+            width: 375,
+            title: 'New Theme',
+            plain: true,
+            buttonAlign: 'center',
+            items: Ext.create('widget.form', {
+                labelWidth: 110,
+                frame: false,
+                bodyStyle: 'padding:5px 5px 0',
+                fileUpload: true,
+                url: '/knitkit/erp_app/desktop/theme/new',
+                defaults: {
+                    width: 225
+                },
+                items: [
+                    {
+                        xtype: 'hidden',
+                        name: 'site_id',
+                        value: websiteId
+                    },
+                    {
+                        xtype: 'fileuploadfield',
+                        fieldLabel: 'Upload Theme',
+                        buttonText: 'Upload',
+                        buttonOnly: false,
+                        allowBlank: true,
+                        name: 'theme_data'
+                    }
+                ]
+            }),
+            buttons: [
+                {
+                    text: 'Submit',
+                    listeners: {
+                        'click': function (button) {
+                            var window = this.up('window'),
+                                form = window.query('form')[0].getForm();
+
+                            if (form.isValid()) {
+                                form.submit({
+                                    waitMsg: 'Creating theme...',
+                                    success: function (form, action) {
+                                        var obj = Ext.decode(action.response.responseText);
+                                        if (obj.success) {
+                                            themesTreePanel.getStore().load({
+                                                node: themesTreePanel.getRootNode()
+                                            });
+                                        }
+                                        window.close();
+                                    },
+                                    failure: function (form, action) {
+                                        Ext.Msg.alert("Error", "Error creating theme");
+                                    }
+                                });
+                            }
+                        }
+                    }
+                },
+                {
+                    text: 'Close',
+                    handler: function (btn) {
+                        btn.up('window').close();
+                    }
+                }
+            ]
+        }).show();
+    }
+};
+
 Compass.ErpApp.Desktop.Applications.Knitkit.ThemeMenu = function () {
     var themeWidget = function () {
         var westRegion = Ext.ComponentQuery.query('#knitkitWestRegion').first(),
@@ -341,200 +701,13 @@ Compass.ErpApp.Desktop.Applications.Knitkit.ThemeMenu = function () {
     return {
         text: 'Themes',
         iconCls: 'icon-picture',
+        disabled: true,
+        itemId: 'themeMenuItem',
         menu: {
             xtype: 'menu',
-            disabled: true,
-            itemId: 'themeMenuItem',
             items: [
-                {
-                    text: 'New Theme',
-                    iconCls: 'icon-add',
-                    handler: function (btn) {
-                        var westRegion = Ext.ComponentQuery.query('#knitkitWestRegion').first(),
-                            themesTreePanel = westRegion.down('#themesTreePanel'),
-                            knitkitWin = compassDesktop.getModule('knitkit-win'),
-                            websiteId = knitkitWin.currentWebsite.id;
-
-                        Ext.create("Ext.window.Window", {
-                            layout: 'fit',
-                            modal: true,
-                            title: 'New Theme',
-                            plain: true,
-                            buttonAlign: 'center',
-                            items: Ext.create('widget.form', {
-                                labelWidth: 110,
-                                frame: false,
-                                bodyStyle: 'padding:5px 5px 0',
-                                fileUpload: true,
-                                url: '/knitkit/erp_app/desktop/theme/new',
-                                defaults: {
-                                    width: 225
-                                },
-                                items: [
-                                    {
-                                        xtype: 'hidden',
-                                        name: 'site_id',
-                                        value: websiteId
-                                    },
-                                    {
-                                        xtype: 'textfield',
-                                        fieldLabel: 'Name',
-                                        allowBlank: false,
-                                        name: 'name'
-                                    },
-                                    {
-                                        xtype: 'textfield',
-                                        fieldLabel: 'Theme ID',
-                                        allowBlank: false,
-                                        name: 'theme_id'
-                                    },
-                                    {
-                                        xtype: 'textfield',
-                                        fieldLabel: 'Version',
-                                        allowBlank: true,
-                                        name: 'version'
-                                    },
-                                    {
-                                        xtype: 'textfield',
-                                        fieldLabel: 'Author',
-                                        allowBlank: true,
-                                        name: 'author'
-                                    },
-                                    {
-                                        xtype: 'textfield',
-                                        fieldLabel: 'HomePage',
-                                        allowBlank: true,
-                                        name: 'homepage'
-                                    },
-                                    {
-                                        xtype: 'textarea',
-                                        fieldLabel: 'Summary',
-                                        allowBlank: true,
-                                        name: 'summary'
-                                    }
-                                ]
-                            }),
-                            buttons: [
-                                {
-                                    text: 'Submit',
-                                    listeners: {
-                                        'click': function (button) {
-                                            var window = button.findParentByType('window'),
-                                                formPanel = window.query('form')[0];
-
-                                            var loading = new Ext.LoadMask(window, {msg: 'Please wait...'});
-                                            loading.show();
-
-                                            formPanel.getForm().submit({
-                                                reset: true,
-                                                success: function (form, action) {
-                                                    loading.hide();
-                                                    window.close();
-
-                                                    var obj = Ext.decode(action.response.responseText);
-                                                    if (obj.success) {
-                                                        themesTreePanel.getStore().load({
-                                                            node: themesTreePanel.getRootNode()
-                                                        });
-                                                    }
-                                                },
-                                                failure: function (form, action) {
-                                                    loading.hide();
-
-                                                    Ext.Msg.alert("Error", "Error creating theme");
-                                                }
-                                            });
-                                        }
-                                    }
-                                },
-                                {
-                                    text: 'Close',
-                                    handler: function (btn) {
-                                        btn.up('window').close();
-                                    }
-                                }
-                            ]
-                        }).show();
-                    }
-                },
-                {
-                    text: 'Upload',
-                    iconCls: 'icon-upload',
-                    handler: function (btn) {
-                        var westRegion = Ext.ComponentQuery.query('#knitkitWestRegion').first(),
-                            themesTreePanel = westRegion.down('#themesTreePanel'),
-                            knitkitWin = compassDesktop.getModule('knitkit-win'),
-                            websiteId = knitkitWin.currentWebsite.id;
-
-                        Ext.create("Ext.window.Window", {
-                            layout: 'fit',
-                            width: 375,
-                            title: 'New Theme',
-                            plain: true,
-                            buttonAlign: 'center',
-                            items: Ext.create('widget.form', {
-                                labelWidth: 110,
-                                frame: false,
-                                bodyStyle: 'padding:5px 5px 0',
-                                fileUpload: true,
-                                url: '/knitkit/erp_app/desktop/theme/new',
-                                defaults: {
-                                    width: 225
-                                },
-                                items: [
-                                    {
-                                        xtype: 'hidden',
-                                        name: 'site_id',
-                                        value: websiteId
-                                    },
-                                    {
-                                        xtype: 'fileuploadfield',
-                                        fieldLabel: 'Upload Theme',
-                                        buttonText: 'Upload',
-                                        buttonOnly: false,
-                                        allowBlank: true,
-                                        name: 'theme_data'
-                                    }
-                                ]
-                            }),
-                            buttons: [
-                                {
-                                    text: 'Submit',
-                                    listeners: {
-                                        'click': function (button) {
-                                            var window = this.up('window'),
-                                                form = window.query('form')[0].getForm();
-
-                                            if (form.isValid()) {
-                                                form.submit({
-                                                    waitMsg: 'Creating theme...',
-                                                    success: function (form, action) {
-                                                        var obj = Ext.decode(action.response.responseText);
-                                                        if (obj.success) {
-                                                            themesTreePanel.getStore().load({
-                                                                node: themesTreePanel.getRootNode()
-                                                            });
-                                                        }
-                                                        window.close();
-                                                    },
-                                                    failure: function (form, action) {
-                                                        Ext.Msg.alert("Error", "Error creating theme");
-                                                    }
-                                                });
-                                            }
-                                        }
-                                    }
-                                },
-                                {
-                                    text: 'Close',
-                                    handler: function (btn) {
-                                        btn.up('window').close();
-                                    }
-                                }
-                            ]
-                        }).show();
-                    }
-                },
+                Compass.ErpApp.Desktop.Applications.Knitkit.newThemeMenuItem,
+                Compass.ErpApp.Desktop.Applications.Knitkit.uploadThemeMenuItem,
                 {
                     text: 'Theme Widget',
                     iconCls: 'icon-picture',
@@ -547,176 +720,188 @@ Compass.ErpApp.Desktop.Applications.Knitkit.ThemeMenu = function () {
     }
 }
 
+// New Navigation / Menu
+Compass.ErpApp.Desktop.Applications.Knitkit.newNavigationMenuItem = {
+    text: 'New Menu',
+    iconCls: 'icon-add',
+    handler: function (btn) {
+        if (currentUser.hasCapability('create', 'WebsiteNav')) {
+            var westRegion = Ext.ComponentQuery.query('#knitkitWestRegion').first(),
+                tree = westRegion.down('#knitkitMenuTreePanel');
+
+            Ext.create("Ext.window.Window", {
+                modal: true,
+                title: 'New Menu',
+                buttonAlign: 'center',
+                items: Ext.create("Ext.form.Panel", {
+                    labelWidth: 50,
+                    frame: false,
+                    bodyStyle: 'padding:5px 5px 0',
+                    url: '/knitkit/erp_app/desktop/website_nav',
+                    defaults: {
+                        width: 300
+                    },
+                    items: [
+                        {
+                            xtype: 'textfield',
+                            fieldLabel: 'Menu name: ',
+                            width: 320,
+                            allowBlank: false,
+                            name: 'name'
+                        },
+                        {
+                            xtype: 'hidden',
+                            name: 'website_id',
+                            itemId: 'websiteId'
+                        }
+                    ]
+                }),
+                buttons: [
+                    {
+                        text: 'Submit',
+                        listeners: {
+                            'click': function (button) {
+                                var window = button.findParentByType('window'),
+                                    formPanel = window.query('form')[0],
+                                    knitkitWin = compassDesktop.getModule('knitkit-win'),
+                                    websiteId = knitkitWin.currentWebsite.id;
+
+                                formPanel.down('#websiteId').setValue(websiteId);
+
+                                formPanel.getForm().submit({
+                                    waitMsg: 'Please wait...',
+                                    success: function (form, action) {
+                                        var obj = Ext.decode(action.response.responseText);
+                                        if (obj.success) {
+                                            tree.getRootNode().appendChild(obj.node);
+                                            window.close();
+                                        }
+                                        else {
+                                            Ext.Msg.alert("Error", obj.msg);
+                                        }
+                                    },
+                                    failure: function (form, action) {
+                                        var obj = Ext.decode(action.response.responseText);
+                                        Ext.Msg.alert("Error", obj.msg);
+                                    }
+                                });
+                            }
+                        }
+                    },
+                    {
+                        text: 'Close',
+                        handler: function (btn) {
+                            btn.up('window').close();
+                        }
+                    }
+                ]
+            }).show();
+        }
+        else {
+            Ext.Msg.alert('Error', 'Your do not have permission to perform this action');
+        }
+    }
+};
+
 Compass.ErpApp.Desktop.Applications.Knitkit.NavigationMenu = function () {
     return {
         text: 'Navigation',
         iconCls: 'icon-index',
         itemId: 'navigationMenuItem',
+        disabled: true,
         menu: {
             xtype: 'menu',
             items: [
-                {
-                    text: 'New Menu',
-                    iconCls: 'icon-add',
-                    disabled: !currentUser.hasCapability('create', 'WebsiteNav'),
-                    handler: function (btn) {
-                        var westRegion = Ext.ComponentQuery.query('#knitkitWestRegion').first(),
-                            tree = westRegion.down('#knitkitMenuTreePanel');
-
-                        Ext.create("Ext.window.Window", {
-                            modal: true,
-                            title: 'New Menu',
-                            buttonAlign: 'center',
-                            items: Ext.create("Ext.form.Panel", {
-                                labelWidth: 50,
-                                frame: false,
-                                bodyStyle: 'padding:5px 5px 0',
-                                url: '/knitkit/erp_app/desktop/website_nav',
-                                defaults: {
-                                    width: 300
-                                },
-                                items: [
-                                    {
-                                        xtype: 'textfield',
-                                        fieldLabel: 'Menu name: ',
-                                        width: 320,
-                                        allowBlank: false,
-                                        name: 'name'
-                                    },
-                                    {
-                                        xtype: 'hidden',
-                                        name: 'website_id',
-                                        itemId: 'websiteId'
-                                    }
-                                ]
-                            }),
-                            buttons: [
-                                {
-                                    text: 'Submit',
-                                    listeners: {
-                                        'click': function (button) {
-                                            var window = button.findParentByType('window'),
-                                                formPanel = window.query('form')[0],
-                                                knitkitWin = compassDesktop.getModule('knitkit-win'),
-                                                websiteId = knitkitWin.currentWebsite.id;
-
-                                            formPanel.down('#websiteId').setValue(websiteId);
-
-                                            formPanel.getForm().submit({
-                                                waitMsg: 'Please wait...',
-                                                success: function (form, action) {
-                                                    var obj = Ext.decode(action.response.responseText);
-                                                    if (obj.success) {
-                                                        tree.getRootNode().appendChild(obj.node);
-                                                        window.close();
-                                                    }
-                                                    else {
-                                                        Ext.Msg.alert("Error", obj.msg);
-                                                    }
-                                                },
-                                                failure: function (form, action) {
-                                                    var obj = Ext.decode(action.response.responseText);
-                                                    Ext.Msg.alert("Error", obj.msg);
-                                                }
-                                            });
-                                        }
-                                    }
-                                },
-                                {
-                                    text: 'Close',
-                                    handler: function (btn) {
-                                        btn.up('window').close();
-                                    }
-                                }
-                            ]
-                        }).show();
-                    }
-                }
+                Compass.ErpApp.Desktop.Applications.Knitkit.newNavigationMenuItem
             ]
         }
     }
 }
+
+// New Hosts
+Compass.ErpApp.Desktop.Applications.Knitkit.newHostMenuItem = {
+    text: 'New Host',
+    iconCls: 'icon-add',
+    handler: function (btn) {
+        var westRegion = Ext.ComponentQuery.query('#knitkitWestRegion').first(),
+            tree = westRegion.down('#knitkitHostListPanel'),
+            knitkitWin = compassDesktop.getModule('knitkit-win'),
+            websiteId = knitkitWin.currentWebsite.id;
+
+        Ext.create("Ext.window.Window", {
+            modal: true,
+            title: 'Add Host',
+            buttonAlign: 'center',
+            items: Ext.create("Ext.form.Panel", {
+                labelWidth: 50,
+                frame: false,
+                bodyStyle: 'padding:5px 5px 0',
+                url: '/knitkit/erp_app/desktop/website_host',
+                defaults: {
+                    width: 300
+                },
+                items: [
+                    {
+                        xtype: 'textfield',
+                        fieldLabel: 'Host',
+                        name: 'host',
+                        allowBlank: false
+                    },
+                    {
+                        xtype: 'hidden',
+                        name: 'website_id',
+                        value: websiteId
+                    }
+                ]
+            }),
+            buttons: [
+                {
+                    text: 'Submit',
+                    listeners: {
+                        'click': function (button) {
+                            var window = button.findParentByType('window');
+                            var formPanel = window.query('form')[0];
+
+                            formPanel.getForm().submit({
+                                waitMsg: 'Please wait...',
+                                success: function (form, action) {
+                                    var obj = Ext.decode(action.response.responseText);
+                                    if (obj.success) {
+                                        window.close();
+                                        tree.getRootNode().appendChild(obj.node);
+                                    }
+                                    else {
+                                        Ext.Msg.alert("Error", obj.msg);
+                                    }
+                                },
+                                failure: function (form, action) {
+                                    Ext.Msg.alert("Error", "Error adding Host");
+                                }
+                            });
+                        }
+                    }
+                },
+                {
+                    text: 'Close',
+                    handler: function (btn) {
+                        btn.up('window').close();
+                    }
+                }
+            ]
+        }).show();
+    }
+};
 
 Compass.ErpApp.Desktop.Applications.Knitkit.HostsMenu = function () {
     return {
         text: 'Hosts',
         iconCls: 'icon-gear',
         itemId: 'hostsMenuItem',
+        disabled: true,
         menu: {
             xtype: 'menu',
             items: [
-                {
-                    text: 'New Host',
-                    iconCls: 'icon-add',
-                    handler: function (btn) {
-                        var westRegion = Ext.ComponentQuery.query('#knitkitWestRegion').first(),
-                            tree = westRegion.down('#knitkitHostListPanel'),
-                            knitkitWin = compassDesktop.getModule('knitkit-win'),
-                            websiteId = knitkitWin.currentWebsite.id;
-
-                        Ext.create("Ext.window.Window", {
-                            modal: true,
-                            title: 'Add Host',
-                            buttonAlign: 'center',
-                            items: Ext.create("Ext.form.Panel", {
-                                labelWidth: 50,
-                                frame: false,
-                                bodyStyle: 'padding:5px 5px 0',
-                                url: '/knitkit/erp_app/desktop/website_host',
-                                defaults: {
-                                    width: 300
-                                },
-                                items: [
-                                    {
-                                        xtype: 'textfield',
-                                        fieldLabel: 'Host',
-                                        name: 'host',
-                                        allowBlank: false
-                                    },
-                                    {
-                                        xtype: 'hidden',
-                                        name: 'website_id',
-                                        value: websiteId
-                                    }
-                                ]
-                            }),
-                            buttons: [
-                                {
-                                    text: 'Submit',
-                                    listeners: {
-                                        'click': function (button) {
-                                            var window = button.findParentByType('window');
-                                            var formPanel = window.query('form')[0];
-
-                                            formPanel.getForm().submit({
-                                                waitMsg: 'Please wait...',
-                                                success: function (form, action) {
-                                                    var obj = Ext.decode(action.response.responseText);
-                                                    if (obj.success) {
-                                                        window.close();
-                                                        tree.getRootNode().appendChild(obj.node);
-                                                    }
-                                                    else {
-                                                        Ext.Msg.alert("Error", obj.msg);
-                                                    }
-                                                },
-                                                failure: function (form, action) {
-                                                    Ext.Msg.alert("Error", "Error adding Host");
-                                                }
-                                            });
-                                        }
-                                    }
-                                },
-                                {
-                                    text: 'Close',
-                                    handler: function (btn) {
-                                        btn.up('window').close();
-                                    }
-                                }
-                            ]
-                        }).show();
-                    }
-                }
+                Compass.ErpApp.Desktop.Applications.Knitkit.newHostMenuItem
             ]
         }
     }

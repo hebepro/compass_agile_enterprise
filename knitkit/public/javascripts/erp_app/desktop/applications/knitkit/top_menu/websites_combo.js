@@ -2,6 +2,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WebsitesComboBox", {
     extend: "Ext.form.field.ComboBox",
     alias: 'widget.websitescombo',
     initComponent: function () {
+        var self = this;
 
         var websiteJsonStore = new Ext.data.Store({
             timeout: 60000,
@@ -20,21 +21,21 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WebsitesComboBox", {
             ]
         });
 
-        var me = this;
-        websiteJsonStore.on('load', function (store) {
-            if (store.data.length > 0) {
-                var record = store.first();
+        self.store = websiteJsonStore;
 
-                me.setValue(store.first().get('id'));
+        self.callParent(arguments);
 
-                var knitkitWin = compassDesktop.getModule('knitkit-win');
+        websiteJsonStore.load({
+            callback: function (records, operation, succes) {
+                if (records.length > 0) {
+                    self.select(records.first());
 
-                knitkitWin.selectWebsite(record);
+                    var knitkitWin = compassDesktop.getModule('knitkit-win');
+
+                    knitkitWin.selectWebsite(records.first());
+                }
             }
         });
-
-        this.store = websiteJsonStore;
-        this.callParent(arguments);
     },
 
     constructor: function (config) {
@@ -46,11 +47,12 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WebsitesComboBox", {
             triggerAction: 'all',
             editable: false,
             forceSelection: true,
+            queryMode: 'local',
             listeners: {
-                'select': function (combo, record, index) {
+                'select': function (combo, records) {
                     var knitkitWin = compassDesktop.getModule('knitkit-win');
 
-                    knitkitWin.selectWebsite(record);
+                    knitkitWin.selectWebsite(records.first());
                 },
                 render: function (combo) {
                     combo.getStore().load();

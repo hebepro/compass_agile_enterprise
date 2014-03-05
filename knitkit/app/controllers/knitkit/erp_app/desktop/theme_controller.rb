@@ -315,20 +315,7 @@ module Knitkit
           tree = []
 
           if @website
-            site_hash = {
-                :text => @website.name,
-                :browseable => true,
-                :contextMenuDisabled => true,
-                :iconCls => 'icon-globe',
-                :id => "site_#{@website.id}",
-                :leaf => false,
-                :children => []
-            }
-
             #handle themes
-            themes_hash = {:text => 'Themes', :contextMenuDisabled => true, :iconCls => 'icon-content',
-                           :isThemeRoot => true, :siteId => @website.id, :children => []}
-
             @website.themes.each do |theme|
               theme_hash = {:text => "#{theme.name}[#{theme.theme_id}]", :handleContextMenu => true,
                             :siteId => @website.id, :isActive => (theme.active == 1), :iconCls => 'icon-content',
@@ -342,10 +329,8 @@ module Knitkit
               ['stylesheets', 'javascripts', 'images', 'templates', 'widgets'].each do |resource_folder|
                 theme_hash[:children] << {:text => resource_folder.capitalize, :iconCls => 'icon-content', :id => "#{theme.url}/#{resource_folder}"}
               end
-              themes_hash[:children] << theme_hash
+              tree << theme_hash
             end
-            site_hash[:children] << themes_hash
-            tree << themes_hash
           end
 
           render :json => tree

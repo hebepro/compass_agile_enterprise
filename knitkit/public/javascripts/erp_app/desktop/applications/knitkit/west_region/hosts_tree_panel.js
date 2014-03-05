@@ -31,6 +31,10 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.HostListPanel", {
     alias: 'widget.knitkit_hostspanel',
     header: false,
 
+    viewConfig: {
+        markDirty: false
+    },
+
     store: store,
 
     selectWebsite: function (website) {
@@ -45,13 +49,12 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.HostListPanel", {
         'itemcontextmenu': function (view, record, htmlItem, index, e) {
             e.stopEvent();
 
-            if(record.isRoot()){
-                return false;
+            if (record.isRoot()) {
+                items = [Compass.ErpApp.Desktop.Applications.Knitkit.newHostMenuItem];
             }
-
-            var items = [];
-
-            items = Compass.ErpApp.Desktop.Applications.Knitkit.addHostOptions(self, items, record);
+            else{
+                items = Compass.ErpApp.Desktop.Applications.Knitkit.addHostOptions(self, items, record);
+            }
 
             if (items.length != 0) {
                 var contextMenu = Ext.create("Ext.menu.Menu", {

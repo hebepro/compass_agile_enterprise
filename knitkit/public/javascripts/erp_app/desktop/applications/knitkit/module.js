@@ -58,7 +58,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
         menuBar.down('#themeMenuItem').enable();
         menuBar.down('#navigationMenuItem').enable();
         menuBar.down('#hostsMenuItem').enable();
-
+        menuBar.down('#sectionsPagesMenuItem').enable();
     },
 
     createWindow: function () {
@@ -81,6 +81,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
                             xtype: 'menu',
                             items: [
                                 Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu(),
+                                Compass.ErpApp.Desktop.Applications.Knitkit.SectionsMenu(),
                                 Compass.ErpApp.Desktop.Applications.Knitkit.ThemeMenu(),
                                 Compass.ErpApp.Desktop.Applications.Knitkit.NavigationMenu(),
                                 Compass.ErpApp.Desktop.Applications.Knitkit.HostsMenu()
@@ -106,20 +107,11 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
                     }
                 },
                 {
-                    text: 'Select website'
+                    text: 'Site:'
                 },
                 {
                     xtype: 'websitescombo',
-                    width: 250,
-                    listeners: {
-                        'select': function (combo, record, index) {
-                            var websiteData = record[0].data;
-                            self.selectWebsite(websiteData)
-                        },
-                        render: function (combo) {
-                            combo.getStore().load();
-                        }
-                    }
+                    width: 250
                 });
 
             tbarItems.push('->',

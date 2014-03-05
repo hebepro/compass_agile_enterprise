@@ -83,10 +83,11 @@ Ext.define("Compass.ErpApp.Desktop.Applications.ThemesTreePanel", {
 
         config = Ext.apply({
             autoLoadRoot: true,
-            rootVisible: false,
+            rootVisible: true,
             multiSelect: true,
             title: 'Themes',
-            rootText: 'Websites',
+            rootText: 'Themes',
+            handleRootContextMenu: true,
             controllerPath: '/knitkit/erp_app/desktop/theme',
             autoDestroy: true,
             allowDownload: true,
@@ -139,7 +140,16 @@ Ext.define("Compass.ErpApp.Desktop.Applications.ThemesTreePanel", {
                     self.initialConfig['centerRegion'].editTemplateFile(node, content, [], themeId);
                 },
                 'handleContextMenu': function (fileManager, node, e) {
-                    if (node.data['isTheme']) {
+                    if(node.isRoot()){
+                        items = [Compass.ErpApp.Desktop.Applications.Knitkit.newThemeMenuItem];
+
+                        var contextMenu = new Ext.menu.Menu({
+                            items: items
+                        });
+                        contextMenu.showAt(e.xy);
+                        return false;
+                    }
+                    else if (node.data['isTheme']) {
                         var items = [];
                         if (node.data['isActive']) {
                             items.push({
