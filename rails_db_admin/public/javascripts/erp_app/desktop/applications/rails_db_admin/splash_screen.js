@@ -23,10 +23,12 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.SplashScreen", {
 
                 {
                     xtype: 'panel',
-                    border: false,
                     height: 140,
                     width: 140,
-                    style: 'margin: 10px 10px 10px 10px;',
+                    style:{
+                        margin: '0px 0px 5px 10px;',
+                        cursor: 'pointer'
+                    },
                     bodyStyle: 'background: #ddd; padding: 20px; border-radius: 7px; border-color: #aaa !important;',
                     border: true,
                     bodyBorder: true,
@@ -41,10 +43,11 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.SplashScreen", {
                             listeners: {
                                 render: function (component) {
                                     component.getEl().on('click', function (e) {
+                                        var module = compassDesktop.getModule('rails_db_admin-win');
 
-                                        self.initialConfig.module.setWindowStatus('Retrieving Docs...');
-                                        self.initialConfig.module.openIframeInTab('Data Models', 'http://documentation.compassagile.com');
-                                        self.initialConfig.module.clearWindowStatus();
+                                        module.setWindowStatus('Retrieving Docs...');
+                                        module.openIframeInTab('Data Models', 'http://documentation.compassagile.com');
+                                        module.clearWindowStatus();
 
                                     }, component);
                                 }
@@ -57,10 +60,12 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.SplashScreen", {
                 },
                 {
                     xtype: 'panel',
-                    border: false,
                     height: 140,
                     width: 140,
-                    style: 'margin: 10px 10px 10px 10px;',
+                    style:{
+                        margin: '0px 0px 5px 10px;',
+                        cursor: 'pointer'
+                    },
                     bodyStyle: 'background: #ddd; padding: 20px; border-radius: 7px; border-color: #aaa !important;',
                     border: true,
                     bodyBorder: true,
@@ -75,20 +80,9 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.SplashScreen", {
                             listeners: {
                                 render: function (component) {
                                     component.getEl().on('click', function (e) {
+                                        var module = compassDesktop.getModule('rails_db_admin-win');
 
-//Launch a console in a tab in the current app
-
-                                        self.initialConfig.module.addConsolePanel();
-
-//****** Launch a console as a separate desktop application ***********
-//
-//                                        var desktop = this.findParentByType('desktop');
-//                                        var module = desktop.app.getModule('compass_console-win');
-//
-//                                        if (module) {
-//                                            module.createWindow();
-//                                        }
-//********************************************************************
+                                        module.addConsolePanel();
                                     }, component);
                                 }
                             }
@@ -100,10 +94,12 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.SplashScreen", {
                 },
                 {
                     xtype: 'panel',
-                    border: false,
                     height: 140,
                     width: 140,
-                    style: 'margin: 10px 10px 10px 10px;',
+                    style:{
+                        margin: '0px 0px 5px 10px;',
+                        cursor: 'pointer'
+                    },
                     bodyStyle: 'background: #ddd; padding: 20px; border-radius: 7px; border-color: #aaa !important;',
                     border: true,
                     bodyBorder: true,
@@ -118,10 +114,11 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.SplashScreen", {
                             listeners: {
                                 render: function (component) {
                                     component.getEl().on('click', function (e) {
+                                        var module = compassDesktop.getModule('rails_db_admin-win');
 
-                                        self.initialConfig.module.setWindowStatus('Retrieving Docs...');
-                                        self.initialConfig.module.openIframeInTab('Tutorials', 'http://tutorials.compassagile.com');
-                                        self.initialConfig.module.clearWindowStatus();
+                                        module.setWindowStatus('Retrieving Docs...');
+                                        module.openIframeInTab('Tutorials', 'http://tutorials.compassagile.com');
+                                        module.clearWindowStatus();
 
                                     }, component);
                                 }
@@ -134,14 +131,6 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.SplashScreen", {
                 }
             ]
         }
-    ],
-    constructor: function (config) {
-        self = this;
-
-        config = Ext.apply({
-            //placeholder
-        }, config);
-        this.callParent([config]);
-    }
+    ]
 
 });

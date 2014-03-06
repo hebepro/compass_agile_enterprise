@@ -3,6 +3,12 @@ Ext.define("Compass.ErpApp.Desktop.Applications.ThemesTreePanel", {
     alias: 'widget.knitkit_themestreepanel',
     itemId: 'themesTreePanel',
 
+    clearWebsite: function(){
+        var store = this.getStore();
+        store.getProxy().extraParams = {};
+        store.load();
+    },
+
     selectWebsite: function (website) {
         var store = this.getStore();
         store.getProxy().extraParams = {

@@ -1,6 +1,6 @@
-Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SplashScreen",{
-    extend:"Ext.panel.Panel",
-    alias:'widget.knitkit_splash_screen',
+Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SplashScreen", {
+    extend: "Ext.panel.Panel",
+    alias: 'widget.knitkit_splash_screen',
     title: 'Startup',
     closable: true,
     items: [
@@ -11,7 +11,6 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SplashScreen",{
         {
             xtype: 'image',
             style: 'padding-left: 50%; margin-left: -300px;',
-             //src: 'http://placehold.it/600x250'
             src: '/images/knitkit/splash/splash.png'
         },
 
@@ -27,10 +26,12 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SplashScreen",{
 
                 {
                     xtype: 'panel',
-                    border: false,
                     height: 140,
                     width: 140,
-                    style: 'margin: 10px 10px 10px 10px;',
+                    style:{
+                        margin: '0px 0px 5px 10px;',
+                        cursor: 'pointer'
+                    },
                     bodyStyle: 'background: #ddd; padding: 20px; border-radius: 7px; border-color: #aaa !important;',
                     border: true,
                     bodyBorder: true,
@@ -41,12 +42,21 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SplashScreen",{
                             src: '/images/knitkit/splash/images/browse-site.png',
                             height: 80,
                             width: 80,
-                            style: 'margin: 0px 0px 5px 10px;',
+                            style:{
+                                margin: '0px 0px 5px 10px;',
+                                cursor: 'pointer'
+                            },
                             listeners: {
                                 render: function (component) {
                                     component.getEl().on('click', function (e) {
 
-                                        alert('Browse current site');
+                                        var currentWebsite = compassDesktop.getModule('knitkit-win').currentWebsite;
+                                        if(currentWebsite){
+                                            window.open(currentWebsite.url,'_blank');
+                                        }
+                                        else{
+                                            Ext.Msg.alert('Error', 'No website selected');
+                                        }
 
                                     }, component);
                                 }
@@ -60,10 +70,12 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SplashScreen",{
 
                 {
                     xtype: 'panel',
-                    border: false,
                     height: 140,
                     width: 140,
-                    style: 'margin: 10px 10px 10px 10px;',
+                    style:{
+                        margin: '0px 0px 5px 10px;',
+                        cursor: 'pointer'
+                    },
                     bodyStyle: 'background: #ddd; padding: 20px; border-radius: 7px; border-color: #aaa !important;',
                     border: true,
                     bodyBorder: true,
@@ -74,20 +86,19 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SplashScreen",{
                             src: '/images/knitkit/splash/images/find-themes.png',
                             height: 80,
                             width: 80,
-                            style: 'margin: 0px 0px 5px 10px;',
+                            style:{
+                                margin: '0px 0px 5px 10px;',
+                                cursor: 'pointer'
+                            },
                             listeners: {
                                 render: function (component) {
                                     component.getEl().on('click', function (e) {
-
-//                                        Which of these is cooler? Which is more useful?
-//                                        window.open("http://themes.compassagile.com");
 
                                         var cr = this.findParentByType('knitkit_centerregion');
 
                                         cr.setWindowStatus('Finding themes...');
                                         cr.openIframeInTab('Find Themes', 'http://themes.compassagile.com');
                                         cr.clearWindowStatus();
-
 
 
                                     }, component);
@@ -102,10 +113,12 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SplashScreen",{
 
                 {
                     xtype: 'panel',
-                    border: false,
                     height: 140,
                     width: 140,
-                    style: 'margin: 10px 10px 10px 10px;',
+                    style:{
+                        margin: '0px 0px 5px 10px;',
+                        cursor: 'pointer'
+                    },
                     bodyStyle: 'background: #ddd; padding: 20px; border-radius: 7px; border-color: #aaa !important;',
                     border: true,
                     bodyBorder: true,
@@ -116,7 +129,10 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SplashScreen",{
                             src: '/images/knitkit/splash/images/tutorials.png',
                             height: 80,
                             width: 80,
-                            style: 'margin: 0px 0px 5px 10px;',
+                            style:{
+                                margin: '0px 0px 5px 10px;',
+                                cursor: 'pointer'
+                            },
                             listeners: {
                                 render: function (component) {
                                     component.getEl().on('click', function (e) {

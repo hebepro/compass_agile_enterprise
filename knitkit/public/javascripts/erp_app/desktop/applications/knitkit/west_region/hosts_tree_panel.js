@@ -37,6 +37,12 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.HostListPanel", {
 
     store: store,
 
+    clearWebsite: function(){
+        var store = this.getStore();
+        store.getProxy().extraParams = {};
+        store.load();
+    },
+
     selectWebsite: function (website) {
         var store = this.getStore();
         store.getProxy().extraParams = {
@@ -53,7 +59,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.HostListPanel", {
                 items = [Compass.ErpApp.Desktop.Applications.Knitkit.newHostMenuItem];
             }
             else{
-                items = Compass.ErpApp.Desktop.Applications.Knitkit.addHostOptions(self, items, record);
+                items = Compass.ErpApp.Desktop.Applications.Knitkit.addHostOptions(self, [], record);
             }
 
             if (items.length != 0) {

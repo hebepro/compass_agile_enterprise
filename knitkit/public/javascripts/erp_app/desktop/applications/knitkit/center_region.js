@@ -145,7 +145,6 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                 var obj = Ext.decode(response.responseText);
                 if (obj.success) {
                     self.clearWindowStatus();
-                    Ext.getStore('knitkit_articlesgridpanelStore').load();
                     var activeTab = self.workArea.getActiveTab();
                     var versionsGrid = activeTab.down('knitkit_versionsarticlegridpanel');
                     versionsGrid.getStore().load();
@@ -314,7 +313,6 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                 var obj = Ext.decode(response.responseText);
                 if (obj.success) {
                     self.clearWindowStatus();
-                    Ext.getStore('knitkit_articlesgridpanelStore').load();
                     var activeTab = self.workArea.getActiveTab();
                     var panel = activeTab.query('knitkit_versionsbloggridpanel');
                     if (panel.length === 0) {
@@ -454,7 +452,6 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                 var obj = Ext.decode(response.responseText);
                 if (obj.success) {
                     self.clearWindowStatus();
-                    Ext.getStore('knitkit_articlesgridpanelStore').load();
                     if (!Compass.ErpApp.Utility.isBlank(contentType)) {
                         var activeTab = self.workArea.getActiveTab();
                         var versionsGrid = activeTab.down('knitkit_versions' + contentType + 'gridpanel');
@@ -511,7 +508,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
             closable: true,
             layout: 'fit',
             title: title,
-            html:'<iframe id="themes_iframe" height="100%" width="100%" frameBorder="0" src="'+url+'"></iframe>'
+            html:'<iframe height="100%" width="100%" frameBorder="0" src="'+url+'"></iframe>'
         });
 
         this.workArea.add(item);

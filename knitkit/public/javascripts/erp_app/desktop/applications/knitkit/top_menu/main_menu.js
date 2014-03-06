@@ -1,3 +1,4 @@
+// Website
 Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu = function () {
     return {
         text: 'Websites',
@@ -10,6 +11,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu = function () {
                     iconCls: 'icon-add',
                     handler: function (btn) {
                         Ext.create("Ext.window.Window", {
+                            modal: true,
                             title: 'New Website',
                             plain: true,
                             buttonAlign: 'center',
@@ -57,17 +59,31 @@ Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu = function () {
                                     text: 'Submit',
                                     listeners: {
                                         'click': function (button) {
-                                            var window = button.findParentByType('window');
-                                            var formPanel = window.query('.form')[0];
+                                            var knitkitModule = compassDesktop.getModule('knitkit-win'),
+                                                knitkitWindow = compassDesktop.desktop.getWindow('knitkit'),
+                                                window = button.findParentByType('window'),
+                                                formPanel = window.query('.form')[0];
 
                                             formPanel.getForm().submit({
                                                 waitMsg: 'Please wait...',
                                                 success: function (form, action) {
                                                     var obj = Ext.decode(action.response.responseText);
                                                     if (obj.success) {
-                                                        var westRegion = Ext.ComponentQuery.query('#knitkitWestRegion').first();
-                                                        westRegion.selectWebsite(obj.website);
-                                                        window.close();
+                                                        var combo = knitkitWindow.down('websitescombo');
+                                                        combo.store.load({
+                                                            callback: function (records, operation, succes) {
+                                                                for (i = 0; i < records.length; i++) {
+                                                                    if (records[i].data.id == obj.website.id) {
+                                                                        combo.select(records[i]);
+
+                                                                        knitkitModule.selectWebsite(records[i]);
+                                                                        window.close();
+
+                                                                        break;
+                                                                    }
+                                                                }
+                                                            }
+                                                        });
                                                     }
                                                 },
                                                 failure: function (form, action) {
@@ -92,6 +108,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu = function () {
                     iconCls: 'icon-globe',
                     handler: function (btn) {
                         Ext.create("Ext.window.Window", {
+                            modal: true,
                             layout: 'fit',
                             width: 375,
                             title: 'Import Website',
@@ -123,17 +140,31 @@ Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu = function () {
                                     text: 'Submit',
                                     listeners: {
                                         'click': function (button) {
-                                            var window = button.findParentByType('window');
-                                            var formPanel = window.query('form')[0];
+                                            var knitkitModule = compassDesktop.getModule('knitkit-win'),
+                                                knitkitWindow = compassDesktop.desktop.getWindow('knitkit'),
+                                                window = button.findParentByType('window'),
+                                                formPanel = window.query('.form')[0];
 
                                             formPanel.getForm().submit({
                                                 waitMsg: 'Please wait...',
                                                 success: function (form, action) {
                                                     var obj = Ext.decode(action.response.responseText);
                                                     if (obj.success) {
-                                                        var westRegion = Ext.ComponentQuery.query('#knitkitWestRegion').first();
-                                                        westRegion.selectWebsite(obj.website);
-                                                        window.close();
+                                                        var combo = knitkitWindow.down('websitescombo');
+                                                        combo.store.load({
+                                                            callback: function (records, operation, succes) {
+                                                                for (i = 0; i < records.length; i++) {
+                                                                    if (records[i].data.id == obj.website.id) {
+                                                                        combo.select(records[i]);
+
+                                                                        knitkitModule.selectWebsite(records[i]);
+                                                                        window.close();
+
+                                                                        break;
+                                                                    }
+                                                                }
+                                                            }
+                                                        });
                                                     }
                                                     else {
                                                         Ext.Msg.alert("Error", obj.message);
@@ -163,8 +194,25 @@ Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu = function () {
                     }
                 },
                 {
+                    xtype: 'menuseparator'
+                },
+                {
+                    text: 'Export Website',
+                    iconCls: 'icon-gear',
+                    itemId: 'exportWebsiteMenuItem',
+                    disabled: true,
+                    handler: function () {
+                        var knitkitWin = compassDesktop.getModule('knitkit-win'),
+                            websiteId = knitkitWin.currentWebsite.id;
+
+                        window.open('/knitkit/erp_app/desktop/site/export?website_id=' + websiteId, '_blank');
+                    }
+                },
+                {
                     text: 'Configure Website',
                     iconCls: 'icon-gear',
+                    itemId: 'configureWebsiteMenuItem',
+                    disabled: true,
                     handler: function () {
                         var knitkitWin = compassDesktop.getModule('knitkit-win'),
                             configurationId = knitkitWin.currentWebsite.configurationId;
@@ -187,6 +235,8 @@ Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu = function () {
                 },
                 {
                     text: 'Website Publications',
+                    itemId: 'websitePublicationsMenuItem',
+                    disabled: true,
                     iconCls: 'icon-history',
                     handler: function () {
                         var knitkitWin = compassDesktop.getModule('knitkit-win'),
@@ -207,8 +257,83 @@ Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu = function () {
                             ]
                         }).show();
                     }
+                },
+                {
+                    text: 'Delete Website',
+                    itemId: 'deleteWebsiteMenuItem',
+                    disabled: true,
+                    iconCls: 'icon-delete',
+                    handler: function () {
+                        var knitkitModule = compassDesktop.getModule('knitkit-win'),
+                            knitkitWindow = compassDesktop.desktop.getWindow('knitkit'),
+                            websiteId = knitkitModule.currentWebsite.id;
+
+                        Ext.MessageBox.confirm('Confirm', 'Are you sure you want to delete this Website?', function (btn) {
+                            if (btn == 'no') {
+                                return false;
+                            }
+                            else if (btn == 'yes') {
+                                Ext.Ajax.request({
+                                    url: '/knitkit/erp_app/desktop/site/delete',
+                                    method: 'POST',
+                                    params: {
+                                        website_id: websiteId
+                                    },
+                                    success: function (response) {
+                                        var obj = Ext.decode(response.responseText);
+                                        if (obj.success) {
+                                            var combo = knitkitWindow.down('websitescombo');
+                                            combo.store.load({
+                                                callback: function (records, operation, succes) {
+                                                    if (records.length > 0) {
+                                                        combo.select(records.first());
+
+                                                        knitkitModule.selectWebsite(records.first());
+                                                    }
+                                                    else {
+                                                        knitkitModule.clearWebsite()
+                                                    }
+                                                }
+                                            });
+                                        }
+                                        else {
+                                            Ext.Msg.alert('Error', 'Error deleting Website');
+                                        }
+                                    },
+                                    failure: function (response) {
+                                        Ext.Msg.alert('Error', 'Error deleting Website');
+                                    }
+                                });
+                            }
+                        });
+                    }
                 }
             ]
+        }
+    }
+}
+
+// Articles
+Compass.ErpApp.Desktop.Applications.Knitkit.ArticlesMenu = function () {
+    return {
+        text: 'Articles',
+        iconCls: 'icon-documents',
+        handler: function () {
+            var centerRegion = Ext.getCmp('knitkitCenterRegion');
+
+            Ext.create('widget.window', {
+                modal: true,
+                title: 'Articles',
+                width: 800,
+                height: 500,
+                layout: 'fit',
+                items: [
+                    {
+                        xtype: 'knitkit_articlesgridpanel',
+                        centerRegion: centerRegion
+                    }
+                ]
+            }).show();
         }
     }
 }
@@ -226,10 +351,9 @@ Compass.ErpApp.Desktop.Applications.Knitkit.newSectionMenuItem = {
                     websiteId = knitkitWin.currentWebsite.id;
 
                 Ext.create("Ext.window.Window", {
+                    model: true,
                     layout: 'fit',
-                    width: 375,
                     title: 'New Section',
-                    plain: true,
                     buttonAlign: 'center',
                     items: Ext.create("Ext.form.Panel", {
                         labelWidth: 110,
@@ -335,7 +459,6 @@ Compass.ErpApp.Desktop.Applications.Knitkit.newSectionMenuItem = {
                                             }
                                         },
                                         failure: function (form, action) {
-                                            self.clearWindowStatus();
                                             var obj = Ext.decode(action.response.responseText);
                                             if (obj.message) {
                                                 Ext.Msg.alert("Error", obj.message);

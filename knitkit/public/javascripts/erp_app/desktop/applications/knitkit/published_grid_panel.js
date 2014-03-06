@@ -217,8 +217,8 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.PublishedGridPanel", {
                                     buttons: [
                                         {
                                             text: 'Close',
-                                            handler: function () {
-                                                noteWindow.close();
+                                            handler: function (btn) {
+                                                btn.up('window').close();
                                             }
                                         }
                                     ]

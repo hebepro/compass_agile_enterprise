@@ -102,6 +102,12 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.MenuTreePanel", {
 
     store: store,
 
+    clearWebsite: function(){
+        var store = this.getStore();
+        store.getProxy().extraParams = {};
+        store.load();
+    },
+
     selectWebsite: function (website) {
         var store = this.getStore();
         store.getProxy().extraParams = {

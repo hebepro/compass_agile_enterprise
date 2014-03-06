@@ -180,8 +180,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addWebsiteNavItemOptions = function 
             iconCls: 'icon-document_lock',
             listeners: {
                 'click': function () {
-                    var westRegion = Ext.ComponentQuery.query('#knitkitWestRegion').first();
-
+                    var westRegion = Ext.getCmp('knitkitWestRegion');
                     westRegion.changeSecurity(record, '/knitkit/erp_app/desktop/website_nav_item/' + record.data.websiteNavItemId + '/update_security', '');
                 }
             }

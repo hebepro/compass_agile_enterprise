@@ -1,5 +1,15 @@
 /****Buttons Icons****/
 
+.icon-section_lock {
+    background-image:url( /images/icons/section_lock/section_lock_16x16.png ) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/section_lock/section_lock_16x16.png', sizingMethod='crop');
+}
+
+.icon-section {
+    background-image:url( /images/icons/section/section_16x16.png ) !important;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/section/section_16x16.png', sizingMethod='crop');
+}
+
 .icon-article {
     background-image:url( /images/icons/article/article_16x16.png ) !important;
     filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/knitkit/knitkit_16x16.png', sizingMethod='crop');

@@ -2,16 +2,20 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin", {
     extend: "Ext.ux.desktop.Module",
     id: 'rails_db_admin-win',
 
+    getWindow: function(){
+        return this.app.getDesktop().getWindow('rails_db_admin');
+    },
+
     queriesTreePanel: function () {
         return this.accordion.down('.railsdbadmin_queriestreemenu');
     },
 
     setWindowStatus: function (status) {
-        this.window.setStatus(status);
+        this.getWindow().setStatus(status);
     },
 
     clearWindowStatus: function () {
-        this.window.clearStatus();
+        this.getWindow().clearStatus();
     },
 
     getTableData: function (table) {
@@ -140,9 +144,8 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin", {
 
 
     addConsolePanel: function () {
-
         this.container.add({
-            xtype: 'compass_ae_console_console_panel',
+            xtype: 'compass_ae_console_panel',
             module: this
         });
         this.container.setActiveTab(this.container.items.length - 1);
@@ -150,7 +153,6 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin", {
     },
 
     addNewQueryTab: function () {
-
         this.container.add({
             xtype: 'railsdbadmin_querypanel',
             module: this
@@ -312,7 +314,6 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin", {
 
     init: function () {
         this.launcher = {
-
             text: 'Database Tools',
             iconCls: 'icon-rails_db_admin',
             handler: this.createWindow,
@@ -371,7 +372,6 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin", {
 
 
     openIframeInTab: function (title, url) {
-
         var self = this;
 
         var item = Ext.create('Ext.panel.Panel', {
@@ -393,6 +393,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin", {
         var win = desktop.getWindow('rails_db_admin');
         if (!win) {
             this.container = Ext.create('Ext.tab.Panel', {
+                itemId: 'centerRegion',
                 region: 'center',
                 margins: '0 0 0 0',
                 border: false,
@@ -457,14 +458,15 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin", {
                 items: [this.accordion, this.container]
             });
 
-            this.container.add({
-                xtype: 'railsdbadmin_splash_screen',
-                module: this,
-                closable: true
-            });
-            this.container.setActiveTab(self.container.items.length - 1);
+            win.addListener('render', function(win){
+                win.down('#centerRegion').add({
+                    xtype: 'railsdbadmin_splash_screen',
+                    module: self,
+                    closable: true
+                });
 
-            this.window = win;
+                win.down('#centerRegion').setActiveTab(win.down('#centerRegion').items.length - 1);
+            });
         }
         win.show();
     }

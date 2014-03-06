@@ -32,6 +32,31 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
         );
     },
 
+    clearWebsite: function(){
+        var self = this,
+            desktop = self.app.getDesktop(),
+            win = desktop.getWindow('knitkit'),
+            menuBar = win.down('toolbar');
+
+        this.currentWebsite = null;
+
+        var eastRegion = Ext.ComponentQuery.query('#knitkitEastRegion').first();
+        eastRegion.fileAssetsPanel.clearWebsite();
+        eastRegion.imageAssetsPanel.clearWebsite();
+
+        var westRegion = Ext.ComponentQuery.query('#knitkitWestRegion').first();
+        westRegion.clearWebsite();
+
+        menuBar.down('#themeMenuItem').disable();
+        menuBar.down('#navigationMenuItem').disable();
+        menuBar.down('#hostsMenuItem').disable();
+        menuBar.down('#sectionsPagesMenuItem').disable();
+        menuBar.down('#deleteWebsiteMenuItem').disable();
+        menuBar.down('#configureWebsiteMenuItem').disable();
+        menuBar.down('#websitePublicationsMenuItem').disable();
+        menuBar.down('#exportWebsiteMenuItem').disable();
+    },
+
     selectWebsite: function (website) {
         website = website.data;
 
@@ -59,6 +84,10 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
         menuBar.down('#navigationMenuItem').enable();
         menuBar.down('#hostsMenuItem').enable();
         menuBar.down('#sectionsPagesMenuItem').enable();
+        menuBar.down('#deleteWebsiteMenuItem').enable();
+        menuBar.down('#configureWebsiteMenuItem').enable();
+        menuBar.down('#websitePublicationsMenuItem').enable();
+        menuBar.down('#exportWebsiteMenuItem').enable();
     },
 
     createWindow: function () {
@@ -79,6 +108,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
                             xtype: 'menu',
                             items: [
                                 Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu(),
+                                Compass.ErpApp.Desktop.Applications.Knitkit.ArticlesMenu(),
                                 Compass.ErpApp.Desktop.Applications.Knitkit.SectionsMenu(),
                                 Compass.ErpApp.Desktop.Applications.Knitkit.ThemeMenu(),
                                 Compass.ErpApp.Desktop.Applications.Knitkit.NavigationMenu(),

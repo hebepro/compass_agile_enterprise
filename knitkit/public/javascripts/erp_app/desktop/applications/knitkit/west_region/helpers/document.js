@@ -5,7 +5,8 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addDocumentOptions = function (self,
             iconCls:'icon-document_lock',
             listeners:{
                 'click':function () {
-                    self.changeSecurity(record, '/knitkit/erp_app/desktop/section/update_security', record.data.id.split('_')[1]);
+                    var westRegion = Ext.getCmp('knitkitWestRegion');
+                    westRegion.changeSecurity(record, '/knitkit/erp_app/desktop/section/update_security', record.data.id.split('_')[1]);
                 }
             }
         });

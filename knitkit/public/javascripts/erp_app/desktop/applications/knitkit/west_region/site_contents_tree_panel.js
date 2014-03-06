@@ -37,7 +37,9 @@ var siteContentsStore = Ext.create('Ext.data.TreeStore', {
         'configurationId',
         'renderWithBaseLayout',
         'roles',
-        'useMarkdown'
+        'useMarkdown',
+        // if an article is part of a blog then you can edit the excerpt
+        'canEditExcerpt'
     ],
     listeners: {
         'load': function (store, node, records) {
@@ -167,6 +169,12 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SiteContentsTreePanel", {
         });
     },
 
+    clearWebsite: function(){
+        var store = this.getStore();
+        store.getProxy().extraParams = {};
+        store.load();
+    },
+
     selectWebsite: function (website) {
         var store = this.getStore();
         store.getProxy().extraParams = {
@@ -180,15 +188,9 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SiteContentsTreePanel", {
             var self = this;
             e.stopEvent();
             if (record.data['isSection']) {
-
-                //self.initialConfig['centerRegion'].setWindowStatus('Retrieving Docs...');
                 self.initialConfig['centerRegion'].openIframeInTab(record.data.text, record.data['url']);
-                //self.initialConfig['centerRegion'].clearWindowStatus();
-
             }
             else if (record.data['objectType'] === "Article") {
-
-                var self = this;
                 var url = '/knitkit/erp_app/desktop/articles/show/' + record.data.id
 
                 Ext.Ajax.request({

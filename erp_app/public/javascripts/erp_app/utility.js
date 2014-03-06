@@ -392,9 +392,13 @@ function OnDemandLoadByAjax() {
 
     this.onFailure = function () {
     };
-};
+}
 
 //Javascript Extensions
+
+String.prototype.startsWith = function (str) {
+    return this.indexOf(str) === 0;
+};
 
 //Array Extensions
 Array.prototype.contains = function (element) {

@@ -12,13 +12,13 @@ module Knitkit
               begin
                 ActiveRecord::Base.transaction do
 
-                  website = Website.find(params[:website_id])
+                  @website = Website.find(params[:website_id])
 
                   if params[:title].to_s.downcase == 'blog' && params[:type] == 'Blog'
                     result = {:success => false, :message => 'Blog can not be the title of a Blog'}
                   else
                     website_section = WebsiteSection.new
-                    website_section.website_id = website.id
+                    website_section.website_id = @website.id
                     website_section.in_menu = params[:in_menu] == 'yes'
                     website_section.title = params[:title]
                     website_section.render_base_layout = params[:render_with_base_layout] == 'yes'
@@ -38,7 +38,7 @@ module Knitkit
                       end
 
                       website_section.update_path!
-                      result = {:success => true, :node => build_section_hash(website_section, website_section.website)}
+                      result = {:success => true, :node => build_section_hash(website_section)}
                     else
                       message = "<ul>"
                       website_section.errors.collect do |e, m|

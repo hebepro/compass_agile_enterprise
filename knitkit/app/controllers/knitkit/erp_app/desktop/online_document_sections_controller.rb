@@ -4,8 +4,9 @@ module Knitkit
       class OnlineDocumentSectionsController < Knitkit::ErpApp::Desktop::AppController
         
         def new
-          website = Website.find(params[:website_id])
-          online_document_section = OnlineDocumentSection.new(:website_id => website.id, :in_menu => params[:in_menu] == 'yes', :title => params[:title],
+          @website = Website.find(params[:website_id])
+          online_document_section = OnlineDocumentSection.new(:website_id => @website.id,
+                                                              :in_menu => params[:in_menu] == 'yes', :title => params[:title],
                                                               :internal_identifier => params[:internal_identifier])
            
           if online_document_section.save
@@ -19,7 +20,7 @@ module Knitkit
               DocumentedItem.create(:documented_content_id => documented_content.id, :online_document_section_id => online_document_section.id)
             end
             
-            result = {:success => true, :node => build_section_hash(online_document_section, online_document_section.website),
+            result = {:success => true, :node => build_section_hash(online_document_section),
                       :documented_content => documented_content.content_hash}
           else
             message = "<ul>"

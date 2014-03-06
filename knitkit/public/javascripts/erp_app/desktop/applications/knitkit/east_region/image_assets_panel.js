@@ -249,6 +249,24 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.ImageAssetsPanel", {
             this.websiteName = website.name;
         };
 
+        this.clearWebsite = function () {
+            this.websiteId = null;
+            this.websiteName = null;
+
+            this.websiteImageAssetsTreePanel.extraPostData = {
+                website_id: null
+            };
+            this.websiteImageAssetsTreePanel.getStore().setProxy({
+                type: 'ajax',
+                url: '/knitkit/erp_app/desktop/file_assets/website/expand_directory',
+                extraParams: {
+                    website_id: null
+                }
+            });
+
+            this.websiteImageAssetsTreePanel.getRootNode().removeAll(true);
+        };
+
         this.reloadWebsiteImageAssetsTreePanel = function (websiteId) {
             this.websiteImageAssetsTreePanel.extraPostData = {
                 website_id: websiteId

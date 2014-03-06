@@ -27,13 +27,12 @@ Ext.define("Compass.ErpApp.Desktop.Applications.CompassAeConsole", {
                 layout: 'fit',
                 items: [
                     {
-                      xtype: 'compass_ae_console_console_panel',
+                      xtype: 'compass_ae_console_panel',
                       header: false
                     }
                 ]
             });
         }
         win.show();
-        sendCommand('console_text_area', '"Ruby version: #{RUBY_VERSION}, Rails version: #{Rails.version}, CompassAeConsole version: #{CompassAeConsole.version}"', false);
     }
 });

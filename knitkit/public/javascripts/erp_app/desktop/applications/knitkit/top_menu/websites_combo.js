@@ -4,7 +4,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WebsitesComboBox", {
     initComponent: function () {
         var self = this;
 
-        var websiteJsonStore = new Ext.data.Store({
+        var websiteJsonStore = Ext.create('Ext.data.Store', {
             timeout: 60000,
             proxy: {
                 type: 'ajax',
@@ -17,6 +17,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WebsitesComboBox", {
             fields: [
                 'name',
                 'id',
+                'url',
                 {name: 'configurationId', mapping: 'configuration_id'}
             ]
         });
@@ -50,9 +51,9 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WebsitesComboBox", {
             queryMode: 'local',
             listeners: {
                 'select': function (combo, records) {
-                    var knitkitWin = compassDesktop.getModule('knitkit-win');
+                    var knitkitModule = compassDesktop.getModule('knitkit-win');
 
-                    knitkitWin.selectWebsite(records.first());
+                    knitkitModule.selectWebsite(records.first());
                 },
                 render: function (combo) {
                     combo.getStore().load();
