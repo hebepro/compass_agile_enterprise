@@ -139,17 +139,17 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin", {
     },
 
 
-    addConsolePanel:function() {
+    addConsolePanel: function () {
 
         this.container.add({
-            xtype:'compass_ae_console_console_panel',
-            module:this
+            xtype: 'compass_ae_console_console_panel',
+            module: this
         });
         this.container.setActiveTab(this.container.items.length - 1);
 
     },
 
-    addNewQueryTab:function () {
+    addNewQueryTab: function () {
 
         this.container.add({
             xtype: 'railsdbadmin_querypanel',
@@ -313,10 +313,10 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin", {
     init: function () {
         this.launcher = {
 
-            text:'Database Tools',
-            iconCls:'icon-rails_db_admin',
-            handler:this.createWindow,
-            scope:this
+            text: 'Database Tools',
+            iconCls: 'icon-rails_db_admin',
+            handler: this.createWindow,
+            scope: this
 
         };
     },
@@ -370,16 +370,16 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin", {
     },
 
 
-    openIframeInTab: function( title, url ) {
+    openIframeInTab: function (title, url) {
 
         var self = this;
 
         var item = Ext.create('Ext.panel.Panel', {
-            iframeId:'tutorials_iframe',
+            iframeId: 'tutorials_iframe',
             closable: true,
             layout: 'fit',
             title: title,
-            html:'<iframe id="themes_iframe" height="100%" width="100%" frameBorder="0" src="'+url+'"></iframe>'
+            html: '<iframe id="themes_iframe" height="100%" width="100%" frameBorder="0" src="' + url + '"></iframe>'
         });
 
         self.container.add(item);
@@ -437,26 +437,30 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin", {
                 animCollapse: false,
                 constrainHeader: true,
                 layout: 'border',
-                tbar: {
-                    ui: 'ide-main',
-                    items: [
-                        {
-                            text: 'Database:'
-                        },
-                        {
-                            xtype: 'railsdbadmin_databasecombo',
-                            width: 205,
-                            module: self
-                        }
-                    ]
-                },
+                dockedItems: [
+                    {
+                        xtype: 'toolbar',
+                        dock: 'top',
+                        ui: 'ide-main',
+                        items: [
+                            {
+                                text: 'Database:'
+                            },
+                            {
+                                xtype: 'railsdbadmin_databasecombo',
+                                width: 205,
+                                module: self
+                            }
+                        ]
+                    }
+                ],
                 items: [this.accordion, this.container]
             });
 
             this.container.add({
-                xtype:'railsdbadmin_splash_screen',
+                xtype: 'railsdbadmin_splash_screen',
                 module: this,
-                closable:true
+                closable: true
             });
             this.container.setActiveTab(self.container.items.length - 1);
 

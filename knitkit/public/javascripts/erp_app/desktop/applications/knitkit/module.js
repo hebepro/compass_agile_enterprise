@@ -62,8 +62,6 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
     },
 
     createWindow: function () {
-        var self = this;
-
         var desktop = this.app.getDesktop();
         var win = desktop.getWindow('knitkit');
 
@@ -172,7 +170,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
                 layout: 'border',
                 dockedItems: {
                     xtype: 'toolbar',
-                    docked: 'top',
+                    dock: 'top',
                     ui: 'ide-main',
                     items: tbarItems
                 },

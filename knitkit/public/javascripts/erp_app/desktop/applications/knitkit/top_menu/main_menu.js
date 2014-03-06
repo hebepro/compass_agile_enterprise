@@ -184,6 +184,29 @@ Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu = function () {
                             ]
                         }).show();
                     }
+                },
+                {
+                    text: 'Website Publications',
+                    iconCls: 'icon-history',
+                    handler: function () {
+                        var knitkitWin = compassDesktop.getModule('knitkit-win'),
+                            websiteId = knitkitWin.currentWebsite.id;
+
+                        Ext.create("Ext.window.Window", {
+                            layout: 'fit',
+                            height: 500,
+                            width: 800,
+                            modal: true,
+                            title: 'Publications',
+                            autoScroll: true,
+                            items: [
+                                {
+                                    xtype: 'knitkit_publishedgridpanel',
+                                    siteId: websiteId
+                                }
+                            ]
+                        }).show();
+                    }
                 }
             ]
         }
