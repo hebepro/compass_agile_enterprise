@@ -38,15 +38,28 @@ Ext.define("Compass.ErpApp.Desktop.Applications.DynamicForms",{
         var win = desktop.getWindow('dynamic_forms');
         this.centerRegion = new Compass.ErpApp.Desktop.Applications.DynamicForms.CenterRegion();                
         if(!win){
+
+            var tbarItems = [];
+
+            tbarItems.push(
+
+            );
+
             win = desktop.createWindow({
                 id: 'dynamic_forms',
                 title:'Dynamic Forms',
-                maximized:true,
+                //maximized:true,
+                width: 1200,
+                height: 600,
                 iconCls: 'icon-form-light',
                 shim:false,
                 animCollapse:false,
                 constrainHeader:true,
                 layout: 'border',
+                tbar: {
+                    ui: 'ide-main',
+                    items: tbarItems
+                },
                 items:[this.centerRegion,{
                     xtype:'dynamic_forms_westregion',
                     centerRegion:this.centerRegion,

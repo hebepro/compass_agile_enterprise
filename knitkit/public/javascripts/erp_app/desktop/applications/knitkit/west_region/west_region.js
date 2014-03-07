@@ -168,10 +168,12 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
 
     constructor: function (config) {
         config = Ext.apply({
+
             region: 'west',
             split: true,
-            width: 310,
+            width: 300,
             collapsible: true
+
         }, config);
 
         this.callParent([config]);

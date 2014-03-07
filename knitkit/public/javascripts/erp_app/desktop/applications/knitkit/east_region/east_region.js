@@ -22,7 +22,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.EastRegion",{
             deferredRender:false,
             itemId:'knitkitEastRegion',
             region:'east',
-            width:300,
+            width:280,
             split:true,
             collapsible:true,
             activeTab: 0

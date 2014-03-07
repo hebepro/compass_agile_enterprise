@@ -304,11 +304,11 @@ Ext.define("Compass.ErpApp.Desktop.Applications.DynamicForms.WestRegion",{
     this.centerRegion.workArea.add(formBuilder);
     this.centerRegion.workArea.setActiveTab(this.centerRegion.workArea.items.length - 1);
 
-    var form_props = formBuilder.query('#form_props').first().getForm();
-    form_props.loadRecord(record);
-    Ext.getCmp('dynamic_forms_westregion').setActiveTab('field_types');
-    var east_tabs = formBuilder.query('#east_tabs').first();
-    east_tabs.setActiveTab('form_props');
+//    var form_props = formBuilder.query('#form_props').first().getForm();
+//    form_props.loadRecord(record);
+//    Ext.getCmp('dynamic_forms_westregion').setActiveTab('field_types');
+//    var east_tabs = formBuilder.query('#east_tabs').first();
+//    east_tabs.setActiveTab('form_props');
   },
 
   getDynamicForm : function(record){
