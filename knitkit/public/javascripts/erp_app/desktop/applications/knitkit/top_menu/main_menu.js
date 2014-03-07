@@ -531,7 +531,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.newThemeMenuItem = {
                 items: [
                     {
                         xtype: 'hidden',
-                        name: 'site_id',
+                        name: 'website_id',
                         value: websiteId
                     },
                     {

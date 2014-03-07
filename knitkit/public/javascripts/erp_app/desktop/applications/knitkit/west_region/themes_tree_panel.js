@@ -25,7 +25,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.ThemesTreePanel", {
             method: 'POST',
             params: {
                 theme_id: themeId,
-                site_id: siteId,
+                website_id: siteId,
                 active: active
             },
             success: function (response) {
