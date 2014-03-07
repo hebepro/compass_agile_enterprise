@@ -58,6 +58,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
     },
 
     selectWebsite: function (website) {
+        // get only the data for the website
         website = website.data;
 
         var self = this,
@@ -69,11 +70,11 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
 
         this.currentWebsite = website;
 
-        var eastRegion = Ext.ComponentQuery.query('#knitkitEastRegion').first();
+        var eastRegion = Ext.getCmp('knitkitEastRegion');
         eastRegion.fileAssetsPanel.selectWebsite(website);
         eastRegion.imageAssetsPanel.selectWebsite(website);
 
-        var westRegion = Ext.ComponentQuery.query('#knitkitWestRegion').first();
+        var westRegion = Ext.getCmp('knitkitWestRegion');
         westRegion.selectWebsite(website);
 
         Compass.ErpApp.Shared.FileManagerTree.extraPostData = {

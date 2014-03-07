@@ -13,7 +13,6 @@ Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu = function () {
                         Ext.create("Ext.window.Window", {
                             modal: true,
                             title: 'New Website',
-                            plain: true,
                             buttonAlign: 'center',
                             items: Ext.create('widget.form', {
                                 labelWidth: 110,
@@ -21,34 +20,30 @@ Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu = function () {
                                 bodyStyle: 'padding:5px 5px 0',
                                 url: '/knitkit/erp_app/desktop/site/new',
                                 defaults: {
-                                    width: 360
+                                    width: 320
                                 },
                                 items: [
                                     {
                                         xtype: 'textfield',
                                         fieldLabel: 'Name *',
-                                        width: 320,
                                         allowBlank: false,
                                         name: 'name'
                                     },
                                     {
                                         xtype: 'textfield',
                                         fieldLabel: 'Host *',
-                                        width: 320,
                                         allowBlank: false,
                                         name: 'host'
                                     },
                                     {
                                         xtype: 'textfield',
                                         fieldLabel: 'Title *',
-                                        width: 320,
                                         allowBlank: false,
                                         name: 'title'
                                     },
                                     {
                                         xtype: 'textfield',
                                         fieldLabel: 'Sub Title',
-                                        width: 320,
                                         allowBlank: true,
                                         name: 'subtitle'
                                     }
@@ -697,153 +692,6 @@ Compass.ErpApp.Desktop.Applications.Knitkit.uploadThemeMenuItem = {
 };
 
 Compass.ErpApp.Desktop.Applications.Knitkit.ThemeMenu = function () {
-    var themeWidget = function () {
-        var westRegion = Ext.ComponentQuery.query('#knitkitWestRegion').first(),
-            themesTreePanel = westRegion.down('#themesTreePanel'),
-            knitkitWin = compassDesktop.getModule('knitkit-win'),
-            websiteId = knitkitWin.currentWebsite.id;
-
-        var themesJsonStore = Ext.create("Ext.data.Store", {
-            autoLoad: false,
-            proxy: {
-                url: '/knitkit/erp_app/desktop/theme/available_themes',
-                type: 'ajax',
-                params: {
-                    site_id: websiteId
-                },
-                reader: {
-                    type: 'json',
-                    root: 'themes'
-                }
-            },
-            fields: [
-                {
-                    name: 'name'
-                },
-                {
-                    name: 'id'
-                }
-            ]
-        });
-
-        var widgetsJsonStore = Ext.create("Ext.data.Store", {
-            proxy: {
-                url: '/knitkit/erp_app/desktop/theme/available_widgets',
-                type: 'ajax',
-                reader: {
-                    type: 'json',
-                    root: 'widgets'
-                }
-            },
-            fields: [
-                {
-                    name: 'name'
-                },
-                {
-                    name: 'id'
-                }
-            ]
-        });
-
-        Ext.create("Ext.window.Window", {
-            layout: 'fit',
-            width: 375,
-            title: 'Theme Widget',
-            plain: true,
-            buttonAlign: 'center',
-            items: Ext.create('widget.form', {
-                labelWidth: 110,
-                frame: false,
-                bodyStyle: 'padding:5px 5px 0',
-                fileUpload: true,
-                url: '/knitkit/erp_app/desktop/theme/theme_widget',
-                defaults: {
-                    width: 300
-                },
-                items: [
-                    {
-                        xtype: 'hidden',
-                        name: 'site_id',
-                        value: websiteId
-                    },
-                    {
-                        xtype: 'combo',
-                        hiddenName: 'theme_id',
-                        name: 'theme_id',
-                        store: themesJsonStore,
-                        forceSelection: true,
-                        editable: false,
-                        fieldLabel: 'Theme',
-                        emptyText: 'Select Theme...',
-                        typeAhead: false,
-                        mode: 'remote',
-                        displayField: 'name',
-                        valueField: 'id',
-                        allowBlank: false,
-                        listeners: {
-                            'select': function (combo, records, opts) {
-                                this.next().enable();
-                                widgetsJsonStore.setExtraParam("theme_id", records[0].get("id"));
-                                widgetsJsonStore.load();
-                            }
-                        }
-                    },
-                    {
-                        xtype: 'combo',
-                        hiddenName: 'widget_id',
-                        name: 'widget_id',
-                        store: widgetsJsonStore,
-                        forceSelection: true,
-                        editable: false,
-                        disabled: true,
-                        fieldLabel: 'Widget',
-                        emptyText: 'Select Widget...',
-                        typeAhead: false,
-                        mode: 'remote',
-                        displayField: 'name',
-                        valueField: 'id',
-                        allowBlank: false
-                    }
-                ]
-            }),
-            buttons: [
-                {
-                    text: 'Submit',
-                    listeners: {
-                        'click': function (button) {
-                            var window = this.up('window'),
-                                form = window.query('form')[0].getForm();
-
-                            if (form.isValid()) {
-                                form.submit({
-                                    waitMsg: 'Generating layout files for widget...',
-                                    success: function (form, action) {
-                                        var obj = Ext.decode(action.response.responseText);
-                                        if (obj.success) {
-                                            themesTreePanel.getStore().load({
-                                                node: themesTreePanel.getRootNode()
-                                            });
-                                        }
-                                        window.close();
-                                    },
-                                    failure: function (form, action) {
-                                        Ext.Msg.alert("Error", "Error generating layouts");
-                                    }
-                                });
-                            }
-                        }
-                    }
-                },
-                {
-                    text: 'Close',
-                    handler: function (btn) {
-                        btn.up('window').close();
-                    }
-                }
-            ]
-        }).show();
-    }
-
     return {
         text: 'Themes',
         iconCls: 'icon-picture',
@@ -853,14 +701,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.ThemeMenu = function () {
             xtype: 'menu',
             items: [
                 Compass.ErpApp.Desktop.Applications.Knitkit.newThemeMenuItem,
-                Compass.ErpApp.Desktop.Applications.Knitkit.uploadThemeMenuItem,
-                {
-                    text: 'Theme Widget',
-                    iconCls: 'icon-picture',
-                    handler: function (btn) {
-                        themeWidget();
-                    }
-                }
+                Compass.ErpApp.Desktop.Applications.Knitkit.uploadThemeMenuItem
             ]
         }
     }

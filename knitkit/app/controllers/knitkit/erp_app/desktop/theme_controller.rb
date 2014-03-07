@@ -326,9 +326,18 @@ module Knitkit
               else
                 theme_hash[:iconCls] = 'icon-delete'
               end
+
               ['stylesheets', 'javascripts', 'images', 'templates', 'widgets'].each do |resource_folder|
-                theme_hash[:children] << {:text => resource_folder.capitalize, :iconCls => 'icon-content', :id => "#{theme.url}/#{resource_folder}"}
+                theme_hash[:children] << {
+                    :themeId => theme.id,
+                    :siteId => @website.id,
+                    :text => resource_folder.capitalize,
+                    :iconCls => 'icon-content',
+                    :handleContextMenu => (resource_folder == 'widgets'),
+                    :id => "#{theme.url}/#{resource_folder}"
+                }
               end
+
               tree << theme_hash
             end
           end

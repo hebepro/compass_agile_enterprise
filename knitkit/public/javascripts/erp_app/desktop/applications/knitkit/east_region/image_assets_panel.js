@@ -26,7 +26,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.ImageAssetsPanel", {
                 },
                 imageuploaded: function (comp) {
                     self.sharedImageAssetsTreePanel.getStore().load({
-                        callback:function(){
+                        callback: function () {
                             self.sharedImageAssetsTreePanel.getView().refresh();
                         }
                     });
@@ -40,7 +40,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.ImageAssetsPanel", {
             listeners: {
                 imageuploaded: function (comp) {
                     self.websiteImageAssetsTreePanel.getStore().load({
-                        callback:function(){
+                        callback: function () {
                             self.websiteImageAssetsTreePanel.getView().refresh();
                         }
                     });
@@ -247,6 +247,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.ImageAssetsPanel", {
         this.selectWebsite = function (website) {
             this.websiteId = website.id;
             this.websiteName = website.name;
+            this.reloadWebsiteImageAssetsTreePanel(website.id);
         };
 
         this.clearWebsite = function () {
