@@ -1,27 +1,26 @@
-Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.DatabaseComboBox",{
-    extend:"Ext.form.field.ComboBox",
-    alias:'widget.railsdbadmin_databasecombo',
-    initComponent: function() {
+Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.DatabaseComboBox", {
+    extend: "Ext.form.field.ComboBox",
+    alias: 'widget.railsdbadmin_databasecombo',
+    initComponent: function () {
 
-        var databaseJsonStore = new Ext.data.Store({
-            timeout:60000,
+        var databaseJsonStore = Ext.create('Ext.data.Store', {
+            timeout: 60000,
             proxy: {
                 type: 'ajax',
-                url :'/rails_db_admin/erp_app/desktop/base/databases',
+                url: '/rails_db_admin/erp_app/desktop/base/databases',
                 reader: {
                     type: 'json',
                     root: 'databases'
                 }
             },
-            fields: [{
-                name:'value'
-            },{
-                name:'display'
-            }]
+            fields: [
+                'value',
+                'display'
+            ]
         });
 
         var me = this;
-        databaseJsonStore.on('load', function(store) {
+        databaseJsonStore.on('load', function (store) {
             me.setValue(store.first().get('value'));
         });
 
@@ -29,25 +28,29 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.DatabaseComboBox",{
         this.callParent(arguments);
     },
 
-    constructor : function(config) {
+    constructor: function (config) {
         config = Ext.apply({
-            id:'databaseCombo',
-            valueField:'value',
-            displayField:'display',
-            triggerAction:'all',
-            editable:false,
-            forceSelection:true,
+            id: 'databaseCombo',
+            fieldStyle: {
+                borderRadius: '0px !important'
+            },
+            valueField: 'value',
+            displayField: 'display',
+            triggerAction: 'all',
+            editable: false,
+            forceSelection: true,
             queryMode: 'local',
-            listeners:{
-                'select':function(combo, record, index){
-                  // switch databases                  
-                  combo.initialConfig.module.connectToDatatbase();
+            listeners: {
+                'select': function (combo, record, index) {
+                    // switch databases
+                    combo.initialConfig.module.connectToDatatbase();
                 },
-                render:function(combo){
+                render: function (combo) {
                     combo.getStore().load();
                 }
             }
         }, config);
+
         this.callParent([config]);
     }
 });

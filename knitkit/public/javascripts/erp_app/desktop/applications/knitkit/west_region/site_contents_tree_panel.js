@@ -169,7 +169,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SiteContentsTreePanel", {
         });
     },
 
-    clearWebsite: function(){
+    clearWebsite: function () {
         var store = this.getStore();
         store.getProxy().extraParams = {};
         store.load();
@@ -244,22 +244,32 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SiteContentsTreePanel", {
                     }
                 });
             }
-            if(record.isRoot()){
-                items = Compass.ErpApp.Desktop.Applications.Knitkit.newSectionMenuItem;
+
+            if (record.isRoot()) {
+                items = [
+                    Compass.ErpApp.Desktop.Applications.Knitkit.newSectionMenuItem,
+                    Compass.ErpApp.Desktop.Applications.Knitkit.configureWebsiteMenuItem(false),
+                    Compass.ErpApp.Desktop.Applications.Knitkit.exportWebsiteMenuItem(false),
+                    Compass.ErpApp.Desktop.Applications.Knitkit.websitePublicationsMenuItem(false)
+                ];
             }
+
             if (record.data['isDocument']) {
                 items = Compass.ErpApp.Desktop.Applications.Knitkit.addDocumentOptions(self, items, record);
             }
+
             if (record.data['objectType'] === "Article") {
 
                 items = Compass.ErpApp.Desktop.Applications.Knitkit.addArticleOptions(self, items, record);
             }
+
             if (record.data['isSection']) {
                 items = Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions(self, items, record);
             }
             else if (record.data['isWebsite']) {
                 items = Compass.ErpApp.Desktop.Applications.Knitkit.addWebsiteOptions(self, items, record);
             }
+
             if (items.length != 0) {
                 var contextMenu = Ext.create("Ext.menu.Menu", {
                     items: items

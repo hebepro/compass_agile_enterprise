@@ -429,7 +429,6 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin", {
             win = desktop.createWindow({
                 id: 'rails_db_admin',
                 title: 'RailsDBAdmin',
-                autoDestroy: true,
                 width: 1200,
                 height: 550,
                 maximized: true,

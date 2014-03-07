@@ -43,6 +43,9 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WebsitesComboBox", {
         config = Ext.apply({
             id: 'websiteCombo',
             emptyText: 'No Websites',
+            fieldStyle: {
+                borderRadius: '0px !important'
+            },
             valueField: 'id',
             displayField: 'name',
             triggerAction: 'all',
@@ -60,6 +63,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WebsitesComboBox", {
                 }
             }
         }, config);
+
         this.callParent([config]);
     }
 });

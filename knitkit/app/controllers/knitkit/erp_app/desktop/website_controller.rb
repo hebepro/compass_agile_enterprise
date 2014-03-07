@@ -165,7 +165,11 @@ module Knitkit
 
         def export
           zip_path = @website.export
-          send_file(zip_path.to_s, :stream => false) rescue raise "Error sending #{zip_path} file"
+          begin
+            send_file(zip_path.to_s, :stream => false)
+          rescue Exception => ex
+            raise "Error sending #{zip_path} file"
+          end
         end
 
         # TODO add role restriction to this
@@ -178,8 +182,6 @@ module Knitkit
           else
             render :inline => {:success => false, :message => message}.to_json
           end
-
-
         ensure
           FileUtils.rm_r File.dirname(zip_path) rescue nil
         end

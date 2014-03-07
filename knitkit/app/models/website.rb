@@ -305,11 +305,12 @@ class Website < ActiveRecord::Base
         zip.add('setup.yml', tmp_dir + 'setup.yml')
       end
     end
+
   end
 
   class << self
     def make_tmp_dir
-      Pathname.new(Rails.root + "/tmp/website_export/tmp_#{Time.now.to_i.to_s}/").tap do |dir|
+      Pathname.new(File.join(Rails.root, "/tmp/website_export/tmp_#{Time.now.to_i.to_s}")).tap do |dir|
         FileUtils.mkdir_p(dir) unless dir.exist?
       end
     end

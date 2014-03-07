@@ -1,4 +1,75 @@
 // Website
+Compass.ErpApp.Desktop.Applications.Knitkit.exportWebsiteMenuItem = function (disabled) {
+    return {
+        text: 'Export Website',
+        iconCls: 'icon-gear',
+        itemId: 'exportWebsiteMenuItem',
+        disabled: disabled,
+        handler: function () {
+            var knitkitWin = compassDesktop.getModule('knitkit-win'),
+                websiteId = knitkitWin.currentWebsite.id;
+
+            window.open('/knitkit/erp_app/desktop/site/export?website_id=' + websiteId, '_blank');
+        }
+    }
+};
+
+Compass.ErpApp.Desktop.Applications.Knitkit.configureWebsiteMenuItem = function (disabled) {
+    return {
+        text: 'Configure Website',
+        iconCls: 'icon-gear',
+        itemId: 'configureWebsiteMenuItem',
+        disabled: disabled,
+        handler: function () {
+            var knitkitWin = compassDesktop.getModule('knitkit-win'),
+                configurationId = knitkitWin.currentWebsite.configurationId;
+
+            Ext.create("Ext.window.Window", {
+                layout: 'fit',
+                height: 500,
+                width: 700,
+                modal: true,
+                title: 'Configuration',
+                autoScroll: true,
+                items: [
+                    {
+                        xtype: 'sharedconfigurationpanel',
+                        configurationId: configurationId
+                    }
+                ]
+            }).show();
+        }
+    }
+};
+
+Compass.ErpApp.Desktop.Applications.Knitkit.websitePublicationsMenuItem = function (disabled) {
+    return {
+        text: 'Website Publications',
+        itemId: 'websitePublicationsMenuItem',
+        disabled: disabled,
+        iconCls: 'icon-history',
+        handler: function () {
+            var knitkitWin = compassDesktop.getModule('knitkit-win'),
+                websiteId = knitkitWin.currentWebsite.id;
+
+            Ext.create("Ext.window.Window", {
+                layout: 'fit',
+                height: 500,
+                width: 800,
+                modal: true,
+                title: 'Publications',
+                autoScroll: true,
+                items: [
+                    {
+                        xtype: 'knitkit_publishedgridpanel',
+                        siteId: websiteId
+                    }
+                ]
+            }).show();
+        }
+    }
+};
+
 Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu = function () {
     return {
         text: 'Websites',
@@ -191,68 +262,9 @@ Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu = function () {
                 {
                     xtype: 'menuseparator'
                 },
-                {
-                    text: 'Export Website',
-                    iconCls: 'icon-gear',
-                    itemId: 'exportWebsiteMenuItem',
-                    disabled: true,
-                    handler: function () {
-                        var knitkitWin = compassDesktop.getModule('knitkit-win'),
-                            websiteId = knitkitWin.currentWebsite.id;
-
-                        window.open('/knitkit/erp_app/desktop/site/export?website_id=' + websiteId, '_blank');
-                    }
-                },
-                {
-                    text: 'Configure Website',
-                    iconCls: 'icon-gear',
-                    itemId: 'configureWebsiteMenuItem',
-                    disabled: true,
-                    handler: function () {
-                        var knitkitWin = compassDesktop.getModule('knitkit-win'),
-                            configurationId = knitkitWin.currentWebsite.configurationId;
-
-                        Ext.create("Ext.window.Window", {
-                            layout: 'fit',
-                            height: 500,
-                            width: 700,
-                            modal: true,
-                            title: 'Configuration',
-                            autoScroll: true,
-                            items: [
-                                {
-                                    xtype: 'sharedconfigurationpanel',
-                                    configurationId: configurationId
-                                }
-                            ]
-                        }).show();
-                    }
-                },
-                {
-                    text: 'Website Publications',
-                    itemId: 'websitePublicationsMenuItem',
-                    disabled: true,
-                    iconCls: 'icon-history',
-                    handler: function () {
-                        var knitkitWin = compassDesktop.getModule('knitkit-win'),
-                            websiteId = knitkitWin.currentWebsite.id;
-
-                        Ext.create("Ext.window.Window", {
-                            layout: 'fit',
-                            height: 500,
-                            width: 800,
-                            modal: true,
-                            title: 'Publications',
-                            autoScroll: true,
-                            items: [
-                                {
-                                    xtype: 'knitkit_publishedgridpanel',
-                                    siteId: websiteId
-                                }
-                            ]
-                        }).show();
-                    }
-                },
+                Compass.ErpApp.Desktop.Applications.Knitkit.configureWebsiteMenuItem(true),
+                Compass.ErpApp.Desktop.Applications.Knitkit.exportWebsiteMenuItem(true),
+                Compass.ErpApp.Desktop.Applications.Knitkit.websitePublicationsMenuItem(true),
                 {
                     text: 'Delete Website',
                     itemId: 'deleteWebsiteMenuItem',

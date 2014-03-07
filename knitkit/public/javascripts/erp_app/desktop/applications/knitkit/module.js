@@ -140,7 +140,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
                 },
                 {
                     xtype: 'websitescombo',
-                    width: 250
+                    width: 205
                 });
 
             tbarItems.push('->',
@@ -199,12 +199,12 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
                 animCollapse: false,
                 constrainHeader: true,
                 layout: 'border',
-                dockedItems: {
+                dockedItems: [{
                     xtype: 'toolbar',
                     dock: 'top',
                     ui: 'ide-main',
                     items: tbarItems
-                },
+                }],
                 items: [
                     this.centerRegion,
                     {
