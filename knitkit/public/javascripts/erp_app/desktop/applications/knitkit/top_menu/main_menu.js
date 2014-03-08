@@ -524,6 +524,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.newThemeMenuItem = {
             layout: 'fit',
             modal: true,
             title: 'New Theme',
+            width: 360,
             plain: true,
             buttonAlign: 'center',
             items: Ext.create('widget.form', {
@@ -533,7 +534,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.newThemeMenuItem = {
                 fileUpload: true,
                 url: '/knitkit/erp_app/desktop/theme/new',
                 defaults: {
-                    width: 225
+                    width: 320
                 },
                 items: [
                     {
@@ -543,13 +544,13 @@ Compass.ErpApp.Desktop.Applications.Knitkit.newThemeMenuItem = {
                     },
                     {
                         xtype: 'textfield',
-                        fieldLabel: 'Name',
+                        fieldLabel: 'Name *',
                         allowBlank: false,
                         name: 'name'
                     },
                     {
                         xtype: 'textfield',
-                        fieldLabel: 'Theme ID',
+                        fieldLabel: 'Theme ID *',
                         allowBlank: false,
                         name: 'theme_id'
                     },
