@@ -55,7 +55,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
                         width: 425,
                         url: '/knitkit/erp_app/desktop/articles/new/' + record.data.id.split('_')[1],
                         defaults: {
-                            width: 257
+                            width: 300
                         },
                         items: addFormItems
                     }),
