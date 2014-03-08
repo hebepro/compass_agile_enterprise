@@ -1195,7 +1195,12 @@ Ext.define("Compass.ErpApp.Desktop.Applications.DynamicForms.FormBuilder",{
                     }
                 },
                 {
-                    xtype: 'dynamic_forms_east_region'
+                    xtype: 'panel',
+                    region: 'east',
+                    style: 'background-color: #fff;',
+                    bodyStyle: 'padding: 5px; background-color: #537697; border-radius: 5px;',
+                    width: 280,
+                    items: [{xtype: 'dynamic_forms_east_region'}]
                 }]
             
         }, config);

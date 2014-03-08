@@ -2,13 +2,10 @@ Ext.define("Compass.ErpApp.Desktop.Applications.DynamicForms.EastRegion",{
     extend:"Ext.tab.Panel",
     alias:'widget.dynamic_forms_east_region',
     itemId: 'east_tabs',
-    region: 'east',
-    split:true,
-    collapsible:true,
     header: false,
-    width: 275,
     activeTab: 0,
-    style: 'margin-right: 8px; margin-top: 10px; background-color: #fff; border-radius: 5px;',
+    style: 'border-radius: 5px;',
+    height: 500,
     defaults:{
         width: 255
     },

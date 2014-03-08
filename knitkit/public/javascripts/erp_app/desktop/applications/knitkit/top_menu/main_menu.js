@@ -2,7 +2,7 @@
 Compass.ErpApp.Desktop.Applications.Knitkit.exportWebsiteMenuItem = function (disabled) {
     return {
         text: 'Export Website',
-        iconCls: 'icon-gear',
+        iconCls: 'icon-website-export',
         itemId: 'exportWebsiteMenuItem',
         disabled: disabled,
         handler: function () {
@@ -17,7 +17,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.exportWebsiteMenuItem = function (di
 Compass.ErpApp.Desktop.Applications.Knitkit.configureWebsiteMenuItem = function (disabled) {
     return {
         text: 'Configure Website',
-        iconCls: 'icon-gear',
+        iconCls: 'icon-knitkit',
         itemId: 'configureWebsiteMenuItem',
         disabled: disabled,
         handler: function () {
@@ -47,7 +47,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.websitePublicationsMenuItem = functi
         text: 'Website Publications',
         itemId: 'websitePublicationsMenuItem',
         disabled: disabled,
-        iconCls: 'icon-history',
+        iconCls: 'icon-website-publications',
         handler: function () {
             var knitkitWin = compassDesktop.getModule('knitkit-win'),
                 websiteId = knitkitWin.currentWebsite.id;
@@ -73,7 +73,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.websitePublicationsMenuItem = functi
 Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu = function () {
     return {
         text: 'Websites',
-        iconCls: 'icon-globe',
+        iconCls: 'icon-website',
         menu: {
             xtype: 'menu',
             items: [
@@ -85,6 +85,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu = function () {
                             modal: true,
                             title: 'New Website',
                             buttonAlign: 'center',
+                            width: 360,
                             items: Ext.create('widget.form', {
                                 labelWidth: 110,
                                 frame: false,
@@ -98,13 +99,15 @@ Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu = function () {
                                         xtype: 'textfield',
                                         fieldLabel: 'Name *',
                                         allowBlank: false,
-                                        name: 'name'
+                                        name: 'name',
+                                        plugins: [new helpQtip("This is required and must be unique. Spaces are OK.")]
                                     },
                                     {
                                         xtype: 'textfield',
                                         fieldLabel: 'Host *',
                                         allowBlank: false,
-                                        name: 'host'
+                                        name: 'host',
+                                        plugins: [new helpQtip("If you are running locally, this will probably be localhost:3000.<br> Otherwise, it is the domain or subdomain for this CompassAE instance")]
                                     },
                                     {
                                         xtype: 'textfield',
@@ -171,7 +174,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu = function () {
                 },
                 {
                     text: 'Import Website',
-                    iconCls: 'icon-globe',
+                    iconCls: 'icon-website-import',
                     handler: function (btn) {
                         Ext.create("Ext.window.Window", {
                             modal: true,
@@ -627,7 +630,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.newThemeMenuItem = {
 // Upload Theme
 Compass.ErpApp.Desktop.Applications.Knitkit.uploadThemeMenuItem = {
     text: 'Upload',
-    iconCls: 'icon-upload',
+    iconCls: 'icon-theme-upload',
     handler: function (btn) {
         var westRegion = Ext.ComponentQuery.query('#knitkitWestRegion').first(),
             themesTreePanel = westRegion.down('#themesTreePanel'),
@@ -707,7 +710,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.uploadThemeMenuItem = {
 Compass.ErpApp.Desktop.Applications.Knitkit.ThemeMenu = function () {
     return {
         text: 'Themes',
-        iconCls: 'icon-picture',
+        iconCls: 'icon-theme',
         disabled: true,
         itemId: 'themeMenuItem',
         menu: {
@@ -806,7 +809,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.newNavigationMenuItem = {
 Compass.ErpApp.Desktop.Applications.Knitkit.NavigationMenu = function () {
     return {
         text: 'Navigation',
-        iconCls: 'icon-index',
+        iconCls: 'icon-menu',
         itemId: 'navigationMenuItem',
         disabled: true,
         menu: {

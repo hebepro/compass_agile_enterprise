@@ -223,6 +223,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
             border: false,
             frame: false,
             region: 'north',
+            bodyStyle: 'border-bottom-left-radius: 5px; border-bottom-right-radius: 5px;',
             height: 200,
             header: false,
             split: true,
