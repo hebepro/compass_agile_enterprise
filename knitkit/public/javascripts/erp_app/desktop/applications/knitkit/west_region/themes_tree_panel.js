@@ -235,8 +235,8 @@ Ext.define("Compass.ErpApp.Desktop.Applications.ThemesTreePanel", {
                 'handleContextMenu',
                 'contextMenuDisabled'
             ],
-            //containerScroll: true,
             scroll: 'vertical',
+            //containerScroll: true,
             listeners: {
                 'load': function (store) {
                     store.getRootNode().expandChildren();
