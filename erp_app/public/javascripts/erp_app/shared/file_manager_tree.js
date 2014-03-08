@@ -122,6 +122,9 @@ Ext.define("Compass.ErpApp.Shared.FileManagerTree", {
                     name: 'text'
                 },
                 {
+                    name: 'iconCls'
+                },
+                {
                     name: 'downloadPath'
                 },
                 {
@@ -250,6 +253,7 @@ Ext.define("Compass.ErpApp.Shared.FileManagerTree", {
 
                 self.selectedNode = record;
                 var menuItems = [];
+
 
                 //if this is a leaf (file) allow user to view Properties
                 if (record.data['leaf']) {
