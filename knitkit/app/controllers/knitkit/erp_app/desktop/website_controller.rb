@@ -8,7 +8,7 @@ module Knitkit
                                               :build_host_hash, :activate_publication, :publish, :update, :delete]
 
         def index
-          render :json => {:sites => Website.all.collect { |item| item.to_hash(:only => [:id, :name],
+          render :json => {:sites => Website.all.collect { |item| item.to_hash(:only => [:id, :name, :title, :subtitle],
                                                                                :configuration_id => item.configurations.first.id,
                                                                                :url => "http://#{item.config_value('primary_host')}") }}
         end

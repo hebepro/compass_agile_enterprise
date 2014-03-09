@@ -16,6 +16,8 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WebsitesComboBox", {
             },
             fields: [
                 'name',
+                'title',
+                'subtitle',
                 'id',
                 'url',
                 {name: 'configurationId', mapping: 'configuration_id'}

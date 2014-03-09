@@ -12,31 +12,6 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
         this.findParentByType('statuswindow').clearStatus();
     },
 
-    publish: function (node) {
-        var self = this;
-        var publishWindow = Ext.create('Compass.ErpApp.Desktop.Applications.Knitkit.PublishWindow', {
-            baseParams: {
-                id: node.id.split('_')[1]
-            },
-            url: '/knitkit/erp_app/desktop/site/publish',
-            listeners: {
-                'publish_success': function (window, response) {
-                    if (response.success) {
-                        self.getPublications(node);
-                    }
-                    else {
-                        Ext.Msg.alert('Error', 'Error publishing Website');
-                    }
-                },
-                'publish_failure': function (window, response) {
-                    Ext.Msg.alert('Error', 'Error publishing Website');
-                }
-            }
-        });
-
-        publishWindow.show();
-    },
-
     changeSecurity: function (node, updateUrl, id) {
         Ext.Ajax.request({
             url: '/knitkit/erp_app/desktop/available_roles',

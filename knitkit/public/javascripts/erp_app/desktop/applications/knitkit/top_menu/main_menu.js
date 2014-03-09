@@ -1,4 +1,99 @@
 // Website
+Compass.ErpApp.Desktop.Applications.Knitkit.editWebsiteMenuItem = function (disabled) {
+    return {
+        text: 'Edit Website',
+        iconCls: 'icon-edit',
+        itemId: 'editWebsiteMenuItem',
+        disabled: disabled,
+        handler: function () {
+            var knitkitModule = compassDesktop.getModule('knitkit-win');
+
+            Ext.create("Ext.window.Window", {
+                title: 'Update Website',
+                plain: true,
+                buttonAlign: 'center',
+                items: Ext.create("Ext.form.Panel", {
+                    labelWidth: 110,
+                    frame: false,
+                    bodyStyle: 'padding:5px 5px 0',
+                    url: '/knitkit/erp_app/desktop/site/update',
+                    defaults: {
+                        width: 225
+                    },
+                    items: [
+                        {
+                            xtype: 'textfield',
+                            fieldLabel: 'Name',
+                            allowBlank: false,
+                            name: 'name',
+                            value: knitkitModule.currentWebsite.name
+                        },
+                        {
+                            xtype: 'textfield',
+                            fieldLabel: 'Title',
+                            id: 'knitkitUpdateSiteTitle',
+                            allowBlank: false,
+                            name: 'title',
+                            value: knitkitModule.currentWebsite.title
+                        },
+                        {
+                            xtype: 'textfield',
+                            fieldLabel: 'Sub Title',
+                            allowBlank: true,
+                            name: 'subtitle',
+                            value: knitkitModule.currentWebsite.subtitle
+
+                        },
+                        {
+                            xtype: 'hidden',
+                            name: 'website_id',
+                            value: knitkitModule.currentWebsite.id
+                        }
+                    ]
+                }),
+                buttons: [
+                    {
+                        text: 'Submit',
+                        listeners: {
+                            'click': function (button) {
+                                var window = button.findParentByType('window');
+                                var formPanel = window.query('form')[0];
+
+                                formPanel.getForm().submit({
+                                    waitMsg: 'Please wait...',
+                                    success: function (form, action) {
+                                        knitkitModule.currentWebsite.name = form.findField('name').getValue();
+                                        knitkitModule.currentWebsite.title = form.findField('title').getValue();
+                                        knitkitModule.currentWebsite.subtitle = form.findField('subtitle').getValue();
+
+                                        var websiteCombo = compassDesktop.desktop.getWindow('knitkit').down('websitescombo');
+                                        websiteCombo.getStore().load({
+                                            callback: function () {
+                                                websiteCombo.select(knitkitModule.currentWebsite.id);
+                                            }
+                                        })
+
+                                        window.close();
+                                    },
+                                    failure: function (form, action) {
+                                        Ext.Msg.alert("Error", "Error updating website");
+                                    }
+                                });
+                            }
+                        }
+                    },
+                    {
+                        text: 'Close',
+                        handler: function (btn) {
+                            btn.up('window').close();
+                        }
+                    }
+                ]
+            }).show();
+        }
+    }
+}
+
 Compass.ErpApp.Desktop.Applications.Knitkit.exportWebsiteMenuItem = function (disabled) {
     return {
         text: 'Export Website',
@@ -69,6 +164,51 @@ Compass.ErpApp.Desktop.Applications.Knitkit.websitePublicationsMenuItem = functi
         }
     }
 };
+
+Compass.ErpApp.Desktop.Applications.Knitkit.websitePublishMenuItem = function (disabled) {
+    return {
+        text: 'Publish Website',
+        itemId: 'publishWebsiteMenuItem',
+        disabled: disabled,
+        iconCls: 'icon-document_up',
+        handler: function () {
+            var knitkitWin = compassDesktop.getModule('knitkit-win'),
+                websiteId = knitkitWin.currentWebsite.id;
+
+            Ext.create('Compass.ErpApp.Desktop.Applications.Knitkit.PublishWindow', {
+                baseParams: {
+                    website_id: websiteId
+                },
+                url: '/knitkit/erp_app/desktop/site/publish',
+                listeners: {
+                    'publish_success': function (window, response) {
+                        if (!response.success) {
+                            Ext.Msg.alert('Error', 'Error publishing Website');
+                        }
+                    },
+                    'publish_failure': function (window, response) {
+                        Ext.Msg.alert('Error', 'Error publishing Website');
+                    }
+                }
+            }).show();
+        }
+    }
+}
+
+Compass.ErpApp.Desktop.Applications.Knitkit.websiteInquiresMenuItem = function (disabled) {
+    return {
+        text: 'View Inquires',
+        itemId: 'websiteInquiresMenuItem',
+        disabled: disabled,
+        iconCls: 'icon-document',
+        handler: function () {
+            var knitkitModule = compassDesktop.getModule('knitkit-win')
+            knitkitWindow = compassDesktop.desktop.getWindow('knitkit');
+
+            knitkitWindow.down('knitkit_centerregion').viewWebsiteInquiries(knitkitModule.currentWebsite.id, knitkitModule.currentWebsite.name);
+        }
+    }
+}
 
 Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu = function () {
     return {
@@ -265,9 +405,12 @@ Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu = function () {
                 {
                     xtype: 'menuseparator'
                 },
+                Compass.ErpApp.Desktop.Applications.Knitkit.editWebsiteMenuItem(true),
                 Compass.ErpApp.Desktop.Applications.Knitkit.configureWebsiteMenuItem(true),
                 Compass.ErpApp.Desktop.Applications.Knitkit.exportWebsiteMenuItem(true),
                 Compass.ErpApp.Desktop.Applications.Knitkit.websitePublicationsMenuItem(true),
+                Compass.ErpApp.Desktop.Applications.Knitkit.websitePublishMenuItem(true),
+                Compass.ErpApp.Desktop.Applications.Knitkit.websiteInquiresMenuItem(true),
                 {
                     text: 'Delete Website',
                     itemId: 'deleteWebsiteMenuItem',

@@ -6,22 +6,22 @@ module Knitkit
         def setup
           form = DynamicForm.get_form('WebsiteInquiry')
           definition = form.definition_object
-    
+
           columns = []
           definition.each do |field_hash|
             field_hash['width'] = 120
             columns << DynamicGridColumn.build_column(field_hash)
           end
-    
-          columns << DynamicGridColumn.build_column({ :fieldLabel => "Username", :name => 'username', :xtype => 'textfield' })
-          columns << DynamicGridColumn.build_column({ :fieldLabel => "Created At", :name => 'created_at', :xtype => 'datefield', :width => 75 })
+
+          columns << DynamicGridColumn.build_column({:fieldLabel => "Username", :name => 'username', :xtype => 'textfield'})
+          columns << DynamicGridColumn.build_column({:fieldLabel => "Created At", :name => 'created_at', :xtype => 'datefield', :width => 75})
           columns << DynamicGridColumn.build_view_column("Ext.getCmp('knitkitCenterRegion').showComment(rec.get('message'));")
           columns << DynamicGridColumn.build_delete_column("Ext.getCmp('InquiriesGridPanel').deleteInquiry(rec);")
-    
-          definition << DynamicFormField.textfield({ :fieldLabel => "Username", :name => 'username' })
-          definition << DynamicFormField.datefield({ :fieldLabel => "Created At", :name => 'created_at' })
-          definition << DynamicFormField.hidden({ :fieldLabel => "ID", :name => 'id' })
-    
+
+          definition << DynamicFormField.textfield({:fieldLabel => "Username", :name => 'username'})
+          definition << DynamicFormField.datefield({:fieldLabel => "Created At", :name => 'created_at'})
+          definition << DynamicFormField.hidden({:fieldLabel => "ID", :name => 'id'})
+
           result = "{
                       \"success\": true,
                       \"model\": \"WebsiteInquiry\",
@@ -29,7 +29,7 @@ module Knitkit
                       \"columns\": [#{columns.join(',')}],
                       \"fields\": #{definition.to_json}
                     }"
-    
+
           render :inline => result
         end
 
@@ -39,7 +39,7 @@ module Knitkit
           website = Website.find(params[:website_id])
           sort_hash = params[:sort].blank? ? {} : Hash.symbolize_keys(JSON.parse(params[:sort]).first)
           sort = sort_hash[:property] || 'created_at'
-          dir  = sort_hash[:direction] || 'DESC'
+          dir = sort_hash[:direction] || 'DESC'
 
           website_inquiries = website.website_inquiries.paginate(:page => page, :per_page => per_page, :order => "#{sort} #{dir}")
 
@@ -52,7 +52,7 @@ module Knitkit
             wihash[:created_at] = i.data.created_at
             wi << wihash
           end
-    
+
           render :inline => "{ total:#{website_inquiries.total_entries}, data:#{wi.to_json} }"
         end
 
@@ -62,7 +62,7 @@ module Knitkit
           render :json => {:success => true}
         end
 
-      end#InquiriesController
-    end#Desktop
-  end#ErpApp
-end#Knitkit
+      end #InquiriesController
+    end #Desktop
+  end #ErpApp
+end #Knitkit

@@ -248,9 +248,12 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SiteContentsTreePanel", {
             if (record.isRoot()) {
                 items = [
                     Compass.ErpApp.Desktop.Applications.Knitkit.newSectionMenuItem,
+                    Compass.ErpApp.Desktop.Applications.Knitkit.editWebsiteMenuItem(false),
                     Compass.ErpApp.Desktop.Applications.Knitkit.configureWebsiteMenuItem(false),
                     Compass.ErpApp.Desktop.Applications.Knitkit.exportWebsiteMenuItem(false),
-                    Compass.ErpApp.Desktop.Applications.Knitkit.websitePublicationsMenuItem(false)
+                    Compass.ErpApp.Desktop.Applications.Knitkit.websitePublicationsMenuItem(false),
+                    Compass.ErpApp.Desktop.Applications.Knitkit.websitePublishMenuItem(false),
+                    Compass.ErpApp.Desktop.Applications.Knitkit.websiteInquiresMenuItem(false)
                 ];
             }
 

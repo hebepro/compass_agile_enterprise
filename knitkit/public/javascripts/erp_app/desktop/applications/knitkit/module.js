@@ -55,6 +55,9 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
         menuBar.down('#configureWebsiteMenuItem').disable();
         menuBar.down('#websitePublicationsMenuItem').disable();
         menuBar.down('#exportWebsiteMenuItem').disable();
+        menuBar.down('#websiteInquiresMenuItem').disable();
+        menuBar.down('#publishWebsiteMenuItem').disable();
+        menuBar.down('#editWebsiteMenuItem').disable();
     },
 
     selectWebsite: function (website) {
@@ -89,6 +92,9 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
         menuBar.down('#configureWebsiteMenuItem').enable();
         menuBar.down('#websitePublicationsMenuItem').enable();
         menuBar.down('#exportWebsiteMenuItem').enable();
+        menuBar.down('#websiteInquiresMenuItem').enable();
+        menuBar.down('#publishWebsiteMenuItem').enable();
+        menuBar.down('#editWebsiteMenuItem').enable();
     },
 
     createWindow: function () {
