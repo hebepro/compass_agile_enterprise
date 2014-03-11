@@ -43,6 +43,12 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
         }
     ],
 
+    /**
+     * @cfg {String} contactPurposesTitle
+     * Title of contact purposes fieldset.
+     */
+    contactPurposesTitle: 'Contact Purpose',
+
     initComponent: function () {
         var me = this,
             config = me.initialConfig;
@@ -339,7 +345,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
 
         config.formFields.push({
             xtype: 'fieldset',
-            title: 'Contact Purpose',
+            title: config.contactPurposesTitle,
             items: [
                 {
                     xtype: 'checkboxgroup',
