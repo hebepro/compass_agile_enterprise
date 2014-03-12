@@ -797,6 +797,8 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid.PostalAddressGrid", {
                 {
                     fieldLabel: 'Zip',
                     name: 'zip',
+                    regex: /^\d{5}(-\d{4})?$/,
+                    regexText: "Must be a valid 5 or 9 digit zip code",
                     allowBlank: false
                 },
                 {
