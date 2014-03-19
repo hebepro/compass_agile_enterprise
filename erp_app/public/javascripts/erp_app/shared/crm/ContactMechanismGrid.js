@@ -426,7 +426,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
                                         grid.getView().getSelectionModel().deselectAll();
                                         grid.store.load();
 
-                                        grid.fireEvent('contactupdated', me, config['contactMechanism'], action.result.data);
+                                        grid.fireEvent('contactupdated', grid, config['contactMechanism'], action.result.data);
                                     }
                                     else {
                                         Ext.Msg.alert('Failed', action.result.msg);
