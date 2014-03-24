@@ -16,7 +16,6 @@ class Content < ActiveRecord::Base
   acts_as_commentable
   acts_as_versioned :table_name => :content_versions
   can_be_published
-  has_relational_dynamic_attributes
 
   has_many :website_section_contents, :dependent => :destroy
   has_many :website_sections, :through => :website_section_contents

@@ -62,7 +62,7 @@ module ErpTxnsAndAccts
 
           def destroy_financial_txn_account
 					  self.financial_txn_account.destroy if (self.financial_txn_account && !self.financial_txn_account.frozen?)
-					end
+          end
 
         end
 

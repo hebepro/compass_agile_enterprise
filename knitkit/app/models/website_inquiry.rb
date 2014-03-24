@@ -16,4 +16,5 @@ class WebsiteInquiry < ActiveRecord::Base
       AuditLog.custom_application_log_message(system_user, e)
     end
   end
+
 end

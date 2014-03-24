@@ -96,6 +96,7 @@ Compass.ErpApp.Organizer.Layout = function (config) {
 
     this.centerPanel = Ext.create("Ext.Panel", {
         cls: 'masterPanel',
+
         id: 'erp_app_viewport_center',
         style: {
             marginRight: '20px',

@@ -62,10 +62,3 @@ Ext.define("Compass.ErpApp.Shared.DynamicEditableGridLoaderPanel", {
         this.callParent([config]);
     }
 });
-
-
-
-
-
-
-
