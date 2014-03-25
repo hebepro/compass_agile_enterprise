@@ -43,6 +43,12 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
         }
     ],
 
+    /**
+     * @cfg {String} contactPurposesTitle
+     * Title of contact purposes fieldset.
+     */
+    contactPurposesTitle: 'Contact Purpose',
+
     initComponent: function () {
         var me = this,
             config = me.initialConfig;
@@ -339,7 +345,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
 
         config.formFields.push({
             xtype: 'fieldset',
-            title: 'Contact Purpose',
+            title: config.contactPurposesTitle,
             items: [
                 {
                     xtype: 'checkboxgroup',
@@ -420,7 +426,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
                                         grid.getView().getSelectionModel().deselectAll();
                                         grid.store.load();
 
-                                        grid.fireEvent('contactupdated', me, config['contactMechanism'], action.result.data);
+                                        grid.fireEvent('contactupdated', grid, config['contactMechanism'], action.result.data);
                                     }
                                     else {
                                         Ext.Msg.alert('Failed', action.result.msg);
@@ -583,7 +589,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid.EmailAddressGrid", {
                                         {
                                             xtype: 'htmleditor',
                                             name: 'message',
-                                            fieldLabel: 'Biography',
+                                            fieldLabel: 'Message',
                                             height: 200,
                                             allowBlank: false
                                         }
@@ -795,6 +801,8 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid.PostalAddressGrid", {
                 {
                     fieldLabel: 'Zip',
                     name: 'zip',
+                    regex: /^\d{5}(-\d{4})?$/,
+                    regexText: "Must be a valid 5 or 9 digit zip code",
                     allowBlank: false
                 },
                 {

@@ -197,6 +197,12 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
         }
     ],
 
+    /**
+     * @cfg {String} contactPurposesTitle
+     * Title of contact purposes fieldset.
+     */
+    contactPurposesTitle: 'Contact Purpose',
+
     constructor: function (config) {
         var listeners = {
             activate: function () {
@@ -564,6 +570,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                 title: title,
                 itemId: itemId,
                 contactPurposes: me.contactPurposes,
+                contactPurposesTitle: me.contactPurposesTitle,
                 applicationContainerId: me.applicationContainerId,
                 partyId: partyId,
                 partyModel: record.get('model'),

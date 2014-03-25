@@ -89,6 +89,12 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
         }
     ],
 
+    /**
+     * @cfg {String} contactPurposesTitle
+     * Title of contact purposes fieldset.
+     */
+    contactPurposesTitle: 'Contact Purpose',
+
     initComponent: function () {
         var me = this,
             tabPanels = [];
@@ -181,6 +187,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
                     items: [
                         {
                             xtype: 'phonenumbergrid',
+                            contactPurposesTitle: 'Use Phone Number for:',
                             contactPurposes: me.contactPurposes,
                             partyId: me.partyId,
                             listeners: {
@@ -191,6 +198,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
                         },
                         {
                             xtype: 'emailaddressgrid',
+                            contactPurposesTitle: 'Use Email for:',
                             contactPurposes: me.contactPurposes,
                             partyId: me.partyId,
                             listeners: {
@@ -201,6 +209,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
                         },
                         {
                             xtype: 'postaladdressgrid',
+                            contactPurposesTitle: 'Use Address for:',
                             contactPurposes: me.contactPurposes,
                             partyId: me.partyId,
                             listeners: {
