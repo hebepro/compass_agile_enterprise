@@ -401,6 +401,16 @@ String.prototype.startsWith = function (str) {
 };
 
 //Array Extensions
+Array.prototype.split = function(n){
+    var len = this.length,out = [], i = 0;
+    while (i < len) {
+        var size = Math.ceil((len - i) / n--);
+        out.push(this.slice(i, i + size));
+        i += size;
+    }
+    return out;
+}
+
 Array.prototype.contains = function (element) {
     for (var i = 0; i < this.length; i++) {
         if (this[i] == element) {

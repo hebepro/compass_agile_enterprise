@@ -791,12 +791,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid.PostalAddressGrid", {
                     queryMode: 'local',
                     displayField: 'state',
                     valueField: 'geo_zone_code',
-                    store: statesStore,
-                    listeners:{
-                        activate: function(){
-                            alert("here")
-                        }
-                    }
+                    store: statesStore
                 },
                 {
                     fieldLabel: 'Zip',
