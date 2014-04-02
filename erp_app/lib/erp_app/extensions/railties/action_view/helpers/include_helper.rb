@@ -62,6 +62,10 @@ module ErpApp
               raw "<script type='text/javascript'>Compass.ErpApp.Utility.SessionTimeout.setupSessionTimeout(#{warn_milli_seconds}, #{redirect_milli_seconds}, '#{redirect_to}') </script>" if current_user
             end
 
+            def set_authenticity_token
+              raw "<script type='text/javascript'>Compass.ErpApp.Utility.createNamespace('Compass.ErpApp'); Compass.ErpApp.AuthentictyToken = '#{form_authenticity_token}';</script>" if current_user
+            end
+
             # need to remove camel case not rubyish, will be deprecated at some point
             alias_method :setSessionTimeout, :set_session_timeout
 

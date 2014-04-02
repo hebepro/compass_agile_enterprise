@@ -73,6 +73,7 @@
   <%= content_for?(:footer) ? yield(:footer) : (render :partial => 'shared/knitkit/footer') %>
   <%= yield :foot %>
 </div>
+<%= set_authenticity_token %>
 <%= set_session_timeout %>
 <%= setup_inline_editing %>
 </body>

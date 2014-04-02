@@ -124,7 +124,7 @@ Knitkit.InlineEditing = {
                 {
                     height: 300,
                     enterMode: CKEDITOR.ENTER_BR,
-                    extraPlugins: 'inlineeditsave,jwplayer,codemirror',
+                    extraPlugins: 'inlineeditsave,codemirror',
                     toolbar: [
                         { name: 'document', items: [ 'Source', '-', 'InlineEditSave' ] },
                         { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline' ] },

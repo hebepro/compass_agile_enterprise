@@ -2,7 +2,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
     extend: "Ext.panel.Panel",
     id: 'knitkitCenterRegion',
     alias: 'widget.knitkit_centerregion',
-    ckEditorExtraPlugins: 'jwplayer,knitkitthemes,codemirror',
+    ckEditorExtraPlugins: 'codemirror',
     ckEditorToolbar: [
         ['Source', '-', 'Preview', 'Print'],
         ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord'],
@@ -11,7 +11,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
         ['SpellChecker', '-', 'SelectAll'],
         ['TextColor', 'BGColor'],
         ['Bold', 'Italic', 'Underline', 'Strike'],
-        ['Subscript', 'Superscript', '-', 'jwplayer'],
+        ['Subscript', 'Superscript', '-'],
         ['Image', 'Table', 'NumberedList', 'BulletedList'],
         ['Outdent', 'Indent', 'Blockquote'],
         ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
@@ -19,7 +19,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
         ['Link', 'Unlink', 'Anchor'],
         ['HorizontalRule', 'SpecialChar', 'PageBreak'],
         ['ShowBlocks', 'RemoveFormat'],
-        ['KnitkitThemes', 'Format', 'Font', 'FontSize' ],
+        ['Format', 'Font', 'FontSize'],
         ['Maximize', '-', 'About']
     ],
 
@@ -519,6 +519,8 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
         var self = this;
         var itemId = 'editContent-' + id;
         var item = this.workArea.query('#' + itemId).first();
+
+        console.log(self.ckEditorExtraPlugins)
 
         if (Compass.ErpApp.Utility.isBlank(item)) {
             var ckEditor = Ext.create("Compass.ErpApp.Shared.CKeditor", {
