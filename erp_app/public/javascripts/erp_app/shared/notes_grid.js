@@ -2,8 +2,15 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
     extend: "Ext.grid.Panel",
     alias: 'widget.shared_notesgrid',
 
+    /**
+     * @cfg {Int} partyId
+     * The id of the party these notes relate to.
+     */
+    partyId: null,
+
     deleteNote: function (rec) {
-        var self = this;
+        var me = this;
+
         Ext.Ajax.request({
             url: '/erp_app/shared/notes/delete/',
             params: {
@@ -13,7 +20,7 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
             success: function (response) {
                 var obj = Ext.decode(response.responseText);
                 if (obj.success) {
-                    self.getStore().load();
+                    me.getStore().load();
                 }
                 else {
                     Ext.Msg.alert('Error', 'Error deleting note.');
@@ -32,19 +39,14 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
         this.store.proxy.url = '/erp_app/shared/notes/view/' + this.partyId;
         this.store.load();
     },
+
     setParams: function (params) {
         this.partyId = params.partyId;
         this.store.proxy.url = '/erp_app/shared/notes/view/' + this.partyId;
     },
 
     initComponent: function () {
-        this.store.load();
-        this.callParent(arguments);
-    },
-
-    constructor: function (config) {
-        var self = this;
-        this.partyId = config['partyId'];
+        var me = this;
 
         var noteTypeStore = Ext.create('Ext.data.Store', {
             proxy: {
@@ -70,7 +72,7 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
         var notesStore = Ext.create('Ext.data.Store', {
             proxy: {
                 type: 'ajax',
-                url: '/erp_app/shared/notes/view/' + self.partyId,
+                url: '/erp_app/shared/notes/view/' + me.partyId,
                 reader: {
                     type: 'json',
                     root: 'notes'
@@ -190,7 +192,7 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
                                 }
                                 else if (btn == 'yes') {
                                     var rec = grid.getStore().getAt(rowIndex);
-                                    self.deleteNote(rec);
+                                    me.deleteNote(rec);
                                 }
                             });
                         }
@@ -216,7 +218,7 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
                             frame: false,
                             layout: '',
                             bodyStyle: 'padding:5px 5px 0',
-                            url: '/erp_app/shared/notes/create/' + self.partyId,
+                            url: '/erp_app/shared/notes/create/' + me.partyId,
                             items: [
                                 {
                                     emptyText: 'Select Type...',
@@ -257,7 +259,7 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
                                             success: function (form, action) {
                                                 var obj = Ext.decode(action.response.responseText);
                                                 if (obj.success) {
-                                                    self.getStore().load();
+                                                    me.getStore().load();
                                                     addNoteWindow.close();
                                                 }
                                                 else {
@@ -290,30 +292,25 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
             });
         }
 
-        //toolBarItems.push('|');
-        //add note type drop down
-
-        config = Ext.apply({
-            region: 'west',
-            store: notesStore,
-            loadMask: false,
-            columns: columns,
-            tbar: {
+        me.store = notesStore;
+        me.columns = columns;
+        me.dockedItems = [
+            {
+                xtype: 'toolbar',
+                dock: 'top',
                 items: toolBarItems
             },
-            bbar: Ext.create("Ext.PagingToolbar", {
+            {
+                xtype: 'pagingtoolbar',
+                dock: 'bottom',
                 pageSize: 30,
                 store: notesStore,
                 displayInfo: true,
                 displayMsg: 'Displaying {0} - {1} of {2}',
                 emptyMsg: "No Notes"
-            })
-        }, config, {
-            title: "Notes"
-        });
+            }
+        ];
 
-        this.callParent([config]);
+        me.callParent();
     }
 });
-
-
