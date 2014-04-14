@@ -177,8 +177,7 @@ module Knitkit
           website, message = Website.import(params[:website_data], current_user)
 
           if website
-            render :inline => {:success => true, :website => website.to_hash(:only => [:id, :name],
-                                                                             :configuration_id => item.configurations.first.id)}.to_json
+            render :inline => {:success => true, :website => website.to_hash(:only => [:id, :name])}.to_json
           else
             render :inline => {:success => false, :message => message}.to_json
           end
