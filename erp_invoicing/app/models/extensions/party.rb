@@ -12,7 +12,7 @@ Party.class_eval do
                             biz_txn_acct_roots.biz_txn_acct_type = 'FinancialTxnAccount'")
     .joins("inner join biz_txn_acct_party_roles on
                             biz_txn_acct_party_roles.biz_txn_acct_root_id = biz_txn_acct_roots.id and
-                            biz_txn_acct_party_roles.party_id = #{self.id}")
+                            biz_txn_acct_party_roles.party_id = #{self.id}").uniq
   end
 
   def billing_accounts_with_roles(*roles)
