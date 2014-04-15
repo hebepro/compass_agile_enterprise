@@ -35,6 +35,7 @@ class BizTxnAcctRoot < ActiveRecord::Base
     
     Party.joins('inner join biz_txn_acct_party_roles on biz_txn_acct_party_roles.party_id = parties.id')
          .where('biz_txn_acct_pty_rtype_id = ?', biz_txn_acct_pty_rtype.id)
+         .where('biz_txn_acct_root_id = ?', self.id)
   end
 
 end
