@@ -445,7 +445,9 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
                                 var obj = Ext.decode(response.responseText);
                                 if (obj.success) {
                                     record.data.hasLayout = true;
-                                    self.editSectionLayout(record.data.text, sectionId, record.data.siteId);
+                                    
+									var sectionPanel = Ext.ComponentQuery.query('#knitkitSiteContentsTreePanel').first();
+									sectionPanel.editSectionLayout(record.data.text, sectionId, record.data.siteId);
                                 }
                                 else {
                                     Ext.Msg.alert('Status', obj.message);

@@ -244,8 +244,8 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SiteContentsTreePanel", {
                     }
                 });
             }
-
-            if (record.isRoot()) {
+	
+            if (record.isRoot() && record.hasChildNodes()) {
                 items = [
                     Compass.ErpApp.Desktop.Applications.Knitkit.newSectionMenuItem,
                     Compass.ErpApp.Desktop.Applications.Knitkit.editWebsiteMenuItem(false),

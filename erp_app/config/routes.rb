@@ -71,6 +71,8 @@ ErpApp::Engine.routes.draw do
 
   end
 
+  match '/admin' => "login#index", :defaults => { :application => "desktop" }
+
   ############################
   #Desktop Application Routes
   ############################

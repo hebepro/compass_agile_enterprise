@@ -124,8 +124,6 @@ class Theme < ActiveRecord::Base
     Zip::ZipFile.open(file.path) do |zip|
       zip.each do |entry|
         if entry.name == 'about.yml'
-          #TODO
-          #FIXME this does not work for some reason
           data = ''
           entry.get_input_stream { |io| data = io.read }
           data = StringIO.new(data) if data.present?
@@ -150,6 +148,7 @@ class Theme < ActiveRecord::Base
         end
       end
     end
+
   end
 
   def export

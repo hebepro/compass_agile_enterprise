@@ -781,28 +781,23 @@ Compass.ErpApp.Desktop.Applications.Knitkit.uploadThemeMenuItem = {
             websiteId = knitkitWin.currentWebsite.id;
 
         Ext.create("Ext.window.Window", {
-            layout: 'fit',
-            width: 375,
+            modal: true,
             title: 'New Theme',
-            plain: true,
             buttonAlign: 'center',
             items: Ext.create('widget.form', {
-                labelWidth: 110,
                 frame: false,
                 bodyStyle: 'padding:5px 5px 0',
                 fileUpload: true,
                 url: '/knitkit/erp_app/desktop/theme/new',
-                defaults: {
-                    width: 225
-                },
                 items: [
                     {
                         xtype: 'hidden',
-                        name: 'site_id',
+                        name: 'website_id',
                         value: websiteId
                     },
                     {
                         xtype: 'fileuploadfield',
+						width: '350px',
                         fieldLabel: 'Upload Theme',
                         buttonText: 'Upload',
                         buttonOnly: false,

@@ -272,6 +272,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.ThemesTreePanel", {
 
                     if (node.isRoot()) {
                         items.push(Compass.ErpApp.Desktop.Applications.Knitkit.newThemeMenuItem);
+						items.push(Compass.ErpApp.Desktop.Applications.Knitkit.uploadThemeMenuItem);
                     }
                     else if (node.data['isTheme']) {
                         if (node.data['isActive']) {
