@@ -76,6 +76,8 @@ var viewConfigItems = {
                 counter = 0;
 
             if(record.get('isSection')){
+                // if the record is modified and the parentId has changed we need to change
+                // the section parent
                 if(record.modified && record.modified.parentId){
                     Ext.Ajax.request({
                         url: '/knitkit/erp_app/desktop/position/change_section_parent',
@@ -128,6 +130,7 @@ var viewConfigItems = {
                     });
                 }
             }
+            // this is an article
             else{
                 if(record.modified && record.modified.parentId){
                     result = false;
