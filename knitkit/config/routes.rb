@@ -50,7 +50,7 @@ Knitkit::Engine.routes.draw do
       match '/comments/:action(/:content_id)' => 'comments'
       #inquir
       match '/inquiries/:action(/:website_id)' => 'inquiries'
-      #positi
+      #position
       match '/position/:action' => 'position'
     end
   end

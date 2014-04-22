@@ -7,11 +7,12 @@ module Knitkit
         def new
           begin
             current_user.with_capability('create', 'Content') do
+              site_id = nil
               result = {}
               website_section_id = params[:section_id]
               article = Article.new
 
-              article.tag_list = params[:tags].split(',').collect{|t| t.strip() } unless params[:tags].blank?
+              article.tag_list = params[:tags].split(',').collect{|t| t.strip } unless params[:tags].blank?
               article.title = params[:title]
               article.internal_identifier = params[:internal_identifier]
               article.display_title = params[:display_title] == 'yes'
@@ -53,7 +54,7 @@ module Knitkit
               website_section_id = params[:section_id]
               article = Article.find(params[:id])
 
-              article.tag_list = params[:tags].split(',').collect{|t| t.strip() } unless params[:tags].blank?
+              article.tag_list = params[:tags].split(',').collect{|t| t.strip } unless params[:tags].blank?
               article.title = params[:title]
               article.internal_identifier = params[:internal_identifier]
               article.display_title = params[:display_title] == 'yes'

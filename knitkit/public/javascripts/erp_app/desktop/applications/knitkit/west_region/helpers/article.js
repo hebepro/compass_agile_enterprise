@@ -67,6 +67,13 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addArticleOptions = function (self, 
                                     value: record.data.tag_list
                                 },
                                 {
+                                    xtype: 'textfield',
+                                    fieldLabel: 'Content Area',
+                                    allowBlank: true,
+                                    name: 'content_area',
+                                    value: record.data.content_area
+                                },
+                                {
                                     xtype: 'displayfield',
                                     fieldLabel: 'Created At',
                                     name: 'created_at',
@@ -84,6 +91,12 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addArticleOptions = function (self, 
                                     name: 'id',
                                     itemId: 'record_id',
                                     value: record.data.id
+                                },
+                                {
+                                    xtype: 'hidden',
+                                    allowBlank: false,
+                                    name: 'section_id',
+                                    value: record.data.parentItemId
                                 }
                             ]
                         },
@@ -102,6 +115,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addArticleOptions = function (self, 
                                                 if (obj.success) {
                                                     record.set('text', values.title);
                                                     record.set('display_title', !Ext.isEmpty(values.display_title));
+                                                    record.set('content_area', values.content_area);
                                                     if (formPanel.getForm().findField('tag_list')) {
                                                         var tag_list = formPanel.getForm().findField('tag_list').getValue();
                                                         record.set('tag_list', tag_list);
@@ -201,4 +215,4 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addArticleOptions = function (self, 
     });
 
     return items;
-}
+};

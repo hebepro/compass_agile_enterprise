@@ -102,8 +102,6 @@ Ext.define("Compass.ErpApp.Shared.CKeditor", {
     setupCkEditor: function () {
         var me = this;
 
-        console.log(this.initialConfig.ckEditorConfig)
-
         Ext.applyIf(this.initialConfig.ckEditorConfig, {
             resize_enabled: false,
             keystrokes: [

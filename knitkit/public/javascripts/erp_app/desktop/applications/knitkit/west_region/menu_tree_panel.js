@@ -43,10 +43,7 @@ var viewConfigItems = {
     plugins: pluginItems,
     listeners: {
         'beforedrop': function (node, data, overModel, dropPosition, dropFunction, options) {
-            if (overModel.data['isWebsiteNavItem']) {
-                return true;
-            }
-            return false;
+            return overModel.data['isWebsiteNavItem'];
         },
         'drop': function (node, data, overModel, dropPosition, options) {
             var positionArray = [];

@@ -31,6 +31,7 @@ module RailsDbAdmin
 
             tables.each do |table|
               result_hash << {:isTable => true,
+                              :id => table[:display],
                               :text => table[:display],
                               :iconCls => 'icon-db-table',
                               :leaf => false}

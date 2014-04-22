@@ -35,6 +35,12 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
                     },
                     {
                         xtype: 'textfield',
+                        fieldLabel: 'Content Area',
+                        allowBlank: true,
+                        name: 'content_area'
+                    },
+                    {
+                        xtype: 'textfield',
                         fieldLabel: 'Internal ID',
                         allowBlank: true,
                         name: 'internal_identifier'
@@ -73,21 +79,17 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
 
                                             var obj = Ext.decode(action.response.responseText);
                                             if (obj.success) {
-
-                                                var obj = Ext.decode(action.response.responseText);
-                                                if (obj.success) {
-                                                    //debugger;
-                                                    var childNode = {
-                                                        id: obj.node.id,
-                                                        text: obj.node.text,
-                                                        objectType: obj.node.objectType,
-                                                        parentItemId: obj.node.parentItemId,
-                                                        siteId: obj.node.siteId,
-                                                        iconCls: obj.node.iconCls,
-                                                        leaf: true
-                                                    }
-                                                    record.appendChild(childNode);
-                                                }
+                                                var childNode = {
+                                                    id: obj.node.id,
+                                                    text: obj.node.text,
+                                                    objectType: obj.node.objectType,
+                                                    parentItemId: obj.node.parentItemId,
+                                                    content_area: obj.node.content_area,
+                                                    siteId: obj.node.siteId,
+                                                    iconCls: obj.node.iconCls,
+                                                    leaf: true
+                                                };
+                                                record.appendChild(childNode);
                                             }
                                             else {
                                                 Ext.Msg.alert("Error", obj.msg);
@@ -445,9 +447,9 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
                                 var obj = Ext.decode(response.responseText);
                                 if (obj.success) {
                                     record.data.hasLayout = true;
-                                    
-									var sectionPanel = Ext.ComponentQuery.query('#knitkitSiteContentsTreePanel').first();
-									sectionPanel.editSectionLayout(record.data.text, sectionId, record.data.siteId);
+
+                                    var sectionPanel = Ext.ComponentQuery.query('#knitkitSiteContentsTreePanel').first();
+                                    sectionPanel.editSectionLayout(record.data.text, sectionId, record.data.siteId);
                                 }
                                 else {
                                     Ext.Msg.alert('Status', obj.message);

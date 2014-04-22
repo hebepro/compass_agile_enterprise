@@ -92,7 +92,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.editWebsiteMenuItem = function (disa
             }).show();
         }
     }
-}
+};
 
 Compass.ErpApp.Desktop.Applications.Knitkit.exportWebsiteMenuItem = function (disabled) {
     return {
@@ -193,7 +193,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.websitePublishMenuItem = function (d
             }).show();
         }
     }
-}
+};
 
 Compass.ErpApp.Desktop.Applications.Knitkit.websiteInquiresMenuItem = function (disabled) {
     return {
@@ -208,7 +208,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.websiteInquiresMenuItem = function (
             knitkitWindow.down('knitkit_centerregion').viewWebsiteInquiries(knitkitModule.currentWebsite.id, knitkitModule.currentWebsite.name);
         }
     }
-}
+};
 
 Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu = function () {
     return {
@@ -464,7 +464,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu = function () {
             ]
         }
     }
-}
+};
 
 // Articles
 Compass.ErpApp.Desktop.Applications.Knitkit.ArticlesMenu = function () {
@@ -489,7 +489,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.ArticlesMenu = function () {
             }).show();
         }
     }
-}
+};
 
 // New Section
 Compass.ErpApp.Desktop.Applications.Knitkit.newSectionMenuItem = {
@@ -639,7 +639,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.newSectionMenuItem = {
 
         }
     }
-}
+};
 
 Compass.ErpApp.Desktop.Applications.Knitkit.SectionsMenu = function () {
     return {
@@ -654,7 +654,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.SectionsMenu = function () {
             ]
         }
     }
-}
+};
 
 // New Theme
 Compass.ErpApp.Desktop.Applications.Knitkit.newThemeMenuItem = {
@@ -859,7 +859,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.ThemeMenu = function () {
             ]
         }
     }
-}
+};
 
 // New Navigation / Menu
 Compass.ErpApp.Desktop.Applications.Knitkit.newNavigationMenuItem = {
@@ -957,7 +957,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.NavigationMenu = function () {
             ]
         }
     }
-}
+};
 
 // New Hosts
 Compass.ErpApp.Desktop.Applications.Knitkit.newHostMenuItem = {
@@ -1046,4 +1046,4 @@ Compass.ErpApp.Desktop.Applications.Knitkit.HostsMenu = function () {
             ]
         }
     }
-}
+};

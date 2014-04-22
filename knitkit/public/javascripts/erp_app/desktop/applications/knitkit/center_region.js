@@ -520,8 +520,6 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
         var itemId = 'editContent-' + id;
         var item = this.workArea.query('#' + itemId).first();
 
-        console.log(self.ckEditorExtraPlugins)
-
         if (Compass.ErpApp.Utility.isBlank(item)) {
             var ckEditor = Ext.create("Compass.ErpApp.Shared.CKeditor", {
                 autoHeight: true,

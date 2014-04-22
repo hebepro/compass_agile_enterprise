@@ -99,17 +99,20 @@ module Knitkit
             website_section_hash[:iconCls] = 'icon-document_info'
           end
 
-          website_section.contents.each do |content_object|
+          website_section.website_section_contents.order('position').each do |website_section_content|
+            content = website_section_content.content
+
             website_section_hash[:children] << {:objectType => "Article",
-                                                :id => content_object.id,
+                                                :id => content.id,
                                                 :siteId => @website.id,
+                                                :content_area => website_section_content.content_area,
                                                 :parentItemId => website_section.id,
                                                 :canEditExcerpt => website_section_hash[:isBlog],
-                                                :text => content_object.title,
-                                                :display_title => content_object.display_title,
-                                                :bodyHtml => content_object.body_html,
-                                                :internal_identifier => content_object.internal_identifier,
-                                                :iconCls => 'icon-document',
+                                                :text => content.title,
+                                                :display_title => content.display_title,
+                                                :bodyHtml => content.body_html,
+                                                :internal_identifier => content.internal_identifier,
+                                                :iconCls => 'x-column-header-wysiwyg',
                                                 :leaf => true}
           end
 

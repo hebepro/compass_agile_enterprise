@@ -20,6 +20,7 @@ var siteContentsStore = Ext.create('Ext.data.TreeStore', {
         'isSection',
         'isDocument',
         'contentInfo',
+        'content_area',
         'isSecured',
         'url',
         'path',
@@ -38,6 +39,7 @@ var siteContentsStore = Ext.create('Ext.data.TreeStore', {
         'renderWithBaseLayout',
         'roles',
         'useMarkdown',
+        'parentItemId',
         // if an article is part of a blog then you can edit the excerpt
         'canEditExcerpt'
     ],
@@ -58,65 +60,112 @@ var viewConfigItems = {
     markDirty: false,
     plugins: pluginItems,
     listeners: {
-        'beforedrop': function (node, data, overModel, dropPosition, dropFunction, options) {
-            if (overModel.data['isWebsiteNavItem']) {
-                return true;
-            }
-            else if (overModel.data['isSection']) {
-                if (overModel.parentNode.data['isSectionRoot']) {
-                    return true;
+        'beforedrop': function (dom, data, overModel, dropPosition, dropHandlers, options) {
+            var record = data.records.first();
+
+            if(record.get('objectType') == 'Article'){
+                if(overModel.get('isSection')){
+                    return false;
                 }
             }
-            else if (overModel.data['isDocument']) {
-                return true;
-            }
-            return false;
         },
-        'drop': function (node, data, overModel, dropPosition, options) {
-            var positionArray = [];
-            var counter = 0;
-            var dropNode = data.records[0];
+        'drop': function (dom, data, overModel, dropPosition, options) {
+            var positionArray = [],
+                record = data.records.first(),
+                result = true,
+                counter = 0;
 
-            if (dropNode.data['isWebsiteNavItem']) {
-                overModel.parentNode.eachChild(function (node) {
-                    positionArray.push({
-                        id: node.data.websiteNavItemId,
-                        position: counter,
-                        klass: 'WebsiteNavItem'
+            if(record.get('isSection')){
+                if(record.modified && record.modified.parentId){
+                    Ext.Ajax.request({
+                        url: '/knitkit/erp_app/desktop/position/change_section_parent',
+                        method: 'PUT',
+                        params:{
+                            section_id: record.get('id').split('_')[1],
+                            parent_id: record.get('parentId').split('_')[1]
+                        },
+                        success: function (response) {
+                            var obj = Ext.decode(response.responseText);
+                            if (!obj.success) {
+                                Ext.Msg.alert("Error", obj.message);
+                                result = false;
+                            }
+                        },
+                        failure: function (response) {
+                            Ext.Msg.alert('Error', 'Error saving positions.');
+                            result = false;
+                        }
                     });
-                    counter++;
-                });
-            }
-            else {
-                overModel.parentNode.eachChild(function (node) {
-                    positionArray.push({
-                        id: node.data.id.split('_')[1],
-                        position: counter,
-                        klass: 'WebsiteSection'
-                    });
-                    counter++;
-                });
-            }
-
-            Ext.Ajax.request({
-                url: '/knitkit/erp_app/desktop/position/update',
-                method: 'PUT',
-                jsonData: {
-                    position_array: positionArray
-                },
-                success: function (response) {
-                    var obj = Ext.decode(response.responseText);
-                    if (obj.success) {
-
-                    }
-                    else {
-                        Ext.Msg.alert("Error", obj.message);
-                    }
-                },
-                failure: function (response) {
-                    Ext.Msg.alert('Error', 'Error saving positions.');
                 }
-            });
+                else{
+                    overModel.parentNode.eachChild(function (node) {
+                        if(node.get('isSection')){
+                            positionArray.push({
+                                id: node.data.id.split('_')[1],
+                                position: counter
+                            });
+                            counter++;
+                        }
+                    });
+
+                    Ext.Ajax.request({
+                        url: '/knitkit/erp_app/desktop/position/update_section_position',
+                        method: 'PUT',
+                        jsonData: {
+                            position_array: positionArray
+                        },
+                        success: function (response) {
+                            var obj = Ext.decode(response.responseText);
+                            if (!obj.success) {
+                                Ext.Msg.alert("Error", obj.message);
+                                result = false;
+                            }
+                        },
+                        failure: function (response) {
+                            Ext.Msg.alert('Error', 'Error saving positions.');
+                            result = false;
+                        }
+                    });
+                }
+            }
+            else{
+                if(record.modified && record.modified.parentId){
+                    result = false;
+                }
+                else{
+                    overModel.parentNode.eachChild(function (node) {
+                        positionArray.push({
+                            id: node.get('id'),
+                            position: counter
+                        });
+                        counter++;
+                    });
+
+                    Ext.Ajax.request({
+                        url: '/knitkit/erp_app/desktop/position/update_article_position',
+                        method: 'PUT',
+                        jsonData: {
+                            position_array: positionArray
+                        },
+                        params:{
+                            section_id: record.parentNode.get('id').split('_')[1]
+                        },
+                        success: function (response) {
+                            var obj = Ext.decode(response.responseText);
+                            if (!obj.success) {
+                                Ext.Msg.alert("Error", obj.message);
+                                result = false;
+                            }
+                        },
+                        failure: function (response) {
+                            Ext.Msg.alert('Error', 'Error saving positions.');
+                            result = false;
+                        }
+                    });
+                }
+            }
+
+            return result;
         }
     }
 };
@@ -244,7 +293,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SiteContentsTreePanel", {
                     }
                 });
             }
-	
+
             if (record.isRoot() && record.hasChildNodes()) {
                 items = [
                     Compass.ErpApp.Desktop.Applications.Knitkit.newSectionMenuItem,
