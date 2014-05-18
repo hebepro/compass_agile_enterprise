@@ -122,6 +122,8 @@ module Knitkit
               :bodyHtml => content.body_html,
               :internal_identifier => content.internal_identifier,
               :iconCls => 'x-column-header-wysiwyg',
+              :created_at => content.created_at,
+              :updated_at => content.updated_at,
               :leaf => true
           }
         end

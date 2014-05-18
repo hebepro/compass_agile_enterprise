@@ -41,7 +41,9 @@ var siteContentsStore = Ext.create('Ext.data.TreeStore', {
         'useMarkdown',
         'parentItemId',
         // if an article is part of a blog then you can edit the excerpt
-        'canEditExcerpt'
+        'canEditExcerpt',
+        {name: 'createdAt', mapping: 'created_at', type: 'date'},
+        {name: 'updatedAt', mapping: 'updated_at', type: 'date'}
     ],
     listeners: {
         'load': function (store, node, records) {

@@ -8,9 +8,8 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addArticleOptions = function (self, 
                     editArticleWindow = Ext.ComponentQuery.query('#' + itemId).first();
 
                 if (Compass.ErpApp.Utility.isBlank(editArticleWindow)) {
-                    editArticleWindow = Ext.create("Ext.window.Window", {
+                    editArticleWindow = Ext.widget("window", {
                         modal: true,
-                        layout: 'fit',
                         title: 'Edit Article',
                         itemId: itemId,
                         buttonAlign: 'center',
@@ -19,7 +18,6 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addArticleOptions = function (self, 
                             labelWidth: 110,
                             frame: false,
                             bodyStyle: 'padding:5px 5px 0',
-                            width: 425,
                             url: '/knitkit/erp_app/desktop/articles/update/',
                             defaults: {width: 225},
                             items: [
@@ -77,13 +75,13 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addArticleOptions = function (self, 
                                     xtype: 'displayfield',
                                     fieldLabel: 'Created At',
                                     name: 'created_at',
-                                    value: record.data.created_at
+                                    value: Ext.Date.format(record.data.createdAt, 'm-d-Y g:i A')
                                 },
                                 {
                                     xtype: 'displayfield',
                                     fieldLabel: 'Updated At',
                                     name: 'updated_at',
-                                    value: record.data.updated_at
+                                    value: Ext.Date.format(record.data.updatedAt, 'm-d-Y g:i A')
                                 },
                                 {
                                     xtype: 'hidden',
@@ -120,7 +118,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addArticleOptions = function (self, 
                                                         var tag_list = formPanel.getForm().findField('tag_list').getValue();
                                                         record.set('tag_list', tag_list);
                                                     }
-                                                    editArticleWindow.close();
+                                                    window.close();
                                                 }
                                                 else {
                                                     Ext.Msg.alert("Error", obj.msg);
@@ -135,8 +133,8 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addArticleOptions = function (self, 
                             },
                             {
                                 text: 'Close',
-                                handler: function () {
-                                    editArticleWindow.close();
+                                handler: function (btn) {
+                                    btn.up('window').close();
                                 }
                             }
                         ]
