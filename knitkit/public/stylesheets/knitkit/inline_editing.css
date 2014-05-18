@@ -15,6 +15,14 @@ a.inline-edit-close img {
     margin-bottom: 7px;
 }
 
+#editableContentContainer .header{
+    color: white;
+    border: 1px solid white;
+    background-color: black;
+    padding: 3px 7px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
 
 span.inline-edit-message{
     float:left;
@@ -30,11 +38,11 @@ div.editable-content-actionresult{
 
 /*simple overlay*/
 div.modal-container{
-    position: absolute;
-    top: 12.5%;
-    left: 12.5%;
+    position: fixed;
+    top: 25%;
+    left:15%;
     width: 75%;
-    height: 600px;
+    height: 100%;
     z-index: 1002;
     overflow: auto;
 }
@@ -77,16 +85,24 @@ div.ckeditor_wrapper{
 }
 
 .modal-overlay{
-    position: absolute;
-    top: 0%;
-    left: 0%;
-    width: 100%;
+    position:fixed;
+    top:0;
+    left:0;
+    bottom:0;
+    right:0;
     height: 100%;
-    background-color: black;
-    z-index:1001;
-    -moz-opacity: 0.8;
-    opacity:.80;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: #000000;
+    opacity: .8;
     filter: alpha(opacity=80);
+    -moz-opacity: .8;
+    z-index: 101;
 }
 /* end inline editing */
+
+body.inline-editing{
+    overflow: hidden;
+}
 

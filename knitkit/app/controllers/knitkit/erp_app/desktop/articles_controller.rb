@@ -12,7 +12,7 @@ module Knitkit
               website_section_id = params[:section_id]
               article = Article.new
 
-              article.tag_list = params[:tags].split(',').collect{|t| t.strip } unless params[:tags].blank?
+              article.tag_list = params[:tags].split(',').collect { |t| t.strip } unless params[:tags].blank?
               article.title = params[:title]
               article.internal_identifier = params[:internal_identifier]
               article.display_title = params[:display_title] == 'yes'
@@ -33,7 +33,7 @@ module Knitkit
                                  :siteId => site_id,
                                  :iconCls => 'x-column-header-wysiwyg',
                                  :leaf => true
-                                }
+                }
 
                 result[:success] = true
               else
@@ -42,7 +42,7 @@ module Knitkit
 
               render :json => result
             end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability=>ex
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
           end
         end
@@ -54,7 +54,7 @@ module Knitkit
               website_section_id = params[:section_id]
               article = Article.find(params[:id])
 
-              article.tag_list = params[:tags].split(',').collect{|t| t.strip } unless params[:tags].blank?
+              article.tag_list = params[:tags].split(',').collect { |t| t.strip } unless params[:tags].blank?
               article.title = params[:title]
               article.internal_identifier = params[:internal_identifier]
               article.display_title = params[:display_title] == 'yes'
@@ -73,7 +73,7 @@ module Knitkit
 
               render :json => result
             end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability=>ex
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
           end
         end
@@ -83,7 +83,7 @@ module Knitkit
             current_user.with_capability('delete', 'Content') do
               render :json => Article.destroy(params[:id]) ? {:success => true} : {:success => false}
             end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability=>ex
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
           end
         end
@@ -93,10 +93,13 @@ module Knitkit
             current_user.with_capability('add_existing', 'Content') do
               website_section = WebsiteSection.find(params[:section_id])
               website_section.contents << Article.find(params[:article_id])
+              website_section.save
 
-              render :json => {:success => true}
+              website_section_content = website_section.website_section_contents.where('content_id = ?', params[:article_id]).first
+
+              render :json => {:success => true, :article => build_article_hash(website_section_content, website_section.website, website_section.is_blog?)}
             end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability=>ex
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
           end
         end
@@ -124,7 +127,7 @@ module Knitkit
 
           sort_hash = params[:sort].blank? ? {} : Hash.symbolize_keys(JSON.parse(params[:sort]).first)
           sort = sort_hash[:property] || sort_default
-          dir  = sort_hash[:direction] || dir_default
+          dir = sort_hash[:direction] || dir_default
           limit = params[:limit] || 10
           start = params[:start] || 0
 
@@ -134,6 +137,7 @@ module Knitkit
 
           Article.class_exec(website_section_id) do
             @@website_section_id = website_section_id
+
             def website_section_position
               self.website_section_contents.find_by_website_section_id(@@website_section_id).position
             end
@@ -163,12 +167,12 @@ module Knitkit
           Article.include_root_in_json = false
           sort_hash = params[:sort].blank? ? {} : Hash.symbolize_keys(JSON.parse(params[:sort]).first)
           sort = sort_hash[:property] || 'title'
-          dir  = sort_hash[:direction] || 'ASC'
+          dir = sort_hash[:direction] || 'ASC'
           limit = params[:limit] || 20
           start = params[:start] || 0
 
-          articles = Article.includes(:website_section_contents)      
-          articles = articles.where( :website_section_contents => { :content_id => nil } ) if params[:show_orphaned] == 'true'
+          articles = Article.includes(:website_section_contents)
+          articles = articles.where(:website_section_contents => {:content_id => nil}) if params[:show_orphaned] == 'true'
           articles = articles.where("UPPER(contents.internal_identifier) LIKE UPPER('%#{params[:iid]}%')") unless params[:iid].blank?
           articles = articles.where("UPPER(contents.title) LIKE UPPER('%#{params[:title]}%')") unless params[:title].blank?
           articles = articles.where("UPPER(contents.body_html) LIKE UPPER('%#{params[:content]}%')
@@ -181,7 +185,7 @@ module Knitkit
           articles.each do |a|
             articles_hash = {}
             articles_hash[:id] = a.id
-            articles_hash[:sections] = a.website_sections.collect{|section| section.title}.join(',')
+            articles_hash[:sections] = a.website_sections.collect { |section| section.title }.join(',')
             articles_hash[:title] = a.title
             articles_hash[:tag_list] = a.tag_list.join(', ')
             articles_hash[:body_html] = a.body_html
@@ -203,7 +207,7 @@ module Knitkit
         def article_attributes
           sort_hash = params[:sort].blank? ? {} : Hash.symbolize_keys(JSON.parse(params[:sort]).first)
           sort = sort_hash[:property] || 'created_at'
-          dir  = sort_hash[:direction] || 'DESC'
+          dir = sort_hash[:direction] || 'DESC'
           limit = params[:limit] || 40
           start = params[:start] || 0
 
@@ -213,15 +217,15 @@ module Knitkit
 
           if dir == "DESC"
             if sort == "data_type" or sort == "description"
-              attributes = attributes.sort {|x,y| x.attribute_type.send(sort) <=> y.attribute_type.send(sort)}
+              attributes = attributes.sort { |x, y| x.attribute_type.send(sort) <=> y.attribute_type.send(sort) }
             else
-              attributes = attributes.sort {|x,y| x.send(sort) <=> y.send(sort)}
+              attributes = attributes.sort { |x, y| x.send(sort) <=> y.send(sort) }
             end
           else
             if sort == "data_type" or sort == "description"
-              attributes = attributes.sort {|x,y| y.attribute_type.send(sort) <=> x.attribute_type.send(sort)}
+              attributes = attributes.sort { |x, y| y.attribute_type.send(sort) <=> x.attribute_type.send(sort) }
             else
-              attributes = attributes.sort {|x,y| y.send(sort) <=> x.send(sort)}
+              attributes = attributes.sort { |x, y| y.send(sort) <=> x.send(sort) }
             end
           end
 
@@ -293,8 +297,8 @@ module Knitkit
           render :json => result
         end
 
-      end#ArticlesController
-    end#Desktop
-  end#ErpApp
-end#Knitkit
+      end #ArticlesController
+    end #Desktop
+  end #ErpApp
+end #Knitkit
 

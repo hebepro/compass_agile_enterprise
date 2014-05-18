@@ -27,6 +27,8 @@ Knitkit.InlineEditing = {
     },
 
     closeEditorClick: function () {
+        var body = jQuery("body");
+
         //make sure modal is not already showing
         if (jQuery("#warning-modal").length === 0) {
             var editor = CKEDITOR.instances['inlineEditTextarea'];
@@ -60,14 +62,16 @@ Knitkit.InlineEditing = {
                     Knitkit.InlineEditing.closeEditor(editor);
                     warningModal.modal('hide');
                     warningModal.remove();
+                    body.removeClass('inline-editing');
                 });
 
                 jQuery("body").append(warningModal);
 
-                warningModal.modal({backdrop:false});
+                warningModal.modal({backdrop: false});
             }
             else {
                 Knitkit.InlineEditing.closeEditor(editor);
+                body.removeClass('inline-editing');
             }
         }
         return false;
@@ -96,7 +100,7 @@ Knitkit.InlineEditing = {
             self.lastUpdate = div.attr('lastupdate');
             var data = div.html();
 
-            var dialogHeader = jQuery("<div style='color: white; border: 1px solid white; padding: 3px 7px; border-top-left-radius: 5px; border-top-right-radius: 5px;'>Edit content: </div>");
+            var dialogHeader = jQuery("<div class='header'>Edit content: </div>");
             var closeLink = jQuery("<a class='inline-edit-close'><img src='/images/icons/close/close_light_16x16.png' /></a><br />");
             var textarea = jQuery('<textarea name="inline-edit-textarea" id="inlineEditTextarea" ></textarea>');
             //var closeLink = jQuery("<a class='inline-edit-close'><img src='images/knitkit/close_window.png' /></a>");
@@ -110,6 +114,7 @@ Knitkit.InlineEditing = {
             editableContentContainer.append(dialogHeader);
             editableContentContainer.append(ckeditorWrapper);
             ckeditorWrapper.append(textarea);
+            textarea.val(data);
             editableContentContainer.append(actionResultDiv);
             actionResultDiv.append(messageSpan);
 
@@ -118,12 +123,15 @@ Knitkit.InlineEditing = {
             body.append(editableContentContainer);
             body.append(overlay);
 
+            body.addClass('inline-editing');
+
             closeLink.bind('click', self.closeEditorClick);
 
             CKEDITOR.replace('inline-edit-textarea',
                 {
                     height: 300,
                     enterMode: CKEDITOR.ENTER_BR,
+                    allowedContent: true,
                     extraPlugins: 'inlineeditsave,codemirror',
                     toolbar: [
                         { name: 'document', items: [ 'Source', '-', 'InlineEditSave' ] },
@@ -138,14 +146,12 @@ Knitkit.InlineEditing = {
                     on: {
                         instanceReady: function (ev) {
                             Knitkit.InlineEditing.contentDiv = div;
-                            this.setData(data);
                             this.focus();
                         },
                         dataReady: function (ev) {
                             this.resetDirty();
                         }
                     }
-
                 });
 
         });

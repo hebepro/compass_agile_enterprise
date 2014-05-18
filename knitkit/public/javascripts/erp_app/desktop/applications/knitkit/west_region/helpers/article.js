@@ -176,7 +176,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addArticleOptions = function (self, 
     }
 
     items.push({
-        text: 'Delete Article',
+        text: 'Detach Article',
         iconCls: 'icon-delete',
         listeners: {
             'click': function () {

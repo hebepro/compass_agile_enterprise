@@ -38,6 +38,10 @@ class WebsiteSection < ActiveRecord::Base
     end
   end
 
+  def is_blog?
+    self.is_a?(Blog) || self.attributes['type'] == 'Blog'
+  end
+
   def secure
     capability = self.add_capability(:view)
     roles = ['admin', 'website_author', self.website.website_role_iid]

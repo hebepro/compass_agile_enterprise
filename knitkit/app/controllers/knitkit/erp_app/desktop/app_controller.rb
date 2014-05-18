@@ -83,7 +83,7 @@ module Knitkit
             end
           end
 
-          if website_section.is_a?(Blog) || website_section.type == 'Blog'
+          if website_section.is_blog?
             website_section_hash[:objectType] = 'Blog'
             website_section_hash[:isBlog] = true
             website_section_hash[:iconCls] = 'icon-blog'
@@ -100,23 +100,30 @@ module Knitkit
           end
 
           website_section.website_section_contents.order('position').each do |website_section_content|
-            content = website_section_content.content
-
-            website_section_hash[:children] << {:objectType => "Article",
-                                                :id => content.id,
-                                                :siteId => @website.id,
-                                                :content_area => website_section_content.content_area,
-                                                :parentItemId => website_section.id,
-                                                :canEditExcerpt => website_section_hash[:isBlog],
-                                                :text => content.title,
-                                                :display_title => content.display_title,
-                                                :bodyHtml => content.body_html,
-                                                :internal_identifier => content.internal_identifier,
-                                                :iconCls => 'x-column-header-wysiwyg',
-                                                :leaf => true}
+            website_section_hash[:children] << build_article_hash(website_section_content, @website, website_section_hash[:isBlog])
           end
 
           website_section_hash
+        end
+
+        def build_article_hash(website_section_content, website, can_edit_excerpt=false)
+          website_section = website_section_content.website_section
+          content = website_section_content.content
+
+          {
+              :objectType => "Article",
+              :id => content.id,
+              :siteId => website.id,
+              :content_area => website_section_content.content_area,
+              :parentItemId => website_section.id,
+              :canEditExcerpt => can_edit_excerpt,
+              :text => content.title,
+              :display_title => content.display_title,
+              :bodyHtml => content.body_html,
+              :internal_identifier => content.internal_identifier,
+              :iconCls => 'x-column-header-wysiwyg',
+              :leaf => true
+          }
         end
 
       end #AppController
