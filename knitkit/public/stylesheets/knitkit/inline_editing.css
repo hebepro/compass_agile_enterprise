@@ -1,21 +1,22 @@
 /* inline editing */
 
 /*hightlight editable areas*/
-div.knitkit-inlineedit-editable{
+div.knitkit-inlineedit-editable {
     cursor: pointer;
     border: 2px dotted red;
     border-radius: 5px;
 }
 
-a.inline-edit-close{
-    float:right;
-    cursor:pointer;
+a.inline-edit-close {
+    float: right;
+    cursor: pointer;
 }
+
 a.inline-edit-close img {
     margin-bottom: 7px;
 }
 
-#editableContentContainer .header{
+#editableContentContainer .header {
     color: white;
     border: 1px solid white;
     background-color: black;
@@ -24,23 +25,26 @@ a.inline-edit-close img {
     border-top-right-radius: 5px;
 }
 
-span.inline-edit-message{
-    float:left;
-    font-weight: bold;
+span.inline-edit-message {
     line-height: 1em;
-    color:#CCC;
-    font-size:16px;
+    color: white;
+    font-size: 16px;
 }
 
-div.editable-content-actionresult{
-    padding-top:5px;
+div.editable-content-actionresult {
+    color: white;
+    border: 1px solid white;
+    background-color: black;
+    padding: 3px 7px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
 
 /*simple overlay*/
-div.modal-container{
+div.modal-container {
     position: fixed;
     top: 25%;
-    left:15%;
+    left: 15%;
     width: 75%;
     height: 100%;
     z-index: 1002;
@@ -48,13 +52,13 @@ div.modal-container{
 }
 
 /*warning modal*/
-#warning-modal{
-    z-index:1003;
-    background-color:white;
-    border:solid 5px #025587;
+#warning-modal {
+    z-index: 1003;
+    background-color: white;
+    border: solid 5px #025587;
     position: absolute;
-    top:40%;
-    left:35%;
+    top: 40%;
+    left: 35%;
     width: 455px;
     height: 55px;
     overflow: auto;
@@ -62,11 +66,11 @@ div.modal-container{
     text-align: center;
 }
 
-#warning-modal span{
+#warning-modal span {
     font: 100% arial;
 }
 
-.warning-btn{
+.warning-btn {
     font: 100% arial;
     border: 1px solid;
     width: 60px;
@@ -79,17 +83,17 @@ div.modal-container{
 
 /*warning modal*/
 
-div.ckeditor_wrapper{
+div.ckeditor_wrapper {
     background-color: #F0EFE2;
-    padding:10px;
+    padding: 10px;
 }
 
-.modal-overlay{
-    position:fixed;
-    top:0;
-    left:0;
-    bottom:0;
-    right:0;
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
     height: 100%;
     width: 100%;
     margin: 0;
@@ -100,9 +104,10 @@ div.ckeditor_wrapper{
     -moz-opacity: .8;
     z-index: 101;
 }
+
 /* end inline editing */
 
-body.inline-editing{
+body.inline-editing {
     overflow: hidden;
 }
 
