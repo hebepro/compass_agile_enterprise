@@ -80,7 +80,7 @@ div.ckeditor_wrapper {
     opacity: .8;
     filter: alpha(opacity=80);
     -moz-opacity: .8;
-    z-index: 101;
+    z-index: 1001;
 }
 
 body.inline-editing {
