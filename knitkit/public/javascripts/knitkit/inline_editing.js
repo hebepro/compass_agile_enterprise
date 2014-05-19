@@ -7,8 +7,13 @@ Knitkit.InlineEditing = {
 
     closeEditor: function (editor) {
         editor.destroy();
+
+        var body = jQuery("body");
+
         jQuery('#editableContentContainer').remove();
         jQuery('#editableContentOverlay').remove();
+        body.removeClass('modal-open');
+        body.removeClass('inline-editing');
     },
 
     saved: function (editor, result, status, xhr) {
@@ -27,8 +32,6 @@ Knitkit.InlineEditing = {
     },
 
     closeEditorClick: function () {
-        var body = jQuery("body");
-
         //make sure modal is not already showing
         if (jQuery("#warning-modal").length === 0) {
             var editor = CKEDITOR.instances['inlineEditTextarea'];
@@ -62,7 +65,6 @@ Knitkit.InlineEditing = {
                     Knitkit.InlineEditing.closeEditor(editor);
                     warningModal.modal('hide');
                     warningModal.remove();
-                    body.removeClass('inline-editing');
                 });
 
                 jQuery("body").append(warningModal);
@@ -71,7 +73,6 @@ Knitkit.InlineEditing = {
             }
             else {
                 Knitkit.InlineEditing.closeEditor(editor);
-                body.removeClass('inline-editing');
             }
         }
         return false;
