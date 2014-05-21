@@ -17,6 +17,9 @@ class CommunicationEvent < ActiveRecord::Base
   validates_presence_of :from_role
   validates_presence_of :from_party
 
+  # serialize ExtJs attributes
+  is_json :custom_fields
+
   def to_label
     "#{short_description}"
   end  

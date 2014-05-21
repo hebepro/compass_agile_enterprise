@@ -18,7 +18,7 @@ module ErpApp
                   end
             end
 
-            def setup_js_authentication(user, app_container)
+            def setup_js_authentication(user=current_user)
               current_user = {
                   :username => user.username,
                   :lastloginAt => user.last_login_at,
@@ -28,6 +28,7 @@ module ErpApp
                   :roles => user.all_roles.collect { |role| role.internal_identifier },
                   :capabilities => user.class_capabilities_to_hash,
                   :id => user.id,
+                  :partyId => user.party.id,
                   :description => user.party.to_s
               }
               js_string = static_javascript_include_tag('erp_app/authentication/compass_user.js')

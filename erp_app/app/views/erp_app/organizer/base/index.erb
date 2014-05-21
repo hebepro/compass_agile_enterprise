@@ -18,7 +18,7 @@
   <!-- end shared application resources -->
 
   <%= static_javascript_include_tag("erp_app/organizer/preference_window.js", "erp_app/organizer/layout.js", "erp_app/organizer/default_menu_tree_panel.js") %>
-  <%= setup_js_authentication(@user, @organizer) %>
+  <%= setup_js_authentication(@user) %>
 
   <!-- application resources -->
   <%= static_javascript_include_tag(@organizer.applications.collect { |app| app.locate_resources('javascripts') }.flatten) %>

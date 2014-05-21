@@ -13,7 +13,8 @@ ErpApp.CompassAccessNegotiator.CompassUser = function (user) {
         this.lastActivityAt = user.lastActivityAt,
         this.failedLoginCount = user.failedLoginCount,
         this.email = user.email,
-        this.description = user.description;
+        this.description = user.description,
+        this.partyId = user.partyId;
 
     /**
      * Checks to see if the passed roles exists in this.roles
