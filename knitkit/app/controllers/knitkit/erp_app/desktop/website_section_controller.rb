@@ -13,6 +13,7 @@ module Knitkit
                 ActiveRecord::Base.transaction do
 
                   @website = Website.find(params[:website_id])
+                  @website_primary_host = @website.nil? ? nil : @website.config_value('primary_host')
 
                   if params[:title].to_s.downcase == 'blog' && params[:type] == 'Blog'
                     result = {:success => false, :message => 'Blog can not be the title of a Blog'}
