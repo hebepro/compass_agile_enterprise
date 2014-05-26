@@ -5,7 +5,7 @@ Provides an application infrastructure based on the Sencha/extjs UI framework, a
 ##Initializer Options
 
 - widgets
-  - This should be let as an empty array.  CompassAE will add any available widgets if finds.
+  - This should be left as an empty array.  CompassAE will add any available widgets if finds.
   - Default : []
 - session_warn_after
   - This is the time in minutes when the user will be warned that thier session is about to expire due to inactivity.
