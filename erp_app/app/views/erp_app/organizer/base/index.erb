@@ -56,17 +56,8 @@
         organizerLayout.setupLogoutButton();
         organizerLayout.setup();
 
-        //Used to stop backspace from redirecting the page
-        Ext.EventManager.on(Ext.isIE ? document : window, 'keydown', function (e, t) {
-            if (e.getKey() == e.BACKSPACE && ((!/^input$/i.test(t.tagName) && !/^textarea$/i.test(t.tagName)) || t.disabled || t.readOnly)) {
-                e.stopEvent();
-            }
-        });
-
-        // Push some history into this windows history to help prevent back button
-        for (var i = 0; i < 10; i++) {
-            window.history.pushState("history", 'CompassAE Organizer', "#"+i*new Date().getMilliseconds());
-        }
+        Compass.ErpApp.Utility.preventBrowserBack();
+        Compass.ErpApp.Utility.setupErpAppLogoutRedirect();
     });
 </script>
 <%= setSessionTimeout %>

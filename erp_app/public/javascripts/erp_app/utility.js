@@ -135,7 +135,7 @@ Compass.ErpApp.Utility.SessionTimeout = {
         this.setForceRedirectTimer('start');
         this.setWarnTimer('start');
     },
-    reset: function(){
+    reset: function () {
         this.resetWarning();
         this.resetRedirect();
     },
@@ -143,7 +143,7 @@ Compass.ErpApp.Utility.SessionTimeout = {
         this.setWarnTimer('stop');
         this.setWarnTimer('start');
     },
-    resetRedirect: function(){
+    resetRedirect: function () {
         this.setForceRedirectTimer('stop');
         this.setForceRedirectTimer('start');
     }
@@ -185,6 +185,37 @@ Compass.ErpApp.Utility.promptReload = function () {
                 window.location.reload();
             }
         });
+    }
+};
+
+Compass.ErpApp.Utility.preventBrowserBack = function () {
+    // Push some history into this windows history to help prevent back button
+    for (var i = 0; i < 10; i++) {
+        window.history.pushState("history", 'CompassAE Desktop', "#" + i * new Date().getMilliseconds());
+    }
+};
+
+Compass.ErpApp.Utility.setupErpAppLogoutRedirect = function () {
+    if (window['Ext']) {
+        var runner = new Ext.util.TaskRunner(),
+            task = runner.start({
+                run: function () {
+                    Ext.Ajax.request({
+                        url: '/session/is_alive',
+                        method: 'GET',
+                        success: function (response) {
+                            var responseObj = Ext.decode(response.responseText);
+                            if (!responseObj.alive) {
+                                window.location = '/erp_app/login';
+                            }
+                        },
+                        failure: function () {
+                            // Log or alert
+                        }
+                    });
+                },
+                interval: 10000
+            });
     }
 };
 

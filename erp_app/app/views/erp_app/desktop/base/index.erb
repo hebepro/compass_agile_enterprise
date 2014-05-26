@@ -244,66 +244,10 @@
             compassDesktop.getModule('<%=application.shortcut_id%>').createWindow();
             <% end %>
 
-        }, 250);
+        }, 1000);
 
-        listeners: {
-            afterlayout: {
-
-                Ext.defer( function () {
-
-                    var arr = Ext.ComponentQuery.query('dataview');
-                    var comp = arr[0];
-
-                    Ext.widget( 'callout', {
-                        cls: 'default',
-                        target: comp,
-                        calloutArrowLocation: 'bottom',
-                        relativePosition: 'c-c',
-                        dismissDelay: 0,
-                        width: 500,
-                        relativeOffsets: [0, -100],
-                        html: "<p>Welcome to Compass Agile Enterprise. These are desktop shortcuts</p>",
-
-                        listeners: {
-                            hide: function () {
-                                this.destroy();
-                            }
-                        }
-                    }).show();
-
-                    var arr2 = Ext.ComponentQuery.query('toolbar[cls~=ux-start-menu-toolbar]');
-                    var comp2 = arr2[0];
-
-                    //debugger;
-
-                    Ext.widget( 'callout', {
-                        cls: 'default',
-                        target: comp,
-                        calloutArrowLocation: 'bottom-left',
-                        relativePosition: 'bl-bl',
-                        dismissDelay: 0,
-                        width: 400,
-                        relativeOffsets: [5, -15],
-                        html: "<p>The task bar includes a start menu and and application icons.</p>",
-
-                        listeners: {
-                            hide: function () {
-                                this.destroy();
-                            }
-                        }
-                    }).show();
-
-
-                }, 35000000 );
-
-            }
-        }
-
-        // Push some history into this windows history to help prevent back button
-        for (var i = 0; i < 10; i++) {
-            window.history.pushState("history", 'CompassAE Desktop', "#" + i * new Date().getMilliseconds());
-        }
-
+        Compass.ErpApp.Utility.preventBrowserBack();
+        Compass.ErpApp.Utility.setupErpAppLogoutRedirect();
     });
 </script>
 <div id="loading-mask"></div>
