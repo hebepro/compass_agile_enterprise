@@ -43,5 +43,20 @@ module ErpTechSvcs
     def keep_alive
       render :json => {:success => true, :last_activity_at => current_user.last_activity_at}
     end
+
+    def is_alive
+      if current_user
+        time_since_last_activity = (Time.now - current_user.last_activity_at)
+
+        if time_since_last_activity > (ErpApp::Config.session_redirect_after * 60)
+          render :json => {:success => false}
+        else
+          render :json => {:success => true, :last_activity_at => current_user.last_activity_at}
+        end
+      else
+        render :json => {:success => false}
+      end
+    end
+
   end #SessionsController
 end #ErpTechSvcs

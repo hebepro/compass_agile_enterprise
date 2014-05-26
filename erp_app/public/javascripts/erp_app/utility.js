@@ -2,7 +2,7 @@ var Compass = window['Compass'] || {};
 Compass['ErpApp'] = Compass['ErpApp'] || {};
 Compass.ErpApp['Utility'] = Compass.ErpApp['Utility'] || {};
 
-//handle session timeout
+//helper to create namespaces
 Compass.ErpApp.Utility.createNamespace = function (namespaces) {
     var spaces = namespaces.split('.'),
         currentNamespace = null;
@@ -19,6 +19,7 @@ Compass.ErpApp.Utility.createNamespace = function (namespaces) {
     }
 };
 
+//handle session timeout
 Compass.ErpApp.Utility.SessionTimeout = {
     enabled: false,
     redirectTo: null,
@@ -32,7 +33,18 @@ Compass.ErpApp.Utility.SessionTimeout = {
             case 'start':
                 var self = this;
                 this.redirectTimer = window.setTimeout(function () {
-                    window.location = self.redirectTo;
+                    jQuery.ajax({
+                        method: 'GET',
+                        url: '/session/is_alive',
+                        success: function (result, request) {
+                            if (result.success) {
+                                self.resetRedirect();
+                            }
+                            else {
+                                window.location = self.redirectTo;
+                            }
+                        }
+                    });
                 }, this.redirectInMilliseconds);
                 break;
             case 'stop':
@@ -123,13 +135,19 @@ Compass.ErpApp.Utility.SessionTimeout = {
         this.setForceRedirectTimer('start');
         this.setWarnTimer('start');
     },
-    reset: function () {
+    reset: function(){
+        this.resetWarning();
+        this.resetRedirect();
+    },
+    resetWarning: function () {
         this.setWarnTimer('stop');
-        this.setForceRedirectTimer('stop');
-
         this.setWarnTimer('start');
+    },
+    resetRedirect: function(){
+        this.setForceRedirectTimer('stop');
         this.setForceRedirectTimer('start');
     }
+
 };
 //end handle session timeout
 
@@ -401,8 +419,8 @@ String.prototype.startsWith = function (str) {
 };
 
 //Array Extensions
-Array.prototype.split = function(n){
-    var len = this.length,out = [], i = 0;
+Array.prototype.split = function (n) {
+    var len = this.length, out = [], i = 0;
     while (i < len) {
         var size = Math.ceil((len - i) / n--);
         out.push(this.slice(i, i + size));
