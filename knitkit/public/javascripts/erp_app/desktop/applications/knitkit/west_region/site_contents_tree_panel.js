@@ -245,7 +245,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SiteContentsTreePanel", {
                 self.initialConfig['centerRegion'].openIframeInTab(record.data.text, record.data['url']);
             }
             else if (record.data['objectType'] === "Article") {
-                var url = '/knitkit/erp_app/desktop/articles/show/' + record.data.id
+                var url = '/knitkit/erp_app/desktop/articles/show/' + record.data.id;
 
                 Ext.Ajax.request({
                     url: url,
