@@ -1,8 +1,8 @@
 class BizTxnEvent < ActiveRecord::Base
   attr_protected :created_at, :updated_at
 
-	belongs_to :biz_txn_acct_root
-	belongs_to :biz_txn_record, :polymorphic => true 
+  belongs_to :biz_txn_acct_root
+  belongs_to :biz_txn_record, :polymorphic => true 
   has_many :biz_txn_party_roles, :dependent => :destroy 
   has_many :biz_txn_event_descs, :dependent => :destroy
   has_many :base_txn_contexts, :dependent => :destroy
@@ -21,7 +21,10 @@ class BizTxnEvent < ActiveRecord::Base
 	alias :account= :biz_txn_acct_root=
 	alias :descriptions :biz_txn_event_descs
 
+  # serialize ExtJs attributes
+  is_json :custom_fields
 
+  
 	#helps when looping through transactions comparing types
 	def txn_type_iid
 		biz_txn_type.internal_identifier if biz_txn_type
