@@ -36,8 +36,7 @@ module ErpApp
           index = (@app_type == 'desktop') ? application_files.index{|x| x =~ /module.js/} : application_files.index{|x| x =~ /base.js/}
           first_load_js = application_files[index]
           application_files.delete_at(index)
-          application_files.push(first_load_js)
-          application_files.reverse!
+          application_files.unshift(first_load_js)
         end
         application_files.map!{|file| File.join("erp_app/#{@app_type}/applications/#{@app_name}",file)}
 
