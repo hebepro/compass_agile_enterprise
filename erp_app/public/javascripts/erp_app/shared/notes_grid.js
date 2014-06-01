@@ -8,6 +8,12 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
      */
     partyId: null,
 
+    listeners:{
+        activate: function(){
+            this.store.loadPage(1);
+        }
+    },
+
     deleteNote: function (rec) {
         var me = this;
 
