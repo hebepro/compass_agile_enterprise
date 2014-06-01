@@ -51,32 +51,32 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
     },
 
     deleteUser: function (rec) {
-        var self = this;
-        self.setWindowStatus('Deleting user...');
+        var me = this;
+        me.setWindowStatus('Deleting user...');
         Ext.Ajax.request({
             url: '/erp_app/desktop/user_management/users/delete/' + rec.get("id"),
             method: 'POST',
             success: function (response) {
                 var obj = Ext.decode(response.responseText);
                 if (obj.success) {
-                    self.clearWindowStatus();
-                    self.getStore().load();
+                    me.clearWindowStatus();
+                    me.getStore().load();
                 }
                 else {
-                    self.clearWindowStatus();
+                    me.clearWindowStatus();
                     Ext.Msg.alert('Error', obj.message);
                 }
             },
             failure: function (response) {
-                self.clearWindowStatus();
+                me.clearWindowStatus();
                 Ext.Msg.alert('Error', 'Error deleting user.');
             }
         });
     },
 
     resetPassword: function (rec) {
-        var self = this;
-        self.setWindowStatus('Resetting password...');
+        var me = this;
+        me.setWindowStatus('Resetting password...');
         Ext.Ajax.request({
             url: '/users/reset_password/',
             params: {
@@ -86,16 +86,16 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
             success: function (response) {
                 var obj = Ext.decode(response.responseText);
                 if (obj.success) {
-                    self.clearWindowStatus();
+                    me.clearWindowStatus();
                     Ext.Msg.alert('Notice', obj.message);
                 }
                 else {
-                    self.clearWindowStatus();
+                    me.clearWindowStatus();
                     Ext.Msg.alert('Error', obj.message);
                 }
             },
             failure: function (response) {
-                self.clearWindowStatus();
+                me.clearWindowStatus();
                 Ext.Msg.alert('Error', 'Error resetting password.');
             }
         });
@@ -104,15 +104,15 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
     viewUser: function (rec) {
         this.setWindowStatus('Loading User...');
         var userId = rec.get('id');
-        var self = this;
+        var me = this;
         Ext.Ajax.request({
             url: '/erp_app/desktop/user_management/users/get_details/' + userId,
             params: {},
             success: function (responseObject) {
                 var response = Ext.decode(responseObject.responseText);
-                self.tabPanel.removeAll();
+                me.tabPanel.removeAll();
 
-                self.initialConfig.tabPanel.add(
+                me.initialConfig.tabPanel.add(
                     {
                         xtype: 'usermanagement_personalinfopanel',
                         businessParty: response.businessParty,
@@ -120,21 +120,21 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
                         entityType: response.entityType
                     });
 
-                self.initialConfig.tabPanel.add(
+                me.initialConfig.tabPanel.add(
                     {
                         xtype: 'controlpanel_userapplicationmgtpanel',
                         userId: userId,
                         title: 'Desktop Applications',
                         appContainerType: 'Desktop'
                     });
-                self.initialConfig.tabPanel.add(
+                me.initialConfig.tabPanel.add(
                     {
                         xtype: 'controlpanel_userapplicationmgtpanel',
                         userId: userId,
                         appContainerType: 'Organizer',
                         title: 'Organizer Applications'
                     });
-                self.initialConfig.tabPanel.add(
+                me.initialConfig.tabPanel.add(
                     {
                         xtype: 'controlpanel_userapplicationmgtpanel',
                         userId: userId,
@@ -142,18 +142,18 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
                         title: 'Mobile Applications'
                     });
 
-                self.initialConfig.tabPanel.add(
+                me.initialConfig.tabPanel.add(
                     {
                         xtype: 'shared_notesgrid',
                         partyId: rec.get('party_id'),
                         title: 'Notes'
                     });
 
-                self.initialConfig.tabPanel.setActiveTab(0);
-                self.clearWindowStatus('Loading User...');
+                me.initialConfig.tabPanel.setActiveTab(0);
+                me.clearWindowStatus('Loading User...');
             },
             failure: function () {
-                self.clearWindowStatus('Loading User...');
+                me.clearWindowStatus('Loading User...');
                 Ext.Msg.alert('Status', 'Error loading User');
             }
         });
@@ -161,11 +161,11 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
 
     initComponent: function () {
         this.store.load();
-        Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid.superclass.initComponent.call(this, arguments);
+        this.callSuper();
     },
 
     constructor: function (config) {
-        var self = this;
+        var me = this;
 
         var usersStore = Ext.create('Ext.data.Store', {
             proxy: {
@@ -222,7 +222,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
                         tooltip: 'View',
                         handler: function (grid, rowIndex, colIndex) {
                             var rec = grid.getStore().getAt(rowIndex);
-                            self.viewUser(rec);
+                            me.viewUser(rec);
                         }
                     }
                 ]
@@ -247,7 +247,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
                                 }
                                 else if (btn == 'yes') {
                                     var rec = grid.getStore().getAt(rowIndex);
-                                    self.resetPassword(rec);
+                                    me.resetPassword(rec);
                                 }
                             });
                         }
@@ -274,7 +274,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
                                 }
                                 else if (btn == 'yes') {
                                     var rec = grid.getStore().getAt(rowIndex);
-                                    self.deleteUser(rec);
+                                    me.deleteUser(rec);
                                 }
                             });
                         }
@@ -366,21 +366,21 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
                                     'click': function (button) {
                                         var window = button.findParentByType('window');
                                         var formPanel = window.query('.form')[0];
-                                        self.setWindowStatus('Creating user...');
+                                        me.setWindowStatus('Creating user...');
                                         formPanel.getForm().submit({
                                             reset: true,
                                             success: function (form, action) {
-                                                self.clearWindowStatus();
+                                                me.clearWindowStatus();
                                                 var obj = Ext.decode(action.response.responseText);
                                                 if (obj.success) {
-                                                    self.getStore().load();
+                                                    me.getStore().load();
                                                 }
                                                 else {
                                                     Ext.Msg.alert("Error", obj.message);
                                                 }
                                             },
                                             failure: function (form, action) {
-                                                self.clearWindowStatus();
+                                                me.clearWindowStatus();
                                                 if (action.response !== undefined) {
                                                     var obj = Ext.decode(action.response.responseText);
                                                     Ext.Msg.alert("Error", obj.message);
@@ -455,9 +455,14 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
                 displayInfo: true,
                 displayMsg: 'Displaying {0} - {1} of {2}',
                 emptyMsg: "No Users"
-            })
+            }),
+            listeners:{
+                itemdblclick: function(grid, record, item, index){
+                    me.viewUser(record);
+                }
+            }
         }, config);
 
-        Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid.superclass.constructor.call(this, config);
+        this.callSuper([config]);
     }
 });

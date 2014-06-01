@@ -33,18 +33,35 @@ Compass.ErpApp.Utility.SessionTimeout = {
             case 'start':
                 var self = this;
                 this.redirectTimer = window.setTimeout(function () {
-                    jQuery.ajax({
-                        method: 'GET',
-                        url: '/session/is_alive',
-                        success: function (result, request) {
-                            if (result.success) {
-                                self.resetRedirect();
+                    if (window['Ext']) {
+                        Ext.Ajax.request({
+                            method: 'POST',
+                            url: '/session/is_alive',
+                            success: function (response, request) {
+                                var result = Ext.decode(repsonse.responseText);
+                                if (result.success) {
+                                    self.resetRedirect();
+                                }
+                                else {
+                                    window.location = self.redirectTo;
+                                }
                             }
-                            else {
-                                window.location = self.redirectTo;
+                        });
+                    }
+                    else{
+                        jQuery.ajax({
+                            method: 'GET',
+                            url: '/session/is_alive',
+                            success: function (result, request) {
+                                if (result.success) {
+                                    self.resetRedirect();
+                                }
+                                else {
+                                    window.location = self.redirectTo;
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                 }, this.redirectInMilliseconds);
                 break;
             case 'stop':
@@ -214,7 +231,7 @@ Compass.ErpApp.Utility.setupErpAppLogoutRedirect = function () {
                         }
                     });
                 },
-                interval: 10000
+                interval: 60000
             });
     }
 };
