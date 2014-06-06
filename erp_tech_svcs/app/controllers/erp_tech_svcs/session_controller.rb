@@ -2,10 +2,6 @@ module ErpTechSvcs
   class SessionController < ActionController::Base
     def create
       login = params[:login].strip
-
-      last_login_at = nil
-      potential_user = User.where('username = ? or email = ?', login, login).first
-      last_login_at = potential_user.last_login_at unless potential_user.nil?
       if login(login, params[:password])
         #log when someone logs in
         ErpTechSvcs::ErpTechSvcsAuditLog.successful_login(current_user)
