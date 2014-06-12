@@ -141,6 +141,12 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
      */
     skipUserActivationEmail: true,
 
+    /**
+     * @cfg {Array} additionalActionColumns
+     * Additional action columns to add.
+     */
+    additionalActionColumns: [],
+
     constructor: function (config) {
         var listeners = {
             activate: function () {
@@ -477,6 +483,10 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
                     }
                 ]
             });
+        }
+
+        if(me.additionalActionColumns.length > 0){
+            columns = columns.concat(me.additionalActionColumns);
         }
 
         this.columns = columns;
