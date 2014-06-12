@@ -34,9 +34,6 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.ImageAssetsDataView", {
                         var file = files[i],
                             reader = new FileReader();
 
-                        var loadMask = new Ext.LoadMask(self, {msg:"Please wait..."});
-                        loadMask.show();
-
                         Compass.ErpApp.Utility.addEventHandler(reader, 'loadend', function (e, file) {
                             var bin = this.result;
 
@@ -44,29 +41,27 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.ImageAssetsDataView", {
                                 headers: {'Content-Type': file.type},
                                 url: config['uploadUrl'],
                                 jsonData: bin,
-                                params:{
+                                params: {
                                     name: file.name,
                                     directory: self.directory,
                                     website_id: self.websiteId,
                                     is_drag_drop: true
                                 },
-                                success: function(result){
-                                    loadMask.hide();
+                                success: function (result) {
                                     resultObj = Ext.JSON.decode(result.responseText);
-                                    if(resultObj.success){
+                                    if (resultObj.success) {
                                         store.load({
-                                            params:{
+                                            params: {
                                                 directory: self.directory
                                             }
                                         });
                                         self.fireEvent('imageuploaded', self);
                                     }
-                                    else{
+                                    else {
                                         Ext.Msg.alert('Error', 'Could not upload image');
                                     }
                                 },
-                                failure: function(result){
-                                    loadMask.hide();
+                                failure: function (result) {
                                     Ext.Msg.alert('Error', 'Could not upload image');
                                 }
                             });

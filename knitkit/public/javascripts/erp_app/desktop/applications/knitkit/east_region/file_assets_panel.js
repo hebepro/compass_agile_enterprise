@@ -55,140 +55,105 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.FileAssetsPanel", {
                     Ext.Msg.alert('Error', 'Could not load available roles');
                 }
             });
-        },
+        };
 
-            // this.changeSecurityOnFile = function(node, secure, model, websiteId){
-            //   var msg = secure ? 'Securing file...' : 'Unsecuring file...';
-            //   var waitMsg = Ext.Msg.wait("Please Wait", msg);
-            //   Ext.Ajax.request({
-            //     url: '/knitkit/erp_app/desktop/file_assets/'+model+'/update_security',
-            //     method: 'POST',
-            //     params:{
-            //       path:node.get('id'),
-            //       secure:secure,
-            //       website_id:websiteId
-            //     },
-            //     success: function(response) {
-            //       var obj = Ext.decode(response.responseText);
-            //       if(obj.success){
-            //         waitMsg.hide();
-            //         if(secure){
-            //           node.set('iconCls', 'icon-document_lock');
-            //         }
-            //         else{
-            //           node.set('iconCls', 'icon-document');
-            //         }
-            //         node.set('isSecured',secure);
-            //         node.commit();
-            //       }
-            //       else{
-            //         Ext.Msg.alert('Error', 'Error securing file.');
-            //       }
-            //     },
-            //     failure: function(response) {
-            //       waitMsg.hide();
-            //       Ext.Msg.alert('Error', 'Error securing file.');
-            //     }
-            //   });
-            // };
-
-            this.sharedFileAssetsTreePanel = Ext.create("Compass.ErpApp.Shared.FileManagerTree", {
-                loadMask: true,
-                collapsible: false,
-                title: 'Shared',
-                rootText: 'Shared Files',
-                allowDownload: false,
-                addViewContentsToContextMenu: false,
-                showNewFileMenuItem: false,
-                rootVisible: true,
-                multiSelect: true,
-                controllerPath: '/knitkit/erp_app/desktop/file_assets/shared',
-                standardUploadUrl: '/knitkit/erp_app/desktop/file_assets/shared/upload_file',
-                url: '/knitkit/erp_app/desktop/file_assets/shared/expand_directory',
-                containerScroll: true,
-                additionalContextMenuItems: [
-                    {
-                        nodeType: 'leaf',
-                        text: 'Insert link at cursor',
-                        iconCls: 'icon-add',
-                        listeners: {
-                            scope: self,
-                            'click': function () {
-                                var node = this.sharedFileAssetsTreePanel.selectedNode;
-                                Ext.MessageBox.prompt('Display Name', 'Please enter display name:', function (btn, text) {
-                                    if (btn == 'ok') {
-                                        self.module.centerRegion.insertHtmlIntoActiveCkEditorOrCodemirror('<a href="/download/' + node.data.text + '?path=' + node.data.downloadPath + '">' + text + '</a>');
-                                    }
-                                });
-                            }
-                        }
-                    },
-                    {
-                        nodeType: 'leaf',
-                        text: 'Insert link at cursor (inline)',
-                        iconCls: 'icon-add',
-                        listeners: {
-                            scope: self,
-                            'click': function () {
-                                var node = this.sharedFileAssetsTreePanel.selectedNode;
-                                Ext.MessageBox.prompt('Display Name', 'Please enter display name:', function (btn, text) {
-                                    if (btn == 'ok') {
-                                        self.module.centerRegion.insertHtmlIntoActiveCkEditorOrCodemirror('<a href="/download/' + node.data.text + '?path=' + node.data.downloadPath + '&disposition=inline">' + text + '</a>');
-                                    }
-                                });
-                            }
-                        }
-                    },
-                    {
-                        nodeType: 'leaf',
-                        text: 'Insert link at cursor (prompt)',
-                        iconCls: 'icon-add',
-                        listeners: {
-                            scope: self,
-                            'click': function () {
-                                var node = this.sharedFileAssetsTreePanel.selectedNode;
-                                Ext.MessageBox.prompt('Display Name', 'Please enter display name:', function (btn, text) {
-                                    if (btn == 'ok') {
-                                        self.module.centerRegion.insertHtmlIntoActiveCkEditorOrCodemirror('<a href="/download/' + node.data.text + '?path=' + node.data.downloadPath + '&disposition=attachment">' + text + '</a>');
-                                    }
-                                });
-                            }
-                        }
-                    },
-                    {
-                        nodeType: 'leaf',
-                        text: 'Security',
-                        iconCls: 'icon-document_lock',
-                        listeners: {
-                            scope: self,
-                            'click': function () {
-                                var node = this.sharedFileAssetsTreePanel.selectedNode;
-                                self.changeSecurityOnFile(node, !node.get('isSecured'), 'shared');
-                            }
+        this.sharedFileAssetsTreePanel = Ext.create("Compass.ErpApp.Shared.FileManagerTree", {
+            loadMask: true,
+            collapsible: false,
+            title: 'Shared',
+            rootText: 'Shared Files',
+            allowDownload: false,
+            addViewContentsToContextMenu: false,
+            showNewFileMenuItem: false,
+            rootVisible: true,
+            multiSelect: true,
+            controllerPath: '/knitkit/erp_app/desktop/file_assets/shared',
+            standardUploadUrl: '/knitkit/erp_app/desktop/file_assets/shared/upload_file',
+            url: '/knitkit/erp_app/desktop/file_assets/shared/expand_directory',
+            containerScroll: true,
+            additionalContextMenuItems: [
+                {
+                    nodeType: 'leaf',
+                    text: 'Insert link at cursor',
+                    iconCls: 'icon-add',
+                    listeners: {
+                        scope: self,
+                        'click': function () {
+                            var node = this.sharedFileAssetsTreePanel.selectedNode;
+                            Ext.MessageBox.prompt('Display Name', 'Please enter display name:', function (btn, text) {
+                                if (btn == 'ok') {
+                                    self.module.centerRegion.insertHtmlIntoActiveCkEditorOrCodemirror('<a href="/download/' + node.data.text + '?path=' + node.data.downloadPath + '">' + text + '</a>');
+                                }
+                            });
                         }
                     }
-                ],
-                listeners: {
-                    'allowdelete': function () {
-                        return currentUser.hasCapability('delete', 'GlobalFileAsset');
-                    },
-                    'allowupload': function () {
-                        return currentUser.hasCapability('upload', 'GlobalFileAsset');
-                    },
-                    'itemclick': function (view, record, item, index, e) {
-                        e.stopEvent();
-                        return false;
-                    },
-                    'fileDeleted': function (fileTreePanel, node) {
-                    },
-                    'fileUploaded': function (fileTreePanel, node) {
-                    },
-                    'downloadfile': function (fileTreePanel, node) {
-                        window.open("/download/" + node.data.text + "?path=" + node.data.downloadPath, 'mywindow', 'width=400,height=200');
-                        return false;
+                },
+                {
+                    nodeType: 'leaf',
+                    text: 'Insert link at cursor (inline)',
+                    iconCls: 'icon-add',
+                    listeners: {
+                        scope: self,
+                        'click': function () {
+                            var node = this.sharedFileAssetsTreePanel.selectedNode;
+                            Ext.MessageBox.prompt('Display Name', 'Please enter display name:', function (btn, text) {
+                                if (btn == 'ok') {
+                                    self.module.centerRegion.insertHtmlIntoActiveCkEditorOrCodemirror('<a href="/download/' + node.data.text + '?path=' + node.data.downloadPath + '&disposition=inline">' + text + '</a>');
+                                }
+                            });
+                        }
+                    }
+                },
+                {
+                    nodeType: 'leaf',
+                    text: 'Insert link at cursor (prompt)',
+                    iconCls: 'icon-add',
+                    listeners: {
+                        scope: self,
+                        'click': function () {
+                            var node = this.sharedFileAssetsTreePanel.selectedNode;
+                            Ext.MessageBox.prompt('Display Name', 'Please enter display name:', function (btn, text) {
+                                if (btn == 'ok') {
+                                    self.module.centerRegion.insertHtmlIntoActiveCkEditorOrCodemirror('<a href="/download/' + node.data.text + '?path=' + node.data.downloadPath + '&disposition=attachment">' + text + '</a>');
+                                }
+                            });
+                        }
+                    }
+                },
+                {
+                    nodeType: 'leaf',
+                    text: 'Security',
+                    iconCls: 'icon-document_lock',
+                    listeners: {
+                        scope: self,
+                        'click': function () {
+                            var node = this.sharedFileAssetsTreePanel.selectedNode;
+                            self.changeSecurityOnFile(node, !node.get('isSecured'), 'shared');
+                        }
                     }
                 }
-            });
+            ],
+            listeners: {
+                'allowdelete': function () {
+                    return currentUser.hasCapability('delete', 'GlobalFileAsset');
+                },
+                'allowupload': function () {
+                    return currentUser.hasCapability('upload', 'GlobalFileAsset');
+                },
+                'itemclick': function (view, record, item, index, e) {
+                    e.stopEvent();
+                    return false;
+                },
+                'fileDeleted': function (fileTreePanel, node) {
+                },
+                'fileUploaded': function (fileTreePanel, node) {
+                },
+                'downloadfile': function (fileTreePanel, node) {
+                    window.open("/download/" + node.data.text + "?path=" + node.data.downloadPath, 'mywindow', 'width=400,height=200');
+                    return false;
+                }
+            }
+        });
 
         this.websiteFileAssetsTreePanel = Ext.create("Compass.ErpApp.Shared.FileManagerTree", {
             itemId: 'websiteFileAssetsTreePanel',

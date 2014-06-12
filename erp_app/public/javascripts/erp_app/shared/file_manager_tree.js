@@ -431,11 +431,11 @@ Ext.define("Compass.ErpApp.Shared.FileManagerTree", {
                                                 var responseObj = Ext.decode(response.responseText);
                                                 msg.hide();
                                                 if (responseObj.success) {
+                                                    self.fireEvent('fileDeleted', this, record);
                                                     store.load({
                                                         node: record.parentNode,
                                                         params: self.extraPostData
                                                     });
-                                                    self.fireEvent('fileDeleted', this, record);
                                                 }
                                                 else {
                                                     Ext.Msg.alert("Error", responseObj.error);
