@@ -341,7 +341,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
         if (Compass.ErpApp.Utility.isBlank(item)) {
             var ckEditor = Ext.create("Compass.ErpApp.Shared.CKeditor", {
                 autoHeight: true,
-                value: content,
+                //value:content,
                 ckEditorConfig: {
                     extraPlugins: self.ckEditorExtraPlugins,
                     toolbar: self.ckEditorToolbar
@@ -350,9 +350,66 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                     save: function (comp, content) {
                         self.saveExcerpt(id, comp, content, siteId);
                         if (!Ext.isEmpty(contentGridStore)) contentGridStore.load();
+                    },
+                    ckeditordrop: function (ckeditorPanel, dropEvent) {
+                        var dataTransfer = dropEvent.dataTransfer;
+                        var files = dataTransfer.files;
+                        for (var i = 0; i < files.length; i++) {
+                            var loadMask = new Ext.LoadMask(ckeditorPanel, {msg:"Please wait..."});
+                            loadMask.show();
+
+                            var file = files[i];
+                            var reader = new FileReader();
+
+                            Compass.ErpApp.Utility.addEventHandler(reader, 'loadend', function (e, file) {
+                                var bin = this.result;
+
+                                Ext.Ajax.request({
+                                    headers: {'Content-Type': file.type},
+                                    url: '/knitkit/erp_app/desktop/image_assets/shared/upload_file',
+                                    jsonData: bin,
+                                    params:{
+                                        name: file.name,
+                                        directory: 'root_node',
+                                        is_drag_drop: true
+                                    },
+                                    success: function(result){
+                                        loadMask.hide();
+                                        resultObj = Ext.JSON.decode(result.responseText);
+                                        if(resultObj.success){
+                                            ckeditorPanel.insertHtml('<img src='+resultObj.url+' height="200" width="200" />');
+                                            var sharedImageAssetsDataView = self.up('#knitkit').down('knitkit_ImageAssetsPanel').sharedImageAssetsDataView,
+                                                sharedImageAssetsTreePanel = self.up('#knitkit').down('knitkit_ImageAssetsPanel').sharedImageAssetsTreePanel;
+
+                                            sharedImageAssetsDataView.getStore().load({
+                                                params:{
+                                                    directory: sharedImageAssetsDataView.directory
+                                                }
+                                            });
+                                            sharedImageAssetsTreePanel.getStore().load({
+                                                callback:function(){
+                                                    sharedImageAssetsTreePanel.getView().refresh();
+                                                }
+                                            });
+                                        }
+                                        else{
+                                            Ext.Msg.alert('Error', 'Could not upload image');
+                                        }
+                                    },
+                                    failure: function(result){
+                                        loadMask.hide();
+                                        Ext.Msg.alert('Error', 'Could not upload image');
+                                    }
+                                });
+                            }.bindToEventHandler(file));
+
+                            reader.readAsDataURL(file);
+                        }
                     }
                 }
             });
+
+            ckEditor.setValue(content);
 
             var items = [
                 {
@@ -372,6 +429,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                     region: 'south',
                     height: 150,
                     collapsible: true,
+                    collapsed: true,
                     centerRegion: self,
                     siteId: siteId
                 });
@@ -383,6 +441,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                     region: 'south',
                     height: 150,
                     collapsible: true,
+                    collapsed: true,
                     centerRegion: self
                 });
             }
