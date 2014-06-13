@@ -19,7 +19,7 @@ module ErpTechSvcs
                          else
                            case ::ActiveRecord::Base.connection.instance_values["config"][:adapter]
                              when 'postgresql'
-                               ::ActiveRecord::Coders::Hstore
+                             ::ActiveRecord::Coders::NestedHstore
                              else
                                JSON
                            end
