@@ -1,14 +1,5 @@
-var siteContentsStore = Ext.create('Ext.data.TreeStore', {
-    proxy: {
-        type: 'ajax',
-        url: '/knitkit/erp_app/desktop/site/build_content_tree',
-        timeout: 90000
-    },
-    root: {
-        text: 'Sections/Web Pages',
-        iconCls: 'icon-ia',
-        expanded: true
-    },
+var siteContentsModel = Ext.define('SiteContentsModel', {
+    extend: 'Ext.data.TreeModel',
     fields: [
         'objectType',
         'text',
@@ -40,11 +31,29 @@ var siteContentsStore = Ext.create('Ext.data.TreeStore', {
         'roles',
         'useMarkdown',
         'parentItemId',
+        'tag_list',
         // if an article is part of a blog then you can edit the excerpt
         'canEditExcerpt',
         {name: 'createdAt', mapping: 'created_at', type: 'date'},
         {name: 'updatedAt', mapping: 'updated_at', type: 'date'}
-    ],
+    ]
+});
+
+var siteContentsStore = Ext.create('Ext.data.TreeStore', {
+    model: 'SiteContentsModel',
+    proxy: {
+        type: 'ajax',
+        url: '/knitkit/erp_app/desktop/site/build_content_tree',
+        timeout: 90000,
+        reader: {
+            type: 'json'
+        }
+    },
+    root: {
+        text: 'Sections/Web Pages',
+        iconCls: 'icon-ia',
+        expanded: true
+    },
     listeners: {
         'load': function (store, node, records) {
             store.getRootNode().expandChildren(true);
@@ -65,8 +74,8 @@ var viewConfigItems = {
         'beforedrop': function (dom, data, overModel, dropPosition, dropHandlers, options) {
             var record = data.records.first();
 
-            if(record.get('objectType') == 'Article'){
-                if(overModel.get('isSection')){
+            if (record.get('objectType') == 'Article') {
+                if (overModel.get('isSection')) {
                     return false;
                 }
             }
@@ -77,14 +86,14 @@ var viewConfigItems = {
                 result = true,
                 counter = 0;
 
-            if(record.get('isSection')){
+            if (record.get('isSection')) {
                 // if the record is modified and the parentId has changed we need to change
                 // the section parent
-                if(record.modified && record.modified.parentId){
+                if (record.modified && record.modified.parentId) {
                     Ext.Ajax.request({
                         url: '/knitkit/erp_app/desktop/position/change_section_parent',
                         method: 'PUT',
-                        params:{
+                        params: {
                             section_id: record.get('id').split('_')[1],
                             parent_id: record.get('parentId').split('_')[1]
                         },
@@ -101,9 +110,9 @@ var viewConfigItems = {
                         }
                     });
                 }
-                else{
+                else {
                     overModel.parentNode.eachChild(function (node) {
-                        if(node.get('isSection')){
+                        if (node.get('isSection')) {
                             positionArray.push({
                                 id: node.data.id.split('_')[1],
                                 position: counter
@@ -133,11 +142,11 @@ var viewConfigItems = {
                 }
             }
             // this is an article
-            else{
-                if(record.modified && record.modified.parentId){
+            else {
+                if (record.modified && record.modified.parentId) {
                     result = false;
                 }
-                else{
+                else {
                     overModel.parentNode.eachChild(function (node) {
                         positionArray.push({
                             id: node.get('id'),
@@ -152,7 +161,7 @@ var viewConfigItems = {
                         jsonData: {
                             position_array: positionArray
                         },
-                        params:{
+                        params: {
                             section_id: record.parentNode.get('id').split('_')[1]
                         },
                         success: function (response) {

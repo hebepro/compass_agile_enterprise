@@ -5,45 +5,47 @@ module Knitkit
         @@datetime_format = "%m/%d/%Y %l:%M%P"
 
         def new
-          begin
-            current_user.with_capability('create', 'Content') do
-              site_id = nil
-              result = {}
-              website_section_id = params[:section_id]
-              article = Article.new
+          ActiveRecord::Base.transaction do
+            begin
+              current_user.with_capability('create', 'Content') do
+                result = {}
+                website_section_id = params[:section_id]
+                article = Article.new
 
-              article.tag_list = params[:tags].split(',').collect { |t| t.strip } unless params[:tags].blank?
-              article.title = params[:title]
-              article.internal_identifier = params[:internal_identifier]
-              article.display_title = params[:display_title] == 'yes'
-              article.created_by = current_user
+                article.tag_list = params[:tags].split(',').collect { |t| t.strip } unless params[:tags].blank?
+                article.title = params[:title]
+                article.internal_identifier = params[:internal_identifier]
+                article.display_title = params[:display_title] == 'yes'
+                article.created_by = current_user
 
-              if article.save
-                unless website_section_id.blank?
-                  website_section = WebsiteSection.find(website_section_id)
-                  article.website_sections << website_section
-                  article.update_content_area_and_position_by_section(website_section, params['content_area'], params['position'])
-                  site_id = website_section.website_id
+                if article.save
+                  result[:node] = if website_section_id.blank?
+                                    {:text => params[:title],
+                                     :id => article.id,
+                                     :objectType => 'Article',
+                                     :parentItemId => params[:section_id],
+                                     :siteId => nil,
+                                     :iconCls => 'x-column-header-wysiwyg',
+                                     :leaf => true
+                                    }
+                                  else
+                                    website_section = WebsiteSection.find(website_section_id)
+                                    article.website_sections << website_section
+                                    website_section_content = article.update_content_area_and_position_by_section(website_section, params['content_area'], params['position'])
+
+                                    build_article_hash(website_section_content, website_section.website, website_section.is_blog?)
+                                  end
+
+                  result[:success] = true
+                else
+                  result[:success] = false
                 end
 
-                result[:node] = {:text => params[:title],
-                                 :id => article.id,
-                                 :objectType => 'Article',
-                                 :parentItemId => params[:section_id],
-                                 :siteId => site_id,
-                                 :iconCls => 'x-column-header-wysiwyg',
-                                 :leaf => true
-                }
-
-                result[:success] = true
-              else
-                result[:success] = false
+                render :json => result
               end
-
-              render :json => result
+            rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
+              render :json => {:success => false, :message => ex.message}
             end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
-            render :json => {:success => false, :message => ex.message}
           end
         end
 
@@ -150,8 +152,6 @@ module Knitkit
             articles_hash[:id] = a.id
             articles_hash[:title] = a.title
             articles_hash[:tag_list] = a.tag_list.join(', ')
-            articles_hash[:body_html] = a.body_html
-            articles_hash[:excerpt_html] = a.excerpt_html
             articles_hash[:internal_identifier] = a.internal_identifier
             articles_hash[:display_title] = a.display_title
             articles_hash[:position] = a.position(website_section_id)

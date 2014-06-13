@@ -42,6 +42,12 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
                     },
                     {
                         xtype: 'textfield',
+                        fieldLabel: 'Tags',
+                        allowBlank: true,
+                        name: 'tags'
+                    },
+                    {
+                        xtype: 'textfield',
                         fieldLabel: 'Internal ID',
                         allowBlank: true,
                         name: 'internal_identifier'
@@ -78,20 +84,11 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
                                     formPanel.getForm().submit({
                                         reset: true,
                                         success: function (form, action) {
-
                                             var obj = Ext.decode(action.response.responseText);
                                             if (obj.success) {
-                                                var childNode = {
-                                                    id: obj.node.id,
-                                                    text: obj.node.text,
-                                                    objectType: obj.node.objectType,
-                                                    parentItemId: obj.node.parentItemId,
-                                                    content_area: obj.node.content_area,
-                                                    siteId: obj.node.siteId,
-                                                    iconCls: obj.node.iconCls,
-                                                    leaf: true
-                                                };
-                                                record.appendChild(childNode);
+                                                obj.node.createdAt = obj.node.created_at;
+                                                obj.node.updatedAt = obj.node.updated_at;
+                                                record.appendChild(Ext.create('SiteContentsModel', obj.node));
                                             }
                                             else {
                                                 Ext.Msg.alert("Error", obj.msg);
@@ -272,7 +269,10 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
                                         success: function (form, action) {
                                             var obj = Ext.decode(action.response.responseText);
                                             if (obj.success) {
-                                                record.appendChild(obj.article);
+                                                obj.article.createdAt = obj.article.created_at;
+                                                obj.article.updatedAt = obj.article.updated_at;
+
+                                                record.appendChild(Ext.create('SiteContentsModel', obj.article));
 
                                                 window.close();
                                             } else {

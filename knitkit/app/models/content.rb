@@ -118,6 +118,8 @@ class Content < ActiveRecord::Base
       website_section_content.position = position
       website_section_content.save
     end
+
+    website_section_content
   end
 
   def content_area_by_website_section(section)
