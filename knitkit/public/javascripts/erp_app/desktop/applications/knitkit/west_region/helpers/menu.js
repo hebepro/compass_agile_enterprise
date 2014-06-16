@@ -98,7 +98,6 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addMenuOptions = function (self, ite
                                     mode: 'local',
                                     displayField: 'title_permalink',
                                     valueField: 'id',
-
                                     triggerAction: 'all'
                                 },
                                 {

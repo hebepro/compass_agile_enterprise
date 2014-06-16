@@ -82,40 +82,10 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.ImageAssetsDataView", {
 
         listeners['itemcontextmenu'] = function (view, record, htmlitem, index, e, options) {
             e.stopEvent();
-            var hostUrl = window.location.protocol,
-                saveUrl = null,
-                exitUrl = null;
-
-            hostUrl = hostUrl.concat("//");
-            hostUrl = hostUrl.concat(window.location.hostname);
-            hostUrl = hostUrl.concat((window.location.port ? ':' + window.location.port : ''));
-
-            saveUrl = hostUrl.concat("/erp_app/pixlr/save");
-            exitUrl = hostUrl.concat("/erp_app/pixlr/exit");
 
             var contextMenu = Ext.create("Ext.menu.Menu", {
                 items: [
-                    {
-                        text: 'Edit with Pixlr',
-                        iconCls: 'icon-picture',
-                        handler: function (btn) {
-                            pixlr.overlay.show({
-                                referrer: 'CompassAE',
-                                exit: exitUrl,
-                                target: saveUrl,
-                                image: record.get('url'),
-                                title: record.get('id') + ':' + record.get('name'),
-                                method: 'GET',
-                                locktarget: true,
-                                locktitle: true,
-                                locktype: true,
-                                service: 'express'
-                            }, function () {
-                                view.getStore().load();
-                            });
-                        }
-                    },
-                    {
+                   {
                         text: 'Insert Image At Cursor',
                         iconCls: 'icon-add',
                         handler: function () {

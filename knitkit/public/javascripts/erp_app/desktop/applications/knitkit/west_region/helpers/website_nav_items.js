@@ -89,7 +89,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addWebsiteNavItemOptions = function 
                                     fields: [
                                         {
                                             name: 'id',
-                                            type: 'integer'
+                                            type: 'string'
                                         },
                                         {
                                             name: 'title_permalink',
