@@ -76,7 +76,7 @@ Ext.define("Compass.ErpApp.Shared.Preferences.ApplicationManagementPanel", {
 
         me.applicationsTree = Ext.create('Ext.tree.Panel', {
             store: store,
-            width: 200,
+            width: 250,
             region: 'west',
             useArrows: true,
             border: false,

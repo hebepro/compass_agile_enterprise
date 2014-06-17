@@ -287,7 +287,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
         if (currentUser.hasCapability('create', 'User')) {
             toolBarItems.push({
                 text: 'Add User',
-                iconCls: 'btn-add-light',
+                iconCls: 'icon-add-light',
                 handler: function () {
                     var addUserWindow = Ext.create("Ext.window.Window", {
                         width: 325,
