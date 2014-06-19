@@ -54,7 +54,7 @@ module ErpTechSvcs
           success = false
         end
         render :json => {:success => success, :message => message}
-      rescue Exception => ex
+      rescue => ex
         Rails.logger.error ex.message
         Rails.logger.error ex.backtrace.join("\n")
         render :json => {:success => false, :message => 'Error sending email.'}

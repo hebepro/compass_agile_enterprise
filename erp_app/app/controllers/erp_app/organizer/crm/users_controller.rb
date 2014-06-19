@@ -186,7 +186,7 @@ module ErpApp
                 result = {:success => false, :message => user.errors.full_messages.to_sentence}
               end
             end
-          rescue Exception => ex
+          rescue => ex
             Rails.logger.error ex.message
             Rails.logger.error ex.backtrace.join("\n")
 

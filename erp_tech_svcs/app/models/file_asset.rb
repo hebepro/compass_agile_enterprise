@@ -162,7 +162,7 @@ class FileAsset < ActiveRecord::Base
         h = f.height.to_i
         update_attribute(:width, w) if width != w
         update_attribute(:height, h) if height != h
-      rescue Exception=>ex
+      rescue => ex
         Rails.logger.error('Could not save width and height of image. Make sure Image Magick and the identify command are accessible')
       end
     end

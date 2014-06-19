@@ -157,7 +157,7 @@ module ErpTechSvcs
           contents = get_contents(node[:id]).to_s
           begin
             model.add_file(contents, node[:id])
-          rescue Exception=>ex
+          rescue => ex
             #the file might already exist if it is in the file system.
           end
         end

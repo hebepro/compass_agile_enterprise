@@ -12,9 +12,9 @@ class Ticket < ActiveRecord::Base
   def send_email(subject='')
     begin
       WebsiteInquiryMailer.inquiry(self, subject).deliver
-    rescue Exception => e
+    rescue => ex
       system_user = Party.find_by_description('Compass AE')
-      AuditLog.custom_application_log_message(system_user, e)
+      AuditLog.custom_application_log_message(system_user, ex)
     end
   end
 end

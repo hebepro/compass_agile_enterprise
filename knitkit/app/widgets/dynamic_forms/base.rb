@@ -55,10 +55,10 @@ module Widgets
             :success => true,
             :response => (file_upload_request? ? ERB::Util.html_escape(output) : output)
           }.to_json
-        rescue Exception => e
-          Rails.logger.error e.message
-          Rails.logger.error e.backtrace.join("\n")
-          output = render_to_string(:template => "error", :layout => false, :locals => {:message => e.message})
+        rescue => ex
+          Rails.logger.error ex.message
+          Rails.logger.error ex.backtrace.join("\n")
+          output = render_to_string(:template => "error", :layout => false, :locals => {:message => ex.message})
   			  render :inline => {
   			    :success => false,
             :response => (file_upload_request? ? ERB::Util.html_escape(output) : output)
@@ -85,10 +85,10 @@ module Widgets
           (@myDynamicObject.file_security_default == 'private') ? file.add_capability(:download, 'FileAsset', roles) : file.remove_all_capabilities
           
           return {:success => true}
-        rescue Exception => e
-          Rails.logger.error e.message
-          Rails.logger.error e.backtrace
-          raise "Error uploading file. #{e.message}"
+        rescue => ex
+          Rails.logger.error ex.message
+          Rails.logger.error ex.backtrace
+          raise "Error uploading file. #{ex.message}"
         end
       end      
 
@@ -103,10 +103,10 @@ module Widgets
       def send_email(form, dynamicObject, subject='', attachments=[])
         begin
           DynamicFormMailer.widget_email_with_attachments(form, dynamicObject, subject, attachments).deliver
-        rescue Exception => e
-          Rails.logger.error e.message
-          Rails.logger.error e.backtrace
-          raise "Error sending email. #{e.message}"
+        rescue => ex
+          Rails.logger.error ex.message
+          Rails.logger.error ex.backtrace
+          raise "Error sending email. #{ex.message}"
         end
       end
 

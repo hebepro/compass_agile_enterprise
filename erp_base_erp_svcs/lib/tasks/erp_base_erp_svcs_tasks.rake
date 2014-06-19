@@ -95,7 +95,7 @@ namespace :compass_ae do
 
       ActiveRecord::Migrator.cleanup_upgrade_migrations
       RussellEdge::DataMigrator.cleanup_upgrade_migrations
-    rescue Exception => ex
+    rescue => ex
       ActiveRecord::Migrator.cleanup_migrations
       ActiveRecord::Migrator.cleanup_upgrade_migrations
       RussellEdge::DataMigrator.cleanup_upgrade_migrations

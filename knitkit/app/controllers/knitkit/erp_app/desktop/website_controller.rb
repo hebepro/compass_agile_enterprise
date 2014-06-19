@@ -132,7 +132,7 @@ module Knitkit
                                                                                :url => "http://#{website.config_value('primary_host')}")}
               end
             end
-          rescue Exception => ex
+          rescue => ex
             Rails.logger.error("#{ex.message} + #{ex.backtrace.join("\n")}")
             render :json => {:success => false, :message => ex.message}
           end

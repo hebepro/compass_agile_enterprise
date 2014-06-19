@@ -58,7 +58,7 @@ module ErpApp
               messages << message
             end
             render :json => {:success => true, :msg => messages.join(',')}
-          rescue Exception => e
+          rescue => ex
             render :json => {:success => false, :error => ex.message}
           end
         end

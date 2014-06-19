@@ -110,7 +110,7 @@ module Widgets
 
           {:json => {success: true, message: 'Email added', email: email.to_hash(:only => [:id, :email_address],
                                                                                  :contact_purpose => email.contact_purpose.description)}}
-        rescue Exception => ex
+        rescue => ex
           Rails.logger.error ex.message
           Rails.logger.error ex.backtrace.join("\n")
           #TODO send out notification
@@ -126,7 +126,7 @@ module Widgets
           EmailAddress.find(email_address_id).destroy
 
           {:json => {success: true, message: 'Email removed'}}
-        rescue Exception => ex
+        rescue => ex
           Rails.logger.error ex.message
           Rails.logger.error ex.backtrace.join("\n")
           #TODO send out notification
@@ -146,7 +146,7 @@ module Widgets
 
           {:json => {success: true, message: 'Phone number added', phone: phone_number.to_hash(:only => [:id, :phone_number],
                                                                                                :contact_purpose => phone_number.contact_purpose.description)}}
-        rescue Exception => ex
+        rescue => ex
           Rails.logger.error ex.message
           Rails.logger.error ex.backtrace.join("\n")
           #TODO send out notification
@@ -162,7 +162,7 @@ module Widgets
           PhoneNumber.find(phone_number_id).destroy
 
           {:json => {success: true, message: 'Phone number removed'}}
-        rescue Exception => ex
+        rescue => ex
           Rails.logger.error ex.message
           Rails.logger.error ex.backtrace.join("\n")
           #TODO send out notification
@@ -196,7 +196,7 @@ module Widgets
                      address: postal_address.to_hash(:only => [:id, :address_line_1, :address_line_2,
                                                                :city, :state, :zip],
                                                      :contact_purpose => postal_address.contact_purpose.description)}}
-        rescue Exception => ex
+        rescue => ex
           Rails.logger.error ex.message
           Rails.logger.error ex.backtrace.join("\n")
           #TODO send out notification
@@ -212,7 +212,7 @@ module Widgets
           PostalAddress.find(address_id).destroy
 
           {:json => {success: true, message: 'address removed'}}
-        rescue Exception => ex
+        rescue => ex
           Rails.logger.error ex.message
           Rails.logger.error ex.backtrace.join("\n")
           #TODO send out notification

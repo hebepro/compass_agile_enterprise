@@ -36,7 +36,7 @@ module Widgets
           else
             render :update => {:id => "#{@uuid}_result", :view => :error}
           end
-        rescue Exception=>ex
+        rescue => ex
           logger.error ex.message
           logger.error ex.backtrace
           render :update => {:id => "#{@uuid}_result", :view => :error}

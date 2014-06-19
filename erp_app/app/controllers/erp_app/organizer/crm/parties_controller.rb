@@ -305,7 +305,7 @@ module ErpApp
 
               result = {:success => true, :message => "#{party_type} Added", :name => business_party.party.description, :party_id => business_party.party.id}
             end
-          rescue Exception => ex
+          rescue => ex
             Rails.logger.error ex.message
             Rails.logger.error ex.backtrace.join("\n")
             result = {:success => false, :message => "Error adding #{party_type}."}

@@ -41,7 +41,7 @@ module Knitkit
                       :leaf => true}
               }
             end
-          rescue Exception => ex
+          rescue => ex
             Rails.logger.error("#{ex.message} + #{ex.backtrace}")
             render :json => {:success => false, :message => ex.message}
           end

@@ -132,9 +132,9 @@ module ErpTechSvcs
           else
             message = FOLDER_IS_NOT_EMPTY
           end
-        rescue Exception => e
+        rescue => ex
           result = false
-          message = e
+          message = ex
         end
 
         return result, message, is_directory

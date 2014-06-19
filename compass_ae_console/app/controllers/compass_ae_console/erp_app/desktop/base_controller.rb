@@ -93,8 +93,8 @@ module CompassAeConsole
 
                        "#{result_eval.inspect}"
                      end
-          rescue Exception => e
-            result = "<span style='color:red'>#{e.to_s}</span>"
+          rescue => ex
+            result = "<span style='color:red'>#{ex.to_s}</span>"
           end
 
           result

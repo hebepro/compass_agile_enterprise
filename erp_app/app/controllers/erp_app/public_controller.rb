@@ -29,7 +29,7 @@ module ErpApp
             end
           rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :text => ex.message and return
-          rescue Exception => ex
+          rescue => ex
             Rails.logger.error ex.message
             Rails.logger.error ex.backtrace.join("\n")
             render :text => ex.message and return

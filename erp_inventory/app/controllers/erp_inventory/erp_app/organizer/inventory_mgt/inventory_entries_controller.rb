@@ -72,10 +72,10 @@ module ErpInventory
 
                 render :json => {:success => true, :data => entry.to_hash(:only => [:id, :description, :created_at, :updated_at], :model => 'InventoryEntry')}
               end
-            rescue Exception => e
-              Rails.logger.error e.message
-              Rails.logger.error e.backtrace.join("\n")
-              render :json => {:success => false, :message => e.message}
+            rescue => ex
+              Rails.logger.error ex.message
+              Rails.logger.error ex.backtrace.join("\n")
+              render :json => {:success => false, :message => ex.message}
             end
           end
 

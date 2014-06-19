@@ -19,7 +19,7 @@ module ErpInvoicing
           begin
             @invoice.add_file(data, File.join(base_path, name))
             result = {:success => true}
-          rescue Exception=>ex
+          rescue => ex
             Rails.logger.error ex.message
             Rails.logger.error ex.backtrace.join("\n")
             result = {:success => false, :error => "Error uploading file."}

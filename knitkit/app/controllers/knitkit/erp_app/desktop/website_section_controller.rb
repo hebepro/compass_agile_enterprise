@@ -51,10 +51,10 @@ module Knitkit
 
                   end
                 end
-              rescue Exception => e
+              rescue => ex
                 # TODO send error notification
-                Rails.logger.error e.message
-                Rails.logger.error e.backtrace.join("\n")
+                Rails.logger.error ex.message
+                Rails.logger.error ex.backtrace.join("\n")
                 result = {:success => false, :message => 'Could not create Section'}
               end
 

@@ -17,12 +17,12 @@ module ErpApp
               \"columns\": [#{columns.join(',')}],
               \"fields\": #{definition.to_json}
             }"
-          rescue Exception => e
-            Rails.logger.error e.message
-            Rails.logger.error e.backtrace.join("\n")
+          rescue => ex
+            Rails.logger.error ex.message
+            Rails.logger.error ex.backtrace.join("\n")
             render :inline => {
               :success => false,
-              :message => e.message
+              :message => ex.message
             }.to_json             
           end
         end

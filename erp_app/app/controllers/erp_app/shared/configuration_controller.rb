@@ -43,7 +43,7 @@ module ErpApp
           end
 
           render :json => {:success => true, :configurationItems => configuration.items.collect(&:to_js_hash)}
-        rescue Exception=>ex
+        rescue => ex
           logger.error(ex.message)
           logger.error(ex.backtrace)
           render :json => {:success => false, :message => ex.message}

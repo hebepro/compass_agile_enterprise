@@ -17,12 +17,12 @@ module ErpApp
               \"columns\": [#{columns.join(',')}],
               \"fields\": #{definition.to_json}
             }"
-          rescue Exception => e
-            Rails.logger.error e.message
-            Rails.logger.error e.backtrace.join("\n")
+          rescue => ex
+            Rails.logger.error ex.message
+            Rails.logger.error ex.backtrace.join("\n")
             render :inline => {
               :success => false,
-              :message => e.message
+              :message => ex.message
             }.to_json             
           end
         end
@@ -71,12 +71,12 @@ module ErpApp
             else
               raise "Group name blank"
             end
-          rescue Exception => e
-            Rails.logger.error e.message
-            Rails.logger.error e.backtrace.join("\n")
+          rescue => ex
+            Rails.logger.error ex.message
+            Rails.logger.error ex.backtrace.join("\n")
             render :inline => {
               :success => false,
-              :message => e.message
+              :message => ex.message
             }.to_json             
           end
         end
@@ -93,12 +93,12 @@ module ErpApp
             else
               raise "Group name blank or no group ID"
             end
-          rescue Exception => e
-            Rails.logger.error e.message
-            Rails.logger.error e.backtrace.join("\n")
+          rescue => ex
+            Rails.logger.error ex.message
+            Rails.logger.error ex.backtrace.join("\n")
             render :inline => {
               :success => false,
-              :message => e.message
+              :message => ex.message
             }.to_json             
           end
         end
@@ -111,12 +111,12 @@ module ErpApp
             else
               raise "No Group ID"
             end
-          rescue Exception => e
-            Rails.logger.error e.message
-            Rails.logger.error e.backtrace.join("\n")
+          rescue => ex
+            Rails.logger.error ex.message
+            Rails.logger.error ex.backtrace.join("\n")
             render :inline => {
               :success => false,
-              :message => e.message
+              :message => ex.message
             }.to_json             
           end
         end
@@ -141,12 +141,12 @@ module ErpApp
             end
 
             render :json => {:success => true, :message => 'Group(s) Added'}
-          rescue Exception => e
-            Rails.logger.error e.message
-            Rails.logger.error e.backtrace.join("\n")
+          rescue => ex
+            Rails.logger.error ex.message
+            Rails.logger.error ex.backtrace.join("\n")
             render :inline => {
               :success => false,
-              :message => e.message
+              :message => ex.message
             }.to_json             
           end
         end
@@ -171,12 +171,12 @@ module ErpApp
             end
 
             render :json => {:success => true, :message => 'Group(s) Removed'}
-          rescue Exception => e
-            Rails.logger.error e.message
-            Rails.logger.error e.backtrace.join("\n")
+          rescue => ex
+            Rails.logger.error ex.message
+            Rails.logger.error ex.backtrace.join("\n")
             render :inline => {
               :success => false,
-              :message => e.message
+              :message => ex.message
             }.to_json             
           end
         end
@@ -187,12 +187,12 @@ module ErpApp
             u = Group.find(assign_to_id)
 
             render :json => {:success => true, :capabilities => u.class_capabilities_to_hash }
-          rescue Exception => e
-            Rails.logger.error e.message
-            Rails.logger.error e.backtrace.join("\n")
+          rescue => ex
+            Rails.logger.error ex.message
+            Rails.logger.error ex.backtrace.join("\n")
             render :inline => {
               :success => false,
-              :message => e.message
+              :message => ex.message
             }.to_json             
           end
         end

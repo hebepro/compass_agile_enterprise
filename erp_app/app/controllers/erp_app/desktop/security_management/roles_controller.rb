@@ -19,12 +19,12 @@ module ErpApp
               \"columns\": [#{columns.join(',')}],
               \"fields\": #{definition.to_json}
             }"
-          rescue Exception => e
-            Rails.logger.error e.message
-            Rails.logger.error e.backtrace.join("\n")
+          rescue => ex
+            Rails.logger.error ex.message
+            Rails.logger.error ex.backtrace.join("\n")
             render :inline => {
               :success => false,
-              :message => e.message
+              :message => ex.message
             }.to_json             
           end
         end
@@ -72,12 +72,12 @@ module ErpApp
             else
               raise "Role name blank"
             end
-          rescue Exception => e
-            Rails.logger.error e.message
-            Rails.logger.error e.backtrace.join("\n")
+          rescue => ex
+            Rails.logger.error ex.message
+            Rails.logger.error ex.backtrace.join("\n")
             render :inline => {
               :success => false,
-              :message => e.message
+              :message => ex.message
             }.to_json             
           end
         end
@@ -94,12 +94,12 @@ module ErpApp
             else
               raise "Role name blank or no role ID"
             end
-          rescue Exception => e
-            Rails.logger.error e.message
-            Rails.logger.error e.backtrace.join("\n")
+          rescue => ex
+            Rails.logger.error ex.message
+            Rails.logger.error ex.backtrace.join("\n")
             render :inline => {
               :success => false,
-              :message => e.message
+              :message => ex.message
             }.to_json             
           end
         end
@@ -112,12 +112,12 @@ module ErpApp
             else
               raise "No Role ID"
             end
-          rescue Exception => e
-            Rails.logger.error e.message
-            Rails.logger.error e.backtrace.join("\n")
+          rescue => ex
+            Rails.logger.error ex.message
+            Rails.logger.error ex.backtrace.join("\n")
             render :inline => {
               :success => false,
-              :message => e.message
+              :message => ex.message
             }.to_json             
           end
         end
@@ -142,12 +142,12 @@ module ErpApp
             end
 
             render :json => {:success => true, :message => 'Security Roles(s) Added'}
-          rescue Exception => e
-            Rails.logger.error e.message
-            Rails.logger.error e.backtrace.join("\n")
+          rescue => ex
+            Rails.logger.error ex.message
+            Rails.logger.error ex.backtrace.join("\n")
             render :inline => {
               :success => false,
-              :message => e.message
+              :message => ex.message
             }.to_json             
           end
         end
@@ -172,12 +172,12 @@ module ErpApp
             end
 
             render :json => {:success => true, :message => 'Security Roles(s) Removed'}
-          rescue Exception => e
-            Rails.logger.error e.message
-            Rails.logger.error e.backtrace.join("\n")
+          rescue => ex
+            Rails.logger.error ex.message
+            Rails.logger.error ex.backtrace.join("\n")
             render :inline => {
               :success => false,
-              :message => e.message
+              :message => ex.message
             }.to_json             
           end
         end

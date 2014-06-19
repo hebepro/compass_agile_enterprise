@@ -127,8 +127,8 @@ class ErpForms::ErpApp::Desktop::DynamicForms::FormsController < ErpForms::ErpAp
       begin
          dform.destroy 
          render :json => {:success => true}
-      rescue Exception => e
-        render :json => {:success => false, :error => e.message} 
+      rescue => ex
+        render :json => {:success => false, :error => ex.message}
       end         
     else
       render :json => {:success => false, :error => 'Could not find form.'}
