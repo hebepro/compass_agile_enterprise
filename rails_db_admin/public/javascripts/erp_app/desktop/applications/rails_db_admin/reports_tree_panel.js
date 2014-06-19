@@ -216,7 +216,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.ReportsTreePanel", 
                             items:[
                                 {
                                     text:"New Report",
-                                    iconCls:'icon-new',
+                                    iconCls:'icon-document',
                                     listeners:{
                                         'click':function () {
                                             me.newReport();
