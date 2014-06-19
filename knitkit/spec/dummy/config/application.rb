@@ -3,7 +3,7 @@ require File.expand_path('../boot', __FILE__)
 require 'rails/all'
 
 Bundler.require
-require "erp_forms"
+require "erp_app"
 require "knitkit"
 
 module Dummy

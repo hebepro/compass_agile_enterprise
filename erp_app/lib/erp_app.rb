@@ -3,6 +3,7 @@ require 'compass_ae_sencha'
 require 'erp_tech_svcs'
 require 'will_paginate'
 require 'uglifier'
+require 'friendly_id'
 
 require "erp_app/version"
 require "erp_app/extensions"

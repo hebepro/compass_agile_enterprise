@@ -1,6 +1,5 @@
 #compass libraries
 require 'erp_app'
-require 'erp_forms'
 
 require 'routing_filter'
 require "knitkit/version"

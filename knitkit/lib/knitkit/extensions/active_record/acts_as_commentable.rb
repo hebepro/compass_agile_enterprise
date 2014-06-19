@@ -1,4 +1,4 @@
-module ErpForms
+module Knitkit
   module Extensions
     module ActiveRecord
       module ActsAsCommentable
@@ -27,7 +27,7 @@ module ErpForms
           end
 
         end
-      end #ActsAsCommentable
-    end #ActiveRecord
-  end #Extensions
-end #Knitkit
+      end # ActsAsCommentable
+    end # ActiveRecord
+  end # Extensions
+end # Knitkit

@@ -7,7 +7,6 @@ gemspec
 #gem 'erp_tech_svcs', :path => '../erp_tech_svcs'
 #gem 'erp_app', :path => '../erp_app'
 #gem 'knitkit', :path => '../knitkit'
-#gem 'erp_forms', :path => '../erp_forms'
 
 #group :development, :test do
 #  gem 'erp_dev_svcs', :path => '../erp_dev_svcs'

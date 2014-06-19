@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'will_paginate', '3.0.3'
   s.add_dependency 'uglifier', '~> 1.3.0'
+  s.add_dependency('friendly_id', '4.0.10.1')
 
   #compass dependencies
   s.add_dependency 'compass_ae_sencha', "~> 1.0.3"

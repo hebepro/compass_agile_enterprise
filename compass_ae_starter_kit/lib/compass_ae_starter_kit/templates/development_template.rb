@@ -36,7 +36,6 @@ path './lib/compass_agile_enterprise' do
   gem 'erp_base_erp_svcs'
   gem 'erp_tech_svcs'
   gem 'erp_app'
-  gem 'erp_forms'
   gem 'knitkit'
   gem 'rails_db_admin'
   gem 'compass_ae_console'
