@@ -21,6 +21,7 @@ Knitkit::Engine.routes.draw do
   namespace :erp_app do
     namespace :desktop do
 
+      resources :inquiries
       resources :website_nav
       resources :website_nav_item do
         member do
@@ -48,8 +49,6 @@ Knitkit::Engine.routes.draw do
       match '/versions/:action' => 'versions'
       #commen
       match '/comments/:action(/:content_id)' => 'comments'
-      #inquir
-      match '/inquiries/:action(/:website_id)' => 'inquiries'
       #position
       match '/position/:action' => 'position'
     end

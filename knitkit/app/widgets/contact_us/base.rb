@@ -8,33 +8,24 @@ module Widgets
       end
 
       def new
-        @validation = {}
-        @validation[:first_name] = "First Name Cannot be Blank" if params[:first_name].blank?
-        @validation[:last_name] = "Last Name Cannot be Blank" if params[:last_name].blank?
-        @validation[:message] = "Message Cannot be Blank" if params[:message].blank?
-        @validation[:email] = "Please Enter a Valid Email Address" unless /^.+@.+\..+$/.match(params[:email])
+        website = Website.find_by_host(request.host_with_port)
 
-        unless @validation.empty?
-          return render :update => {:id => "#{@uuid}_result", :view => :error}
-        end
+        website_inquiry = WebsiteInquiry.new
+        website_inquiry.created_by = current_user unless current_user.nil?
+        website_inquiry.website = website
+        website_inquiry.first_name = params[:first_name].strip
+        website_inquiry.last_name = params[:last_name].strip
+        website_inquiry.message = params[:message].strip
+        website_inquiry.email = params[:email].strip
 
-        @website = Website.find_by_host(request.host_with_port)
-        @website_inquiry = WebsiteInquiry.new
-
-        subject = strip_tags(params[:email_subject])
-        params.delete(:email_subject)
-        params[:created_by] = current_user unless current_user.nil?
-        params[:created_with_form_id] = params[:dynamic_form_id] if params[:dynamic_form_id] and params[:is_html_form].blank?
-        params[:website_id] = @website.id
-        @website_inquiry = @website_inquiry.save_all_attributes(params, ErpApp::Widgets::Base::IGNORED_PARAMS)
-
-        if @website_inquiry
-          if @website.email_inquiries?
-            @website_inquiry.send_email(subject)
+        if website_inquiry.save
+          if website.email_inquiries?
+            WebsiteInquiryMailer.inquiry(website_inquiry).deliver
           end
           render :update => {:id => "#{@uuid}_result", :view => :success}
 
         else
+          @errors = @website_inquiry.errors.full_messages
           render :update => {:id => "#{@uuid}_result", :view => :error}
 
         end

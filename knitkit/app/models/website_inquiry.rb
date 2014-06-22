@@ -2,19 +2,11 @@ class WebsiteInquiry < ActiveRecord::Base
   attr_protected :created_at, :updated_at
 
   belongs_to :website
-  belongs_to :user
+  belongs_to :created_by, :class_name => 'User', :foreign_key => 'created_by_id'
 
-  acts_as_dynamic_form_model
-  has_dynamic_forms
-	has_dynamic_data
-
-  def send_email(subject='')
-    begin
-      WebsiteInquiryMailer.inquiry(self, subject).deliver
-    rescue => ex
-      system_user = Party.find_by_description('Compass AE')
-      AuditLog.custom_application_log_message(system_user, ex)
-    end
-  end
+  validates :first_name, presence: true
+  validates :last_name, presence: true
+  validates :message, presence: true
+  validates :email, presence: true, format: {with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, on: :create}
 
 end
