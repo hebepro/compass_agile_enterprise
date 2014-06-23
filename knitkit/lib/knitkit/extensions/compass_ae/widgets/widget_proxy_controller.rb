@@ -19,10 +19,13 @@ ErpApp::WidgetProxyController.class_eval do
     return if result.nil?
 
     if result.is_a?(Hash)
-      render result
+      if !result[:send_file] and !result[:send_data]
+        render result
+      end
     else
       render :inline => result
     end
+
   end
 
   protected
