@@ -140,13 +140,6 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
                     handler: function (btn) {
                         centerRegion.saveAll();
                     }
-                },
-                {
-                    text: 'Site:'
-                },
-                {
-                    xtype: 'websitescombo',
-                    width: 205
                 });
 
             tbarItems.push('->',
