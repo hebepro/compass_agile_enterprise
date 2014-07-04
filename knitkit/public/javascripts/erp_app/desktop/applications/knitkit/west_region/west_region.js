@@ -34,10 +34,10 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
                                     node.set('iconCls', 'icon-section_lock');
                                 }
                                 else {
-                                    if(node.get('isBlog')){
+                                    if (node.get('isBlog')) {
                                         node.set('iconCls', 'icon-blog');
                                     }
-                                    else{
+                                    else {
                                         node.set('iconCls', 'icon-section');
                                     }
                                 }
@@ -74,7 +74,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
         hostPanel.selectWebsite(website);
     },
 
-    clearWebsite: function(){
+    clearWebsite: function () {
         var siteContentsPanel = Ext.ComponentQuery.query('#knitkitSiteContentsTreePanel').first();
         siteContentsPanel.clearWebsite();
 
@@ -137,6 +137,22 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
         });
 
         this.items = [siteContentsPanel, themesPanel, menuPanel, configPanel];
+
+        this.dockedItems = [
+            {
+                xtype: 'toolbar',
+                dock: 'top',
+                items: [
+                    {
+                        text: 'Site:'
+                    },
+                    {
+                        xtype: 'websitescombo',
+                        width: 205
+                    }
+                ]
+            }
+        ];
 
         this.callParent(arguments);
     },

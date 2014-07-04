@@ -3,52 +3,54 @@ Compass.ErpApp.Widgets.ProductCatalog = {
         "   :action => :index,\n",
         "   :params => {:cart_items_url => '{cartItemsUrl}'} %>"),
 
-    add:function(){
-        var addProductCatalogWidgetWindow = Ext.create("Ext.window.Window",{
-            layout:'fit',
-            width:300,
-            title:'Add Product Catalog Widget',
-            height:100,
-            buttonAlign:'center',
-            items: Ext.create("Ext.form.Panel",{
+    add: function () {
+        var addProductCatalogWidgetWindow = Ext.create("Ext.window.Window", {
+            layout: 'fit',
+            width: 300,
+            title: 'Add Product Catalog Widget',
+            height: 100,
+            buttonAlign: 'center',
+            items: Ext.create("Ext.form.Panel", {
                 labelWidth: 100,
-                frame:false,
-                bodyStyle:'padding:5px 5px 0',
+                frame: false,
+                bodyStyle: 'padding:5px 5px 0',
                 defaults: {
                     width: 225
                 },
                 items: [
-                {
-                    xtype:'textfield',
-                    fieldLabel:'Cart Items Url',
-                    name:'cartItemsUrl',
-                    hidden:false,
-                    value:'/cart-items'
-                }
+                    {
+                        xtype: 'textfield',
+                        fieldLabel: 'Cart Items Url',
+                        name: 'cartItemsUrl',
+                        hidden: false,
+                        value: '/cart-items'
+                    }
                 ]
             }),
-            buttons: [{
-                text:'Submit',
-                handler:function(button){
-                    var window = button.findParentByType('window');
-                    var formPanel = window.query('form')[0];
-                    var basicForm = formPanel.getForm();
-                    var cartItemsUrl = basicForm.findField('cartItemsUrl').getValue();
-                    var data = {
-                        cartItemsUrl:cartItemsUrl
-                    };
+            buttons: [
+                {
+                    text: 'Submit',
+                    handler: function (button) {
+                        var window = button.findParentByType('window');
+                        var formPanel = window.query('form')[0];
+                        var basicForm = formPanel.getForm();
+                        var cartItemsUrl = basicForm.findField('cartItemsUrl').getValue();
+                        var data = {
+                            cartItemsUrl: cartItemsUrl
+                        };
 
-                    //add rendered template to center region editor
-                    Ext.getCmp('knitkitCenterRegion').addContentToActiveCodeMirror(Compass.ErpApp.Widgets.ProductCatalog.template.apply(data));
-                    addProductCatalogWidgetWindow.close();
+                        //add rendered template to center region editor
+                        Ext.getCmp('knitkitCenterRegion').addContentToActiveCodeMirror(Compass.ErpApp.Widgets.ProductCatalog.template.apply(data));
+                        addProductCatalogWidgetWindow.close();
+                    }
+                },
+                {
+                    text: 'Close',
+                    handler: function () {
+                        addProductCatalogWidgetWindow.close();
+                    }
                 }
-            },
-            {
-                text: 'Close',
-                handler: function(){
-                    addProductCatalogWidgetWindow.close();
-                }
-            }]
+            ]
 
         });
         addProductCatalogWidgetWindow.show();
@@ -56,7 +58,7 @@ Compass.ErpApp.Widgets.ProductCatalog = {
 }
 
 Compass.ErpApp.Widgets.AvailableWidgets.push({
-    name:'Product Catalog',
-    iconUrl:'/images/icons/product/product_48x48.png',
-    onClick:Compass.ErpApp.Widgets.ProductCatalog.add
+    name: 'Product Catalog',
+    iconUrl: '/images/icons/product/product_48x48.png',
+    onClick: Compass.ErpApp.Widgets.ProductCatalog.add
 });

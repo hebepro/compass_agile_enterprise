@@ -401,6 +401,21 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin", {
             });
 
             this.accordion = Ext.create('Ext.panel.Panel', {
+                dockedItems: [
+                    {
+                        xtype: 'toolbar',
+                        dock: 'top',
+                        items: [
+                            {
+                                text: 'Database:'
+                            },
+                            {
+                                xtype: 'railsdbadmin_databasecombo',
+                                module: self
+                            }
+                        ]
+                    }
+                ],
                 ui: 'rounded-panel',
                 region: 'west',
                 margins: '0 0 0 0',
@@ -437,23 +452,6 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin", {
                 animCollapse: false,
                 constrainHeader: true,
                 layout: 'border',
-                dockedItems: [
-                    {
-                        xtype: 'toolbar',
-                        dock: 'top',
-                        ui: 'ide-main',
-                        items: [
-                            {
-                                text: 'Database:'
-                            },
-                            {
-                                xtype: 'railsdbadmin_databasecombo',
-                                width: 205,
-                                module: self
-                            }
-                        ]
-                    }
-                ],
                 items: [this.accordion, this.container]
             });
 

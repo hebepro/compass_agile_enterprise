@@ -1,29 +1,33 @@
-<% @results.each do |r| %>
-    <p>
-      <a href="<%= r[:link] %>"><%= r[:title] %></a>
-      <br/>
-      <%= sanitize(r[:content].body_html[0..500], :tags => []) unless r[:content].body_html.nil? %>
-      <br/>
-    </p>
+<% if @results.count == 0 %>
+    <h2>No Results</h2>
+<% else %>
+    <% @results.each do |r| %>
+        <p>
+          <a href="<%= r[:link] %>"><%= r[:title] %></a>
+          <br/>
+          <%= sanitize(r[:content].body_html[0..500], :tags => []) unless r[:content].body_html.nil? %>
+          <br/>
+        </p>
+    <% end %>
+    <%=
+        will_paginate @results,
+                      :renderer => Knitkit::Extensions::WillPaginate::LinkRenderer,
+                      :params => {
+                              :widget_name => 'search',
+                              :widget_action => 'search',
+                              :uuid => @uuid,
+                              :query => @query,
+                              :content_type => @content_type,
+                              :section_unique_name => @section_unique_name,
+                              :per_page => @per_page,
+                              :controller => 'erp_app/widget_proxy',
+                              :only_path => true,
+                              :scope => erp_app
+                      }
+    %>
+    <script type="text/javascript">
+        $(function () {
+            jQuery('.pagination a').attr('data-remote', 'true');
+        });
+    </script>
 <% end %>
-<%=
-   will_paginate @results,
-                 :renderer => Knitkit::Extensions::WillPaginate::LinkRenderer,
-                 :params => {
-                         :widget_name => 'search',
-                         :widget_action => 'search',
-                         :uuid => @uuid,
-                         :query => @query,
-                         :content_type => @content_type,
-                         :section_unique_name => @section_unique_name,
-                         :per_page => @per_page,
-                         :controller => 'erp_app/widget_proxy',
-                         :only_path => true,
-                         :scope => erp_app
-                 }
-%>
-<script type="text/javascript">
-    $(function(){
-        jQuery('.pagination a').attr('data-remote', 'true');
-    });
-</script>
