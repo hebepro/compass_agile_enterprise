@@ -34,40 +34,28 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SecurityManagement.UsersWidget",
   },
 
   constructor : function(config) {
-    var self = this;
-
-    var available_grid = {
+    var self = this,
+        commonWidgetProperties  = Compass.ErpApp.Desktop.Applications.SecurityManagement.CommonWidget.properties;
+    
+    var available_grid = Ext.apply(commonWidgetProperties.available_grid,{
       xtype: 'security_management_user_grid',
-      itemId: 'available',
       title: 'Available Users',
-      width: 400,
-      height: 340,
-      region: 'west',
       setupUrl: '/erp_app/desktop/security_management/users/available_setup',
       dataUrl: '/erp_app/desktop/security_management/users/available',
       autoLoad: false
-    };
+    });
 
-    var selected_grid = {
+    var selected_grid = Ext.apply(commonWidgetProperties.selected_grid,{
       xtype: 'security_management_user_grid',
-      itemId: 'selected',
       title: 'Selected Users',
-      width: 400,
-      height: 340,
-      region: 'east',
       setupUrl: '/erp_app/desktop/security_management/users/selected_setup',   
       dataUrl: '/erp_app/desktop/security_management/users/selected',
       autoLoad: false
-    };
+    });
 
-    var assignment = {
+    var assignment = Ext.apply(commonWidgetProperties.assignment, {
         xtype: 'panel',
-        itemId: 'assignment',
         title: 'Manage Users',
-        layout: 'table',
-        autoScroll: true,
-        height: 600,
-        bodyPadding: 10,
         items:[
           available_grid,
           {
@@ -81,7 +69,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SecurityManagement.UsersWidget",
           },
           selected_grid
         ]
-    };
+    });
 
     config = Ext.apply({
       title:'Users',
@@ -161,6 +149,10 @@ Ext.define('Compass.ErpApp.Desktop.Applications.SecurityManagement.AddUserButton
     alias: 'widget.SecurityManagement-AddUserButton',
     itemId: 'AddUserButton',
     cls: 'x-btn-text-icon',
+    style: {
+        marginTop: '5px',
+        marginBottom: '5px'
+    },
     iconCls : 'icon-arrow-right-blue',
     formBind: false,
     tooltip: 'Add to Selected',

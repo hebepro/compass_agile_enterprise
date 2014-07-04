@@ -1,0 +1,12 @@
+.x-btn-text-icon {
+    margin: 5px 0 5px 0;
+}
+
+.assignment > .x-panel-header-default:first-child {
+    background-color: white;
+}
+
+.assignment > .x-panel-header-default:first-child .x-header-text {
+    color: grey;
+}
+

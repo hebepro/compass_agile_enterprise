@@ -34,40 +34,28 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SecurityManagement.CapabilitiesW
   },
 
   constructor : function(config) {
-    var self = this;
-
-    var available_grid = {
+    var self = this,
+        commonWidgetProperties  = Compass.ErpApp.Desktop.Applications.SecurityManagement.CommonWidget.properties;
+    
+    var available_grid = Ext.apply(commonWidgetProperties.available_grid, {
       xtype: 'security_management_capability_grid',
-      itemId: 'available',
       title: 'Available Capabilities',
-      width: 400,
-      height: 340,
-      region: 'west',
       setupUrl: '/erp_app/desktop/security_management/capabilities/available_setup',
       dataUrl: '/erp_app/desktop/security_management/capabilities/available',
       autoLoad: false
-    };
+    });
 
-    var selected_grid = {
+    var selected_grid = Ext.apply(commonWidgetProperties.selected_grid, {
       xtype: 'security_management_capability_grid',
-      itemId: 'selected',
       title: 'Selected Capabilities',
-      width: 400,
-      height: 340,
-      region: 'east',
       setupUrl: '/erp_app/desktop/security_management/capabilities/selected_setup',   
       dataUrl: '/erp_app/desktop/security_management/capabilities/selected',
       autoLoad: false
-    };
+    });
 
-    var assignment = {
+    var assignment = Ext.apply(commonWidgetProperties.assignment, {
         xtype: 'panel',
-        itemId: 'assignment',
         title: 'Manage Capabilities',
-        layout: 'table',
-        autoScroll: true,
-        height: 600,
-        bodyPadding: 10,
         items:[
           available_grid,
           {
@@ -81,7 +69,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SecurityManagement.CapabilitiesW
           },
           selected_grid
         ]
-    };
+    });
 
     config = Ext.apply({
       title:'Capabilities',

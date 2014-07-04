@@ -99,7 +99,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SecurityManagement.UsersEffectiv
         var effective = {
             xtype: 'panel',
             itemId: 'effective',
-            title: 'Effective Security',
+          //  title: 'Effective Security',
             layout: 'hbox',
             autoScroll: true,
             bodyPadding: 10,
