@@ -109,7 +109,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.ConfigurationManagement.Configur
         itemId:'updateOptionBtn',
         hidden:true,
         handler:function(btn){
-          var form = btn.up('form').getForm()
+          var form = btn.up('form').getForm();
           if(form.isValid()){
             form.submit({
               waitMsg:'Updating option...',
