@@ -21,7 +21,7 @@ module ErpApp
             }
             format.tree {
               render :json => options.collect { |option| option.to_hash(:only => [:internal_identifier, :value, :comment, :description],
-                                                                        :methods => [{:description => :text}, {:id => :model_id}],
+                                                                        :text => option.description, :model_id => option.id,
                                                                         :iconCls => 'icon-document', :leaf => true, :children => []) }
             }
           end

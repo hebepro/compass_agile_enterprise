@@ -20,11 +20,11 @@ module ErpApp
         def index
           item_types = [].tap do |item_types_array|
             ConfigurationItemType.all.group_by(&:category).each do |category, categorized_item_types|
-              category_hash = {:text => category.description, :iconCls => 'icon-documents', :leaf => false, :children => []}
+              category_hash = {:text => (category.nil? ? 'uncategorized' : category.description), :iconCls => 'icon-documents', :leaf => false, :children => []}
               categorized_item_types.each do |item_type|
                 categorized_config_item_type_hash = {
                   :type => 'ConfigurationItemType',
-                  :category_id => category.id,
+                  :category_id => (category.nil? ? nil : category.id),
                   :text => item_type.description,
                   :description => item_type.description,
                   :internal_identifier => item_type.internal_identifier,
