@@ -17,7 +17,67 @@ class Theme < ActiveRecord::Base
   protected_with_capabilities
   has_file_assets
 
+  def import_download_item_file(file)
+    file_support = ErpTechSvcs::FileSupport::Base.new(:storage => Rails.application.config.erp_tech_svcs.file_storage)
+
+    theme_root = Theme.find_theme_root_from_file(file)
+
+    Zip::ZipFile.open(file) do |zip|
+      zip.each do |entry|
+        if entry.name == 'about.yml'
+          data = ''
+          entry.get_input_stream { |io| data = io.read }
+          data = StringIO.new(data) if data.present?
+          about = YAML.load(data)
+          self.author = about['author'] if about['author']
+          self.version = about['version'] if about['version']
+          self.homepage = about['homepage'] if about['homepage']
+          self.summary = about['summary'] if about['summary']
+        else
+          name = entry.name.sub(/__MACOSX\//, '')
+          name = Theme.strip_path(name, theme_root)
+          data = ''
+          entry.get_input_stream { |io| data = io.read }
+          data = StringIO.new(data) if data.present?
+          theme_file = self.files.where("name = ? and directory = ?", File.basename(name), File.join(self.url,File.dirname(name))).first
+          unless theme_file.nil?
+            theme_file.data = data
+            theme_file.save
+          else
+            self.add_file(data, File.join(file_support.root, self.url,name)) rescue next
+          end
+        end
+      end
+    end
+
+  end
+
   class << self
+    def import_download_item(tempfile, website)
+          name_and_id = tempfile.gsub(/(^.*(\\|\/))|(\.zip$)/, '')
+          theme_name = name_and_id.split('[').first
+          theme_id = name_and_id.split('[').last.gsub(']','')
+          Theme.create(:name => theme_name.sub(/-theme/, ''), :theme_id => theme_id, :website_id => website.id).tap do |theme|
+            theme.import_download_item_file(tempfile)
+          end
+    end
+
+
+    def find_theme_root_from_file(file)
+      theme_root = ''
+      Zip::ZipFile.open(file) do |zip|
+        zip.each do |entry|
+          entry.name.sub!(/__MACOSX\//, '')
+          if theme_root == root_in_path(entry.name)
+            break
+          end
+        end
+      end
+      theme_root
+    end
+
+
+
     def root_dir
       @@root_dir ||= "#{Rails.root}/public"
     end
@@ -264,5 +324,5 @@ class Theme < ActiveRecord::Base
     end
 
   end
-
 end
+

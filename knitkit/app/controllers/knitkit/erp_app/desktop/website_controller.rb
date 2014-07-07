@@ -185,6 +185,17 @@ module Knitkit
           FileUtils.rm_r File.dirname(zip_path) rescue nil
         end
 
+        def importtemplate
+
+          website, message = Website.import_template_director(params[:website_data], User.first)
+
+          if website
+            render :inline => {:success => true, :website => website.to_hash(:only => [:id, :name])}.to_json
+          else
+            render :inline => {:success => false, :message => message}.to_json
+          end
+        end
+
       end # WebsiteController
     end # Desktop
   end # ErpApp
