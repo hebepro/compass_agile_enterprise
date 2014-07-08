@@ -1,7 +1,7 @@
 
 # == Basic overview
 # Based on ideas and code snippits from Cell plugin this library allows you
-# to imbed a reusable component into view that is decoupled from the controller
+# to embed a reusable component into view that is decoupled from the controller
 # and view it resides in. It can have its own MVC lifecycle independent of its parent
 # view.
 
@@ -22,7 +22,7 @@ module ErpApp
       IGNORED_PARAMS = %w{action controller uuid widget_name widget_action dynamic_form_id dynamic_form_model_id
                           model_name use_dynamic_form authenticity_token is_html_form commit utf8}
 
-      delegate :config, :params, :session, :request, :logger, :logged_in?, :current_user, :login,
+      delegate :redirect_to, :config, :params, :session, :request, :logger, :logged_in?, :current_user, :login,
                :flash, :update_div_id, :update_html, :current_theme_paths, :request, :to => :proxy_controller
 
       attr_reader   :state_name
@@ -76,6 +76,12 @@ module ErpApp
         proxy_controller.send_data(data, options)
 
         {send_data: true}
+      end
+
+      def redirect_to(options = {}, response_status = {})
+        proxy_controller.redirect_to(options, response_status)
+
+        {redirect_to: true}
       end
 
       private

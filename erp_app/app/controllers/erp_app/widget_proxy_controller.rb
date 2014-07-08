@@ -20,7 +20,7 @@ module ErpApp
       return if result.nil?
 
       if result.is_a?(Hash)
-        if !result[:send_file] and !result[:send_data]
+        if !result[:send_file] and !result[:send_data] and !result[:redirect_to]
           render result
         end
       else
