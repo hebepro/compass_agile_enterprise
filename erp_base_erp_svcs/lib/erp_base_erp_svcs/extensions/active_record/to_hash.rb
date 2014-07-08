@@ -21,8 +21,15 @@ ActiveRecord::Base.class_eval do
         hash.merge!(self.attributes)
       end
 
+      if options[:methods]
+        options[:methods].each do |method|
+          hash[method] = self.send(method)
+        end
+      end
+
       options.each do |key, value|
         next if [:only].include?(key)
+        next if [:methods].include?(key)
 
         hash[key] = value
       end

@@ -8,8 +8,8 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
      */
     partyId: null,
 
-    listeners:{
-        activate: function(){
+    listeners: {
+        activate: function () {
             this.store.loadPage(1);
         }
     },
@@ -117,95 +117,91 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
             {
                 header: 'Note Type',
                 dataIndex: 'note_type_desc',
-                sortable: false,
-                width: 150
+                flex: 1
             },
             {
                 header: 'Summary',
                 dataIndex: 'summary',
                 sortable: false,
-                width: 130
+                flex: 1
             },
             {
                 header: 'Created By',
                 dataIndex: 'created_by_username',
                 sortable: false,
-                width: 100
+                flex: 1
             },
             {
                 header: 'Created',
                 dataIndex: 'created_at',
                 sortable: true,
                 renderer: Ext.util.Format.dateRenderer('m/d/Y H:i:s'),
-                width: 120
+                flex: 1
             }
         ];
 
-        if (currentUser.hasCapability('view', 'Note')) {
-            columns.push({
-                menuDisabled: true,
-                resizable: false,
-                xtype: 'actioncolumn',
-                align: 'center',
-                width: 50,
-                items: [
-                    {
-                        icon: '/images/icons/document_view/document_view_16x16.png',
-                        tooltip: 'View',
-                        handler: function (grid, rowIndex, colIndex) {
-                            var rec = grid.getStore().getAt(rowIndex);
-                            var noteWindow = Ext.create("Ext.window.Window", {
-                                width: 325,
-                                height: 400,
-                                buttonAlign: 'center',
-                                autoScroll: true,
-                                layout: 'fit',
-                                items: {
-                                    xtype: 'panel',
-                                    html: rec.get('content')
-                                },
-                                buttons: [
-                                    {
-                                        text: 'Close',
-                                        handler: function () {
-                                            noteWindow.close();
-                                        }
+        columns.push({
+            menuDisabled: true,
+            resizable: false,
+            xtype: 'actioncolumn',
+            align: 'center',
+            width: 50,
+            items: [
+                {
+                    icon: '/images/icons/eye/eye_16x16.png',
+                    tooltip: 'View',
+                    style: {
+                        marginRight: '10px'
+                    },
+                    disabled: !currentUser.hasCapability('view', 'Note'),
+                    getClass: function (value, metadata) {
+                        return 'x-action-col-icon-margin';
+                    },
+                    handler: function (grid, rowIndex, colIndex) {
+                        var rec = grid.getStore().getAt(rowIndex);
+                        var noteWindow = Ext.create("Ext.window.Window", {
+                            width: 325,
+                            height: 400,
+                            buttonAlign: 'center',
+                            autoScroll: true,
+                            layout: 'fit',
+                            items: {
+                                xtype: 'panel',
+                                html: rec.get('content')
+                            },
+                            buttons: [
+                                {
+                                    text: 'Close',
+                                    handler: function () {
+                                        noteWindow.close();
                                     }
-                                ]
-                            });
-                            noteWindow.show();
-                        }
-                    }
-                ]
-            });
-        }
-
-        if (currentUser.hasCapability('delete', 'Note')) {
-            columns.push({
-                menuDisabled: true,
-                resizable: false,
-                xtype: 'actioncolumn',
-                align: 'center',
-                width: 50,
-                items: [
-                    {
-                        icon: '/images/icons/delete/delete_16x16.png',
-                        tooltip: 'Delete',
-                        handler: function (grid, rowIndex, colIndex) {
-                            Ext.MessageBox.confirm('Confirm', 'Are you sure you want to delete this note?', function (btn) {
-                                if (btn == 'no') {
-                                    return false;
                                 }
-                                else if (btn == 'yes') {
-                                    var rec = grid.getStore().getAt(rowIndex);
-                                    me.deleteNote(rec);
-                                }
-                            });
-                        }
+                            ]
+                        });
+                        noteWindow.show();
                     }
-                ]
-            });
-        }
+                },
+                {
+                    icon: '/images/icons/delete/delete_16x16.png',
+                    tooltip: 'Delete',
+                    disabled: !currentUser.hasCapability('delete', 'Note'),
+                    getClass: function (value, metadata) {
+                        return 'x-action-col-icon-margin';
+                    },
+                    handler: function (grid, rowIndex, colIndex) {
+                        Ext.MessageBox.confirm('Confirm', 'Are you sure you want to delete this note?', function (btn) {
+                            if (btn == 'no') {
+                                return false;
+                            }
+                            else if (btn == 'yes') {
+                                var rec = grid.getStore().getAt(rowIndex);
+                                me.deleteNote(rec);
+                            }
+                        });
+                    }
+                }
+            ]
+        });
 
         var toolBarItems = [];
         if (currentUser.hasCapability('create', 'Note')) {

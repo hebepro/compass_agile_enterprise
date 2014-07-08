@@ -97,12 +97,6 @@
     padding: 3px;
 }
 
-.x-action-col-icon {
-    height: 16px;
-    width: 16px;
-    margin-right: 8px;
-}
-
 .approve-col{
     background-image:url( /images/icons/document_delete/document_delete_16x16.png ) !important;
     filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/document_delete/document_delete_16x16.png', sizingMethod='crop');
