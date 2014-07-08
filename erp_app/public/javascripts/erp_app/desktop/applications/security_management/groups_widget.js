@@ -12,7 +12,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SecurityManagement.GroupsWidget"
     if (tab === undefined) tab = this;
 
     //need a delay to allow for rendering of shared_dynamiceditablegrid
-    setTimeout( function() { 
+    setTimeout( function() {
       var available_grid = tab.down('#available').down('shared_dynamiceditablegrid');
       var selected_grid = tab.down('#selected').down('shared_dynamiceditablegrid');
       if (tab.assign_to_id){
@@ -34,40 +34,28 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SecurityManagement.GroupsWidget"
   },
 
   constructor : function(config) {
-    var self = this;
-
-    var available_grid = {
+    var self = this,
+        commonWidgetProperties  = Compass.ErpApp.Desktop.Applications.SecurityManagement.CommonWidget.properties;
+    
+    var available_grid = Ext.apply(commonWidgetProperties.available_grid, {
       xtype: 'security_management_group_grid',
-      itemId: 'available',
       title: 'Available Groups',
-      width: 400,
-      height: 340,
-      region: 'west',
       setupUrl: '/erp_app/desktop/security_management/groups/available_setup',
       dataUrl: '/erp_app/desktop/security_management/groups/available',
       autoLoad: false
-    };
-
-    var selected_grid = {
+    });
+    
+    var selected_grid = Ext.apply(commonWidgetProperties.selected_grid, {
       xtype: 'security_management_group_grid',
-      itemId: 'selected',
       title: 'Selected Groups',
-      width: 400,
-      height: 340,
-      region: 'east',
       setupUrl: '/erp_app/desktop/security_management/groups/selected_setup',   
       dataUrl: '/erp_app/desktop/security_management/groups/selected',
       autoLoad: false
-    };
+    });
 
-    var assignment = {
+    var assignment = Ext.apply(commonWidgetProperties.assignment, {
         xtype: 'panel',
-        itemId: 'assignment',
         title: 'Manage Groups',
-        layout: 'table',
-        autoScroll: true,
-        height: 600,
-        bodyPadding: 10,
         items:[
           available_grid,
           {
@@ -81,7 +69,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SecurityManagement.GroupsWidget"
           },
           selected_grid
         ]
-    };
+    });
 
     config = Ext.apply({
       title:'Groups',
