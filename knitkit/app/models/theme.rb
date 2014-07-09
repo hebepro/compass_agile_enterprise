@@ -49,7 +49,7 @@ class Theme < ActiveRecord::Base
         end
       end
     end
-
+    activate!
   end
 
   class << self
