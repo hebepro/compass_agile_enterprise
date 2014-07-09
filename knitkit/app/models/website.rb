@@ -311,7 +311,7 @@ class Website < ActiveRecord::Base
   def export_template
     tmp_dir = Website.make_tmp_dir
     template_zip_path = export
-    theme_zip_path = themes.last.export
+    theme_zip_path = themes.active.first.export
 
     zip_file_name = File.join(tmp_dir, self.iid + '-composite.zip')
 
