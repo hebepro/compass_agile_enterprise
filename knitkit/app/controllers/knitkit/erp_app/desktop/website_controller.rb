@@ -4,7 +4,7 @@ module Knitkit
       class WebsiteController < Knitkit::ErpApp::Desktop::AppController
         IGNORED_PARAMS = %w{action controller id}
 
-        before_filter :set_website, :only => [:build_content_tree, :export, :website_publications, :set_viewing_version,
+        before_filter :set_website, :only => [:build_content_tree, :export, :exporttemplate, :website_publications, :set_viewing_version,
                                               :build_host_hash, :activate_publication, :publish, :update, :delete]
 
         def index
@@ -167,6 +167,15 @@ module Knitkit
           zip_path = @website.export
           begin
             send_file(zip_path.to_s, :stream => false)
+          rescue Exception => ex
+            raise "Error sending #{zip_path} file"
+          end
+        end
+
+        def exporttemplate
+          zip_path = @website.export_template
+          begin
+            send_file(zip_path, :stream => false)
           rescue Exception => ex
             raise "Error sending #{zip_path} file"
           end

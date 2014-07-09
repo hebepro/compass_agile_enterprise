@@ -120,7 +120,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
                                 Compass.ErpApp.Desktop.Applications.Knitkit.ThemeMenu(),
                                 Compass.ErpApp.Desktop.Applications.Knitkit.NavigationMenu(),
                                 Compass.ErpApp.Desktop.Applications.Knitkit.HostsMenu(),
-                                Compass.ErpApp.Desktop.Applications.Knitkit.TemplateImportMenu()
+                                Compass.ErpApp.Desktop.Applications.Knitkit.TemplateMenu()
                             ]
                         }
                     }

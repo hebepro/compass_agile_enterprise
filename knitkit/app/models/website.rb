@@ -308,6 +308,21 @@ class Website < ActiveRecord::Base
 
   end
 
+  def export_template
+    tmp_dir = Website.make_tmp_dir
+    template_zip_path = export
+    theme_zip_path = themes.last.export
+
+    zip_file_name = File.join(tmp_dir, self.iid + '-composite.zip')
+
+    Zip::ZipFile.open(zip_file_name, Zip::ZipFile::CREATE) do |zip_file|
+      zip_file.add(File.basename(template_zip_path, '.zip') + '-template.zip', template_zip_path)
+      zip_file.add(File.basename(theme_zip_path, '.zip') + '-theme.zip', theme_zip_path)
+    end
+
+    File.join(tmp_dir, self.iid + '-composite.zip')
+  end
+
   class << self
     def make_tmp_dir
       Pathname.new(File.join(Rails.root, "/tmp/website_export/tmp_#{Time.now.to_i.to_s}")).tap do |dir|
