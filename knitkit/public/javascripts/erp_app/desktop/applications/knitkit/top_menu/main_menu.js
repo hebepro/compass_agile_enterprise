@@ -1062,8 +1062,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.TemplateMenu = function () {
                     handler: function (btn) {
                         var westRegion = Ext.ComponentQuery.query('#knitkitWestRegion').first(),
                             themesTreePanel = westRegion.down('#themesTreePanel'),
-                            knitkitWin = compassDesktop.getModule('knitkit-win'),
-                            websiteId = knitkitWin.currentWebsite.id;
+                            knitkitWin = compassDesktop.getModule('knitkit-win')
 
                         Ext.create("Ext.window.Window", {
                             modal: true,
@@ -1075,11 +1074,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.TemplateMenu = function () {
                                 fileUpload: true,
                                 url: '/knitkit/erp_app/desktop/site/importtemplate',
                                 items: [
-                                    {
-                                        xtype: 'hidden',
-                                        name: 'website_id',
-                                        value: websiteId
-                                    },
+
                                     {
                                         xtype: 'fileuploadfield',
                                         width: '350px',
