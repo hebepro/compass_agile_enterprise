@@ -23,7 +23,7 @@ class WebsiteSection < ActiveRecord::Base
 
   validates :title, :presence => {:message => 'Title cannot be blank'}
   validates_uniqueness_of :permalink, :scope => [:website_id, :parent_id]
-  validates_uniqueness_of :internal_identifier, :scope => :website_id, :case_sensitive => false
+  validates_uniqueness_of :internal_identifier, :scope => [:website_id, :parent_id], :case_sensitive => false
 
   KNIT_KIT_ROOT = Knitkit::Engine.root.to_s
   WEBSITE_SECTIONS_TEMP_LAYOUT_PATH = "#{Knitkit::Engine.root.to_s}/app/views/knitkit/website_sections"
