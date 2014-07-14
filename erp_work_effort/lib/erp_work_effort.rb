@@ -1,4 +1,4 @@
-require 'erp_base_erp_svcs'
+require 'erp_orders'
 
 require "erp_work_effort/version"
 require "erp_work_effort/extensions"
