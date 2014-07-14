@@ -60,7 +60,9 @@ Ext.define("Compass.ErpApp.Shared.DynamicEditableGrid", {
     },
 
     constructor: function (config) {
-        var plugins = [];
+        var me = this,
+            plugins = [];
+
         if (config['editable']) {
             var tbar = {};
             this.editing = Ext.create('Ext.grid.plugin.RowEditing', {

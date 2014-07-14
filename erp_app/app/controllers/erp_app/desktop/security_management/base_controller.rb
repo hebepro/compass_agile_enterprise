@@ -2,7 +2,7 @@ module ErpApp
   module Desktop
     module SecurityManagement
       class BaseController < ::ErpApp::Desktop::BaseController
-      
+
         # used for related_searchbox
         def search
           if params[:model].blank? or (params[:displayField].blank? and params[:search_fields].blank?)
@@ -16,7 +16,7 @@ module ErpApp
               search_fields = params[:search_fields].split(',')
               unless params[:query].blank?
                 sql = ''
-                search_fields.each_with_index do |f,i|
+                search_fields.each_with_index do |f, i|
                   sql += " OR " if i > 0
                   sql += "UPPER(#{f}) LIKE UPPER('%#{params[:query]}%')"
                 end
@@ -27,7 +27,7 @@ module ErpApp
 
             total = query.count
             data = query.all
-            render :inline => { :data => data, :total => total}.to_json
+            render :inline => {:data => data, :total => total}.to_json
           end
         end
 
@@ -36,12 +36,12 @@ module ErpApp
           offset = params[:start].to_f
           offset > 0 ? (offset / params[:limit].to_f).to_i + 1 : 1
         end
-        
+
         def per_page
           params[:limit].nil? ? 10 : params[:limit].to_i
         end
 
       end
-    end#SecurityManagement
-  end#Desktop
-end#ErpApp
+    end #SecurityManagement
+  end #Desktop
+end #ErpApp
