@@ -135,6 +135,12 @@ class FileAsset < ActiveRecord::Base
     self.protected_with_capability?('download')
   end
 
+  def copy(path, name)
+    file_support = ErpTechSvcs::FileSupport::Base.new(:storage => ErpTechSvcs::Config.file_storage)
+
+    file_support.copy(self.path, path, name)
+  end
+
   # compass file download url
   def url
     "/download/#{self.name}?path=#{self.directory}"

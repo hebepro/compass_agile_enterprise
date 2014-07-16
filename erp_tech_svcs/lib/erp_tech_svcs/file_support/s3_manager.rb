@@ -56,6 +56,13 @@ module ErpTechSvcs
         bucket.objects[full_filename].write(content, {:acl => :public_read})
       end
 
+      # copy a file
+      def copy_file(origination_file, path, name)
+        contents = get_contents(origination_file)
+
+        create_file(path, name, contents)
+      end
+
       def create_folder(path, name)
         path = path.sub(%r{^/}, '')
         full_filename = (path.blank? ? name : File.join(path, name))
