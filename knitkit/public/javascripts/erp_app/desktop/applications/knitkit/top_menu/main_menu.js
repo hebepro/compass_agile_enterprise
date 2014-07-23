@@ -1047,3 +1047,115 @@ Compass.ErpApp.Desktop.Applications.Knitkit.HostsMenu = function () {
         }
     }
 };
+
+
+Compass.ErpApp.Desktop.Applications.Knitkit.TemplateMenu = function () {
+    return {
+        text: 'Templates',
+        iconCls: 'icon-website',
+        menu: {
+            xtype: 'menu',
+            items: [
+                {
+                    text: 'Template Import',
+                    iconCls: 'icon-website-import',
+                    handler: function (btn) {
+                        var westRegion = Ext.ComponentQuery.query('#knitkitWestRegion').first(),
+                            themesTreePanel = westRegion.down('#themesTreePanel'),
+                            knitkitWin = compassDesktop.getModule('knitkit-win')
+
+                        Ext.create("Ext.window.Window", {
+                            modal: true,
+                            title: 'Import Template',
+                            buttonAlign: 'center',
+                            items: Ext.create('widget.form', {
+                                frame: false,
+                                bodyStyle: 'padding:5px 5px 0',
+                                fileUpload: true,
+                                url: '/knitkit/erp_app/desktop/site/importtemplate',
+                                items: [
+
+                                    {
+                                        xtype: 'fileuploadfield',
+                                        width: '350px',
+                                        fieldLabel: 'Upload Template',
+                                        buttonText: 'Upload',
+                                        buttonOnly: false,
+                                        allowBlank: true,
+                                        name: 'website_data'
+                                    }
+                                ]
+                            }),
+                            buttons: [
+                                {
+                                    text: 'Submit',
+                                    listeners: {
+                                        'click': function (button) {
+                                            var knitkitModule = compassDesktop.getModule('knitkit-win'),
+                                                knitkitWindow = compassDesktop.desktop.getWindow('knitkit'),
+                                                window = button.findParentByType('window'),
+                                                formPanel = window.query('.form')[0];
+
+                                            formPanel.getForm().submit({
+
+                                                waitMsg: 'Please wait...',
+                                                success: function (form, action) {
+
+                                                    var obj = Ext.decode(action.response.responseText);
+                                                    if (obj.success) {
+                                                        var combo = knitkitWindow.down('websitescombo');
+                                                        combo.store.load({
+                                                            callback: function (records, operation, succes) {
+                                                                for (i = 0; i < records.length; i++) {
+                                                                    if (records[i].data.id == obj.website.id) {
+                                                                        combo.select(records[i]);
+
+                                                                        knitkitModule.selectWebsite(records[i]);
+                                                                        window.close();
+
+                                                                        break;
+                                                                    }
+                                                                }
+                                                            }
+                                                        });
+                                                    }
+                                                    else {
+                                                        Ext.Msg.alert("Error", obj.message);
+                                                    }
+                                                },
+                                                failure: function (form, action) {
+                                                    var obj = Ext.decode(action.response.responseText);
+                                                    if (obj != null) {
+                                                        Ext.Msg.alert("Error", obj.message);
+                                                    }
+                                                    else {
+                                                        Ext.Msg.alert("Error", "Error importing template");
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    }
+                                },
+                                {
+                                    text: 'Close',
+                                    handler: function (btn) {
+                                        btn.up('window').close();
+                                    }
+                                }
+                            ]
+                        }).show();
+                    }
+                },
+                {
+                    text: 'Export Current Site as Template',
+                    iconCls: 'icon-website-export',
+                    handler: function () {
+                        var knitkitWin = compassDesktop.getModule('knitkit-win'),
+                            websiteId = knitkitWin.currentWebsite.id;
+                        window.open('/knitkit/erp_app/desktop/site/exporttemplate?website_id=' + websiteId, '_blank');
+                    }
+                }
+            ]
+        }
+    }
+};

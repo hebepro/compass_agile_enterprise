@@ -4,7 +4,7 @@ module Knitkit
       class WebsiteController < Knitkit::ErpApp::Desktop::AppController
         IGNORED_PARAMS = %w{action controller id}
 
-        before_filter :set_website, :only => [:build_content_tree, :export, :website_publications, :set_viewing_version,
+        before_filter :set_website, :only => [:build_content_tree, :export, :exporttemplate, :website_publications, :set_viewing_version,
                                               :build_host_hash, :activate_publication, :publish, :update, :delete]
 
         def index
@@ -172,6 +172,20 @@ module Knitkit
           end
         end
 
+        def exporttemplate
+          zip_path = @website.export_template
+
+          if zip_path == false
+            render :json => {:success => false, :message => "Error sending file. Make sure you have a website and an active theme."}
+          end
+
+          begin
+            send_file(zip_path, :stream => false)
+          rescue Exception => ex
+            raise "Error sending file. Make sure you have a website and an active theme."
+          end
+        end
+
         # TODO add role restriction to this
         def import
           website, message = Website.import(params[:website_data], current_user)
@@ -183,6 +197,16 @@ module Knitkit
           end
         ensure
           FileUtils.rm_r File.dirname(zip_path) rescue nil
+        end
+
+        def importtemplate
+          website, message = Website.import_template_director(params[:website_data], User.first)
+
+          if website
+            render :inline => {:success => true, :website => website.to_hash(:only => [:id, :name])}.to_json
+          else
+            render :inline => {:success => false, :message => message}.to_json
+          end
         end
 
       end # WebsiteController
