@@ -311,6 +311,11 @@ class Website < ActiveRecord::Base
   def export_template
     tmp_dir = Website.make_tmp_dir
     template_zip_path = export
+
+    if !themes.active.first.is_a?(Theme)
+      return false
+    end
+
     theme_zip_path = themes.active.first.export
 
     zip_file_name = File.join(tmp_dir, self.iid + '-composite.zip')
@@ -486,12 +491,12 @@ class Website < ActiveRecord::Base
       }
       w = ''
       entries.each do |entry|
-        if entry.match(/-template.zip/) && !entry.match(/_./)
+        if entry.match(/-template.zip/)
           w = import_template('public/waste/' + entry, current_user)
         end
       end
       entries.each do |entry|
-        if entry.match(/-theme.zip/) && !entry.match(/_./)
+        if entry.match(/-theme.zip/)
           Theme.import_download_item('public/waste/' + entry, w[0])
         end
       end
@@ -594,14 +599,13 @@ class Website < ActiveRecord::Base
           end
 
           #handle hosts
-          setup_hash[:hosts].each do |host|
-            website.hosts << WebsiteHost.create(:host => host)
-            website.save
+          if WebsiteHost.last
+          setup_hash.merge(:hosts => WebsiteHost.last.host)
           end
 
           if !setup_hash[:hosts].blank? and !setup_hash[:hosts].empty?
             #set first host as primary host in configuration
-            website.configurations.first.update_configuration_item(ConfigurationItemType.find_by_internal_identifier('primary_host'), setup_hash[:hosts].first)
+            website.configurations.first.update_configuration_item(ConfigurationItemType.find_by_internal_identifier('primary_host'), WebsiteHost.last.host)
             website.save
           end
 
