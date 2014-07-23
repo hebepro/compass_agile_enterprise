@@ -87,6 +87,7 @@ module ErpInventory
             begin
               ActiveRecord::Base.transaction do
                 entry = InventoryEntry.find(params[:inventory_entry_id])
+                current_facility = entry.current_storage_facility
                 entry.description=params[:description]
                 entry.sku=params[:sku]
                 entry.unit_of_measurement_id=params[:unit_of_measurement]
@@ -95,10 +96,12 @@ module ErpInventory
                 entry.product_type_id=params[:product_type_id]
                 entry.save
 
-                location_assignment = InventoryEntryLocation.new
-                location_assignment.inventory_entry = entry
-                location_assignment.facility_id = params[:inventory_facility]
-                location_assignment.save
+                if current_facility.id != params[:inventory_facility].to_i
+                  location_assignment = InventoryEntryLocation.new
+                  location_assignment.inventory_entry = entry
+                  location_assignment.facility_id = params[:inventory_facility]
+                  location_assignment.save
+                end
 
                 render :json => {:success => true, :data => entry.to_hash(:only => [:id, :description, :created_at, :updated_at], :model => 'InventoryEntry')}
               end
