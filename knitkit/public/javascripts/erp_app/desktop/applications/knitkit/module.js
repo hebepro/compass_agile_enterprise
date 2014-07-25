@@ -10,6 +10,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
     currentWebsite: null,
 
     init: function () {
+
         this.launcher = {
             text: 'KnitKit',
             iconCls: 'icon-knitkit',
@@ -58,11 +59,15 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
         menuBar.down('#websiteInquiresMenuItem').disable();
         menuBar.down('#publishWebsiteMenuItem').disable();
         menuBar.down('#editWebsiteMenuItem').disable();
+        menuBar.down('#templatesMenuItem').disable();
+        menuBar.down('#exportTemplateMenuItem').disable();
+
     },
 
     selectWebsite: function (website) {
         // get only the data for the website
         website = website.data;
+
 
         var self = this,
             desktop = self.app.getDesktop(),
@@ -84,6 +89,21 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
             website_id: website.id
         };
 
+        Ext.Ajax.request({
+            url: '/knitkit/erp_app/desktop/site/has_active_theme',
+            params: {
+                website_id: website.id
+            },
+            success: function(response){
+                var text = response.responseText;
+                var obj = Ext.decode(text);
+                console.log(obj.message)
+                if (obj.message == 'true') {
+                    menuBar.down('#exportTemplateMenuItem').enable();
+                }
+            }
+        });
+
         menuBar.down('#themeMenuItem').enable();
         menuBar.down('#navigationMenuItem').enable();
         menuBar.down('#hostsMenuItem').enable();
@@ -95,6 +115,8 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
         menuBar.down('#websiteInquiresMenuItem').enable();
         menuBar.down('#publishWebsiteMenuItem').enable();
         menuBar.down('#editWebsiteMenuItem').enable();
+        menuBar.down('#templatesMenuItem').enable();
+        menuBar.down('#exportTemplateMenuItem').disable();
     },
 
     createWindow: function () {

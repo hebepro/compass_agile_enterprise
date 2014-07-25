@@ -1053,6 +1053,8 @@ Compass.ErpApp.Desktop.Applications.Knitkit.TemplateMenu = function () {
     return {
         text: 'Templates',
         iconCls: 'icon-website',
+        itemId: 'templatesMenuItem',
+        disabled: true,
         menu: {
             xtype: 'menu',
             items: [
@@ -1147,12 +1149,17 @@ Compass.ErpApp.Desktop.Applications.Knitkit.TemplateMenu = function () {
                     }
                 },
                 {
-                    text: 'Export Current Site as Template',
+                    itemId: 'exportTemplateMenuItem',
+                    text: 'Export Current Site and Active Theme as Template',
                     iconCls: 'icon-website-export',
                     handler: function () {
                         var knitkitWin = compassDesktop.getModule('knitkit-win'),
-                            websiteId = knitkitWin.currentWebsite.id;
-                        window.open('/knitkit/erp_app/desktop/site/exporttemplate?website_id=' + websiteId, '_blank');
+                        websiteId = knitkitWin.currentWebsite.id;
+                        ifrm = document.createElement("IFRAME");
+                        ifrm.setAttribute("src", '/knitkit/erp_app/desktop/site/exporttemplate?website_id=' + websiteId);
+                        ifrm.style.width = 0+"px";
+                        ifrm.style.height = 0+"px";
+                        document.body.appendChild(ifrm);
                     }
                 }
             ]

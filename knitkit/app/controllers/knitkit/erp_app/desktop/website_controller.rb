@@ -174,15 +174,14 @@ module Knitkit
 
         def exporttemplate
           zip_path = @website.export_template
-
-          if zip_path == false
-            render :json => {:success => false, :message => "Error sending file. Make sure you have a website and an active theme."}
-          end
-
-          begin
-            send_file(zip_path, :stream => false)
-          rescue Exception => ex
-            raise "Error sending file. Make sure you have a website and an active theme."
+          if zip_path
+            begin
+              send_file(zip_path, :stream => false)
+            rescue Exception => ex
+              raise "Error sending file. Make sure you have a website and an active theme."
+            end
+          else
+             render :inline => {:success => false, :message => 'test'}.to_json
           end
         end
 
@@ -207,6 +206,13 @@ module Knitkit
           else
             render :inline => {:success => false, :message => message}.to_json
           end
+        end
+
+        def has_active_theme
+          !!Website.find_by_id(params[:website_id]).themes.active.first ? response = 'true' : response = 'false'
+          render :json => {:success => true, :message => response}
+
+          # example found in knitkit module.js
         end
 
       end # WebsiteController

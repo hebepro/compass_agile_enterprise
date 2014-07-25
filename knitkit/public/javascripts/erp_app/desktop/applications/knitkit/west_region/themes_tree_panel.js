@@ -345,3 +345,4 @@ Ext.define("Compass.ErpApp.Desktop.Applications.ThemesTreePanel", {
         this.callParent([config]);
     }
 });
+

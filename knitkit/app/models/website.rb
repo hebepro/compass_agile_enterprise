@@ -496,27 +496,30 @@ class Website < ActiveRecord::Base
       file_path = file_object.path
 
       entries = []
-      Zip::ZipFile.open(file_path) { |zip_file|
-        zip_file.each { |f|
-          f_path=File.join('public/waste', f.name)
-          FileUtils.mkdir_p(File.dirname(f_path))
-          zip_file.extract(f, f_path) unless File.exist?(f_path)
-          entries << f.name
+      begin
+        Zip::ZipFile.open(file_path) { |zip_file|
+          zip_file.each { |f|
+            f_path=File.join('public/waste', f.name)
+            FileUtils.mkdir_p(File.dirname(f_path))
+            zip_file.extract(f, f_path) unless File.exist?(f_path)
+            entries << f.name
+          }
         }
-      }
-      w = ''
-      entries.each do |entry|
-        if entry.match(/-template.zip/)
-          w = import_template('public/waste/' + entry, current_user)
-        end
-      end
-      entries.each do |entry|
-        if entry.match(/-theme.zip/)
-          Theme.import_download_item('public/waste/' + entry, w[0])
-        end
-      end
 
-      return w[0], w[1]
+        entries.each do |entry|
+          if entry.match(/-template.zip/)
+            website_result = import_template('public/waste/' + entry, current_user)
+          end
+        end
+        entries.each do |entry|
+          if entry.match(/-theme.zip/)
+            Theme.import_download_item('public/waste/' + entry, w[0])
+          end
+        end
+        return website_result[0], website_result[1]
+      rescue Exception => e
+        return false, "Error"
+      end
     end
 
     def import_template(file, current_user)
