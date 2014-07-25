@@ -97,7 +97,6 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
             success: function(response){
                 var text = response.responseText;
                 var obj = Ext.decode(text);
-                console.log(obj.message)
                 if (obj.message == 'true') {
                     menuBar.down('#exportTemplateMenuItem').enable();
                 }
