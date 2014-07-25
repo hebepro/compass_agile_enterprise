@@ -102,7 +102,7 @@ Knitkit.InlineEditing = {
             var data = div.html();
 
             var dialogHeader = jQuery("<div class='header'></div>");
-            var closeLink = jQuery("<a class='inline-edit-close'><img src='/images/icons/close/close_light_16x16.png' /></a><br />");
+            var closeLink = jQuery("<a class='inline-edit-close'><img width='24px' height='24px' src='/images/inline_edit/close.png' /></a><br />");
             var textarea = jQuery('<textarea name="inline-edit-textarea" id="inlineEditTextarea" ></textarea>');
             var messageSpan = jQuery("<span class='inline-edit-message' id='inlineEditMessage'>Last Update: <span id='inlineEditLastUpdate'>" + self.lastUpdate + "</span><span id='inlineEditSaveResult'></span></span>");
 
