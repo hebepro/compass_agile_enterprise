@@ -1054,7 +1054,6 @@ Compass.ErpApp.Desktop.Applications.Knitkit.TemplateMenu = function () {
         text: 'Templates',
         iconCls: 'icon-website',
         itemId: 'templatesMenuItem',
-        disabled: true,
         menu: {
             xtype: 'menu',
             items: [
@@ -1151,6 +1150,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.TemplateMenu = function () {
                 {
                     itemId: 'exportTemplateMenuItem',
                     text: 'Export Current Site and Active Theme as Template',
+                    disabled: true,
                     iconCls: 'icon-website-export',
                     handler: function () {
                         var knitkitWin = compassDesktop.getModule('knitkit-win'),

@@ -508,15 +508,15 @@ class Website < ActiveRecord::Base
 
         entries.each do |entry|
           if entry.match(/-template.zip/)
-            website_result = import_template('public/waste/' + entry, current_user)
+            @website_result = import_template('public/waste/' + entry, current_user)
           end
         end
         entries.each do |entry|
           if entry.match(/-theme.zip/)
-            Theme.import_download_item('public/waste/' + entry, w[0])
+            Theme.import_download_item('public/waste/' + entry, @website_result[0])
           end
         end
-        return website_result[0], website_result[1]
+        return @website_result[0], @website_result[1]
       rescue Exception => e
         return false, "Error"
       end
@@ -618,12 +618,12 @@ class Website < ActiveRecord::Base
 
           #handle hosts
           if WebsiteHost.last
-          setup_hash.merge(:hosts => WebsiteHost.last.host)
+          setup_hash.merge(:hosts => 'localhost:3000')
           end
 
           if !setup_hash[:hosts].blank? and !setup_hash[:hosts].empty?
             #set first host as primary host in configuration
-            website.configurations.first.update_configuration_item(ConfigurationItemType.find_by_internal_identifier('primary_host'), WebsiteHost.last.host)
+            website.configurations.first.update_configuration_item(ConfigurationItemType.find_by_internal_identifier('primary_host'), 'localhost:3000')
             website.save
           end
 
