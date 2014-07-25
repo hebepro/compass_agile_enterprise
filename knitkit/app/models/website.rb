@@ -513,7 +513,7 @@ class Website < ActiveRecord::Base
         end
         entries.each do |entry|
           if entry.match(/-theme.zip/)
-            Theme.import_download_item('public/waste/' + entry, w[0])
+            Theme.import_download_item('public/waste/' + entry, website_result[0])
           end
         end
         return website_result[0], website_result[1]
