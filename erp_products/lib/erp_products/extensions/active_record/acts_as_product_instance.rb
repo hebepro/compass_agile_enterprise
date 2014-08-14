@@ -26,7 +26,8 @@ module ErpProducts
                 :external_identifier,
                 :external_identifier=,
                 :external_id_source,
-                :external_id_source=
+                :external_id_source=,
+                :product_feature_instances
             ].each do |m|
               delegate m, :to => :product_instance
             end
