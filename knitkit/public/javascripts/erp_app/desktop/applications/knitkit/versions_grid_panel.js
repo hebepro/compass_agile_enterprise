@@ -57,7 +57,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.VersionsGridPanel", {
                 flex: 0.5,
                 items: [
                     {
-                        icon: '/images/icons/document_view/document_view_16x16.png',
+                        icon: '/images/icons/eye/eye_16x16.png',
                         tooltip: 'View',
                         getClass: function (v, meta, rec) {
                             return 'x-action-col-icon';

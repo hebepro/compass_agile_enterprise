@@ -131,7 +131,7 @@ Compass.ErpApp.Widgets.Login = {
                             if (action == ':login_header') {
                                 var loginWidgetLoginUrlField = basicForm.findField('loginWidgetLoginUrl');
                                 data.loginWidgetLoginUrl = loginWidgetLoginUrlField.getValue();
-                                 content = Compass.ErpApp.Widgets.Login.loginHeaderTemplate.apply(data);
+                                content = Compass.ErpApp.Widgets.Login.loginHeaderTemplate.apply(data);
                             }
                             else {
                                 var loginWidgetLoginToField = basicForm.findField('loginWidgetLoginTo');
@@ -157,11 +157,11 @@ Compass.ErpApp.Widgets.Login = {
         });
         addLoginWidgetWindow.show();
     }
-}
+};
 
 Compass.ErpApp.Widgets.AvailableWidgets.push({
     name: 'Login',
-    iconUrl: '/images/icons/key/key_48x48.png',
+    iconUrl: '/images/icons/login/login_48x48.png',
     onClick: Compass.ErpApp.Widgets.Login.addLogin,
     about: 'This widget creates a login form to allow users to log into the website.'
 });
