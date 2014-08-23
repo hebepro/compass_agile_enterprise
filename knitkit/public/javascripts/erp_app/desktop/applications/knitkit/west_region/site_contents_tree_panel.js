@@ -86,7 +86,7 @@ var viewConfigItems = {
                 result = true,
                 counter = 0;
 
-            if (record.get('isSection')) {
+            if (record.get('isSection') || record.get('isDocument')) {
                 // if the record is modified and the parentId has changed we need to change
                 // the section parent
                 if (record.modified && record.modified.parentId) {
@@ -112,7 +112,7 @@ var viewConfigItems = {
                 }
                 else {
                     overModel.parentNode.eachChild(function (node) {
-                        if (node.get('isSection')) {
+                        if (node.get('isSection') || record.get('isDocument')) {
                             positionArray.push({
                                 id: node.data.id.split('_')[1],
                                 position: counter

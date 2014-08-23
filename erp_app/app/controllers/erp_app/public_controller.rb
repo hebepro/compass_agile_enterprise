@@ -10,6 +10,12 @@ module ErpApp
     # Download Prompt Example: /download/filename.ext?path=/directory&disposition=attachment
     def download
       filename = "#{params[:filename]}.#{params[:format]}"
+
+      # remove trailing period if present
+      if filename.last == '.'
+        filename.chop!
+      end
+
       path = params[:path].blank? ? nil : params[:path].gsub("/#{params[:filename]}.#{params[:format]}", '')
       disposition = params[:disposition]
 

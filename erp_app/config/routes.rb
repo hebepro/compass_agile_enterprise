@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  match '/download/:filename' => 'erp_app/public#download'
+  match '/download/:filename' => 'erp_app/public#download', :filename => /[^\/]*/
 end
 
 ErpApp::Engine.routes.draw do
@@ -10,12 +10,6 @@ ErpApp::Engine.routes.draw do
   match '/application/:action' => "application"
   match '/login(/:application)' => "login#index"
   match '/public/:action' => "public"
-
-  #############################
-  #Pixlar Callback Routes
-  #############################
-
-  match '/pixlr/:action' => 'pixlr'
 
   #############################
   #Shared Application Routes
