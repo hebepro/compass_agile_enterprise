@@ -121,14 +121,20 @@ module Knitkit
                 @website_section.use_markdown = (params[:use_markdown] == 'yes')
               end
 
-              website = @website_section.website
-              if @website_section.save
-                @website_section.publish(website, 'Auto Publish', @website_section.version, current_user) if website.publish_on_save?
+              #TODO this should probably be moved into the view
+              if @website_section.altered?
+                website = @website_section.website
+                if @website_section.save
+                  @website_section.publish(website, 'Auto Publish', @website_section.version, current_user) if website.publish_on_save?
 
-                render :json => {:success => true}
+                  render :json => {:success => true}
+                else
+                  render :json => {:success => false}
+                end
               else
-                render :json => {:success => false}
+                render :json => {:success => true}
               end
+
             end
           rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
@@ -163,9 +169,18 @@ module Knitkit
               unless result
                 website = @website_section.website
                 @website_section.layout = params[:content]
-                saved = @website_section.save
-                @website_section.publish(website, 'Auto Publish', @website_section.version, current_user) if saved and website.publish_on_save?
-                render :json => saved ? {:success => true} : {:success => false}
+
+                #TODO this should probably be moved into the view
+                if @website_section.altered?
+                  saved = @website_section.save
+                  @website_section.publish(website, 'Auto Publish', @website_section.version, current_user) if saved and website.publish_on_save?
+
+                  render :json => saved ? {:success => true} : {:success => false}
+                else
+
+                  render :json => {:success => true}
+                end
+
               else
                 render :json => {:success => false, :message => result}
               end

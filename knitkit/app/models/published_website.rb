@@ -25,7 +25,7 @@ class PublishedWebsite < ActiveRecord::Base
   end
 
   def publish(comment, current_user)
-    new_publication = clone_publication(1, comment, current_user)
+    new_publication = clone_publication(comment, current_user)
     elements = []
 
     #get a publish sections
@@ -76,7 +76,7 @@ class PublishedWebsite < ActiveRecord::Base
   end
 
   def publish_element(comment, element, version, current_user)
-    new_publication = clone_publication(0.1, comment, current_user)
+    new_publication = clone_publication(comment, current_user)
 
     published_element = new_publication.published_elements.where('published_element_record_id = ? and (published_element_record_type = ? or published_element_record_type = ?)', element.id, element.class.to_s, element.class.superclass.to_s).first
 
@@ -101,15 +101,13 @@ class PublishedWebsite < ActiveRecord::Base
 
   private
 
-  def clone_publication(version_increment, comment, current_user)
+  def clone_publication(comment, current_user)
     #create new PublishedWebsite with comment
     published_website = PublishedWebsite.new
     published_website.website = self.website
-    if version_increment == 1
-      published_website.version = (self.version.to_i + version_increment)
-    else
-      published_website.version = (self.version + version_increment).round(6)
-    end
+
+    published_website.version = (self.version.to_i + 1)
+
     published_website.published_by = current_user
     published_website.comment = comment
     published_website.save

@@ -26,14 +26,17 @@ module Knitkit
           end
 
           def destroy_published_elements
-            published_elements = PublishedElement.where('published_element_record_id = ? and (published_element_record_type = ? or published_element_record_type = ?)', self.id, self.class.to_s, self.class.superclass.to_s)
+            published_elements = PublishedElement.where('published_element_record_id = ?
+                                                        and (published_element_record_type = ?
+                                                        or published_element_record_type = ?)',
+                                                        self.id, self.class.to_s, self.class.superclass.to_s)
             published_elements.each do |published_element|
               published_element.destroy
             end
           end
         end
 
-      end#ActsAsPublishable
-    end#ActiveRecord
-  end#Extensions
-end#Knitkit
+      end #ActsAsPublishable
+    end #ActiveRecord
+  end #Extensions
+end #Knitkit
