@@ -160,3 +160,7 @@
     height: 16px;
     width: 16px;
 }
+
+#ext-quicktips-tip-outerCt {
+    width: auto !important;
+}
