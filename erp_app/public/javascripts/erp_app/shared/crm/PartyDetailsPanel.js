@@ -224,7 +224,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
         });
 
         tabPanels.push(contactsPanel);
-        tabPanels.push({xtype: 'shared_notesgrid', partyId: me.partyId});
+        tabPanels.push({xtype: 'shared_notesgrid', recordType: 'Party', recordId: me.partyId});
 
         me.partyDetailsPanel = Ext.create('widget.panel', {
             itemId: 'partyDetails',

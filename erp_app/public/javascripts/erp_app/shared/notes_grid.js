@@ -3,10 +3,16 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
     alias: 'widget.shared_notesgrid',
 
     /**
-     * @cfg {Int} partyId
-     * The id of the party these notes relate to.
+     * @cfg {Int} recordType
+     * The type of record we are saving notes to.
      */
-    partyId: null,
+    recordType: null,
+
+    /**
+     * @cfg {Int} recordId
+     * The id of the record we are saving notes to.
+     */
+    recordId: null,
 
     listeners: {
         activate: function () {
@@ -38,17 +44,14 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
         });
     },
 
-    //TODO: Deprecate this method in preference of
-    //set params
-    updateParty: function (partyId) {
-        this.partyId = partyId;
-        this.store.proxy.url = '/erp_app/shared/notes/view/' + this.partyId;
-        this.store.load();
-    },
-
     setParams: function (params) {
-        this.partyId = params.partyId;
-        this.store.proxy.url = '/erp_app/shared/notes/view/' + this.partyId;
+        this.recordId = params.recordId;
+        this.recordType = params.recordType;
+        this.store.proxy.setExtraParams({
+            recordType: me.recordType,
+            recordId: me.recordId
+        });
+
     },
 
     initComponent: function () {
@@ -78,7 +81,11 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
         var notesStore = Ext.create('Ext.data.Store', {
             proxy: {
                 type: 'ajax',
-                url: '/erp_app/shared/notes/view/' + me.partyId,
+                url: '/erp_app/shared/notes/view',
+                extraParams: {
+                    recordType: me.recordType,
+                    recordId: me.recordId
+                },
                 reader: {
                     type: 'json',
                     root: 'notes'
@@ -220,7 +227,7 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
                             frame: false,
                             layout: '',
                             bodyStyle: 'padding:5px 5px 0',
-                            url: '/erp_app/shared/notes/create/' + me.partyId,
+                            url: '/erp_app/shared/notes/create',
                             items: [
                                 {
                                     emptyText: 'Select Type...',
@@ -258,6 +265,10 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
                                         var formPanel = window.query('.form')[0];
                                         formPanel.getForm().submit({
                                             reset: true,
+                                            params: {
+                                                recordType: me.recordType,
+                                                recordId: me.recordId
+                                            },
                                             success: function (form, action) {
                                                 var obj = Ext.decode(action.response.responseText);
                                                 if (obj.success) {

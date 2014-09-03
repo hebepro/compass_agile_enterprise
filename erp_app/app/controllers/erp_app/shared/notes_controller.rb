@@ -13,31 +13,39 @@ module ErpApp
 
         statement = Note
 
-        if params[:party_id] && params[:party_id] != "null"
-          statement = Note.where('noted_record_id = ? and noted_record_type = ?', params[:party_id], 'Party')
+        if params[:record_id] && params[:record_type]
+          statement = Note.where('noted_record_id = ? and noted_record_type = ?', record_id, record_type)
         end
 
         total = statement.count('id')
         notes = statement.limit(limit).offset(start).order("#{sort} #{dir}")
 
-        render :json => {totalCount: total, notes: notes.collect{|note| note.to_hash(only: [:id, :content, :created_at], methods: [:summary, :note_type_desc, :created_by_username])}}
+        render :json => {totalCount: total, notes: notes.collect { |note| note.to_hash(only: [:id, :content, :created_at], methods: [:summary, :note_type_desc, :created_by_username]) }}
       end
 
       def create
-        content = params[:content]
-        note_type = NoteType.find(params[:note_type_id])
-        party = Party.find(params[:party_id])
+        begin
+          ActiveRecord::Base.transaction do
+            content = params[:content]
+            note_type = NoteType.find(params[:note_type_id])
+            record_type = params[:record_type]
+            record_id = params[:record_id]
 
-        note = Note.create(
-            :note_type => note_type,
-            :content => content,
-            :created_by_id => current_user.party.id
-        )
+            Note.create(
+                :note_type => note_type,
+                :content => content,
+                :noted_record_type => record_type,
+                :noted_record_id => record_id,
+                :created_by_id => current_user.party.id
+            )
 
-        party.notes << note
-        party.save
+            render :json => {:success => true}
+          end
+        rescue => ex
+          #TODO print exception to log
 
-        render :json => {:success => true}
+          render :json => {:success => false}
+        end
       end
 
       def delete
@@ -49,6 +57,7 @@ module ErpApp
 
         render :json => {:note_types => NoteType.all}
       end
-    end
-  end
-end
+
+    end # NotesController
+  end # Shared
+end # ErpApp

@@ -145,7 +145,8 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
                 me.initialConfig.tabPanel.add(
                     {
                         xtype: 'shared_notesgrid',
-                        partyId: rec.get('party_id'),
+                        recordId: rec.get('party_id'),
+                        recordType: 'Party',
                         title: 'Notes'
                     });
 
