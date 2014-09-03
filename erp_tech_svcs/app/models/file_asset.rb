@@ -133,7 +133,7 @@ class FileAsset < ActiveRecord::Base
 
   def check_name_uniqueness
     # check if name is already taken
-    unless FileAsset.where('name = ?', self.name).first.nil?
+    unless FileAsset.where('directory = ? and name = ?',  self.directory, self.name).first.nil?
       # if it is keeping add incrementing by 1 until we have a good name
       counter = 0
       while true
@@ -144,7 +144,7 @@ class FileAsset < ActiveRecord::Base
 
         new_name = "#{basename}-#{counter}.#{extname}"
 
-        if FileAsset.where('name = ?', new_name).first.nil?
+        if FileAsset.where('directory = ? and name = ?', self.directory, new_name).first.nil?
           self.name = new_name
           break
         end
