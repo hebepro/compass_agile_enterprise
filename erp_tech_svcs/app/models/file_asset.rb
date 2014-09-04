@@ -59,7 +59,7 @@ class FileAsset < ActiveRecord::Base
                     :s3_permissions => :public_read,
                     :s3_credentials => "#{Rails.root}/config/s3.yml",
                     :path => ":file_path",
-                    :url => ":file_url",
+                    :url => (ErpTechSvcs::Config.file_storage == :filesystem ? ":file_url" : (ErpTechSvcs::Config.s3_url || ":file_url")),
                     :validations => {:extension => lambda { |data, file| validate_extension(data, file) }}
 
   before_post_process :set_content_type
