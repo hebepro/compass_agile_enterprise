@@ -42,6 +42,24 @@ module Knitkit
           end
         end
 
+        def update_menu_item_position
+          begin
+            current_user.with_capability('drag_item', 'WebsiteTree') do
+
+              params[:position_array].each do |position|
+                model = WebsiteNavItem.find(position['id'])
+                model.position = position['position'].to_i
+                model.save
+              end
+
+              render :json => {:success => true}
+
+            end
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
+            render :json => {:success => false, :message => ex.message}
+          end
+        end
+
         def update_article_position
           begin
             current_user.with_capability('drag_item', 'WebsiteTree') do
