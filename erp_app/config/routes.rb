@@ -14,7 +14,7 @@ ErpApp::Engine.routes.draw do
   #############################
   #Shared Application Routes
   #############################
-  match '/shared/notes/:action(/:party_id)' => "shared/notes"
+  match '/shared/notes/:action' => "shared/notes"
   match '/shared/audit_log/:action' => 'shared/audit_log'
 
   #############################

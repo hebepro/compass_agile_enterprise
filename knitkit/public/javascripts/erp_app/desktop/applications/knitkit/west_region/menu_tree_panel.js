@@ -62,7 +62,7 @@ var viewConfigItems = {
             }
 
             Ext.Ajax.request({
-                url: '/knitkit/erp_app/desktop/position/update',
+                url: '/knitkit/erp_app/desktop/position/update_menu_item_position',
                 method: 'PUT',
                 jsonData: {
                     position_array: positionArray

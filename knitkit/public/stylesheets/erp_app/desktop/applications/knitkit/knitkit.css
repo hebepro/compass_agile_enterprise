@@ -88,8 +88,8 @@
     float: left;
     margin: 8px 0 8px 8px;
     cursor: pointer;
-    width: 60px;
-    height: 80px;
+    width: 80px;
+    height: 100px;
     text-align: center;
 }
 
@@ -158,4 +158,8 @@
     filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/information/information_16x16.png', sizingMethod='crop');
     height: 16px;
     width: 16px;
+}
+
+#ext-quicktips-tip-outerCt {
+    width: auto !important;
 }

@@ -118,7 +118,7 @@ module ErpApp
             if File.directory?(File.join(Rails.root,"lib/extensions/widgets",widget_hash[:name],'views'))
               view_path = File.join(Rails.root,"lib/extensions/widgets",widget_hash[:name],'views')
               widget_hash = Rails.application.config.erp_app.widgets.find{|item| item[:name] == widget_hash[:name]}
-              widget_hash[:view_paths].unshift(view_path)
+              widget_hash[:view_paths].push(view_path)
               #get all view files for theme generation
               get_widget_view_files(widget_hash, view_path)
             end

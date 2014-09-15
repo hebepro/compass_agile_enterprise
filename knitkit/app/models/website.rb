@@ -67,6 +67,10 @@ class Website < ActiveRecord::Base
     parents.each { |parent| parent.destroy }
   end
 
+  def publishing?
+    self.publishing
+  end
+
   def to_label
     self.name
   end

@@ -2,7 +2,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
     extend: "Ext.panel.Panel",
     id: 'knitkitCenterRegion',
     alias: 'widget.knitkit_centerregion',
-    ckEditorExtraPlugins: 'codemirror',
+    ckEditorExtraPlugins: 'codemirror,syntaxhighlight',
     ckEditorToolbar: [
         ['Source', '-', 'Preview', 'Print'],
         ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord'],
@@ -20,7 +20,8 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
         ['HorizontalRule', 'SpecialChar', 'PageBreak'],
         ['ShowBlocks', 'RemoveFormat'],
         ['Format', 'Font', 'FontSize'],
-        ['Maximize', '-', 'About']
+        ['Maximize', '-', 'About'],
+        ['Syntaxhighlight']
     ],
 
     setWindowStatus: function (status) {
