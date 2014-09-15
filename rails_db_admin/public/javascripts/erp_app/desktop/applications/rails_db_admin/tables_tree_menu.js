@@ -19,7 +19,13 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.TablesMenuTreePanel
                             listeners: {
                                 change: function (comp, newValue, oldValue) {
                                     var store = comp.up('treepanel').getStore();
-                                    store.load({params: {name: newValue}});
+
+                                    setTimeout(function(){
+                                        if(!store.loading){
+                                            store.reload({params: {name: newValue}});
+                                        }
+                                    }, 500);
+
                                 }
                             }
                         }
@@ -61,7 +67,6 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.TablesMenuTreePanel
             }),
             animate: false,
             listeners: {
-
                 'itemclick': function (view, record, item, index, e, eOpts) {
 
                     e.stopEvent();

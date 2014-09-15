@@ -33,21 +33,21 @@ Knitkit::Engine.routes.draw do
       match '/:action' => 'app'
       match '/image_assets/:context/:action' => 'image_assets'
       match '/file_assets/:context/:action' => 'file_assets'
-      #articl
+      #article
       match '/articles/:action(/:section_id)' => 'articles'
-      #conten
+      #content
       match '/content/:action' => 'content'
       #websit
       match '/site(/:action)' => 'website'
-      #sectio
+      #section
       match '/section/:action' => 'website_section'
-      #docume
+      #document
       match '/online_document_sections/:action' => 'online_document_sections'
       #theme
       match '/theme/:action' => 'theme'
-      #versio
+      #version
       match '/versions/:action' => 'versions'
-      #commen
+      #comment
       match '/comments/:action(/:content_id)' => 'comments'
       #position
       match '/position/:action' => 'position'

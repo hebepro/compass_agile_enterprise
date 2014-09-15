@@ -250,7 +250,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addDocumentOptions = function (self,
                                             success: function (form, action) {
                                                 var values = formPanel.getValues();
 
-                                                record.set('title', values.title);
+                                                record.set('text', values.title);
                                                 record.set('internal_identifier', values.internal_identifier);
                                                 record.set("inMenu", (values.in_menu == 'yes'));
                                                 record.set("useMarkdown", (values.use_markdown == 'yes'));
