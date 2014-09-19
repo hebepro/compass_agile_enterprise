@@ -535,6 +535,59 @@ Array.prototype.last = function () {
     }
 };
 
+
+//Lazy enumerator methods for Array
+
+Array.prototype.next = function() {
+    if(this.currentIndex == undefined){
+      this.currentIndex = -1;
+    }
+  
+  if(this[this.currentIndex + 1] != undefined){
+       return this[++this.currentIndex];
+    }else{
+      return false;
+    }
+ 
+};
+
+Array.prototype.prev = function() {
+    if(this.currentIndex == undefined){
+      this.currentIndex = -1;
+    }
+  
+  if(this[this.currentIndex - 1] != undefined){
+       return this[--this.currentIndex];
+    }else{
+      return false;
+    }
+ 
+};
+
+Array.prototype.current = function(){
+  if(this.currentIndex == undefined){
+    this.currentIndex = -1;
+  }
+  return this[this.currentIndex]; 
+};
+
+Array.prototype.reset = function() {
+  this.currentIndex = -1;
+  return this[this.currentIndex];
+};
+
+Array.prototype.peek = function() {
+  return this[this.currentIndex + 1];
+};
+
+Array.prototype.seek = function() {
+  this.currentIndex = 0;
+  return this[this.currentIndex];
+};
+
+//End of lazy enumerator methods for Array  
+
+
 Array.prototype.collect = function (item) {
     var items = [];
     try {
