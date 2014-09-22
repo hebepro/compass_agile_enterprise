@@ -1,3 +1,23 @@
+#### Table Definition ###########################
+#  create_table :invoices do |t|
+#    t.string     :invoice_number
+#    t.string     :description
+#    t.string     :message
+#    t.date       :invoice_date
+#    t.date       :due_date
+#    t.string     :external_identifier
+#    t.string     :external_id_source
+#    t.references :product
+#    t.references :invoice_type
+#    t.references :billing_account
+#    t.references :invoice_payment_strategy_type
+#    t.references :balance
+#    t.references :calculate_balance_strategy_type
+#
+#    t.timestamps
+#  end
+#################################################
+
 class Invoice < ActiveRecord::Base
   attr_protected :created_at, :updated_at
 

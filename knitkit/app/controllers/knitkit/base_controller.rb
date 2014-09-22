@@ -41,7 +41,7 @@ module Knitkit
           end
         end
       else
-        raise "No Id set"
+        raise ActionController::RoutingError.new('Not Found')
       end
     end
 
