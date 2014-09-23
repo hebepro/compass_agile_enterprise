@@ -177,7 +177,7 @@ describe Knitkit::ErpApp::Desktop::WebsiteSectionController do
 
   describe "Get available_articles" do
     it "should return the internal_identifier and id of all articles not attatched to the given section" do
-      if Object.const_defined?('WorkflowProcess')
+      if Object.class_exists?('WorkflowProcess')
         WorkflowProcess.create(:internal_identifier => "test_content_mgmt", :process_template => true)
         WorkflowStep.create(:internal_identifier => "Start", :executable_command_id => 1, :executable_command_type => "ManualWorkflowStep", :workflow_process_id => 1, :initial_step => true)
       end

@@ -6,7 +6,7 @@ describe Article do
   end
 
   it "can be saved successfully" do
-    if Object.const_defined?('WorkflowProcess')
+    if Object.class_exists?('WorkflowProcess')
       WorkflowProcess.create(:internal_identifier => "test_content_mgmt", :process_template => true)
       WorkflowStep.create(:internal_identifier => "Start", :executable_command_id => 1, :executable_command_type => "ManualWorkflowStep", :workflow_process_id => 1, :initial_step => true)
     end
@@ -15,7 +15,7 @@ describe Article do
 
   describe "to_param" do
     it "should return the permalink of the article" do
-      if Object.const_defined?('WorkflowProcess')
+      if Object.class_exists?('WorkflowProcess')
         WorkflowProcess.create(:internal_identifier => "test_content_mgmt", :process_template => true)
         WorkflowStep.create(:internal_identifier => "Start", :executable_command_id => 1, :executable_command_type => "ManualWorkflowStep", :workflow_process_id => 1, :initial_step => true)
       end
@@ -25,7 +25,7 @@ describe Article do
 
   describe "check_internal_indentifier" do
     it "should set the internal_identifier if none is set when article is created" do
-      if Object.const_defined?('WorkflowProcess')
+      if Object.class_exists?('WorkflowProcess')
         WorkflowProcess.create(:internal_identifier => "test_content_mgmt", :process_template => true)
         WorkflowStep.create(:internal_identifier => "Start", :executable_command_id => 1, :executable_command_type => "ManualWorkflowStep", :workflow_process_id => 1, :initial_step => true)
       end
