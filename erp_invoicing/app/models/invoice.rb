@@ -26,7 +26,7 @@ class Invoice < ActiveRecord::Base
   belongs_to  :billing_account
   belongs_to	:invoice_type
   belongs_to  :invoice_payment_strategy_type
-  belongs_to  :balance, :class_name => "Money", :foreign_key => 'balance_id', :dependent => :destroy
+  belongs_to  :balance_record, :class_name => "Money", :foreign_key => 'balance_id', :dependent => :destroy
   belongs_to  :calculate_balance_strategy_type
   has_many    :invoice_payment_term_sets, :dependent => :destroy
   has_many    :payment_applications, :as => :payment_applied_to, :dependent => :destroy do
@@ -91,7 +91,19 @@ class Invoice < ActiveRecord::Base
     else
       self.balance
     end
+  end
 
+  def balance
+    self.balance_record.amount
+  end
+
+  def balance=(amount, currency=Currency.usd)
+    if self.balance_record
+      self.balance_record.amount = amount
+    else
+      self.balance_record = Money.create(:amount => amount, :currency => currency)
+    end
+    self.balance_record.save
   end
 
   def payment_due

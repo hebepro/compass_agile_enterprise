@@ -25,6 +25,7 @@ module ErpTxnsAndAccts
               :txn_type_iid,:txn_type_iid=,
               :biz_txn_type_id,:biz_txn_type_id=,
               :external_id_source,:external_id_source=,
+              :external_identifier,:external_identifier=,
               :description,:description=,
               :post_date,:post_date=,
               :created_at,:created_at=,
