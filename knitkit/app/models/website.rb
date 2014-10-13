@@ -312,13 +312,13 @@ class Website < ActiveRecord::Base
 
   def save_section_layout_to_file(sections_path, website_section)
     unless website_section.layout.blank?
-      File.open(File.join(sections_path, "#{website_section.internal_identifier}.rhtml"), 'wb+') { |f| f.puts(website_section.layout) }
+      File.open(File.join(sections_path, "#{website_section.permalink}.rhtml"), 'wb+') { |f| f.puts(website_section.layout) }
     end
 
     # we need to handle child sections because internal identifier uniqueness is scoped by parent_id and website_id
     # get all children of this section
     unless website_section.children.empty?
-      sections_path = Pathname.new(File.join(sections_path, website_section.internal_identifier))
+      sections_path = Pathname.new(File.join(sections_path, website_section.permalink))
       FileUtils.mkdir_p(sections_path) unless sections_path.exist?
 
       website_section.children.each do |website_section_child|
@@ -725,7 +725,7 @@ class Website < ActiveRecord::Base
       section.permalink = hash[:permalink]
       section.path = hash[:path]
       content = entries.find do |entry|
-        entry[:type] == 'sections' and entry[:name] == "#{hash[:internal_identifier]}.rhtml" and entry[:path].split('.')[0] == "sections#{hash[:path]}"
+        entry[:type] == 'sections' and entry[:name] == "#{hash[:permalink]}.rhtml" and entry[:path].split('.')[0] == "sections#{hash[:path]}"
       end
 
       section.layout = content[:data] unless content.nil?
