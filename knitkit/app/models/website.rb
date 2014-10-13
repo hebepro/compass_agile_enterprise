@@ -782,6 +782,9 @@ class Website < ActiveRecord::Base
           capability = section.add_capability(:view)
           hash[:roles].each do |role_iid|
             role = SecurityRole.find_by_internal_identifier(role_iid)
+            if role.nil?
+              role = SecurityRole.create(internal_identifier: role_iid, description: role_iid.humanize)
+            end
             role.add_capability(capability)
           end
         end
