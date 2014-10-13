@@ -1,14 +1,17 @@
 class OrderTxn < ActiveRecord::Base
   attr_protected :created_at, :updated_at
 
+  # serialize custom attributes
+  is_json :custom_fields
+
   acts_as_biz_txn_event
 
-	belongs_to :order_txn_record, :polymorphic => true
+  belongs_to :order_txn_record, :polymorphic => true
   has_many   :order_line_items, :dependent => :destroy
   has_many   :charge_lines, :as => :charged_item
 
-	alias :line_items :order_line_items
-
+  alias :line_items :order_line_items
+  
   # validation
   validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, :on => :update, :allow_nil => true
 

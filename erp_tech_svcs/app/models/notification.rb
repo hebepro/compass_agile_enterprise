@@ -1,12 +1,16 @@
 class Notification < ActiveRecord::Base
   attr_protected :created_at, :updated_at
 
+  # to be removed
   has_dynamic_attributes :dynamic_attribute_prefix => 'dyn_', :destroy_dynamic_attribute_for_nil => true
   has_dynamic_attribute_helpers :dynamic_attribute_prefix => 'dyn_'
+  
+  # serialize custom attributes
+  is_json :custom_fields
 
   belongs_to :notification_type
   belongs_to :created_by, :foreign_key => 'created_by_id', :class_name => 'Party'
-
+  
   include AASM
 
   aasm_column :current_state
@@ -31,7 +35,7 @@ class Notification < ActiveRecord::Base
       )
 
       dyn_attributes.each do |k,v|
-        notification.set_dyn_attribute(k, v)
+        notification.custom_fields[k] = v
       end
 
       notification.save
