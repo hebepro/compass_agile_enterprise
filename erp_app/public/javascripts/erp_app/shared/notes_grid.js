@@ -83,8 +83,8 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
                 type: 'ajax',
                 url: '/erp_app/shared/notes/view',
                 extraParams: {
-                    recordType: me.recordType,
-                    recordId: me.recordId
+                  record_type: me.recordType,
+                  record_id: me.recordId
                 },
                 reader: {
                     type: 'json',
@@ -266,8 +266,8 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
                                         formPanel.getForm().submit({
                                             reset: true,
                                             params: {
-                                                recordType: me.recordType,
-                                                recordId: me.recordId
+                                              record_type: me.recordType,
+                                              record_id: me.recordId
                                             },
                                             success: function (form, action) {
                                                 var obj = Ext.decode(action.response.responseText);

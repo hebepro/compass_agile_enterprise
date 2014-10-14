@@ -14,7 +14,7 @@ module ErpApp
         statement = Note
 
         if params[:record_id] && params[:record_type]
-          statement = Note.where('noted_record_id = ? and noted_record_type = ?', record_id, record_type)
+          statement = Note.where('noted_record_id = ? and noted_record_type = ?', params[:record_id], params[:record_type])
         end
 
         total = statement.count('id')
