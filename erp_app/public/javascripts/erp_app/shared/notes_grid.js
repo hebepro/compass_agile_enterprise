@@ -54,13 +54,13 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
 
     },
 
-    initComponent: function () {
-        var me = this;
-
+    setNoteTypeStore: function(){
+      var me = this;
+      
         var noteTypeStore = Ext.create('Ext.data.Store', {
             proxy: {
                 type: 'ajax',
-                url: '/erp_app/shared/notes/note_types/',
+                url: '/erp_app/shared/notes/note_types',
                 reader: {
                     type: 'json',
                     root: 'note_types'
@@ -77,6 +77,13 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
                 }
             ]
         });
+
+      return noteTypeStore;
+    },
+
+    initComponent: function () {
+        var me = this,
+            noteTypeStore = me.setNoteTypeStore();
 
         var notesStore = Ext.create('Ext.data.Store', {
             proxy: {
