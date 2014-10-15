@@ -82,8 +82,7 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
     },
 
     initComponent: function () {
-        var me = this,
-            noteTypeStore = me.setNoteTypeStore();
+        var me = this;
 
         var notesStore = Ext.create('Ext.data.Store', {
             proxy: {
@@ -223,8 +222,10 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
                 text: 'Add Note',
                 iconCls: 'icon-add',
                 handler: function () {
-                    var addNoteWindow = Ext.create("Ext.window.Window", {
+                    var noteTypeStore = me.setNoteTypeStore(),
+                        addNoteWindow = Ext.create("Ext.window.Window", {
                         layout: 'fit',
+                        itemId: 'addNoteWindow',
                         width: 325,
                         title: 'New Note',
                         height: 450,
