@@ -10,7 +10,6 @@ require 'mail_alternatives_with_attachments'
 require 'sorcery'
 require 'pdfkit'
 require 'aws'
-require 'dynamic_attributes'
 require 'activerecord-postgres-hstore'
 require 'nested-hstore'
 require "erp_tech_svcs/version"

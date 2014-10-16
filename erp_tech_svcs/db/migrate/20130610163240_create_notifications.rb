@@ -8,7 +8,6 @@ class CreateNotifications < ActiveRecord::Migration
         t.text :message
         t.references :notification_type
         t.string :current_state
-        t.text :dynamic_attributes
 
         t.timestamps
       end

@@ -271,7 +271,6 @@ class SetupKnitkit < ActiveRecord::Migration
       t.string    :internal_identifier
       t.string    :description
       t.datetime  :document_date
-      t.text      :dynamic_attributes
 
       t.references :document_record, :polymorphic => true
       t.references :document_type

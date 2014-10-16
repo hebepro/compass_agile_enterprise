@@ -5,8 +5,6 @@ require 'will_paginate'
 require 'uglifier'
 require 'friendly_id'
 
-require 'erp_app/dynamic_grid_column'
-require 'erp_app/dynamic_form_field'
 require "erp_app/version"
 require "erp_app/extensions"
 require "erp_app/application_resource_loader"

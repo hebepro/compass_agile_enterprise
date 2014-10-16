@@ -1,9 +1,5 @@
 class Notification < ActiveRecord::Base
   attr_protected :created_at, :updated_at
-
-  # to be removed
-  has_dynamic_attributes :dynamic_attribute_prefix => 'dyn_', :destroy_dynamic_attribute_for_nil => true
-  has_dynamic_attribute_helpers :dynamic_attribute_prefix => 'dyn_'
   
   # serialize custom attributes
   is_json :custom_fields

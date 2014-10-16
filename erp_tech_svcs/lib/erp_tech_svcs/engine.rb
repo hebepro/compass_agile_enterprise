@@ -9,7 +9,6 @@ module ErpTechSvcs
       include ErpTechSvcs::Extensions::ActiveRecord::HasFileAssets
       include ErpTechSvcs::Extensions::ActiveRecord::ProtectedByCapabilities
       include ErpTechSvcs::Extensions::ActiveRecord::HasCapabilityAccessors
-      include ErpTechSvcs::Extensions::ActiveRecord::HasDynamicAttributeHelpers
       include ErpTechSvcs::Extensions::ActiveRecord::HasUserDefinedData
       include ErpTechSvcs::Extensions::ActiveRecord::IsJson
     end
