@@ -14,6 +14,20 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
      */
     recordId: null,
 
+     /**
+      * @cfg {String} baseURL
+      * Base url for CRUDing notes.
+      */
+    baseURL: '/erp_app/shared/notes',
+
+    /**
+      * @cfg {Int} businessModuleId
+      * The id of business module record.
+    */
+    businessModuleId: null,
+
+
+  
     listeners: {
         activate: function () {
             this.store.loadPage(1);
@@ -24,11 +38,11 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
         var me = this;
 
         Ext.Ajax.request({
-            url: '/erp_app/shared/notes/delete/',
+            url: me.baseURL + '/' + rec.get('id'),
+            method: 'DELETE',
             params: {
-                id: rec.get('id')
+              business_module_id: me.businessModuleId
             },
-            method: 'POST',
             success: function (response) {
                 var obj = Ext.decode(response.responseText);
                 if (obj.success) {
@@ -54,10 +68,10 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
 
     },
 
-    setNoteTypeStore: function(){
-      var me = this;
+    buildNoteTypeStore: function(){
+        var me = this;
       
-        var noteTypeStore = Ext.create('Ext.data.Store', {
+        return Ext.create('Ext.data.Store', {
             proxy: {
                 type: 'ajax',
                 url: '/erp_app/shared/notes/note_types',
@@ -78,8 +92,8 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
             ]
         });
 
-      return noteTypeStore;
     },
+  
 
     initComponent: function () {
         var me = this;
@@ -87,10 +101,11 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
         var notesStore = Ext.create('Ext.data.Store', {
             proxy: {
                 type: 'ajax',
-                url: '/erp_app/shared/notes/view',
+                url: me.baseURL,
                 extraParams: {
                   record_type: me.recordType,
-                  record_id: me.recordId
+                  record_id: me.recordId,
+                  business_module_id: me.businessModuleId
                 },
                 reader: {
                     type: 'json',
@@ -222,7 +237,7 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
                 text: 'Add Note',
                 iconCls: 'icon-add',
                 handler: function () {
-                    var noteTypeStore = me.setNoteTypeStore(),
+                    var noteTypeStore = me.buildNoteTypeStore(),
                         addNoteWindow = Ext.create("Ext.window.Window", {
                         layout: 'fit',
                         itemId: 'addNoteWindow',
@@ -235,7 +250,7 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
                             frame: false,
                             layout: '',
                             bodyStyle: 'padding:5px 5px 0',
-                            url: '/erp_app/shared/notes/create',
+                            url: me.baseURL,
                             items: [
                                 {
                                     emptyText: 'Select Type...',
@@ -275,7 +290,8 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
                                             reset: true,
                                             params: {
                                               record_type: me.recordType,
-                                              record_id: me.recordId
+                                              record_id: me.recordId,
+                                              business_module_id: me.businessModuleId
                                             },
                                             success: function (form, action) {
                                                 var obj = Ext.decode(action.response.responseText);

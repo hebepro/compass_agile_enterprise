@@ -3,7 +3,7 @@ module ErpApp
     class NotesController < ErpApp::ApplicationController
       before_filter :require_login
 
-      def view
+      def index
         sort_hash = params[:sort].blank? ? {} : Hash.symbolize_keys(JSON.parse(params[:sort]).first)
         limit = params[:limit] || 30
         start = params[:start] || 0
@@ -48,7 +48,7 @@ module ErpApp
         end
       end
 
-      def delete
+      def destroy
         Note.find(params[:id]).destroy ? (render :json => {:success => true}) : (render :json => {:success => false})
       end
 
