@@ -2,32 +2,12 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
     extend: "Ext.grid.Panel",
     alias: 'widget.shared_notesgrid',
 
-    /**
-     * @cfg {Int} recordType
-     * The type of record we are saving notes to.
-     */
-    recordType: null,
-
-    /**
-     * @cfg {Int} recordId
-     * The id of the record we are saving notes to.
-     */
-    recordId: null,
-
      /**
       * @cfg {String} baseURL
       * Base url for CRUDing notes.
       */
     baseURL: '/erp_app/shared/notes',
 
-    /**
-      * @cfg {Int} businessModuleId
-      * The id of business module record.
-    */
-    businessModuleId: null,
-
-
-  
     listeners: {
         activate: function () {
             this.store.loadPage(1);
@@ -93,7 +73,10 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
         });
 
     },
-  
+
+    canAddNote: function(){
+        return currentUser.hasCapability('create', 'Note');
+    },
 
     initComponent: function () {
         var me = this;
@@ -232,7 +215,7 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
         });
 
         var toolBarItems = [];
-        if (currentUser.hasCapability('create', 'Note')) {
+        if (me.canAddNote()) {
             toolBarItems.push({
                 text: 'Add Note',
                 iconCls: 'icon-add',
@@ -246,7 +229,7 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
                         height: 450,
                         plain: true,
                         buttonAlign: 'center',
-                        items: new Ext.FormPanel({
+                        items: Ext.widget('form', {
                             frame: false,
                             layout: '',
                             bodyStyle: 'padding:5px 5px 0',
