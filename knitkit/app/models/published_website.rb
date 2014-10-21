@@ -3,7 +3,7 @@ class PublishedWebsite < ActiveRecord::Base
 
   belongs_to :website
   belongs_to :published_by, :class_name => "User"
-  has_many :published_elements, :dependent => :destroy
+  has_many :published_elements, :dependent => :delete_all
 
   def published_by_username
     self.published_by.username rescue ''

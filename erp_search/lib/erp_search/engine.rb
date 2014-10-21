@@ -26,6 +26,7 @@ module ErpSearch
       end
 
       ErpSearch::Engine.config.after_initialize do
+        # DynamicFormModel has been removed.
         # setup sunspot for all dynamic form models if we're using USE_SOLR_FOR_DYNAMIC_FORM_MODELS
         DynamicFormModel.sunspot_setup_all if Object.class_exists?('ErpForms') and ErpForms.use_solr? and ActiveRecord::Base.connection.table_exists?('dynamic_form_models')
       end

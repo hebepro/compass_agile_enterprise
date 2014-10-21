@@ -6,7 +6,8 @@ require "erp_base_erp_svcs/non_escape_json_string"
 
 module ErpBaseErpSvcs
   class << self
-
+    @@root_engine_loaded = false
+      
     def installed_engines
       ErpBaseErpSvcs::Config.compass_ae_engines
     end
@@ -26,6 +27,10 @@ module ErpBaseErpSvcs
     end
 
     def mount_compass_ae_engines(routes)
+      unless @@root_engine_loaded
+        load_root_compass_ae_framework_extensions
+        @@root_engine_loaded = true
+      end
       installed_engines.each do |engine|
         routes.mount engine => "/#{engine.name.split("::").first.underscore}"
       end
@@ -33,14 +38,14 @@ module ErpBaseErpSvcs
 
     def register_as_compass_ae_engine(config, engine)
       setup_compass_ae_callback(config, engine) do |engine|
-        ErpBaseErpSvcs.load_compass_ae_engine(engine)
+        ErpBaseErpSvcs.load_compass_ae_engine(engine)        
       end
     end
 
     def load_compass_ae_engine(engine)
       installed_engines << engine unless installed_engines.include?(engine)
       load_compass_ae_extensions(engine)
-      load_root_compass_ae_framework_extensions
+      
     end
 
     #forces rails to reload model extensions and framework extensions

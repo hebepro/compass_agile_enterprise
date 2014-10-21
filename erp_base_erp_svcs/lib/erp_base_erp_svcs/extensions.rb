@@ -3,6 +3,7 @@ require 'erp_base_erp_svcs/extensions/core/array'
 require 'erp_base_erp_svcs/extensions/core/hash'
 require 'erp_base_erp_svcs/extensions/core/numbers'
 require 'erp_base_erp_svcs/extensions/core/object'
+require 'erp_base_erp_svcs/extensions/core/acts_as_aspector_on'
 
 #active record extensions
 require 'erp_base_erp_svcs/extensions/active_record/acts_as_category'

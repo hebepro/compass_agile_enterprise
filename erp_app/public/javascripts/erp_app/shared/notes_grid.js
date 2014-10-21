@@ -2,17 +2,11 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
     extend: "Ext.grid.Panel",
     alias: 'widget.shared_notesgrid',
 
-    /**
-     * @cfg {Int} recordType
-     * The type of record we are saving notes to.
-     */
-    recordType: null,
-
-    /**
-     * @cfg {Int} recordId
-     * The id of the record we are saving notes to.
-     */
-    recordId: null,
+     /**
+      * @cfg {String} baseURL
+      * Base url for CRUDing notes.
+      */
+    baseURL: '/erp_app/shared/notes',
 
     listeners: {
         activate: function () {
@@ -24,11 +18,11 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
         var me = this;
 
         Ext.Ajax.request({
-            url: '/erp_app/shared/notes/delete/',
+            url: me.baseURL + '/' + rec.get('id'),
+            method: 'DELETE',
             params: {
-                id: rec.get('id')
+              business_module_id: me.businessModuleId
             },
-            method: 'POST',
             success: function (response) {
                 var obj = Ext.decode(response.responseText);
                 if (obj.success) {
@@ -54,13 +48,13 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
 
     },
 
-    initComponent: function () {
+    buildNoteTypeStore: function(){
         var me = this;
-
-        var noteTypeStore = Ext.create('Ext.data.Store', {
+      
+        return Ext.create('Ext.data.Store', {
             proxy: {
                 type: 'ajax',
-                url: '/erp_app/shared/notes/note_types/',
+                url: '/erp_app/shared/notes/note_types',
                 reader: {
                     type: 'json',
                     root: 'note_types'
@@ -78,13 +72,23 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
             ]
         });
 
+    },
+
+    canAddNote: function(){
+        return currentUser.hasCapability('create', 'Note');
+    },
+
+    initComponent: function () {
+        var me = this;
+
         var notesStore = Ext.create('Ext.data.Store', {
             proxy: {
                 type: 'ajax',
-                url: '/erp_app/shared/notes/view',
+                url: me.baseURL,
                 extraParams: {
-                    recordType: me.recordType,
-                    recordId: me.recordId
+                  record_type: me.recordType,
+                  record_id: me.recordId,
+                  business_module_id: me.businessModuleId
                 },
                 reader: {
                     type: 'json',
@@ -211,23 +215,25 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
         });
 
         var toolBarItems = [];
-        if (currentUser.hasCapability('create', 'Note')) {
+        if (me.canAddNote()) {
             toolBarItems.push({
                 text: 'Add Note',
                 iconCls: 'icon-add',
                 handler: function () {
-                    var addNoteWindow = Ext.create("Ext.window.Window", {
+                    var noteTypeStore = me.buildNoteTypeStore(),
+                        addNoteWindow = Ext.create("Ext.window.Window", {
                         layout: 'fit',
+                        itemId: 'addNoteWindow',
                         width: 325,
                         title: 'New Note',
                         height: 450,
                         plain: true,
                         buttonAlign: 'center',
-                        items: new Ext.FormPanel({
+                        items: Ext.widget('form', {
                             frame: false,
                             layout: '',
                             bodyStyle: 'padding:5px 5px 0',
-                            url: '/erp_app/shared/notes/create',
+                            url: me.baseURL,
                             items: [
                                 {
                                     emptyText: 'Select Type...',
@@ -266,8 +272,9 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
                                         formPanel.getForm().submit({
                                             reset: true,
                                             params: {
-                                                recordType: me.recordType,
-                                                recordId: me.recordId
+                                              record_type: me.recordType,
+                                              record_id: me.recordId,
+                                              business_module_id: me.businessModuleId
                                             },
                                             success: function (form, action) {
                                                 var obj = Ext.decode(action.response.responseText);

@@ -25,7 +25,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency "chronic", "0.10.2"
   s.add_dependency "aasm", "3.0.14"
-  s.add_dependency 'dynamic_attributes','~> 1.2.0'
   s.add_dependency 'activerecord-postgres-hstore', '0.7.7'
   s.add_dependency 'nested-hstore', '0.0.5'
   s.add_dependency 'httparty', '~> 0.12.0'

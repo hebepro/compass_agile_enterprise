@@ -8,7 +8,6 @@ require 'erp_tech_svcs/extensions/active_record/has_security_roles'
 require 'erp_tech_svcs/extensions/active_record/protected_with_capabilities'
 require 'erp_tech_svcs/extensions/active_record/has_capability_accessors'
 require 'erp_tech_svcs/extensions/active_record/acts_as_versioned'
-require 'erp_tech_svcs/extensions/active_record/has_dynamic_attribute_helpers'
 require 'erp_tech_svcs/extensions/active_record/has_user_defined_data'
 require 'erp_tech_svcs/extensions/active_record/is_json'
 
