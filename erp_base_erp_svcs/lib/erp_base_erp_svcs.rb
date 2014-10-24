@@ -117,7 +117,7 @@ module ErpBaseErpSvcs
     end
 
     def load_root_compass_ae_framework_extensions
-      Dir.glob(File.join(Rails.root,"lib/extensions/compass_ae/**/*.rb")).each do |file|
+      Dir.glob(File.join(Rails.root,"lib/extensions/compass_ae/**/*.rb")).sort.each do |file|
         load file
       end
     end
