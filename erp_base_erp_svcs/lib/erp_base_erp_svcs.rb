@@ -27,10 +27,6 @@ module ErpBaseErpSvcs
     end
 
     def mount_compass_ae_engines(routes)
-      unless @@root_engine_loaded
-        load_root_compass_ae_framework_extensions
-        @@root_engine_loaded = true
-      end
       installed_engines.each do |engine|
         routes.mount engine => "/#{engine.name.split("::").first.underscore}"
       end
@@ -45,7 +41,6 @@ module ErpBaseErpSvcs
     def load_compass_ae_engine(engine)
       installed_engines << engine unless installed_engines.include?(engine)
       load_compass_ae_extensions(engine)
-      
     end
 
     #forces rails to reload model extensions and framework extensions
