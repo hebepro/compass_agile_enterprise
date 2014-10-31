@@ -1,5 +1,10 @@
 Ext.ns("Compass.ErpApp.Organizer.Applications");
 
+Ext.define("Compass.ErpApp.Organizer.Applications.ApplicationContainer", {
+    extend: "Ext.tab.Panel",
+    alias: 'widget.applicationcontainer'
+});
+
 Compass.ErpApp.Organizer.Layout = function (config) {
 
     this.layoutConfig = config;
@@ -191,7 +196,7 @@ Compass.ErpApp.Organizer.Layout = function (config) {
         accordionMenuItems.push(menuPanel);
 
         //Create the main tab panel which will house instances of the main Task Types
-        var masterPanel = Ext.create('Ext.tab.Panel', {
+        var masterPanel = Ext.widget('applicationcontainer', {
             id: config.id,
             itemId: config.id,
             //These tasks we always want open

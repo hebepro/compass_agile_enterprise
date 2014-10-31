@@ -6,12 +6,6 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
     loadMask: true,
 
     /**
-     * @cfg {String} applicationContainerId
-     * The id of the root application container that this panel resides in.
-     */
-    applicationContainerId: 'crmTaskTabPanel',
-
-    /**
      * @cfg {String} addBtnIconCls
      * Icon css class for add button.
      */
@@ -250,7 +244,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
                 handler: function (button) {
                     if (me.fireEvent('adduserclick', me) !== false) {
                         // open tab with create user form.
-                        var tabPanel = button.up('crmusersgrid').up('#' + me.applicationContainerId);
+                        var tabPanel = button.up('crmusersgrid').up('applicationcontainer');
 
                         var crmUserFormPanel = Ext.create("widget.crmuserform", {
                             title: 'Add User',
@@ -401,7 +395,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
 
                             if (me.fireEvent('edituserclick', me, record) !== false) {
                                 // open tab with create user form.
-                                var tabPanel = grid.up('#' + me.applicationContainerId);
+                                var tabPanel = grid.up('applicationcontainer');
 
                                 var crmUserFormPanel = Ext.create("widget.crmuserform", {
                                     title: 'Update User',

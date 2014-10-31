@@ -21,7 +21,6 @@ Compass.ErpApp.Organizer.Applications.Tasks.Base = function (config) {
                     searchDescription: 'Find Worker',
                     partyMgtTitle: 'Worker',
                     addBtnDescription: 'Add Worker',
-                    applicationContainerId: 'tasksPanel',
                     itemId: 'workersPanel',
                     partyRole: 'worker',
                     partyRelationships: [],

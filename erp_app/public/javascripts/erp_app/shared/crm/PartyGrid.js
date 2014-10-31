@@ -6,12 +6,6 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
     loadMask: true,
 
     /**
-     * @cfg {String} applicationContainerId
-     * The id of the root application container that this panel resides in.
-     */
-    applicationContainerId: 'crmTaskTabPanel',
-
-    /**
      * @cfg {String} partyRole
      * PartyRole to load for Grid Example (Customer, Prospect).
      */
@@ -290,11 +284,10 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                 iconCls: me.addBtnIconCls,
                 handler: function (button) {
                     // open tab with create user form.
-                    var tabPanel = button.up('crmpartygrid').up('#' + me.applicationContainerId);
+                    var tabPanel = button.up('crmpartygrid').up('applicationcontainer');
 
                     var crmPartyFormPanel = Ext.create("widget.crmpartyformpanel", {
                         title: me.addBtnDescription,
-                        applicationContainerId: me.applicationContainerId,
                         toPartyId: me.toPartyId,
                         partyRole: me.partyRole,
                         securityRoles: me.securityRoles,
@@ -469,7 +462,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                         tooltip: 'Edit',
                         handler: function (grid, rowIndex, colIndex) {
                             var record = grid.getStore().getAt(rowIndex),
-                                crmTaskTabPanel = grid.up('crmpartygrid').up('#' + me.applicationContainerId),
+                                crmTaskTabPanel = grid.up('crmpartygrid').up('applicationcontainer'),
                                 itemId = 'editParty-' + record.get('id'),
                                 title = 'Edit ' + me.partyMgtTitle;
 
@@ -480,7 +473,6 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                                     title: title,
                                     itemId: itemId,
                                     formFields: me.formFields,
-                                    applicationContainerId: me.applicationContainerId,
                                     partyType: record.get('model'),
                                     partyId: record.get('id'),
                                     userId: record.get('userId'),
@@ -558,7 +550,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
     showDetails: function (index) {
         var me = this,
             record = me.getStore().getAt(index),
-            crmTaskTabPanel = me.up('#' + me.applicationContainerId),
+            crmTaskTabPanel = me.up('applicationcontainer'),
             itemId = 'detailsParty-' + record.get('id'),
             title = record.get('description'),
             partyId = record.get('id');
@@ -571,7 +563,6 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                 itemId: itemId,
                 contactPurposes: me.contactPurposes,
                 contactPurposesTitle: me.contactPurposesTitle,
-                applicationContainerId: me.applicationContainerId,
                 partyId: partyId,
                 partyModel: record.get('model'),
                 partyRelationships: me.partyRelationships,

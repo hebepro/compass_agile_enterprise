@@ -11,12 +11,6 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
     ],
 
     /**
-     * @cfg {String} applicationContainerId
-     * The id of the root application container that this panel resides in.
-     */
-    applicationContainerId: 'crmTaskTabPanel',
-
-    /**
      * @cfg {Array} additionalTabs
      * Array of additional tab panels to add.
      */
@@ -248,7 +242,6 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
                 formFields: partyRelationship.formFields || 'none',
                 securityRoles: partyRelationship.securityRoles || [],
                 allowedPartyType: partyRelationship.allowedPartyType || 'Both',
-                applicationContainerId: me.applicationContainerId,
                 addBtnDescription: partyRelationship.addBtnDescription || ('Add ' + Ext.String.capitalize(partyRelationship.fromRoleType)),
                 searchDescription: 'Search ' + partyRelationship.title,
                 toRole: partyRelationship.toRoleType,

@@ -10,8 +10,6 @@ Compass.ErpApp.Organizer.Applications.Crm.Base = function (config) {
             id: 'crmTaskTabPanel',
             tabs: [
                 {
-                    applicationContainerId: 'crmTaskTabPanel',
-
                     xtype: 'crmpartygrid',
                     itemId: 'customersPanel',
 
