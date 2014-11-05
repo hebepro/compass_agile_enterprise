@@ -8,6 +8,8 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
       */
     baseURL: '/erp_app/shared/notes',
 
+    title: 'Notes',
+
     listeners: {
         activate: function () {
             this.store.loadPage(1);

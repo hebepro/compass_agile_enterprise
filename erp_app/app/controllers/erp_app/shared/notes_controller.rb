@@ -42,9 +42,10 @@ module ErpApp
             render :json => {:success => true}
           end
         rescue => ex
-          #TODO print exception to log
+          logger.error ex.message
+          logger.error ex.backtrace.join("\n")
 
-          render :json => {:success => false}
+          render :json => {:success => false, message: ex.message}
         end
       end
 
