@@ -1,5 +1,64 @@
-<div style='padding: 10px;'>
+<style>
+    .summary-title {
+        font-size: 16px;
+        margin: 10px 0px 20px 20px;
+    }
 
-  <h1><%= @facility.description %></h1>
+    .summary-title label {
+        font-weight: bold;
+    }
+
+    .summary-panel {
+        width: 70%;
+        background-color: #eee;
+        border-radius: 3px;
+        padding: 20px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .field-group {
+        width: 500px;
+        padding: 2px;
+    }
+
+    .label {
+        display: inline-block;
+        width: 200px;
+        text-align: right;
+        margin: 2px 5px 2px;
+        font-weight: bold;
+    }
+</style>
+
+<div>
+  <div class="summary-title">
+    <label>Description:</label>
+    <span><%= @facility.description %></span>
+  </div>
+  <div class="summary-panel">
+    <% if @facility.postal_address %>
+        <div class='field-group'>
+          <label class="label">Address Line 1: </label>
+          <span><%= @facility.postal_address.address_line_1 rescue "" %></span>
+        </div>
+        <div class='field-group'>
+          <label class="label">Address Line 2: </label>
+          <span><%= @facility.postal_address.address_line_2 rescue "" %></span>
+        </div>
+        <div class='field-group'>
+          <label class="label">City: </label>
+          <span><%= @facility.postal_address.city rescue "" %></span>
+        </div>
+        <div class='field-group'>
+          <label class="label">State: </label>
+          <span><%= @facility.postal_address.state rescue "" %></span>
+        </div>
+        <div class='field-group'>
+          <label class="label">Postal Code: </label>
+          <span><%= @facility.postal_address.zip rescue "" %></span>
+        </div>
+    <% end %>
+  </div>
 
 </div>
