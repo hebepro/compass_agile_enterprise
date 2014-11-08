@@ -42,10 +42,15 @@ class FileAsset < ActiveRecord::Base
     class_inheritable_writer :valid_extensions
   end
 
+  # setup scoping
+  scoped_by :scoped_by
+
   after_create :set_sti
   # must fire after paperclip's after_save :save_attached_files
   after_save :set_data_file_name, :save_dimensions
-  before_validation :check_name_uniqueness
+  before_validation(on: :create) do
+    self.check_name_uniqueness
+  end
 
   belongs_to :file_asset_holder, :polymorphic => true
   instantiates_with_sti

@@ -11,6 +11,7 @@ module ErpTechSvcs
       include ErpTechSvcs::Extensions::ActiveRecord::HasCapabilityAccessors
       include ErpTechSvcs::Extensions::ActiveRecord::HasUserDefinedData
       include ErpTechSvcs::Extensions::ActiveRecord::IsJson
+      include ErpTechSvcs::Extensions::ActiveRecord::ScopedBy
     end
 
     ErpBaseErpSvcs.register_as_compass_ae_engine(config, self)
