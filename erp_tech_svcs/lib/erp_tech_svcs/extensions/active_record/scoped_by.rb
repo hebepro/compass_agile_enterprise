@@ -12,7 +12,7 @@ module ErpTechSvcs
 
         module ClassMethods
 
-          def scoped_by(attr_name, class_name=nil)
+          def add_scoped_by(attr_name)
             # serialize Scope attributes
             is_json attr_name
 

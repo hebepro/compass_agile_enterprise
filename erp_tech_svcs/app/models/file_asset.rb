@@ -43,7 +43,7 @@ class FileAsset < ActiveRecord::Base
   end
 
   # setup scoping
-  scoped_by :scoped_by
+  add_scoped_by :scoped_by
 
   after_create :set_sti
   # must fire after paperclip's after_save :save_attached_files
