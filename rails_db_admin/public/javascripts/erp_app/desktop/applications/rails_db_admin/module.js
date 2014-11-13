@@ -2,7 +2,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin", {
     extend: "Ext.ux.desktop.Module",
     id: 'rails_db_admin-win',
 
-    getWindow: function(){
+    getWindow: function () {
         return this.app.getDesktop().getWindow('rails_db_admin');
     },
 
@@ -116,10 +116,14 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin", {
                 var data = response.data;
 
                 var readOnlyDataGrid = Ext.create('Compass.ErpApp.Desktop.Applications.RailsDbAdmin.ReadOnlyTableDataGrid', {
-                    region: 'center',
+                    region: 'south',
+                    split: true,
                     columns: columns,
                     fields: fields,
-                    data: data
+                    data: data,
+                    collapseDirection: 'bottom',
+                    height: '50%',
+                    collapsible: true
                 });
 
                 var queryPanel = Ext.create('Compass.ErpApp.Desktop.Applications.RailsDbAdmin.QueryPanel', {
@@ -185,8 +189,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin", {
     },
 
     getDatabase: function () {
-        var database = Ext.getCmp('databaseCombo').getValue();
-        return database;
+        return Ext.getCmp('databaseCombo').getValue();
     },
 
     deleteQuery: function (queryName) {
@@ -256,13 +259,16 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin", {
                     var data = response.data;
 
                     var readOnlyDataGrid = Ext.create('Compass.ErpApp.Desktop.Applications.RailsDbAdmin.ReadOnlyTableDataGrid', {
-                        region: 'center',
+                        region: 'south',
                         columns: columns,
                         fields: fields,
-                        data: data
+                        data: data,
+                        collapseDirection: 'bottom',
+                        height: '50%',
+                        collapsible: true
                     });
 
-                    var queryPanel = Ext.create('Compass.ErpApp.Desktop.Applications.RailsDbAdmin.QueryPanel', {
+                    queryPanel = Ext.create('Compass.ErpApp.Desktop.Applications.RailsDbAdmin.QueryPanel', {
                         module: self,
                         sqlQuery: query,
                         southRegion: readOnlyDataGrid,
@@ -455,7 +461,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin", {
                 items: [this.accordion, this.container]
             });
 
-            win.addListener('render', function(win){
+            win.addListener('render', function (win) {
                 win.down('#centerRegion').add({
                     xtype: 'railsdbadmin_splash_screen',
                     module: self,
@@ -473,15 +479,13 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.BooleanEditor", {
     extend: "Ext.form.ComboBox",
     alias: 'widget.booleancolumneditor',
     initComponent: function () {
-        var trueFalseStore = Ext.create('Ext.data.ArrayStore', {
+        this.store = Ext.create('Ext.data.ArrayStore', {
             fields: ['display', 'value'],
             data: [
                 ['False', '0'],
                 ['True', '1']
             ]
         });
-
-        this.store = trueFalseStore;
 
         this.callParent(arguments);
     },

@@ -2,7 +2,7 @@ module RailsDbAdmin
   class TableSupport
 
     def initialize(database_connection_class)
-     @connection = database_connection_class.connection
+      @connection = database_connection_class.connection
     end
 
     def columns(table)
@@ -25,7 +25,7 @@ module RailsDbAdmin
       data[0].delete('fake_id')
       data[1].delete('fake_id')
       data.map! do |item|
-        item.each do |k,v|
+        item.each do |k, v|
           item[k] = v.to_s
         end
         item
@@ -72,27 +72,27 @@ module RailsDbAdmin
     end
 
     def primary_key(table)
-      [@connection.primary_key(table),nil]
+      [@connection.primary_key(table), nil]
     end
 
     def primary_key?(table)
       @connection.supports_primary_key? && !@connection.primary_key(table).nil?
     end
 
-	  
-	  def table_contains_column(table, column_name)
-	    
-	    column_names = columns(table).map{|column| column.name.to_sym}
-	    
-	    column_names.include?(column_name)
-	  end
-	
+
+    def table_contains_column(table, column_name)
+
+      column_names = columns(table).map { |column| column.name.to_sym }
+
+      column_names.include?(column_name)
+    end
+
     def clean_nulls!(table, data)
       if data.class == Array
-        data.each {|x| clean_nulls!(table, x)}
+        data.each { |x| clean_nulls!(table, x) }
       end
 
-      data.collect do |k,v|
+      data.collect do |k, v|
         if v == "" || v == 0
           column = columns(table).collect do |x|
             if (x.name == k)
@@ -117,7 +117,16 @@ module RailsDbAdmin
         # records << record
 
         # simplifying the above with to_hash.symbolize_keys
-        records << row.to_hash.symbolize_keys
+        row_data = row.to_hash.symbolize_keys
+
+        # any hashes need to be converted to json strings
+        row_data.each do |k, v|
+          if v.is_a?(Hash)
+            row_data[k] = v.to_json
+          end
+        end
+
+        records << row_data
       end
 
       records.reverse
@@ -128,7 +137,7 @@ module RailsDbAdmin
     #calls
     def self.arel_attr data, arel_table
       cln_hsh = {}
-      data.each do |k,v|
+      data.each do |k, v|
         cln_hsh[arel_table[k.to_sym]] = v
       end
       cln_hsh
