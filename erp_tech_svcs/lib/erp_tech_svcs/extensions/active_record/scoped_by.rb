@@ -35,8 +35,8 @@ module ErpTechSvcs
             if ::ActiveRecord::Base.connection.instance_values["config"][:adapter] == 'postgresql'
               where("(scoped_by @> '\"#{scope_name}\"=>\"#{scope_value}\"'::hstore )")
             else
-              where(arel_table[:scoped_by].matches("\"#{scope_name}\": \"#{scope_value}\"")
-                    .or(arel_table[:scoped_by].matches("\"#{scope_name}\": #{scope_value}")))
+              where(arel_table[:scoped_by].matches("%\"#{scope_name}\":\"#{scope_value}\"%")
+                    .or(arel_table[:scoped_by].matches("%\"#{scope_name}\":#{scope_value}%")))
             end
           end
         end
