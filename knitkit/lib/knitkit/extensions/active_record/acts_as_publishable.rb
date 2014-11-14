@@ -26,9 +26,7 @@ module Knitkit
           end
 
           def delete_published_elements
-            PublishedElement.delete_all("published_element_record_id = '#{id}'
-                                          and (published_element_record_type = '#{self.class.to_s}'
-                                          or published_element_record_type = '#{self.class.superclass.to_s}')")
+            PublishedElement.delete_all("published_element_record_id = '#{id}' and (published_element_record_type = '#{self.class.to_s}' or published_element_record_type = '#{self.class.superclass.to_s}')")
           end
         end
 

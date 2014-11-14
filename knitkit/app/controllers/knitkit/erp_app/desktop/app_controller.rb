@@ -57,6 +57,8 @@ module Knitkit
 
         def build_section_hash(website_section)
           website_section_hash = {
+              recordType: 'WebsiteSection',
+              recordId: website_section.id,
               :text => website_section.title,
               :path => website_section.path,
               :siteName => @website.name,
@@ -88,19 +90,13 @@ module Knitkit
             website_section_hash[:isBlog] = true
             website_section_hash[:iconCls] = 'icon-blog'
             website_section_hash[:leaf] = false
-            website_section_hash[:children] = []
           else
             website_section_hash[:leaf] = false
-            website_section_hash[:children] = website_section.positioned_children.map { |child| build_section_hash(child) }
             website_section_hash[:isSecured] ? website_section_hash[:iconCls] = 'icon-section_lock' : website_section_hash[:iconCls] = 'icon-section'
           end
 
           if website_section.is_a?(OnlineDocumentSection) || website_section.type == 'OnlineDocumentSection'
             website_section_hash[:iconCls] = 'icon-document_info'
-          end
-
-          website_section.website_section_contents.order('position').each do |website_section_content|
-            website_section_hash[:children] << build_article_hash(website_section_content, @website, website_section_hash[:isBlog])
           end
 
           website_section_hash
@@ -111,6 +107,8 @@ module Knitkit
           content = website_section_content.content
 
           {
+              recordType: 'Article',
+              recordId: website_section_content.id,
               :objectType => "Article",
               :id => content.id,
               :siteId => website.id,

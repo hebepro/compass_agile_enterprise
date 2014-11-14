@@ -1,6 +1,8 @@
-var siteContentsModel = Ext.define('SiteContentsModel', {
+Ext.define('SiteContentsModel', {
     extend: 'Ext.data.TreeModel',
     fields: [
+        'recordType',
+        'recordId',
         'objectType',
         'text',
         'iconCls',
@@ -55,8 +57,12 @@ var siteContentsStore = Ext.create('Ext.data.TreeStore', {
         expanded: true
     },
     listeners: {
-        'load': function (store, node, records) {
-            store.getRootNode().expandChildren(true);
+        beforeexpand: function (node, eOpts) {
+            if (!node.isRoot()) {
+                var tree = node.getOwnerTree();
+                tree.getStore().getProxy().setExtraParam('record_type', node.get('recordType'));
+                tree.getStore().getProxy().setExtraParam('record_id', node.get('recordId'));
+            }
         }
     }
 });

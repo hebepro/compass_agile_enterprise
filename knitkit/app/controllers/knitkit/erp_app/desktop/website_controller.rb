@@ -14,18 +14,33 @@ module Knitkit
         end
 
         def build_content_tree
-
-          tree = []
+          nodes = []
 
           if @website
+            if params[:record_type].blank?
+              @website.website_sections.positioned.each do |website_section|
+                nodes << build_section_hash(website_section)
+              end
+            else
+              case params[:record_type]
+                when 'WebsiteSection'
+                  website_section = WebsiteSection.find(params[:record_id])
 
-            @website.website_sections.positioned.each do |website_section|
-              tree << build_section_hash(website_section)
+                  # get child sections
+                  nodes = website_section.positioned_children.map { |child| build_section_hash(child) }
+
+                  # get child articles
+                  website_section.website_section_contents.order('position').each do |website_section_content|
+                    nodes << build_article_hash(website_section_content, @website, website_section.is_blog?)
+                  end
+
+                else
+                  raise 'Unknown Node Type'
+              end
             end
-
           end
 
-          render :json => tree
+          render :json => nodes
         end
 
         def website_publications
@@ -181,7 +196,7 @@ module Knitkit
               raise "Error sending file. Make sure you have a website and an active theme."
             end
           else
-             render :inline => {:success => false, :message => 'test'}.to_json
+            render :inline => {:success => false, :message => 'test'}.to_json
           end
         end
 

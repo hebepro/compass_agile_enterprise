@@ -67,8 +67,17 @@ module Knitkit
 
         def delete
           begin
-            current_user.with_capability('delete', 'WebsiteSection') do
-              render :json => WebsiteSection.destroy(params[:id]) ? {:success => true} : {:success => false}
+            ActiveRecord::Base.transaction do
+              current_user.with_capability('delete', 'WebsiteSection') do
+                section = WebsiteSection.find(params[:id])
+
+                # we need to remove any content related to this section if it is an OnlineDocumentSection
+                if section.type == 'OnlineDocumentSection'
+                  section.website_section_contents.destroy_all
+                end
+
+                render :json => section.destroy ? {:success => true} : {:success => false}
+              end
             end
           rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
