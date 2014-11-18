@@ -462,10 +462,6 @@ function OnDemandLoadByAjax() {
 
 //Javascript Extensions
 
-String.prototype.startsWith = function (str) {
-    return this.indexOf(str) === 0;
-};
-
 //Array Extensions
 Array.prototype.split = function (n) {
     var len = this.length, out = [], i = 0;
@@ -475,7 +471,7 @@ Array.prototype.split = function (n) {
         i += size;
     }
     return out;
-}
+};
 
 Array.prototype.contains = function (element) {
     for (var i = 0; i < this.length; i++) {
@@ -535,7 +531,6 @@ Array.prototype.last = function () {
     }
 };
 
-
 //Lazy enumerator methods for Array
 
 Array.prototype.next = function() {
@@ -587,7 +582,6 @@ Array.prototype.seek = function() {
 
 //End of lazy enumerator methods for Array  
 
-
 Array.prototype.collect = function (item) {
     var items = [];
     try {
@@ -606,6 +600,9 @@ Array.prototype.empty = function () {
 };
 
 //String Extensions
+String.prototype.contains = function () {
+    return String.prototype.indexOf.apply(this, arguments) !== -1;
+};
 
 String.prototype.underscore = function () {
     return this.replace(/\s/g, "_");
