@@ -7,6 +7,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'compass_ae'
   s.version     = CompassAe::VERSION::STRING
+  s.licenses    = ['GPL-3-LICENSE']
   s.summary     = 'Full ERP stack built on top of the Rails framework.'
   s.description = 'Full ERP stack with a CRM, CMS and mulitple ERP Modules based on Silverston data models'
 
