@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   s.add_dependency('friendly_id', '4.0.10.1')
 
   #compass dependencies
-  s.add_dependency 'compass_ae_sencha', "~> 1.0.3"
-  s.add_dependency 'erp_tech_svcs', "~> 3.1"
-  s.add_development_dependency 'erp_dev_svcs', "~> 3.1"
+  s.add_dependency 'compass_ae_sencha', "~> 2.0"
+  s.add_dependency 'erp_tech_svcs', "~> 4.0"
+  s.add_development_dependency 'erp_dev_svcs', "~> 4.0"
 end

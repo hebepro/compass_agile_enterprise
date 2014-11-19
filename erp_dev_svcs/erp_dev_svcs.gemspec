@@ -22,5 +22,5 @@ Gem::Specification.new do |s|
   s.executables   = ['compass_ae-dev']
 
   #compass dependencies
-  s.add_dependency 'erp_base_erp_svcs', '~> 3.1'
+  s.add_dependency 'erp_base_erp_svcs', '~> 4.0'
 end

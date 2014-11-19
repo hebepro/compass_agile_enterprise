@@ -21,6 +21,6 @@ Gem::Specification.new do |s|
   s.add_dependency "activemerchant", "1.29.3"
 
   #compass_ae dependencies
-  s.add_dependency "erp_orders", "~> 3.1"
-  s.add_development_dependency "erp_dev_svcs", "~> 3.1"
+  s.add_dependency "erp_orders", "~> 4.0"
+  s.add_development_dependency "erp_dev_svcs", "~> 4.0"
 end

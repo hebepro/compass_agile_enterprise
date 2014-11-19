@@ -18,8 +18,8 @@ Gem::Specification.new do |s|
   s.test_files = Dir["spec/**/*"]
   
   #compass dependencies
-  s.add_dependency "knitkit", "~> 2.1"
-  s.add_development_dependency "erp_dev_svcs", "~> 3.1"
+  s.add_dependency "knitkit", "~> 3.0"
+  s.add_development_dependency "erp_dev_svcs", "~> 4.0"
 
   s.add_dependency "sunspot_rails", "~> 1.3.3"
   s.add_dependency "sunspot_solr", "~> 1.3.3"
