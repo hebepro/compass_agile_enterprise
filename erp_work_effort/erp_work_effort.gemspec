@@ -8,6 +8,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = "erp_work_effort"
   s.version     = ErpWorkEffort::VERSION::STRING
+  s.licenses    = ['GPL-3-LICENSE']
   s.summary     = "Summary of ErpWorkEffort."
   s.description = "Description of ErpWorkEffort."
   s.authors     = ["Rick Koloski, Russell Holmes"]

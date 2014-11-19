@@ -9,6 +9,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = "erp_tech_svcs"
   s.version     = ErpTechSvcs::VERSION::STRING
+  s.licenses    = ['GPL-3-LICENSE']
   s.summary     = "This engine is implemented with the premise that services like logging, tracing and encryption would likely already exist in many organizations, so they are factored here so they can easily be re-implemented."
   s.description = "This engine is implemented with the premise that services like logging, tracing and encryption would likely already exist in many organizations, so they are factored here so they can easily be re-implemented. There are default implementations here, and we track several excellent Rails projects as potential implementations of services like security and content/digital asset mgt."
   s.authors     = ["Rick Koloski, Russell Holmes"]

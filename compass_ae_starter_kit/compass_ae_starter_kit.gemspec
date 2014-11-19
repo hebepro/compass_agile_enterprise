@@ -8,6 +8,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = "compass_ae_starter_kit"
   s.version     = CompassAeStarterKit::VERSION::STRING
+  s.licenses    = ['GPL-3-LICENSE']
   s.summary     = "Gem to help get the Compass AE framework up a running"
   s.description = "Contains compass_ae command to create a new Compass AE application"
   s.authors     = ["Rick Koloski, Russell Holmes"]

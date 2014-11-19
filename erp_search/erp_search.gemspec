@@ -8,6 +8,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = "erp_search"
   s.version     = ErpSearch::VERSION::STRING
+  s.licenses    = ['GPL-3-LICENSE']
   s.summary     = "The CompassAE Search Engine provides functionality to facilitate both dimensional and index-based searches. "
   s.description = "The CompassAE Search Engine provides functionality to facilitate both dimensional and index-based searches. CompassAE by default will search for an instance of SOLR/Sunspot and use it if it is available, otherwise it will attempt to use SQL to implement content searches. This engine also contains a demonstration of how to implement a denormalized search fact table using the Party entity."
   s.authors     = ["Rick Koloski, Russell Holmes"]

@@ -8,6 +8,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = "erp_invoicing"
   s.version     = ErpInvoicing::VERSION::STRING
+  s.licenses    = ['GPL-3-LICENSE']
   s.summary     = "ErpInvoicing adds models and services to the CompassAE core to handle invoicing and billing functions."
   s.description = "ErpInvoicing adds models and services to the CompassAE core to handle invoicing and billing functions. It includes extensions to the core ERP classes for accounts and things that are 'billable' (products, work efforts), and additional models for the invoices/items, payments and the application of payments to invoices or invoice items. It also includes application hooks to make it easy to add electronic bill pay functionality to Web applications."
   s.authors     = ["Rick Koloski, Russell Holmes"]

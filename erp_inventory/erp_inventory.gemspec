@@ -8,6 +8,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = "erp_inventory"
   s.version     = ErpInventory::VERSION::STRING
+  s.licenses    = ['GPL-3-LICENSE']
   s.summary     = "The Inventory Engine in CompassAE implements a set of models for storing information about the availability and location of ProductTypes and optionally Product Instances. "
   s.description = "The Inventory Engine in CompassAE implements a set of models for storing information about the availability and location of ProductTypes and optionally Product Instances. It is also the root for yield and revenue management requirements to segment and allocate inventory for different purposes."
   s.authors     = ["Rick Koloski, Russell Holmes"]

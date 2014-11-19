@@ -8,6 +8,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = "erp_communication_events"
   s.version     = ErpCommunicationEvents::VERSION::STRING
+  s.licenses    = ['GPL-3-LICENSE']
   s.summary     = "ErpCommunicationEvents add models and services to CompassAE's ERP core to handle contacts between Business Parties."
   s.description = "ErpCommunicationEvents add models and services to CompassAE's ERP core to handle contacts between Business Parties. For example, tracking inbound or outbound emails, customer contact events, support requests, etc. These models would be used for support and ticketing systems, marketing communications applications and the like. CommunicationEvents can be typed and can relate to one another, providing the functionality to treat several related communication events as a group."
   s.authors     = ["Rick Koloski, Russell Holmes"]

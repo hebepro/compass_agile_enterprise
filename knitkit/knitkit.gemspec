@@ -9,6 +9,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = "knitkit"
   s.version     = Knitkit::VERSION::STRING
+  s.licenses    = ['GPL-3-LICENSE']
   s.summary     = "CMS built for the Compass AE framework"
   s.description = "Knitkit is CompassAE's content and digital asset management application. It is based on ideas and code adapted from Mephisto and adva_cms, with significant changes to integrate with the CompassAE object-relational layer and to harmonize the user interface with the rest of CompassAE."
   s.authors     = ["Rick Koloski, Russell Holmes"]

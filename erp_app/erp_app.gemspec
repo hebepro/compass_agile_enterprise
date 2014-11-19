@@ -9,6 +9,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = "erp_app"
   s.version     = ErpApp::VERSION::STRING
+  s.licenses    = ['GPL-3-LICENSE']
   s.summary     = "Provides an application infrastructure based on the Sencha/extjs UI framework, as well as several utilities and example applications. "
   s.description = "Provides an application infrastructure based on the Sencha/extjs UI framework, as well as several utilities and example applications. It houses the core application container framework and component model infrastructure that play a key role in the RAD/Agile orientation of CompassAE."
   s.authors     = ["Rick Koloski, Russell Holmes"]
