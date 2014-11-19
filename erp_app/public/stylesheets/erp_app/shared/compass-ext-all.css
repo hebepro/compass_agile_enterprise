@@ -120,7 +120,7 @@
     filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/document_pulse/document_pulse_16x16.png', sizingMethod='crop');
 }
 
-.icon-file-manager {
+.icon-folders, .icon-file-manager {
     background-image: url(/images/icons/file_manager/file_manager_16x16.png) !important;
     filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/file_manager/file_manager_16x16.png', sizingMethod='crop');
 }
@@ -365,7 +365,7 @@
     filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/grid/grid_16x16.png', sizingMethod='crop');
 }
 
-.icon-tasks, .icon-calendar {
+.icon-tasks, .icon-calendar, .icon-note_pinned {
     background-image: url(/images/icons/calendar/calendar_16x16.png) !important;
     filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/calendar/calendar_16x16.png', sizingMethod='crop');
 }

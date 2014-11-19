@@ -6,7 +6,7 @@ module ErpApp
         def categories
           render :json => {:success => true,
             :categories => Category.all.collect{|category|
-            category.to_hash(:methods => [{:id => :category_id}, :description])}
+            category.to_hash(:methods => [:description], :id => :category_id)}
           }
         end
 

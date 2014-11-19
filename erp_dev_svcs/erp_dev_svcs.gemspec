@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.email       = ["russonrails@gmail.com"]
   s.homepage    = "http://development.compassagile.com"
 
-  s.files = Dir["{app,config,db,lib,tasks,compass_scripts}/**/*"] + ["GPL-3-LICENSE", "Rakefile", "README.rdoc"]
+  s.files = Dir["{config,db,lib,tasks,compass_scripts}/**/*"] + ["GPL-3-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["spec/**/*"]
 
   s.bindir        = 'bin'
