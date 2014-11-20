@@ -8,6 +8,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = "erp_work_effort"
   s.version     = ErpWorkEffort::VERSION::STRING
+  s.licenses    = ['GPL-3-LICENSE']
   s.summary     = "Summary of ErpWorkEffort."
   s.description = "Description of ErpWorkEffort."
   s.authors     = ["Rick Koloski, Russell Holmes"]
@@ -18,7 +19,7 @@ Gem::Specification.new do |s|
   s.test_files = Dir["spec/**/*"]
 
   #compass dependencies
-  s.add_dependency "erp_tech_svcs", "~> 3.1"
-  s.add_dependency "erp_inventory", "~> 3.1"
-  s.add_development_dependency "erp_dev_svcs", "~> 3.1"
+  s.add_dependency "erp_tech_svcs", "~> 4.0"
+  s.add_dependency "erp_inventory", "~> 4.0"
+  s.add_development_dependency "erp_dev_svcs", "~> 4.0"
 end

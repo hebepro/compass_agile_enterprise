@@ -9,6 +9,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = "rails_db_admin"
   s.version     = RailsDbAdmin::VERSION::STRING
+  s.licenses    = ['GPL-3-LICENSE']
   s.summary     = "RailsDB Admin is similar in functionality to PHPMyAdmin and other database browsing and data editing tools. "
   s.description = "RailsDB Admin is similar in functionality to PHPMyAdmin and other database browsing and data editing tools. It uses the CompassAE database connection information to discover the schema for an installation, and generates Extjs UIs for creating queries and performing grid-based data inspection and editing."
   s.authors     = ["Rick Koloski, Russell Holmes"]
@@ -19,6 +20,6 @@ Gem::Specification.new do |s|
   s.test_files = Dir["spec/**/*"]
 
   #compass dependencies
-  s.add_dependency "erp_app", "~> 3.1"
-  s.add_development_dependency "erp_dev_svcs", "~> 3.1"
+  s.add_dependency "erp_app", "~> 4.0"
+  s.add_development_dependency "erp_dev_svcs", "~> 4.0"
 end

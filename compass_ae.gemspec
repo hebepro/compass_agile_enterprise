@@ -7,6 +7,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'compass_ae'
   s.version     = CompassAe::VERSION::STRING
+  s.licenses    = ['GPL-3-LICENSE']
   s.summary     = 'Full ERP stack built on top of the Rails framework.'
   s.description = 'Full ERP stack with a CRM, CMS and mulitple ERP Modules based on Silverston data models'
 
@@ -17,11 +18,11 @@ Gem::Specification.new do |s|
   
   s.homepage    = 'http://development.compassagile.com'
   
-  s.add_dependency('compass_ae_starter_kit', '~> 3.0.0')
-  s.add_dependency('erp_base_erp_svcs',      '~> 3.1.0')
-  s.add_dependency('erp_tech_svcs',          '~> 3.1.0')
-  s.add_dependency('erp_app',                '~> 3.1.0')
-  s.add_dependency('compass_ae_console',     '~> 2.0.0')
-  s.add_dependency('knitkit',                '~> 2.1.0')
-  s.add_dependency('rails_db_admin',         '~> 2.1.0')
+  s.add_dependency('compass_ae_starter_kit', '~> 4.0')
+  s.add_dependency('erp_base_erp_svcs',      '~> 4.0')
+  s.add_dependency('erp_tech_svcs',          '~> 4.0')
+  s.add_dependency('erp_app',                '~> 4.0')
+  s.add_dependency('compass_ae_console',     '~> 3.0')
+  s.add_dependency('knitkit',                '~> 3.0')
+  s.add_dependency('rails_db_admin',         '~> 3.0')
 end

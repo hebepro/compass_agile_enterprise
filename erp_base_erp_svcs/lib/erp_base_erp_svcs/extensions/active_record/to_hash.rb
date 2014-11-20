@@ -23,6 +23,12 @@ ActiveRecord::Base.class_eval do
 
       if options[:methods]
         options[:methods].each do |method|
+          if method.is_a?(Hash)
+            name, method_name = method.first
+            hash[name] = self.send(method_name)
+          else
+            hash[method] = self.send(method)
+          end
           hash[method] = self.send(method)
         end
       end

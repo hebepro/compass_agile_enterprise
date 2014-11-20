@@ -43,8 +43,7 @@ Usage:
             system "rails new #{app_name} #{ARGV * ' '} -m #{template_path}"
             Dir.chdir app_name
             puts 'Installing CompassAE migrations and data migrations...'
-            system "rake compass_ae:install:migrations"
-            system "rake compass_ae:install:data_migrations"
+            system "rake compass_ae:install:all_migrations"
             puts 'Migrating a fresh database...'
             system "rake db:migrate"
             system "rake db:migrate_data"

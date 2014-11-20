@@ -56,7 +56,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.WebNavigator",{
         var win = desktop.getWindow('web_navigator');
         if(!win){
             if(Compass.ErpApp.Utility.isBlank(url) || typeof(url) != "string"){
-                url = 'http://documentation.compassagile.com';
+                url = 'http://www.truenorthtechnology.com';
             }
 
             var tbarItems = [];
@@ -74,7 +74,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.WebNavigator",{
                 text:'Online Documentation',
                 scope:this,
                 handler:function(button){
-                    this.gotToPage('http://documentation.compassagile.com');
+                    this.gotToPage('http://www.truenorthtechnology.com');
                 }
             });
 

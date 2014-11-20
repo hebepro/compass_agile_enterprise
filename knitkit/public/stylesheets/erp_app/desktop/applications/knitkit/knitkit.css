@@ -2,34 +2,36 @@
     opacity: 0.8;
 }
 
-.icon-knitkit {
-    background-image:url( /images/icons/knitkit/knitkit_16x16.png ) !important;
-    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/knitkit/knitkit_16x16.png', sizingMethod='crop');
+.icon-knitkit, .icon-palette {
+    background-image: url(/images/icons/knitkit/knitkit_16x16.png) !important;
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/knitkit/knitkit_16x16.png', sizingMethod='crop');
 }
+
 .icon-knitkit-light {
-    background-image:url( /images/icons/knitkit/knitkit_light_16x16.png ) !important;
-    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/knitkit/knitkit_16x16.png', sizingMethod='crop');
+    background-image: url(/images/icons/knitkit/knitkit_light_16x16.png) !important;
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/knitkit/knitkit_16x16.png', sizingMethod='crop');
 }
 
 .x-column-header-wysiwyg {
-    background: url( /images/icons/code/code_16x16.png ) center no-repeat !important;
+    background: url(/images/icons/code/code_16x16.png) center no-repeat !important;
 }
 
 .x-column-header-ordered-list {
-    background: url( /images/icons/ordered_list/ordered_list_16x16.png ) center no-repeat !important;
+    background: url(/images/icons/ordered_list/ordered_list_16x16.png) center no-repeat !important;
 }
 
 .x-column-header-attributes {
-    background: url( /images/icons/small_gear/small_gear_16x16.png ) center no-repeat !important;
-}
-.x-column-header-detach {
-    background: url( /images/icons/delete/delete_16x16.png ) center no-repeat !important;
+    background: url(/images/icons/small_gear/small_gear_16x16.png) center no-repeat !important;
 }
 
+.x-column-header-detach {
+    background: url(/images/icons/delete/delete_16x16.png) center no-repeat !important;
+}
 
 .image-assets-panel .x-tab-bar-body {
     background-color: #fff;
 }
+
 .image-assets-panel a.x-tab {
     border-style: solid;
     border-color: #aaa;
@@ -40,6 +42,7 @@
 .file-assets-panel .x-tab-bar-body {
     background-color: #fff;
 }
+
 .file-assets-panel a.x-tab {
     border-style: solid;
     border-color: #aaa;
@@ -97,65 +100,65 @@
     padding: 3px;
 }
 
-.approve-col{
-    background-image:url( /images/icons/document_delete/document_delete_16x16.png ) !important;
-    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/document_delete/document_delete_16x16.png', sizingMethod='crop');
+.approve-col {
+    background-image: url(/images/icons/document_delete/document_delete_16x16.png) !important;
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/document_delete/document_delete_16x16.png', sizingMethod='crop');
     height: 16px;
     width: 16px;
 }
 
-.approved-col{
-    background-image:url( /images/icons/document_ok/document_ok_16x16.png ) !important;
-    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/document_ok/document_ok_16x16.png', sizingMethod='crop');
+.approved-col {
+    background-image: url(/images/icons/document_ok/document_ok_16x16.png) !important;
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/document_ok/document_ok_16x16.png', sizingMethod='crop');
     height: 16px;
     width: 16px;
 }
 
-.publish-col{
-    background-image:url( /images/icons/document_up/document_up_16x16.png ) !important;
-    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/document_up/document_up_16x16.png', sizingMethod='crop');
+.publish-col {
+    background-image: url(/images/icons/document_up/document_up_16x16.png) !important;
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/document_up/document_up_16x16.png', sizingMethod='crop');
     height: 16px;
     width: 16px;
 }
 
-.published-col{
-    background-image:url( /images/icons/document_pinned/document_pinned_16x16.png ) !important;
-    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/document_pinned/document_pinned_16x16.png', sizingMethod='crop');
+.published-col {
+    background-image: url(/images/icons/document_pinned/document_pinned_16x16.png) !important;
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/document_pinned/document_pinned_16x16.png', sizingMethod='crop');
     height: 16px;
     width: 16px;
 }
 
-.activate-col{
-    background-image:url( /images/icons/delete/delete_16x16.png ) !important;
-    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/delete/delete_16x16.png', sizingMethod='crop');
+.activate-col {
+    background-image: url(/images/icons/delete/delete_16x16.png) !important;
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/delete/delete_16x16.png', sizingMethod='crop');
     height: 16px;
     width: 16px;
 }
 
-.active-col{
-    background-image:url( /images/icons/add/add_16x16.png ) !important;
-    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/add/add_16x16.png', sizingMethod='crop');
+.active-col {
+    background-image: url(/images/icons/add/add_16x16.png) !important;
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/add/add_16x16.png', sizingMethod='crop');
     height: 16px;
     width: 16px;
 }
 
-.viewing-col{
-    background-image:url( /images/icons/eye/eye_16x16.png ) !important;
-    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/eye/eye_16x16.png', sizingMethod='crop');
+.viewing-col {
+    background-image: url(/images/icons/eye/eye_16x16.png) !important;
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/eye/eye_16x16.png', sizingMethod='crop');
     height: 16px;
     width: 16px;
 }
 
-.view-col{
-    background-image:url( /images/icons/document_view/document_view_16x16.png ) !important;
-    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/document_view/document_view_16x16.png', sizingMethod='crop');
+.view-col {
+    background-image: url(/images/icons/document_view/document_view_16x16.png) !important;
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/document_view/document_view_16x16.png', sizingMethod='crop');
     height: 16px;
     width: 16px;
 }
 
-.info-col{
-    background-image:url( /images/icons/information/information_16x16.png ) !important;
-    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/information/information_16x16.png', sizingMethod='crop');
+.info-col {
+    background-image: url(/images/icons/information/information_16x16.png) !important;
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icons/information/information_16x16.png', sizingMethod='crop');
     height: 16px;
     width: 16px;
 }
