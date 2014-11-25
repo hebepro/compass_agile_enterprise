@@ -76,6 +76,7 @@ module ErpTechSvcs
             self.files.where('type = ?', 'XmlFile')
           end
 
+          # destroy all files related to this model regardless of other relationships
           def destroy_all_files
             statement = "delete from file_assets where id in (select file_asset_id from file_asset_holders where (file_asset_holder_type = '#{self.class.to_s}' or file_asset_holder_type = '#{self.class.superclass.to_s}' ) and file_asset_holder_id = #{self.id} )"
 
