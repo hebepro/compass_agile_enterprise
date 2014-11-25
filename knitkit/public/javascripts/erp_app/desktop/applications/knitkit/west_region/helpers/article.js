@@ -154,7 +154,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addArticleOptions = function (self, 
                     var centerRegion = Ext.getCmp('knitkitCenterRegion'),
                         websiteId = compassDesktop.getModule('knitkit-win').currentWebsite.id;
 
-                    var url = '/knitkit/erp_app/desktop/articles/show/' + record.data.id
+                    var url = '/knitkit/erp_app/desktop/articles/show/' + record.data.id;
 
                     Ext.Ajax.request({
                         url: url,
