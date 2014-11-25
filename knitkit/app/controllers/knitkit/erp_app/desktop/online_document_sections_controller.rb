@@ -3,7 +3,7 @@ module Knitkit
     module Desktop
       class OnlineDocumentSectionsController < Knitkit::ErpApp::Desktop::AppController
         
-        def new
+        def create
           @website = Website.find(params[:website_id])
           online_document_section = OnlineDocumentSection.new(:website_id => @website.id,
                                                               :in_menu => params[:in_menu] == 'yes', :title => params[:title],
@@ -32,8 +32,15 @@ module Knitkit
           end
 
           render :json => result
-        end     
-      end
-    end
-  end
-end
+        end
+
+        def content
+          document_section = OnlineDocumentSection.find(params[:id])
+
+          render :json => {success: true, content: document_section.documented_item_content_html}
+        end
+
+      end # OnlineDocumentSectionsController
+    end # Desktop
+  end # ErpApp
+end # Knitkit

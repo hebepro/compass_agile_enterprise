@@ -272,29 +272,50 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SiteContentsTreePanel", {
                     success: function (response) {
                         var article = Ext.decode(response.responseText);
                         self.initialConfig['centerRegion'].editContent(record.data.text, record.data.id, article.body_html, record.data['siteId'], 'article');
+                    },
+                    failure: function(){
+                        Ext.Msg.alert('Error', 'Could not load content');
                     }
                 });
             }
             else if (record.data['isDocument']) {
+                var url = '/knitkit/erp_app/desktop/online_document_sections/' + record.data.id.split('_').last() + '/content/';
                 var contentInfo = record.data['contentInfo'];
-                if (record.data['useMarkdown']) {
-                    self.initialConfig['centerRegion'].editDocumentationMarkdown(
-                        contentInfo.title,
-                        record.data['siteId'],
-                        contentInfo.id,
-                        contentInfo.body_html,
-                        []
-                    );
-                }
-                else {
-                    self.initialConfig['centerRegion'].editContent(
-                        record.data['contentInfo'].title,
-                        record.data['contentInfo'].id,
-                        record.data['contentInfo'].body_html,
-                        record.data['siteId'],
-                        'article'
-                    );
-                }
+
+                Ext.Ajax.request({
+                    url: url,
+                    method: 'GET',
+                    timeout: 90000,
+                    success: function (response) {
+                        var result = Ext.decode(response.responseText);
+                        if(result.success){
+                            if (record.data['useMarkdown']) {
+                                self.initialConfig['centerRegion'].editDocumentationMarkdown(
+                                    contentInfo.title,
+                                    record.data['siteId'],
+                                    contentInfo.id,
+                                    result.content,
+                                    []
+                                );
+                            }
+                            else{
+                                self.initialConfig['centerRegion'].editContent(
+                                    contentInfo.title,
+                                    contentInfo.id,
+                                    result.content,
+                                    record.data['siteId'],
+                                    'article'
+                                );
+                            }
+                        }
+                        else{
+                            Ext.Msg.alert('Error', 'Could not load content');
+                        }
+                    },
+                    failure: function(){
+                        Ext.Msg.alert('Error', 'Could not load content');
+                    }
+                });
             }
         },
         'itemcontextmenu': function (view, record, htmlItem, index, e) {

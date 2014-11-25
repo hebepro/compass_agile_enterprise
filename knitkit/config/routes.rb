@@ -29,6 +29,11 @@ Knitkit::Engine.routes.draw do
         end
       end
       resources :website_host
+      resources :online_document_sections do
+        member do
+          get :content
+        end
+      end
 
       match '/:action' => 'app'
       match '/image_assets/:context/:action' => 'image_assets'
@@ -41,8 +46,6 @@ Knitkit::Engine.routes.draw do
       match '/site(/:action)' => 'website'
       #section
       match '/section/:action' => 'website_section'
-      #document
-      match '/online_document_sections/:action' => 'online_document_sections'
       #theme
       match '/theme/:action' => 'theme'
       #version
