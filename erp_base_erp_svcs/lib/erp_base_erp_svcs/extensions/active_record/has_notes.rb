@@ -34,7 +34,7 @@ module ErpBaseErpSvcs
             note.noted_record = self
             note.created_by = party unless party.nil?
             note.content = content
-            note.save
+            note if note.save
           end
 
           def create_or_update_note_by_type(note_type_iid='basic_note', content='', party=nil)
