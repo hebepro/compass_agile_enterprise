@@ -3,9 +3,12 @@ class ProductType < ActiveRecord::Base
 
   acts_as_nested_set
   include ErpTechSvcs::Utils::DefaultNestedSetMethods
+  acts_as_taggable
  
   has_file_assets
   is_describable
+
+  is_json :custom_fields
   
 	belongs_to :product_type_record, :polymorphic => true  
   has_one    :product_instance
@@ -26,6 +29,24 @@ class ProductType < ActiveRecord::Base
   
   def to_s
     "#{description}"
+  end
+
+  def category
+    category_id = CategoryClassification.where(classification_type: 'ProductType',
+                                               classification_id: id).pluck(:category_id).first
+    Category.find(category_id)
+  end
+
+  def category=(category_id)
+    category_id ||= 1
+    category_classification = CategoryClassification.where(classification_id: id,
+                                                           classification_type: self.class.name,
+                                                           category_id: category_id).first || CategoryClassification.new
+
+    category_classification.classification = self
+    category_classification.category_id = category_id
+
+    category_classification.save
   end
 
   def self.count_by_status(product_type, prod_availability_status_type)
