@@ -4,19 +4,20 @@ namespace :erp_tech_svcs do
 
     desc "Sync storage between database and storage location ie (s3 or file system), taskes storage option"
     task :sync_storage, [:storage] => :environment do |t, args|
+      ErpTechSvcs::FileSupport::S3Manager.setup_connection
       file_support = ErpTechSvcs::FileSupport::Base.new(:storage => args.storage.to_sym)
 
       #sync shared
       puts "Syncing Shared Assets..."
-      file_support.sync(File.join(file_support.root, '/images'), CompassAeInstance.find_by_internal_identifier('base'))
-      file_support.sync(File.join(file_support.root, '/files'), CompassAeInstance.find_by_internal_identifier('base'))
+      file_support.sync(File.join(file_support.root, 'public/knitkit/images/'), CompassAeInstance.find_by_internal_identifier('base'))
+      file_support.sync(File.join(file_support.root, 'file_assets/shared_site_files/'), CompassAeInstance.find_by_internal_identifier('base'))
       puts "Complete"
 
       #sync websites
       puts "Syncing Websites..."
       Website.all.each do |website|
-        file_support.sync(File.join(file_support.root, "/sites/site-#{website.id}/images"), website)
-        file_support.sync(File.join(file_support.root, "/sites/site-#{website.id}/files"), website)
+        file_support.sync(File.join(file_support.root, "public/knitkit/sites/#{website.iid}/images"), website)
+        file_support.sync(File.join(file_support.root, "file_assets/sites/#{website.iid}"), website)
       end
       puts "Complete"
 
