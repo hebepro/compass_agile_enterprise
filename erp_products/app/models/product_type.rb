@@ -34,7 +34,8 @@ class ProductType < ActiveRecord::Base
   def category
     category_id = CategoryClassification.where(classification_type: 'ProductType',
                                                classification_id: id).pluck(:category_id).first
-    Category.find(category_id)
+
+    category_id ? Category.find(category_id) : nil
   end
 
   def category=(category_id)
