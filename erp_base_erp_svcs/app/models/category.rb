@@ -10,24 +10,14 @@ class Category < ActiveRecord::Base
     where("internal_identifier = ?",internal_identifier_string.to_s).first
   end
 
-  def to_record_representation
+  def to_record_representation(root)
     # returns a string of category descriptions like
     # 'main_category > sub_category n > ... > this category instance'
     if root?
       category.description
     else
-      crawl_up_from(self).split('///').reverse.join(' > ')
+      crawl_up_from(self, root).split('///').reverse.join(' > ')
     end
-  end
-
-  def self.to_all_representation
-    # returns an array of hashes which represent all categories in nested set order,
-    # each of which consists of the category's id and representation
-    container_arr = []
-    each_with_level(root.self_and_descendants) do |o, level|
-      container_arr << {:id => o.id, :description => o.to_representation}
-    end
-    container_arr
   end
 
   def to_representation
@@ -38,12 +28,22 @@ class Category < ActiveRecord::Base
     rep << description
   end
 
+  def self.to_all_representation(root)
+    # returns an array of hashes which represent all categories in nested set order,
+    # each of which consists of the category's id and representation
+    container_arr = []
+    each_with_level(root) do |o, level|
+      container_arr << {:id => o.id, :description => o.to_representation}
+    end
+    container_arr
+  end
+
   private
 
-  def crawl_up_from(category)
+  def crawl_up_from(category, to_category)
     # returns a string that is a '///'-separated list of categories
     # from child category to root
-    "#{category.description}///#{crawl_up_from(category.parent) if category != Category.root}"
+    "#{category.description}///#{crawl_up_from(category.parent, to_category) if category != to_category}"
   end
 
 end
