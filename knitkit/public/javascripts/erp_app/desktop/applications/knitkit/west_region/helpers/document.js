@@ -26,11 +26,12 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addDocumentOptions = function (self,
                         title: 'New Document Section',
                         plain: true,
                         buttonAlign: 'center',
-                        items: new Ext.FormPanel({
+                        items: {
+                            xtype: 'form',
                             labelWidth: 110,
                             frame: false,
                             bodyStyle: 'padding:5px 5px 0',
-                            url: '/knitkit/erp_app/desktop/online_document_sections/new',
+                            url: '/knitkit/erp_app/desktop/online_document_sections',
                             defaults: {
                                 width: 225
                             },
@@ -102,15 +103,16 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addDocumentOptions = function (self,
                                     value: record.data.siteId
                                 }
                             ]
-                        }),
+                        },
                         buttons: [
                             {
                                 text: 'Submit',
                                 listeners: {
                                     'click': function (button) {
                                         var window = button.findParentByType('window');
-                                        var formPanel = window.query('.form')[0];
+                                        var formPanel = window.down('form');
                                         formPanel.getForm().submit({
+                                            method: 'post',
                                             reset: true,
                                             waitMsg: 'Creating document section...',
                                             success: function (form, action) {
@@ -118,7 +120,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addDocumentOptions = function (self,
                                                 if (obj.success) {
                                                     record.appendChild(obj.node);
 
-                                                    var centerRegion = Ext.getComp('knitkitCenterRegion');
+                                                    var centerRegion = Ext.getCmp('knitkitCenterRegion');
                                                     centerRegion.editContent(obj.documented_content.title, obj.documented_content.id, obj.documented_content.body_html, record.data.siteId, 'article');
                                                     window.close();
                                                 }
