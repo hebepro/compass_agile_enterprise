@@ -25,7 +25,7 @@ class UpdateFileAssetReln < ActiveRecord::Migration
       execute('CREATE EXTENSION IF NOT EXISTS hstore;')
 
       add_column :file_asset_holders, :scoped_by, :hstore
-      add_hstore_index :file_assets, :scoped_by
+      add_hstore_index :file_asset_holders, :scoped_by
     else
       add_column :file_asset_holders, :scoped_by, :text
     end
