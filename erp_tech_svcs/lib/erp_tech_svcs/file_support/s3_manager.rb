@@ -191,7 +191,7 @@ module ErpTechSvcs
 
             leaf_hash = {
                 :text => node.key.split('/').pop,
-                :downloadPath => "/#{node.key}",
+                :downloadPath => "/#{node.key.split('/')[0..-2].join('/')}",
                 :id => "/#{node.key}",
                 :leaf => true
             }

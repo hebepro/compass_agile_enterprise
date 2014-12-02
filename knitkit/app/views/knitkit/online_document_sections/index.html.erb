@@ -7,7 +7,7 @@
     var selectedNode = null;
 
     function showContent(record) {
-        var tab = Ext.getCmp(record.data['id']), path = record.getPath(),
+        var tab = Ext.getCmp((record.data['internalIdentifier'] + '-' + record.data['id'])), path = record.getPath('internalIdentifier'),
                 tabPanel = Ext.getCmp("fittedPanelDiv").down('tabpanel');
         selectedNode = record;
         window.history.pushState("path", selectedNode.get('title'), path);
@@ -23,7 +23,7 @@
                 if (responseObj.success) {
                     if (Ext.isEmpty(tab)) {
                         tabPanel.add({
-                            id: record.data['id'],
+                            id: record.data['internalIdentifier'] + '-' + record.data['id'],
                             title: record.data['title'],
                             html: responseObj.html,
                             closable: true
@@ -47,7 +47,7 @@
     function findShowAndExpandNode(internalId) {
         var tree = Ext.getCmp("fittedPanelDiv").down('treepanel'),
                 rootNode = tree.getRootNode(),
-                documentNode = rootNode.findChild('id', internalId, true),
+                documentNode = rootNode.findChild('internalIdentifier', internalId, true),
                 documentRootParentNode = documentNode.parentNode;
 
         while (documentRootParentNode.id != rootNode.id) {
@@ -125,7 +125,8 @@
                 },
                 root: {
                     text: '<%= @root.title %>',
-                    id: '<%= @root.internal_identifier %>',
+                    id: '<%= @root.id %>',
+                    internalIdentifier: '<%= @root.internal_identifier %>',
                     expanded: true
                 },
                 fields: [
@@ -181,7 +182,7 @@
             items: [],
             listeners: {
                 tabchange: function (tabPanel, newCard, oldCard) {
-                    window.history.pushState("path", selectedNode.get('title'), selectedNode.getPath());
+                    window.history.pushState("path", selectedNode.get('title'), selectedNode.getPath('internalIdentifier'));
                 }
             },
             plugins: Ext.create('Ext.ux.TabCloseMenu', {
@@ -237,7 +238,7 @@
                 var responseObj = Ext.JSON.decode(response.responseText);
                 if (responseObj.success) {
                     var panel = Ext.create('widget.panel', {
-                        id: '<%= @root.internal_identifier %>',
+                        id: '<%= @root.internal_identifier %>-<%= @root.id %>',
                         title: '<%= @root.title %>',
                         html: responseObj.html,
                         closable: false
