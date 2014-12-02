@@ -42,7 +42,7 @@ module ErpApp
         def download_file
           path = params[:path]
           contents, message = @file_support.get_contents(path)
-          send_data contents, :filename => File.basename(path)
+          send_data contents, :filename => File.basename(path), :disposition => :attachment
         end
 
         def save_move

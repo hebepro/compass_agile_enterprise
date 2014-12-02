@@ -10,6 +10,7 @@
 # add_index :file_asset_holders, [:file_asset_holder_id, :file_asset_holder_type], :name => 'file_asset_holder_idx'
 
 class FileAssetHolder < ActiveRecord::Base
+  attr_protected :created_at, :updated_at
 
   belongs_to :file_asset
   belongs_to :file_asset_holder, :polymorphic => true

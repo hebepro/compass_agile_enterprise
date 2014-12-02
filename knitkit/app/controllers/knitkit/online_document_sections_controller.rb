@@ -31,8 +31,7 @@ module Knitkit
     end
 
     def get_content
-      document_section = OnlineDocumentSection.where(:internal_identifier => params[:document_section_id])
-                                              .where(:website_id => @website.id).first
+      document_section = OnlineDocumentSection.find(params[:document_section_id])
       content = document_section.documented_item_published_content(@active_publication) unless @active_publication.nil?
       content = document_section.documented_item.content if @active_publication.nil? or content.nil?
 
@@ -56,7 +55,8 @@ module Knitkit
     end
 
     def build_document_hash(document_section)
-      {:id => document_section.internal_identifier,
+      {:id => document_section.id,
+       :internalIdentifier => document_section.internal_identifier,
        :title => document_section.title,
        :leaf => document_section.leaf,
        :iconCls => (document_section.leaf ? 'icon-documentation-document' : 'icon-documentation-multi-document'),
