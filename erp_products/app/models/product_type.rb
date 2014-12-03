@@ -31,24 +31,24 @@ class ProductType < ActiveRecord::Base
     "#{description}"
   end
 
-  def category
-    category_id = CategoryClassification.where(classification_type: 'ProductType',
-                                               classification_id: id).pluck(:category_id).first
-
-    category_id ? Category.find(category_id) : nil
-  end
-
-  def category=(category_id)
-    category_id ||= 1
-    category_classification = CategoryClassification.where(classification_id: id,
-                                                           classification_type: self.class.name,
-                                                           category_id: category_id).first || CategoryClassification.new
-
-    category_classification.classification = self
-    category_classification.category_id = category_id
-
-    category_classification.save
-  end
+  # def category
+  #   category_id = CategoryClassification.where(classification_type: 'ProductType',
+  #                                              classification_id: id).pluck(:category_id).first
+  #
+  #   category_id ? Category.find(category_id) : nil
+  # end
+  #
+  # def category=(category_id)
+  #   category_id ||= 1
+  #   category_classification = CategoryClassification.where(classification_id: id,
+  #                                                          classification_type: self.class.name,
+  #                                                          category_id: category_id).first || CategoryClassification.new
+  #
+  #   category_classification.classification = self
+  #   category_classification.category_id = category_id
+  #
+  #   category_classification.save
+  # end
 
   def self.count_by_status(product_type, prod_availability_status_type)
     ProductInstance.count("product_type_id = #{product_type.id} and prod_availability_status_type_id = #{prod_availability_status_type.id}")
