@@ -14,7 +14,7 @@ class Category < ActiveRecord::Base
     # returns a string of category descriptions like
     # 'main_category > sub_category n > ... > this category instance'
     if root?
-      category.description
+      description
     else
       crawl_up_from(self, root).split('///').reverse.join(' > ')
     end
