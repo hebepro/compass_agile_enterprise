@@ -1,280 +1,33 @@
-<div style="margin-top:10px;" class="container">
-  <div id="document_content">
-  </div>
+<style>
+  .onlineDocumentSectionIframeContainer {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .onlineDocumentSectionIframe {
+    width: 100%;
+    height: 100%;
+  }
+</style>
+
+<div class="onlineDocumentSectionIframeContainer">
+  <iframe class="onlineDocumentSectionIframe" src="/onlinedocumentsections/<%= @online_document.id %>/show" frameborder="0"></iframe>
 </div>
 
-<script type="text/javascript" charset="utf-8">
-    var selectedNode = null;
+<script type="text/javascript">
+  function resize_windows() {
+    window_height = $('body').height();
+    header_height = $('#header').height();
+    footer_height = $('#footer').height();
+    document_content_height = window_height - header_height - footer_height;
+    $('.onlineDocumentSectionIframeContainer').height(document_content_height);
+  }
 
-    function showContent(record) {
-        var tab = Ext.getCmp((record.data['internalIdentifier'] + '-' + record.data['id'])), path = record.getPath('internalIdentifier'),
-                tabPanel = Ext.getCmp("fittedPanelDiv").down('tabpanel');
-        selectedNode = record;
-        window.history.pushState("path", selectedNode.get('title'), path);
+  $(document).ready(function(){
+    resize_windows();
 
-        Ext.Ajax.request({
-            url: '/online_document_sections/get_content',
-            params: {
-                document_section_id: record.data['id'],
-                section_id:<%= @root.id %>
-            },
-            success: function (response) {
-                var responseObj = Ext.JSON.decode(response.responseText);
-                if (responseObj.success) {
-                    if (Ext.isEmpty(tab)) {
-                        tabPanel.add({
-                            id: record.data['internalIdentifier'] + '-' + record.data['id'],
-                            title: record.data['title'],
-                            html: responseObj.html,
-                            closable: true
-                        }).show();
-                    }
-                    else {
-                        tabPanel.setActiveTab(tab);
-                        tab.update(responseObj.html)
-                    }
-                }
-                else {
-                    Ext.Msg.alert('Error', 'Could not load content');
-                }
-            },
-            failure: function (response) {
-                Ext.Msg.alert('Error', 'Could not load content');
-            }
-        });
-    }
-
-    function findShowAndExpandNode(internalId) {
-        var tree = Ext.getCmp("fittedPanelDiv").down('treepanel'),
-                rootNode = tree.getRootNode(),
-                documentNode = rootNode.findChild('internalIdentifier', internalId, true),
-                documentRootParentNode = documentNode.parentNode;
-
-        while (documentRootParentNode.id != rootNode.id) {
-            documentRootParentNode.expand();
-            documentRootParentNode = documentRootParentNode.parentNode;
-        }
-
-        tree.getSelectionModel().select(documentNode);
-
-        showContent(documentNode);
-    }
-
-    function searchDocs(btn) {
-        var toolbar = btn.up('toolbar'),
-                query = toolbar.down('textfield').getValue(),
-                fittedPanel = toolbar.up('#fittedPanelDiv'),
-                tabPanel = fittedPanel.down('tabpanel'),
-                searchResults = tabPanel.down('#searchResults');
-
-        Ext.Ajax.request({
-            url: '/online_document_sections/search',
-            params: {
-                query: query,
-                section_id: <%= @root.id %>
-            },
-            success: function (response) {
-                var responseObj = Ext.JSON.decode(response.responseText);
-                if (responseObj.success) {
-                    if (searchResults) {
-                        searchResults.update(responseObj.html);
-                        tabPanel.setActiveTab(searchResults);
-                    }
-                    else {
-                        tabPanel.add({
-                            id: 'searchResults',
-                            title: 'Search Results',
-                            html: responseObj.html,
-                            closable: true
-                        }).show();
-                    }
-                }
-                else {
-                    Ext.Msg.alert('Error', 'Could not search documents');
-                }
-
-            },
-            failure: function (response) {
-                Ext.Msg.alert('Error', 'Could not search documents');
-            }
-        });
-    }
-
-    function resize_windows() {
-        window_height = Ext.getBody().getViewSize().height;
-        header_height = Ext.get("header").getHeight();
-        footer_height = Ext.get("footer").getHeight();
-        document_content_height = window_height - header_height - footer_height;
-        Ext.get("document_content").setHeight(document_content_height);
-        Ext.getCmp("fittedPanelDiv").setHeight(document_content_height);
-    }
-
-    Ext.onReady(function () {
-        var currentItem, treePanel, tabPanel;
-
-        treePanel = Ext.createWidget('treepanel', {
-            xtype: 'tree',
-            region: 'west',
-            store: Ext.create('Ext.data.TreeStore', {
-                preloadChildren: true,
-                proxy: {
-                    type: 'ajax',
-                    url: '/online_document_sections/build_tree',
-                    extraParams: { section_id: <%= params[:section_id] %> },
-                    format: 'json'
-                },
-                root: {
-                    text: '<%= @root.title %>',
-                    id: '<%= @root.id %>',
-                    internalIdentifier: '<%= @root.internal_identifier %>',
-                    expanded: true
-                },
-                fields: [
-                    'id',
-                    'title',
-                    'iconCls',
-                    'internalIdentifier',
-                    'leaf'
-                ]
-            }),
-            collapsible: true,
-            dockedItems: {
-                xtype: 'toolbar',
-                docked: 'top',
-                items: [
-                    {
-                        xtype: 'textfield',
-                        emptyText: 'Search',
-                        flex: 5,
-                        allowBlank: true
-                    },
-                    {
-                        flex: 1,
-                        iconCls: 'icon-search',
-                        handler: searchDocs
-                    }
-                ]
-            },
-            header: false,
-            autoScroll: true,
-            bodyBorder: false,
-            rootVisible: false,
-            width: 200,
-            displayField: 'title',
-            valueField: 'id',
-            title: '<%= @root.title %>',
-            listeners: {
-                'itemclick': function (view, record, htmlItem, index, e) {
-                    showContent(record);
-                }
-            }
-        });
-
-        tabPanel = Ext.createWidget('tabpanel', {
-            xtype: 'tabpanel',
-            region: 'center',
-            plain: true,
-            bodyBorder: true,
-            defaults: {
-                autoScroll: true,
-                bodyPadding: 10
-            },
-            items: [],
-            listeners: {
-                tabchange: function (tabPanel, newCard, oldCard) {
-                    window.history.pushState("path", selectedNode.get('title'), selectedNode.getPath('internalIdentifier'));
-                }
-            },
-            plugins: Ext.create('Ext.ux.TabCloseMenu', {
-                extraItemsTail: [
-                    '-',
-                    {
-                        text: 'Closable',
-                        checked: true,
-                        hideOnClick: true,
-                        handler: function (item) {
-                            currentItem.tab.setClosable(item.checked);
-                        }
-                    }
-                ],
-                listeners: {
-                    aftermenu: function () {
-                        currentItem = null;
-                    },
-                    beforemenu: function (menu, item) {
-                        var menuitem = menu.child('*[text="Closable"]');
-                        currentItem = item;
-                        menuitem.setChecked(item.closable);
-                    }
-                }
-            })
-        });
-
-        Ext.createWidget('panel', {
-            id: 'fittedPanelDiv',
-            layout: 'border',
-            //width: 800,
-            header: false,
-            defaults: {
-                split: true
-            },
-            renderTo: 'document_content',
-            items: [
-                treePanel,
-                tabPanel
-            ]
-        });
-
-        resize_windows();
-
-        // Load root page
-        Ext.Ajax.request({
-            url: '/online_document_sections/get_content',
-            params: {
-                document_section_id: '<%= @root.internal_identifier %>',
-                section_id:<%= @root.id %>
-            },
-            success: function (response) {
-                var responseObj = Ext.JSON.decode(response.responseText);
-                if (responseObj.success) {
-                    var panel = Ext.create('widget.panel', {
-                        id: '<%= @root.internal_identifier %>-<%= @root.id %>',
-                        title: '<%= @root.title %>',
-                        html: responseObj.html,
-                        closable: false
-                    });
-
-                    tabPanel.add(panel).show();
-                    tabPanel.setActiveTab(panel);
-                }
-                else {
-                    Ext.Msg.alert('Error', 'Could not load content');
-                }
-            },
-            failure: function (response) {
-                Ext.Msg.alert('Error', 'Could not load content');
-            }
-        });
-
-        // Check for deep linking
-
-        <% if @online_document %>
-
-        var task = new Ext.util.DelayedTask(function () {
-            if (!treePanel.getRootNode().isLoading()) {
-                findShowAndExpandNode('<%= @online_document.internal_identifier %>');
-            }
-            else {
-                task.delay(200);
-            }
-        });
-        task.delay(200);
-
-        <% end %>
-    });
-
-    window.onresize = function () {
-        resize_windows();
-    }
-
+    window.onresize = function(event) {
+      resize_windows();
+    };
+  });
 </script>
