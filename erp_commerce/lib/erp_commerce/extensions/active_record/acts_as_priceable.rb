@@ -37,8 +37,7 @@ module ErpCommerce
           end
 
           def get_current_simple_plan
-            self.pricing_plans.find(:first, 
-              :conditions => ['is_simple_amount = ? and from_date <= ? and thru_date >= ?', true, Date.today, Date.today])
+            self.pricing_plans.where('is_simple_amount = ? and (from_date <= ? and thru_date >= ? or (from_date is null and thru_date is null))', true, Date.today, Date.today).first
           end
 
           class Helper

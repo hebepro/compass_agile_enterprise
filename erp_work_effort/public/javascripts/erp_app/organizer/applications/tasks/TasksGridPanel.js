@@ -112,7 +112,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Tasks.GridPanel", {
                 icon: '/images/erp_app/organizer/applications/crm/toolbar_find.png',
                 listeners: {
                     click: function (button, e, eOpts) {
-                        var grid = button.up('crmpartygrid'),
+                        var grid = button.up('tasksgridpanel'),
                             value = grid.down('toolbar').down('textfield').getValue();
 
                         grid.store.load({
