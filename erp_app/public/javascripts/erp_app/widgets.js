@@ -3,7 +3,7 @@ Compass.ErpApp.Utility.createNamespace("Compass.ErpApp.Widgets");
 Compass.ErpApp.Widgets = {
     setup: function (uuid, name, action, params, addToLoaded) {
         var widgetParams = {
-            widget_params: Ext.encode(params)
+            widget_params: $.param(params)
         };
 
         jQuery.ajax({
