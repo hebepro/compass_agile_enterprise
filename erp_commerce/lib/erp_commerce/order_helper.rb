@@ -24,9 +24,10 @@ module ErpCommerce
   
       #see if we need to update quantity or create new line item
       order_line_item = get_line_item_for_product_type(product_type)
-      if order_line_item.nil? || order_line_item.empty?
+      if order_line_item.nil?
         #create order line item
         order_line_item = order.add_line_item(product_type)
+        order_line_item.quantity = 1
 
         #get pricing plan and create charge lines
         pricing_plan = product_type.get_current_simple_plan
@@ -39,12 +40,21 @@ module ErpCommerce
           :charged_item => order_line_item,
           :money => money,
           :description => pricing_plan.description)
+
         charge_line.save
         order_line_item.charge_lines << charge_line
         order.status = 'Items Added'
         order.save
       else
-        #update quantity
+        order_line_item.quantity ||= 1
+        order_line_item.quantity += 1
+        charge_line = order_line_item.charge_lines.first
+        pricing_plan = product_type.get_current_simple_plan
+        charge_line.money.amount += pricing_plan.money_amount
+        order.status = 'Items Added'
+        charge_line.money.save
+        order_line_item.save
+        order.save
       end
       order
     end
@@ -190,7 +200,7 @@ module ErpCommerce
 
     def get_line_item_for_product_type(product_type)
       order = get_order(true)
-      order.line_items.select{|oli| oli.product_type == product_type.id}
+      order.line_items.detect{|oli| oli.product_type == product_type}
     end
 
     def clear_order
