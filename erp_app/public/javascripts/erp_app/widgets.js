@@ -3,18 +3,19 @@ Compass.ErpApp.Utility.createNamespace("Compass.ErpApp.Widgets");
 Compass.ErpApp.Widgets = {
     setup: function (uuid, name, action, params, addToLoaded) {
         var widgetParams = {
-            widget_params: $.param(params)
+            widget_params: $.param(params),
+            authenticity_token: Compass.ErpApp.AuthentictyToken
         };
 
         jQuery.ajax({
             url: '/erp_app/widgets/' + name + '/' + action + '/' + uuid,
-            type: 'POST',
+            type: 'GET',
             data: widgetParams,
             success:function(data, textStatus, xhr){
-                var widgetDiv = jQuery('#' + uuid)
+                var widgetDiv = jQuery('#' + uuid);
 
-                widgetDiv.innerHTML = response.responseText;
-                Compass.ErpApp.Utility.evaluateScriptTags(widgetDiv);
+                widgetDiv.innerHTML = data.html;
+                Compass.ErpApp.Utility.evaluateScriptTags(widgetDiv[0]);
                 Compass.ErpApp.JQuerySupport.setupHtmlReplace();
                 if (addToLoaded)
                     Compass.ErpApp.Widgets.LoadedWidgets.push({
@@ -25,7 +26,7 @@ Compass.ErpApp.Widgets = {
                     });
             },
             error: function(){
-                jQuery('#' + uuid).unmask();
+                //ALERT?
             }
         });
     },
