@@ -1,3 +1,9 @@
+Version 3.0.1
+- Moved OnlineDocument sections views into IFrame
+- Updated Online Document sections to use ids instead of internal identifiers
+- Updated Online Document sections to load content from server on every load
+Version 3.0.0
+- Updated major version of CompassAE Platform release
 Version 2.1.16
 - Updated CKeditor and Codemirror
 - Fixed view_paths for widgets in ErpApp::Widgets::Base.render_template override
