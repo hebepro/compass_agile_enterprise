@@ -9,7 +9,13 @@ module Knitkit
 
     def index
       @online_document = OnlineDocumentSection.find(params[:section_id])
+    end
+
+    def show
+      @online_document = OnlineDocumentSection.find(params[:section_id])
       @online_document = nil if @online_document.id == find_root.id
+
+      render :show, :layout => false
     end
 
     def search
