@@ -34,7 +34,7 @@ class OrderTxn < ActiveRecord::Base
       cur_money = charge.money
       cur_total = total_hash[cur_money.currency.internal_identifier]
       if (cur_total.nil?)
-        cur_total = cur_money.clone
+        cur_total = cur_money.dup
       else
         cur_total.amount = 0 if cur_total.amount.nil?
         cur_total.amount += cur_money.amount if !cur_money.amount.nil?
