@@ -1,8 +1,7 @@
 Version 3.0.1
 - Fixed bug where string.startsWith was moved to Ext.String
-Version 3.0.0
+Version 3.0.0 - 11-19-2014
 - Update major version for CompassAE platform release
-Version 2.0.1
 - Fixed CSS issues in history panel
 - Increased security on controller
 - Cleaned up version reporting
