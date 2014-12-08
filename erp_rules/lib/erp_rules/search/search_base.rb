@@ -2,7 +2,7 @@ module ErpRules
   module Search
     class SearchBase
 
-      def search facts
+      def search(facts)
         return process_search_facts(facts)
       end
 

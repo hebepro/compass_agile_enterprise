@@ -15,7 +15,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
      * @cfg {String} addBtnDescription
      * Description for add party button.
      */
-    addBtnDescription: 'Add Customer',
+    addBtnDescription: 'Add User',
 
     /**
      * @cfg {String} title
@@ -46,10 +46,10 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
     includedToPartyRelationships: [],
 
     /**
-     * @cfg {String} partyRole
-     * Get all user records with this partyRole.
+     * @cfg {String[]} partyRole
+     * Array of PartyRoles to add to users during creation.
      */
-    partyRole: 'customer',
+    partyRoles: [],
 
     /**
      * @cfg {String} toRole
@@ -87,6 +87,60 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
      */
     canDeleteUser: true,
 
+    /**
+     * @cfg {String} deleteUrl
+     * Url to call to delete user
+     */
+    deleteUrl: '/erp_app/organizer/crm/users/',
+
+    /**
+     * @cfg {String} updateUrl
+     * Url to call to update user
+     */
+    updateUrl: '/erp_app/organizer/crm/users/',
+
+    /**
+     * @cfg {String} createUrl
+     * Url to call to update user
+     */
+    createUrl: '/erp_app/organizer/crm/users/',
+
+    /**
+     * @cfg {String[]} securityRoles
+     * Array of SecurityRoles to add to users during creation.
+     */
+    securityRoles: [],
+
+    /**
+     * @cfg {boolean} allowFormToggle
+     * True to allow user to toggle user form.
+     */
+    allowFormToggle: true,
+
+    /**
+     * @cfg {boolean} allowFormSubmission
+     * True to allow from to be submitted.
+     */
+    allowFormSubmission: false,
+
+    /**
+     * @cfg {boolean} createParty
+     * True to create party with user.
+     */
+    createParty: false,
+
+    /**
+     * @cfg {boolean} skipUserActivationEmail
+     * True to skip activation email.
+     */
+    skipUserActivationEmail: true,
+
+    /**
+     * @cfg {Array} additionalActionColumns
+     * Additional action columns to add.
+     */
+    additionalActionColumns: [],
+
     constructor: function (config) {
         var listeners = {
             activate: function () {
@@ -115,7 +169,21 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
              * @param {Compass.ErpApp.Shared.Crm.UsersGrid} this
              * @param {Compass.ErpApp.Shared.Crm.User} user about to be edited
              */
-            'edituserclick'
+            'edituserclick',
+            /*
+             * @event usercreated
+             * Fires when a user is updated
+             * @param {Compass.ErpApp.Shared.Crm.UsersGrid} this
+             * @param {Object} user
+             */
+            'usercreated',
+            /*
+             * @event userupdated
+             * Fires when a party is updated
+             * @param {Compass.ErpApp.Shared.Crm.UsersGrid} this
+             * @param {Object} user
+             */
+            'userupdated'
         );
 
         var userFields = [
@@ -142,11 +210,12 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
         this.store = Ext.create('Ext.data.Store', {
             autoLoad: false,
             autoSync: true,
+            remoteSort: true,
             proxy: {
                 type: 'ajax',
                 url: '/erp_app/organizer/crm/users',
                 extraParams: {
-                    party_role: me.partyRole,
+                    party_roles: me.partyRoles,
                     to_role: me.toRole,
                     to_party_id: me.toPartyId,
                     included_party_to_relationships: Ext.encode(me.includedToPartyRelationships)
@@ -166,7 +235,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
         // setup toolbar
         var toolBarItems = [];
 
-        // attempt to add Add party button
+        // attempt to add Add user button
         if (me.canAddUser) {
             toolBarItems.push({
                 text: me.addBtnDescription,
@@ -174,7 +243,32 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
                 iconCls: me.addBtnIconCls,
                 handler: function (button) {
                     if (me.fireEvent('adduserclick', me) !== false) {
+                        // open tab with create user form.
+                        var tabPanel = button.up('crmusersgrid').up('applicationcontainer');
 
+                        var crmUserFormPanel = Ext.create("widget.crmuserform", {
+                            title: 'Add User',
+                            width: 500,
+                            bodyPadding: '5px',
+                            partyRoles: me.partyRoles,
+                            allowFormToggle: me.allowFormToggle,
+                            createParty: me.createParty,
+                            skipUserActivationEmail: me.skipUserActivationEmail,
+                            allowFormSubmission: me.allowFormSubmission,
+                            createUrl: me.createUrl,
+                            updateUrl: me.updateUrl,
+                            closable: true,
+                            listeners: {
+                                usercreated: function (comp, user) {
+                                    me.store.load();
+                                    me.fireEvent('usercreated', me, user);
+                                    comp.close();
+                                }
+                            }
+                        });
+
+                        tabPanel.add(crmUserFormPanel);
+                        tabPanel.setActiveTab(crmUserFormPanel);
                     }
                 }
             }, '|');
@@ -237,7 +331,8 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
                 columns.push({
                     header: relationship.title,
                     dataIndex: relationship.toRoleType,
-                    width: 150
+                    width: 150,
+                    sortable: false
                 })
             });
         }
@@ -251,7 +346,8 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
             {
                 header: 'Full Name',
                 dataIndex: 'partyDescription',
-                width: 200
+                width: 200,
+                sortable: false
             },
             {
                 header: 'Email',
@@ -289,7 +385,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
                 xtype: 'actioncolumn',
                 header: 'Edit',
                 align: 'center',
-                width: 50,
+                width: 75,
                 items: [
                     {
                         icon: '/images/icons/edit/edit_16x16.png',
@@ -298,7 +394,34 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
                             var record = grid.getStore().getAt(rowIndex);
 
                             if (me.fireEvent('edituserclick', me, record) !== false) {
+                                // open tab with create user form.
+                                var tabPanel = grid.up('applicationcontainer');
 
+                                var crmUserFormPanel = Ext.create("widget.crmuserform", {
+                                    title: 'Update User',
+                                    width: 500,
+                                    bodyPadding: '5px',
+                                    partyRoles: me.partyRoles,
+                                    allowFormToggle: me.allowFormToggle,
+                                    createParty: me.createParty,
+                                    skipUserActivationEmail: me.skipUserActivationEmail,
+                                    allowFormSubmission: me.allowFormSubmission,
+                                    createUrl: me.createUrl,
+                                    updateUrl: me.updateUrl,
+                                    closable: true,
+                                    listeners: {
+                                        userupdated: function (comp, user) {
+                                            me.store.load();
+                                            me.fireEvent('userupdated', me, user);
+                                            comp.close();
+                                        }
+                                    }
+                                });
+
+                                tabPanel.add(crmUserFormPanel);
+                                tabPanel.setActiveTab(crmUserFormPanel);
+
+                                crmUserFormPanel.loadUser(record.get('id'));
                             }
                         }
                     }
@@ -313,7 +436,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
                 xtype: 'actioncolumn',
                 header: 'Delete',
                 align: 'center',
-                width: 50,
+                width: 75,
                 items: [
                     {
                         icon: '/images/icons/delete/delete_16x16.png',
@@ -328,13 +451,16 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
                                 if (btn == 'ok' || btn == 'yes') {
                                     Ext.Ajax.request({
                                         method: 'DELETE',
-                                        url: '/erp_app/organizer/crm/users/' + record.get('id'),
+                                        url: me.deleteUrl + record.get('id'),
                                         success: function (response) {
                                             myMask.hide();
                                             responseObj = Ext.JSON.decode(response.responseText);
 
                                             if (responseObj.success) {
                                                 grid.store.reload();
+                                            }
+                                            else{
+                                                Ext.Msg.alert("Error", responseObj.message);
                                             }
                                         },
                                         failure: function (response) {
@@ -351,6 +477,10 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
                     }
                 ]
             });
+        }
+
+        if(me.additionalActionColumns.length > 0){
+            columns = columns.concat(me.additionalActionColumns);
         }
 
         this.columns = columns;

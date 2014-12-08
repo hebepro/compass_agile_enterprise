@@ -24,21 +24,15 @@ CompassAeStarterKit::FileSupport.patch_file 'config/environments/production.rb',
 "  config.assets.compile = true",
 :patch_mode => :change
 
-CompassAeStarterKit::FileSupport.patch_file 'Gemfile',
-"gem 'jquery-rails'",
-"gem 'jquery-rails', '2.1.4'",
-:patch_mode => :change
-
 CompassAeStarterKit::FileSupport.append_file 'Gemfile',
 "
-gem 'erp_base_erp_svcs', '3.1.5'
-gem 'erp_tech_svcs', '3.1.8'
-gem 'compass_ae_sencha', '1.0.3'
-gem 'erp_app', '3.1.16'
-gem 'erp_forms', '3.1.2'
-gem 'knitkit', '2.1.15'
-gem 'rails_db_admin', '2.1.2'
-gem 'compass_ae_console', '2.0.0'
+gem 'erp_base_erp_svcs', '~> 4.0'
+gem 'erp_tech_svcs', '4.0'
+gem 'compass_ae_sencha', '2.0'
+gem 'erp_app', '4.0'
+gem 'knitkit', '3.0'
+gem 'rails_db_admin', '3.0'
+gem 'compass_ae_console', '3.0'
 "
 puts <<-end
 

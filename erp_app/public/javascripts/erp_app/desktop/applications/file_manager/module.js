@@ -12,7 +12,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.FileManager", {
     init: function () {
         this.launcher = {
             text: 'File Manager',
-            iconCls: 'icon-folders',
+            iconCls: 'icon-file-manager',
             handler: this.createWindow,
             scope: this
         };
@@ -98,7 +98,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.FileManager", {
                 width: 1000,
                 height: 550,
                 autoDestroy: true,
-                iconCls: 'icon-folders',
+                iconCls: 'icon-file-manager-light',
                 shim: false,
                 animCollapse: false,
                 constrainHeader: true,

@@ -56,6 +56,13 @@ module ErpTechSvcs
         bucket.objects[full_filename].write(content, {:acl => :public_read})
       end
 
+      # copy a file
+      def copy_file(origination_file, path, name)
+        contents = get_contents(origination_file)
+
+        create_file(path, name, contents)
+      end
+
       def create_folder(path, name)
         path = path.sub(%r{^/}, '')
         full_filename = (path.blank? ? name : File.join(path, name))
@@ -132,9 +139,9 @@ module ErpTechSvcs
           else
             message = FOLDER_IS_NOT_EMPTY
           end
-        rescue Exception => e
+        rescue => ex
           result = false
-          message = e
+          message = ex
         end
 
         return result, message, is_directory
@@ -184,7 +191,7 @@ module ErpTechSvcs
 
             leaf_hash = {
                 :text => node.key.split('/').pop,
-                :downloadPath => "/#{node.key}",
+                :downloadPath => "/#{node.key.split('/')[0..-2].join('/')}",
                 :id => "/#{node.key}",
                 :leaf => true
             }

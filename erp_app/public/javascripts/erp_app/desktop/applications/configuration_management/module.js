@@ -4,7 +4,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.ConfigurationManagement",{
   init : function(){
     this.launcher = {
       text: 'Configuration Management',
-      iconCls:'icon-grid',
+      iconCls:'icon-settings',
       handler: this.createWindow,
       scope: this
     }
@@ -82,7 +82,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.ConfigurationManagement",{
         title:'Configuration Management',
         width:1000,
         height:540,
-        iconCls: 'icon-grid',
+        iconCls: 'icon-settings-light',
         shim:false,
         animCollapse:false,
         constrainHeader:true,

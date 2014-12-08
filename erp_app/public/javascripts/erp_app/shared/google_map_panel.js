@@ -2,6 +2,11 @@ Ext.define('Ext.ux.GoogleMapPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.googlemappanel',
     autoDestroy: true,
+    listeners: {
+        resize: function(){
+            this.resizeMap();
+        }
+    },
 
     initComponent: function () {
         var me = this;
@@ -101,5 +106,9 @@ Ext.define('Ext.ux.GoogleMapPanel', {
             }
 
         });
+    },
+
+    resizeMap: function () {
+        google.maps.event.trigger(this.gmap, 'resize');
     }
 });

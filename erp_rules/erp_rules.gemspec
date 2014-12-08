@@ -7,6 +7,7 @@ require "erp_rules/version"
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = "erp_rules"
+  s.licenses    = ['GPL-3-LICENSE']
   s.version     = ErpRules::VERSION::STRING
   s.summary     = "The Rules Module of CompassAE includes classes which act as helpers in externalizing the execution context of CompassAE value objects for processing by a rules engine."
   s.description = "The Rules Module of CompassAE includes classes which act as helpers in externalizing the execution context of CompassAE value objects for processing by a rules engine. It also includes an integration with Ruleby, which is a pure ruby implementation of the forward chaining Rete algorithm."
@@ -20,6 +21,6 @@ Gem::Specification.new do |s|
   s.add_dependency "ruleby", "~> 0.8"
 
   #compass dependencies
-  s.add_dependency "erp_txns_and_accts", "~> 3.1"
-  s.add_development_dependency "erp_dev_svcs", "~> 3.1"
+  s.add_dependency "erp_txns_and_accts", "~> 4.0"
+  s.add_development_dependency "erp_dev_svcs", "~> 4.0"
 end

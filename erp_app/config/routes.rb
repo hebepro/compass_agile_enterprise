@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  match '/download/:filename' => 'erp_app/public#download'
+  match '/download/:filename' => 'erp_app/public#download', :filename => /[^\/]*/
 end
 
 ErpApp::Engine.routes.draw do
@@ -12,15 +12,11 @@ ErpApp::Engine.routes.draw do
   match '/public/:action' => "public"
 
   #############################
-  #Pixlar Callback Routes
-  #############################
-
-  match '/pixlr/:action' => 'pixlr'
-
-  #############################
   #Shared Application Routes
   #############################
-  match '/shared/notes/:action(/:party_id)' => "shared/notes"
+  get '/shared/notes(/:action)' => "shared/notes"
+  post '/shared/notes' => "shared/notes#create"
+  delete '/shared/notes/:id' => "shared/notes#destroy"
   match '/shared/audit_log/:action' => 'shared/audit_log'
 
   #############################
@@ -56,7 +52,6 @@ ErpApp::Engine.routes.draw do
 
       resources :contact_mechanisms do
         collection do
-          get 'contact_purposes'
           get 'states'
         end
 
@@ -72,42 +67,50 @@ ErpApp::Engine.routes.draw do
 
   end
 
+  match '/admin' => "login#index", :defaults => { :application => "desktop" }
+
   ############################
   #Desktop Application Routes
   ############################
-  match '/desktop' => "desktop/base#index"
+  namespace :desktop do
+    match '/' => "base#index"
 
-  #Desktop Applications
-  #scaffold
-  match '/desktop/scaffold/:action((/:model_name)(/:id))' => "desktop/scaffold/base"
-  
-  #user_management
-  match '/desktop/user_management/users(/:action(/:id))' => "desktop/user_management/base"
-  match '/desktop/user_management/role_management/:action' => "desktop/user_management/role_management"
-  match '/desktop/user_management/application_management/:action' => "desktop/user_management/application_management"
+    #Desktop Applications
 
-  #security_management
-  match '/desktop/security_management/groups(/:action(/:assign_to(/:id)))' => "desktop/security_management/groups"
-  match '/desktop/security_management/users(/:action(/:assign_to(/:id)))' => "desktop/security_management/users"
-  match '/desktop/security_management/roles(/:action(/:assign_to(/:id)))' => "desktop/security_management/roles"
-  match '/desktop/security_management/capabilities(/:action(/:assign_to(/:id)))' => "desktop/security_management/capabilities"
-  match '/desktop/security_management/(/:action)' => "desktop/security_management/base"
+    #scaffold
+    match 'scaffold/:action((/:model_name)(/:id))' => "scaffold/base"
 
-  #control_panel
-  match '/desktop/control_panel/application_management/:action(/:id)' => "desktop/control_panel/application_management"
-  match '/desktop/control_panel/desktop_management/:action' => "desktop/control_panel/desktop_management"
+    #user_management
+    match 'user_management/users(/:action(/:id))' => "user_management/base"
+    match 'user_management/role_management/:action' => "user_management/role_management"
+    match 'user_management/application_management/:action' => "user_management/application_management"
 
-  #file_manager
-  match '/desktop/file_manager/base/:action' => "desktop/file_manager/base"
-  match '/desktop/file_manager/download_file/:path' => "desktop/file_manager/base#download_file"
+    #security_management
+    match 'security_management/groups(/:action(/:assign_to(/:id)))' => "security_management/groups"
+    match 'security_management/users(/:action(/:assign_to(/:id)))' => "security_management/users"
+    match 'security_management/roles(/:action(/:assign_to(/:id)))' => "security_management/roles"
+    match 'security_management/capabilities(/:action(/:assign_to(/:id)))' => "security_management/capabilities"
+    match 'security_management/(/:action)' => "security_management/base"
 
-  #configuration_management
-  match '/desktop/configuration_management/:action' => "desktop/configuration_management/base"
-  match '/desktop/configuration_management/types/:action' => "desktop/configuration_management/types"
-  match '/desktop/configuration_management/options/:action' => "desktop/configuration_management/options"
+    #control_panel
+    match 'control_panel/application_management/:action(/:id)' => "control_panel/application_management"
+    match 'control_panel/desktop_management/:action' => "control_panel/desktop_management"
 
-  #tail
-  match '/desktop/tail(/:action)' => "desktop/tail/base"
+    #file_manager
+    match 'file_manager/base/:action' => "file_manager/base"
+    match 'file_manager/download_file/:path' => "file_manager/base#download_file"
+
+    #configuration_management
+    match 'configuration_management/:action' => "configuration_management/base"
+    match 'configuration_management/types/:action' => "configuration_management/types"
+    match 'configuration_management/options/:action' => "configuration_management/options"
+
+    #tail
+    match 'tail(/:action)' => "tail/base"
+
+    #job_tracker
+    match 'job_tracker(/:action)' => "job_tracker/base"
+  end
 
   #widget proxy
   match '/widgets/:widget_name/:widget_action/:uuid(/:id)' => "widget_proxy#index", :as => :widget
@@ -115,7 +118,5 @@ ErpApp::Engine.routes.draw do
   #shared
   match '/shared/configuration/(/:action(/:id(/:category_id)))' => "shared/configuration"
   match '/shared/profile_management/:action' => "shared/profile_management"
-  
-  #job_tracker
-  match '/desktop/job_tracker(/:action)' => "desktop/job_tracker/base"
+
 end

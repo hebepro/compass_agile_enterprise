@@ -15,6 +15,9 @@ class Party < ActiveRecord::Base
   attr_reader :relationships
   attr_writer :create_relationship
 
+  # serialize ExtJs attributes
+  is_json :custom_fields
+  
   # Gathers all party relationships that contain this particular party id
   # in either the from or to side of the relationship.
   def relationships

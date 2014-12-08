@@ -62,11 +62,16 @@ module ErpTxnsAndAccts
 
           def destroy_financial_txn_account
 					  self.financial_txn_account.destroy if (self.financial_txn_account && !self.financial_txn_account.frozen?)
-					end
+          end
 
         end
 
         module SingletonMethods
+
+          def join_account_root
+            joins(:financial_txn_account => :biz_txn_acct_root).uniq
+          end
+
         end
 
       end

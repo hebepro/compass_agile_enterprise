@@ -27,7 +27,10 @@
   <%= static_javascript_include_tag 'knitkit/inline_editing.js' %>
   <%= static_javascript_include_tag 'knitkit/jquery.maskedinput.min.js' %>
 
+  <%= include_code_mirror_library %>
   <%= static_stylesheet_link_tag 'knitkit/inline_editing.css' %>
+
+  <%= setup_js_authentication %>
 
   <%= yield :head %>
 </head>
@@ -73,6 +76,7 @@
   <%= content_for?(:footer) ? yield(:footer) : (render :partial => 'shared/knitkit/footer') %>
   <%= yield :foot %>
 </div>
+<%= set_authenticity_token %>
 <%= set_session_timeout %>
 <%= setup_inline_editing %>
 </body>

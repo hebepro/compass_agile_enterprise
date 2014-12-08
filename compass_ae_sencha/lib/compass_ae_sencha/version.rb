@@ -1,10 +1,14 @@
 module CompassAeSencha
   module VERSION #:nodoc:
-    MAJOR = 1
+    MAJOR = 2
     MINOR = 0
-    TINY  = 5
+    TINY  = 0
 
     STRING = [MAJOR, MINOR, TINY].compact.join('.')
+  end
+
+  def self.version
+    CompassAeSencha::VERSION::STRING
   end
 end
 

@@ -1,3 +1,5 @@
+Version 4.0.0 - 11-19-2014
+- Updated major version of CompassAE Platform release
 Version 3.1.4 - 08-26-2013
 - Fixed bug in shopping_cart widget
 - Changed middleware to insert_before Rack::Runtime instead of Rack::Lock to allow for config.threadsafe!

@@ -20,9 +20,9 @@ module Knitkit
       def validate_erb(contents)
         begin
           ActionView::Template::Handlers::Erubis.new(contents).result
-        rescue SyntaxError=>ex
+        rescue SyntaxError=> ex
           ex.message
-        rescue Exception=>ex
+        rescue => ex
           nil
         end
       end

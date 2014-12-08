@@ -2,10 +2,31 @@ module Knitkit
   module ErpApp
     module Desktop
       class WebsiteNavController < Knitkit::ErpApp::Desktop::AppController
-        def new
+
+        before_filter :set_website, :only => [:index]
+
+        def index
+          tree = []
+
+          if @website
+            @website.website_navs.each do |website_nav|
+              menu_hash = {:text => website_nav.name, :websiteNavId => website_nav.id, :canAddMenuItems => true,
+                           :iconCls => 'icon-index', :isWebsiteNav => true, :leaf => false, :children => []}
+
+              menu_hash[:children] = website_nav.website_nav_items.positioned.map { |item| build_menu_item_hash(item) }
+
+              tree << menu_hash
+            end
+          end
+
+          render :json => tree
+        end
+
+        def create
           begin
             current_user.with_capability('create', 'WebsiteNavItem') do
               result = {}
+
               website = Website.find(params[:website_id])
               website_nav = WebsiteNav.new(:name => params[:name])
               website.website_navs << website_nav
@@ -13,20 +34,19 @@ module Knitkit
               if website_nav.save
                 result[:success] = true
                 result[:node] = {:text => params[:name],
-                  :websiteNavId => website_nav.id,
-                  :websiteId => website.id,
-                  :iconCls => 'icon-index',
-                  :canAddMenuItems => true,
-                  :isWebsiteNav => true,
-                  :leaf => false,
-                  :children => []}
+                                 :websiteNavId => website_nav.id,
+                                 :iconCls => 'icon-index',
+                                 :canAddMenuItems => true,
+                                 :isWebsiteNav => true,
+                                 :leaf => false,
+                                 :children => []}
               else
                 result[:success] = false
               end
 
               render :json => result
             end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability=>ex
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
           end
         end
@@ -34,22 +54,22 @@ module Knitkit
         def update
           begin
             current_user.with_capability('edit', 'WebsiteNavItem') do
-              website_nav = WebsiteNav.find(params[:website_nav_id])
+              website_nav = WebsiteNav.find(params[:id])
               website_nav.name = params[:name]
 
               render :json => (website_nav.save ? {:success => true} : {:success => false})
             end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability=>ex
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
           end
         end
 
-        def delete
+        def destroy
           begin
             current_user.with_capability('delete', 'WebsiteNavItem') do
               render :json => (WebsiteNav.destroy(params[:id]) ? {:success => true} : {:success => false})
             end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability=>ex
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
           end
         end
@@ -64,7 +84,7 @@ module Knitkit
               website_nav_item = WebsiteNavItem.new(:title => params[:title])
 
               url = params[:url]
-              if(params[:link_to] != 'url')
+              if (params[:link_to] != 'url')
                 #user wants to see Section so this is needed
                 params[:link_to] = 'WebsiteSection' if params[:link_to] == 'website_section'
 
@@ -88,25 +108,25 @@ module Knitkit
 
                 result[:success] = true
                 result[:node] = {:text => params[:title],
-                  :linkToType => params[:link_to].underscore,
-                  :linkedToId => linked_to_id,
-                  :websiteId => website_nav.website.id,
-                  :url => url,
-                  :isSecure => false,
-                  :roles => [],
-                  :canAddMenuItems => true,
-                  :websiteNavItemId => website_nav_item.id,
-                  :iconCls => 'icon-document',
-                  :isWebsiteNavItem => true,
-                  :leaf => false,
-                  :children => []}
+                                 :linkToType => params[:link_to].underscore,
+                                 :linkedToId => linked_to_id,
+                                 :websiteNavId => website_nav.id,
+                                 :url => url,
+                                 :isSecure => false,
+                                 :roles => [],
+                                 :canAddMenuItems => true,
+                                 :websiteNavItemId => website_nav_item.id,
+                                 :iconCls => 'icon-document',
+                                 :isWebsiteNavItem => true,
+                                 :leaf => false,
+                                 :children => []}
               else
                 result[:success] = false
               end
 
               render :json => result
             end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability=>ex
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
           end
         end
@@ -120,7 +140,7 @@ module Knitkit
 
               url = params[:url]
               linked_to_id = nil
-              if(params[:link_to] != 'url')
+              if (params[:link_to] != 'url')
                 #user wants to see Section so this is needed
                 params[:link_to] = 'WebsiteSection' if params[:link_to] == 'website_section'
 
@@ -147,7 +167,17 @@ module Knitkit
 
               render :json => result
             end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability=>ex
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
+            render :json => {:success => false, :message => ex.message}
+          end
+        end
+
+        def delete_menu_item
+          begin
+            current_user.with_capability('delete', 'WebsiteNavItem') do
+              render :json => (WebsiteNavItem.destroy(params[:id]) ? {:success => true} : {:success => false})
+            end
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
           end
         end
@@ -176,23 +206,13 @@ module Knitkit
               end
             end
 
-            render :json => {:success => true, :secured => website_nav_item.is_secured?, :roles => website_nav_item.roles.collect{|item| item.internal_identifier}}
+            render :json => {:success => true, :secured => website_nav_item.is_secured?, :roles => website_nav_item.roles.collect { |item| item.internal_identifier }}
           else
             render :json => {:success => false, :message => "User does not have capability."}
           end
         end
 
-        def delete_menu_item
-          begin
-            current_user.with_capability('delete', 'WebsiteNavItem') do
-              render :json => (WebsiteNavItem.destroy(params[:id]) ? {:success => true} : {:success => false})
-            end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability=>ex
-            render :json => {:success => false, :message => ex.message}
-          end
-        end
-
-      end#WebsiteNavController
-    end#Desktop
-  end#ErpApp
-end#Knitkit
+      end #WebsiteNavController
+    end #Desktop
+  end #ErpApp
+end #Knitkit

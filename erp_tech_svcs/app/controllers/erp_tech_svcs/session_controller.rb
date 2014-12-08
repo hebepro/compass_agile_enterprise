@@ -2,10 +2,6 @@ module ErpTechSvcs
   class SessionController < ActionController::Base
     def create
       login = params[:login].strip
-
-      last_login_at = nil
-      potential_user = User.where('username = ? or email = ?', login, login).first
-      last_login_at = potential_user.last_login_at unless potential_user.nil?
       if login(login, params[:password])
         #log when someone logs in
         ErpTechSvcs::ErpTechSvcsAuditLog.successful_login(current_user)
@@ -13,7 +9,7 @@ module ErpTechSvcs
         #set logout
         session[:logout_to] = params[:logout_to]
 
-        login_to = session[:return_to_url].blank? ? (last_login_at.nil? ? params[:first_login_to] : params[:login_to]) : session[:return_to_url]
+        login_to = session[:return_to_url].blank? ? params[:login_to] : session[:return_to_url]
         request.xhr? ? (render :json => {:success => true, :login_to => login_to}) : (redirect_to login_to)
       else
         message = "Login failed. Try again"
@@ -43,5 +39,20 @@ module ErpTechSvcs
     def keep_alive
       render :json => {:success => true, :last_activity_at => current_user.last_activity_at}
     end
+
+    def is_alive
+      if current_user
+        time_since_last_activity = (Time.now - current_user.last_activity_at)
+
+        if time_since_last_activity > (ErpApp::Config.session_redirect_after * 60)
+          render :json => {alive: false}
+        else
+          render :json => {alive: true}
+        end
+      else
+        render :json => {alive: false}
+      end
+    end
+
   end #SessionsController
 end #ErpTechSvcs

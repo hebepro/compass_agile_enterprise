@@ -10,6 +10,7 @@
 
 Ext.define("Compass.ErpApp.Shared.CodeMirror", {
     extend: "Ext.panel.Panel",
+    header: false,
     alias: 'widget.codemirror',
     codeMirrorInstance: null,
 
@@ -111,6 +112,11 @@ Ext.define("Compass.ErpApp.Shared.CodeMirror", {
      * @cfg {Boolean} enableLineNumbers Whether to show line numbers to the left of the editor.
      */
     enableLineNumbers: true,
+
+    /**
+     * @cfg {Boolean} enableCodeFolding Whether to allow code folding.
+     */
+    enableCodeFolding: true,
 
     /**
      * @cfg {Boolean} enableGutter Can be used to force a 'gutter' (empty space on the left of the editor) to be shown even
@@ -372,6 +378,7 @@ Ext.define("Compass.ErpApp.Shared.CodeMirror", {
             lineNumbers: me.enableLineNumbers,
             lineWrapping: me.enableLineWrapping,
             firstLineNumber: me.firstLineNumber,
+            enableCodeFolding: me.enableCodeFolding,
             tabSize: me.tabSize,
             gutter: me.enableGutter,
             fixedGutter: me.enableFixedGutter,
@@ -400,6 +407,11 @@ Ext.define("Compass.ErpApp.Shared.CodeMirror", {
 
         me.codeMirrorInstance = CodeMirror.fromTextArea(textAreaComp.inputEl.dom, this.initialConfig.codeMirrorConfig);
         me.codeMirrorInstance.setCursor(1);
+
+        // Enable Code Folding (Requires 'lineNumbers' to be set to 'true')
+        if (me.enableLineNumbers && me.enableCodeFolding) {
+            me.codeMirrorInstance.on("gutterClick", CodeMirror.newFoldFunction(CodeMirror.tagRangeFinder));
+        }
 
         if (me.showMode) {
             // set value of mode combo
@@ -449,8 +461,6 @@ Ext.define("Compass.ErpApp.Shared.CodeMirror", {
     },
 
     insertContent: function (value) {
-        var lineNumber = this.codeMirrorInstance.getCursor().line;
-        var lineText = this.codeMirrorInstance.lineInfo(lineNumber).text;
-        this.codeMirrorInstance.setLine(lineNumber, (lineText + value));
+        this.codeMirrorInstance.replaceRange(value, this.codeMirrorInstance.getCursor());
     }
 });

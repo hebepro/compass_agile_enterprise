@@ -21,13 +21,13 @@ Ext.define("Compass.ErpApp.Shared.ConfigurationForm", {
     configurationItems: null,
     autoScroll: true,
     bodyStyle: 'padding:5px 5px 0',
-    frame: true,
+    frame: false,
+    border: false,
     alreadySetup: false,
     layout: 'anchor',
     defaults: {
         anchor: '100%'
     },
-    border: false,
 
     setup: function () {
         var self = this;

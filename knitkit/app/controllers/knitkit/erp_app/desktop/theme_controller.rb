@@ -3,7 +3,7 @@ module Knitkit
     module Desktop
       class ThemeController < ::ErpApp::Desktop::FileManager::BaseController
         before_filter :set_file_support
-        before_filter :set_website, :only => [:new, :change_status, :available_themes]
+        before_filter :set_website, :only => [:index, :new, :change_status, :available_themes]
         before_filter :set_theme, :only => [:delete, :change_status, :theme_widget, :available_widgets]
         IGNORED_PARAMS = %w{action controller node_id theme_data}
 
@@ -21,11 +21,13 @@ module Knitkit
         end
 
         def available_themes
-          render :json => {:success => true, :themes => @website.themes.map{|theme|{:id => theme.id, :name => theme.name}}}
+          render :json => {:success => true,
+                           :themes => @website.themes.map { |theme| {:id => theme.id, :name => theme.name} }}
         end
 
         def available_widgets
-          render :json => {:success => true, :widgets => @theme.non_themed_widgets.map{|widget|{:id => widget, :name => widget.humanize}}}
+          render :json => {:success => true,
+                           :widgets => @theme.non_themed_widgets.map { |widget| {:id => widget, :name => widget.humanize} }}
         end
 
         def theme_widget
@@ -40,17 +42,17 @@ module Knitkit
                 Theme.import(params[:theme_data], @website)
               else
                 theme = Theme.create(:website => @website, :name => params[:name], :theme_id => params[:theme_id])
-                theme.version  = params[:version]
-                theme.author   = params[:author]
+                theme.version = params[:version]
+                theme.author = params[:author]
                 theme.homepage = params[:homepage]
-                theme.summary  = params[:summary]
+                theme.summary = params[:summary]
                 theme.save
                 theme.create_theme_files!
               end
 
               render :inline => {:success => true}.to_json
             end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability=>ex
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
           end
         end
@@ -61,10 +63,10 @@ module Knitkit
               if @theme.destroy
                 render :json => {:success => true}
               else
-                render :json =>  {:success => false}
+                render :json => {:success => false}
               end
             end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability=>ex
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
           end
         end
@@ -84,7 +86,7 @@ module Knitkit
 
               render :json => {:success => true}
             end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability=>ex
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
           end
         end
@@ -98,7 +100,7 @@ module Knitkit
         def create_file
           begin
             current_user.with_capability('view', 'Theme') do
-              path = File.join(@file_support.root,params[:path])
+              path = File.join(@file_support.root, params[:path])
               name = params[:name]
 
               theme = get_theme(path)
@@ -106,7 +108,7 @@ module Knitkit
 
               render :json => {:success => true}
             end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability=>ex
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
           end
         end
@@ -114,13 +116,13 @@ module Knitkit
         def create_folder
           begin
             current_user.with_capability('view', 'Theme') do
-              path = File.join(@file_support.root,params[:path])
+              path = File.join(@file_support.root, params[:path])
               name = params[:name]
 
               @file_support.create_folder(path, name)
               render :json => {:success => true}
             end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability=>ex
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
           end
         end
@@ -128,7 +130,7 @@ module Knitkit
         def update_file
           begin
             current_user.with_capability('view', 'Theme') do
-              path = File.join(@file_support.root,params[:node])
+              path = File.join(@file_support.root, params[:node])
               content = params[:content]
 
               type = File.extname(File.basename(path)).gsub(/^\.+/, '').to_sym
@@ -141,18 +143,18 @@ module Knitkit
                 render :json => {:success => false, :message => result}
               end
             end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability=>ex
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
           end
         end
 
         def save_move
-          result        = {}
+          result = {}
           nodes_to_move = (params[:selected_nodes] ? JSON(params[:selected_nodes]) : [params[:node]])
           begin
             nodes_to_move.each do |node|
               current_user.with_capability('view', 'Theme') do
-                path            = File.join(@file_support.root, node)
+                path = File.join(@file_support.root, node)
                 new_parent_path = File.join(@file_support.root, params[:parent_node])
 
                 unless @file_support.exists? path
@@ -165,7 +167,7 @@ module Knitkit
               end
             end
             render :json => result
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability=>ex
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
           end
         end
@@ -173,18 +175,18 @@ module Knitkit
         def download_file
           begin
             current_user.with_capability('view', 'Theme') do
-              path = File.join(@file_support.root,params[:path])
+              path = File.join(@file_support.root, params[:path])
               contents, message = @file_support.get_contents(path)
 
               send_data contents, :filename => File.basename(path)
             end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability=>ex
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
           end
         end
 
         def get_contents
-          path = File.join(@file_support.root,params[:node])
+          path = File.join(@file_support.root, params[:node])
           contents, message = @file_support.get_contents(path)
 
           if contents.nil?
@@ -208,7 +210,7 @@ module Knitkit
               begin
                 theme.add_file(data, name)
                 result = {:success => true}
-              rescue Exception=>ex
+              rescue => ex
                 logger.error ex.message
                 logger.error ex.backtrace.join("\n")
                 result = {:success => false, :error => "Error uploading #{name}"}
@@ -216,7 +218,7 @@ module Knitkit
 
               render :inline => result.to_json
             end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability=>ex
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
           end
         end
@@ -227,16 +229,16 @@ module Knitkit
           begin
             result = false
             nodes_to_delete.each do |path|
-              current_user.with_capability('view', 'Theme') do                
+              current_user.with_capability('view', 'Theme') do
                 begin
                   name = File.basename(path)
-                  result, message, is_folder = @file_support.delete_file(File.join(@file_support.root,path))
+                  result, message, is_folder = @file_support.delete_file(File.join(@file_support.root, path))
                   if result && !is_folder
                     theme_file = get_theme_file(path)
                     theme_file.destroy
                   end
                   messages << message
-                rescue Exception=>ex
+                rescue Exception => ex
                   Rails.logger.error ex.message
                   Rails.logger.error ex.backtrace.join("\n")
                   render :json => {:success => false, :error => "Error deleting #{name}"} and return
@@ -248,7 +250,7 @@ module Knitkit
             else
               render :json => {:success => false, :error => messages.join(',')}
             end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability=>ex
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
           end
         end
@@ -267,9 +269,9 @@ module Knitkit
                 theme_file.save
               end
 
-              render :json =>  {:success => true, :message => message}
+              render :json => {:success => true, :message => message}
             end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability=>ex
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
           end
         end
@@ -291,9 +293,9 @@ module Knitkit
 
         def get_theme(path)
           sites_index = path.index('sites')
-          sites_path  = path[sites_index..path.length]
-          site_name   = sites_path.split('/')[1]
-          site        = Website.find_by_internal_identifier(site_name)
+          sites_path = path[sites_index..path.length]
+          site_name = sites_path.split('/')[1]
+          site = Website.find_by_internal_identifier(site_name)
 
           themes_index = path.index('themes')
           path = path[themes_index..path.length]
@@ -311,41 +313,36 @@ module Knitkit
 
         def setup_tree
           tree = []
-          sites = Website.all
-          sites.each do |site|
-            site_hash = {
-              :text => site.name,
-              :browseable => true,
-              :contextMenuDisabled => true,
-              :iconCls => 'icon-globe',
-              :id => "site_#{site.id}",
-              :leaf => false,
-              :children => []
-            }
 
+          if @website
             #handle themes
-            themes_hash = {:text => 'Themes', :contextMenuDisabled => true, :iconCls => 'icon-content', :isThemeRoot => true, :siteId => site.id, :children => []}
-            site.themes.each do |theme|
-              theme_hash = {:text => "#{theme.name}[#{theme.theme_id}]", :handleContextMenu => true, :siteId => site.id, :isActive => (theme.active == 1), :iconCls => 'icon-content', :isTheme => true, :id => theme.id, :children => []}
+            @website.themes.each do |theme|
+              theme_hash = {:text => "#{theme.name}[#{theme.theme_id}]", :handleContextMenu => true,
+                            :siteId => @website.id, :isActive => (theme.active == 1), :iconCls => 'icon-content',
+                            :isTheme => true, :id => theme.id, :children => []}
+
               if theme.active == 1
                 theme_hash[:iconCls] = 'icon-add'
               else
                 theme_hash[:iconCls] = 'icon-delete'
               end
+
               ['stylesheets', 'javascripts', 'images', 'templates', 'widgets'].each do |resource_folder|
-                theme_hash[:children] << {:text => resource_folder, :iconCls => 'icon-content', :id => "#{theme.url}/#{resource_folder}"}
+                theme_hash[:children] << {
+                    :themeId => theme.id,
+                    :siteId => @website.id,
+                    :text => resource_folder.capitalize,
+                    :iconCls => 'icon-content',
+                    :handleContextMenu => (resource_folder == 'widgets'),
+                    :id => "#{theme.url}/#{resource_folder}"
+                }
               end
-              themes_hash[:children] << theme_hash
+
+              tree << theme_hash
             end
-            site_hash[:children] << themes_hash
-            tree << site_hash
           end
 
           render :json => tree
-        end
-
-        def set_website
-          @website = Website.find(params[:site_id])
         end
 
         def set_theme
@@ -355,8 +352,14 @@ module Knitkit
         def set_file_support
           @file_support = ErpTechSvcs::FileSupport::Base.new(:storage => ErpTechSvcs::Config.file_storage)
         end
-  
-      end#ThemeController
-    end#Desktop
-  end#ErpApp
-end#Knitkit
+
+        def set_website
+          if params[:website_id]
+            @website = Website.find(params[:website_id])
+          end
+        end
+
+      end #ThemeController
+    end #Desktop
+  end #ErpApp
+end #Knitkit

@@ -1,54 +1,64 @@
 module ErpApp
-	module Shared
-		class Shared::NotesController < ErpApp::ApplicationController
+  module Shared
+    class NotesController < ErpApp::ApplicationController
       before_filter :require_login
 
-		  def view
-        if params[:party_id].to_i == 0
-          render :json => {:totalCount => 0, :notes => []}
-        else
-          sort_hash = params[:sort].blank? ? {} : Hash.symbolize_keys(JSON.parse(params[:sort]).first)
-          limit = params[:limit] || 30
-          start = params[:start] || 0
+      def index
+        sort_hash = params[:sort].blank? ? {} : Hash.symbolize_keys(JSON.parse(params[:sort]).first)
+        limit = params[:limit] || 30
+        start = params[:start] || 0
 
-          sort = sort_hash[:property] || 'created_at'
-          dir  = sort_hash[:direction] || 'DESC'
+        sort = sort_hash[:property] || 'created_at'
+        dir = sort_hash[:direction] || 'DESC'
 
-          Note.include_root_in_json = false
-			
-          party = Party.find(params[:party_id])
-          notes = party.notes.order("created_at desc").limit(limit).offset(start)
-			
-          render :inline => "{\"totalCount\":#{party.notes.count}, \"notes\":#{notes.to_json(:only => [:id, :content, :created_at], :methods => [:summary, :note_type_desc, :created_by_username])}}"
+        statement = Note
+
+        if params[:record_id] && params[:record_type]
+          statement = Note.where('noted_record_id = ? and noted_record_type = ?', params[:record_id], params[:record_type])
         end
-		  end
 
-		  def create
-        content  = params[:content]
-        note_type = NoteType.find(params[:note_type_id])
-        party = Party.find(params[:party_id])
+        total = statement.count('id')
+        notes = statement.limit(limit).offset(start).order("#{sort} #{dir}")
 
-        note = Note.create(
-          :note_type => note_type,
-          :content => content,
-          :created_by_id => current_user.party.id
-        )
+        render :json => {totalCount: total, notes: notes.collect { |note| note.to_hash(only: [:id, :content, :created_at], methods: [:summary, :note_type_desc, :created_by_username]) }}
+      end
 
-        party.notes << note
-        party.save
+      def create
+        begin
+          ActiveRecord::Base.transaction do
+            content = params[:content]
+            note_type = NoteType.find(params[:note_type_id])
+            record_type = params[:record_type]
+            record_id = params[:record_id]
 
-        render :json => {:success => true}
-		  end
+            Note.create(
+                :note_type => note_type,
+                :content => content,
+                :noted_record_type => record_type,
+                :noted_record_id => record_id,
+                :created_by_id => current_user.party.id
+            )
 
-		  def delete
+            render :json => {:success => true}
+          end
+        rescue => ex
+          logger.error ex.message
+          logger.error ex.backtrace.join("\n")
+
+          render :json => {:success => false, message: ex.message}
+        end
+      end
+
+      def destroy
         Note.find(params[:id]).destroy ? (render :json => {:success => true}) : (render :json => {:success => false})
-		  end
+      end
 
-		  def note_types
+      def note_types
         NoteType.include_root_in_json = false
 
         render :json => {:note_types => NoteType.all}
-		  end
-		end
-	end
-end
+      end
+
+    end # NotesController
+  end # Shared
+end # ErpApp

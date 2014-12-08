@@ -1,3 +1,23 @@
+#### Table Definition ###########################
+#  create_table :invoices do |t|
+#    t.string     :invoice_number
+#    t.string     :description
+#    t.string     :message
+#    t.date       :invoice_date
+#    t.date       :due_date
+#    t.string     :external_identifier
+#    t.string     :external_id_source
+#    t.references :product
+#    t.references :invoice_type
+#    t.references :billing_account
+#    t.references :invoice_payment_strategy_type
+#    t.references :balance
+#    t.references :calculate_balance_strategy_type
+#
+#    t.timestamps
+#  end
+#################################################
+
 class Invoice < ActiveRecord::Base
   attr_protected :created_at, :updated_at
 
@@ -6,7 +26,7 @@ class Invoice < ActiveRecord::Base
   belongs_to  :billing_account
   belongs_to	:invoice_type
   belongs_to  :invoice_payment_strategy_type
-  belongs_to  :balance, :class_name => "Money", :foreign_key => 'balance_id', :dependent => :destroy
+  belongs_to  :balance_record, :class_name => "Money", :foreign_key => 'balance_id', :dependent => :destroy
   belongs_to  :calculate_balance_strategy_type
   has_many    :invoice_payment_term_sets, :dependent => :destroy
   has_many    :payment_applications, :as => :payment_applied_to, :dependent => :destroy do
@@ -71,7 +91,19 @@ class Invoice < ActiveRecord::Base
     else
       self.balance
     end
+  end
 
+  def balance
+    self.balance_record.amount
+  end
+
+  def balance=(amount, currency=Currency.usd)
+    if self.balance_record
+      self.balance_record.amount = amount
+    else
+      self.balance_record = Money.create(:amount => amount, :currency => currency)
+    end
+    self.balance_record.save
   end
 
   def payment_due

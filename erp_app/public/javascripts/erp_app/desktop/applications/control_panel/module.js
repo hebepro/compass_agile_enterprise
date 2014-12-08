@@ -17,14 +17,6 @@ Ext.define("Compass.ErpApp.Desktop.Applications.ControlPanel", {
             var tabPanel = Ext.create('Ext.tab.Panel', {
                 items: [
                     {
-                        xtype: 'controlpanel_desktopmanagementpanel',
-                        listeners: {
-                            'activate': function (panel) {
-                                panel.setup();
-                            }
-                        }
-                    },
-                    {
                         xtype: 'sharedpreferencesapplicationmanagementpanel',
                         updatePreferencesUrl: '/erp_app/desktop/control_panel/application_management/update',
                         setupPreferencesUrl: '/erp_app/desktop/control_panel/application_management/setup',
@@ -63,7 +55,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.ControlPanel", {
                 title: 'Control Panel',
                 width: 550,
                 height: 550,
-                iconCls: 'icon-control_panel',
+                iconCls: 'icon-control_panel-light',
                 shim: false,
                 animCollapse: false,
                 constrainHeader: true,

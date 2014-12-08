@@ -80,12 +80,6 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
     skipUserActivationEmail: true,
 
     /**
-     * @cfg {String} applicationContainerId
-     * The id of the root application container that this panel resides in.
-     */
-    applicationContainerId: 'crmTaskTabPanel',
-
-    /**
      * @cfg {String} allowedPartyType
      * Party type that can be created {Both | Individual | Organization}.
      */
@@ -148,7 +142,6 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
                 xtype: 'crmuserform',
                 securityRoles: me.securityRoles,
                 allowFormToggle: true,
-                applicationContainerId: me.applicationContainerId,
                 skipUserActivationEmail: me.skipUserActivationEmail
             },
             {
@@ -311,8 +304,8 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyFormPanel", {
             this.down('crmpartyform').loadParty(me.partyId);
         }
 
-        if (!Ext.isEmpty(me.partyType) && me.partyType == 'Individual' && !Ext.isEmpty(me.partyId)) {
-            this.down('crmuserform').loadUser(me.partyId, me.userId);
+        if (!Ext.isEmpty(me.partyType) && me.partyType == 'Individual' && !Ext.isEmpty(me.userId)) {
+            this.down('crmuserform').loadUser(me.userId);
         }
 
         if (me.allowedPartyType == 'Organization' || (!Ext.isEmpty(me.partyType) && me.partyType == 'Organization')) {

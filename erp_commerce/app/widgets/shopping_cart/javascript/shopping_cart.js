@@ -101,10 +101,10 @@ Compass.ErpApp.Widgets.ShoppingCart = {
         });
         addShoppingCartWidget.show();
     }
-}
+};
 
 Compass.ErpApp.Widgets.AvailableWidgets.push({
     name: 'Shopping Cart',
-    iconUrl: '/images/icons/shoppingcart/shoppingcart_48x48.png',
+    iconUrl: '/images/icons/shopping_cart/shopping_cart_48x48.png',
     onClick: Compass.ErpApp.Widgets.ShoppingCart.addShoppingCart
 });

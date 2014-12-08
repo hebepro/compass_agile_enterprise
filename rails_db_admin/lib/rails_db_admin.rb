@@ -1,6 +1,5 @@
 #compass libraries
 require 'erp_app'
-require 'erp_forms'
 
 require "rails_db_admin/extensions/railties/action_view/base"
 require "rails_db_admin/version"

@@ -1,4 +1,7 @@
-Version 3.1.2
+Version 4.0.1
+- Removed migration to create tasks Organizer Application
+Version 4.0.0 - 11-19-2014
+- Updated major version of CompassAE Platform release
 - Added acts_as_work_effort and work_effort_party_roles
 - Removed work_effort_party_assignments
 Version 3.1.1 - 7-26-2013

@@ -9,6 +9,8 @@ class ProductType < ActiveRecord::Base
   
 	belongs_to :product_type_record, :polymorphic => true  
   has_one    :product_instance
+  belongs_to :unit_of_measurement
+  has_many :product_type_pty_roles, :dependent => :destroy
   
   def prod_type_relns_to
     ProdTypeReln.where('prod_type_id_to = ?',id)
@@ -33,6 +35,19 @@ class ProductType < ActiveRecord::Base
   def images_path
     file_support = ErpTechSvcs::FileSupport::Base.new(:storage => Rails.application.config.erp_tech_svcs.file_storage)
     File.join(file_support.root,Rails.application.config.erp_tech_svcs.file_assets_location,'products','images',"#{self.description.underscore}_#{self.id}")
+  end
+
+  def to_data_hash
+    {
+        :id => self.id,
+        :description => self.description,
+        :sku => self.sku,
+        :unit_of_measurement_id => self.unit_of_measurement_id,
+        :unit_of_measurement_description => (self.unit_of_measurement.description rescue nil),
+        :comment => self.comment,
+        :created_at => self.created_at,
+        :updated_at => self.updated_at
+    }
   end
   
 end

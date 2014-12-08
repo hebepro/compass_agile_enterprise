@@ -12,7 +12,7 @@ module ErpApp
       widget_params = nil
       widget_params = JSON.parse(params[:widget_params]) unless params[:widget_params].blank?
 
-      widget_obj = "::Widgets::#{@widget_name.camelize}::Base".constantize.new(self, @widget_name, @widget_action, @uuid, widget_params, @website)
+      widget_obj = "::Widgets::#{@widget_name.camelize}::Base".constantize.new(self, @widget_name, @widget_action, @uuid, widget_params)
 
       result = widget_obj.process(@widget_action)
 
@@ -20,11 +20,13 @@ module ErpApp
       return if result.nil?
 
       if result.is_a?(Hash)
-        render result
+        if !result[:send_file] and !result[:send_data] and !result[:redirect_to]
+          render result
+        end
       else
         render :inline => result
       end
     end
     
-	end
-end
+	end #WidgetProxyController
+end #ErpApp

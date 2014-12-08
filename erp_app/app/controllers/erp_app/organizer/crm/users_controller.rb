@@ -4,7 +4,7 @@ module ErpApp
       class UsersController < ErpApp::Organizer::BaseController
 
         def index
-          party_role = params[:party_role]
+          party_roles = params[:party_roles]
           to_role = params[:to_role]
           to_party_id = params[:to_party_id]
           offset = params[:start] || 0
@@ -12,9 +12,16 @@ module ErpApp
           included_party_to_relationships = ActiveSupport::JSON.decode params[:included_party_to_relationships]
           query_filter = params[:query_filter] || nil
 
+          # determine sorting
+          sort_hash = params[:sort].present? ? ActiveSupport::JSON.decode(params[:sort]).first : {}
+          order_by = sort_hash['property'] || 'created_at'
+          direction = sort_hash['direction'] || 'desc'
+
           user_table = User.arel_table
 
-          statement = User.joins(:party => :party_roles).where(:party_roles => {:role_type_id => RoleType.iid(party_role).id})
+          if party_roles.present?
+            statement = User.joins(:party => :party_roles).where(:party_roles => {:role_type_id => RoleType.where(:internal_identifier => party_roles).all})
+          end
 
           unless to_role.blank?
             to_role_type = RoleType.iid(to_role)
@@ -43,7 +50,7 @@ module ErpApp
           end
 
           total = statement.uniq.count
-          users = statement.uniq.limit(limit).offset(offset).all
+          users = statement.uniq.order("#{order_by} #{direction}").limit(limit).offset(offset).all
 
           data = {
               :success => true,
@@ -86,6 +93,8 @@ module ErpApp
           user = User.where('id = ?', params[:id]).first
 
           if user
+            individual = user.party.business_party
+
             result[:user] = user.to_hash(:only =>
                                              [:id,
                                               :username,
@@ -93,7 +102,9 @@ module ErpApp
                                               :last_login_at,
                                               :created_at,
                                               :updated_at,
-                                              :activation_state])
+                                              :activation_state],
+                                         :first_name => individual.current_first_name,
+                                         :last_name => individual.current_last_name)
           end
 
           render :json => result
@@ -105,7 +116,7 @@ module ErpApp
           user_data = params[:data].present? ? params[:data] : params
           party_id = params[:party_id] || user_data[:party_id]
 
-          party = Party.find(party_id)
+          party = party_id.blank? ? nil : Party.find(party_id)
 
           begin
             ActiveRecord::Base.transaction do
@@ -128,7 +139,22 @@ module ErpApp
               #set this to tell activation where to redirect_to for login and temp password
               user.add_instance_attribute(:login_url, '/erp_app/login')
 
-              user.party = party
+              # if a party was passed create this user with the party if not then create a individual now
+              if party
+                user.party = party
+              else
+                individual = Individual.create(current_first_name: params[:first_name].strip,
+                                               current_last_name: params[:last_name].strip)
+
+                user.party = individual.party
+
+                # add a party roles if passed
+                if params[:party_roles].present?
+                  params[:party_roles].split(',').each do |party_role|
+                    PartyRole.create(party: individual.party, role_type: RoleType.iid(party_role))
+                  end
+                end
+              end
 
               if params[:skip_activation_email].present? and params[:skip_activation_email] === 'true'
                 user.skip_activation_email = true
@@ -160,7 +186,7 @@ module ErpApp
                 result = {:success => false, :message => user.errors.full_messages.to_sentence}
               end
             end
-          rescue Exception => ex
+          rescue => ex
             Rails.logger.error ex.message
             Rails.logger.error ex.backtrace.join("\n")
 
@@ -177,6 +203,16 @@ module ErpApp
 
           user.username = user_data[:username].strip
           user.email = user_data[:email].strip
+
+          # update first name and last of individual if passed
+          if params[:first_name].present? and params[:last_name].present?
+            individual = user.party.business_party
+
+            individual.current_first_name = params[:first_name].strip
+            individual.current_last_name = params[:last_name].strip
+
+            individual.save
+          end
 
           if user_data[:activation_state].present?
             user.activation_state = user_data[:activation_state].strip

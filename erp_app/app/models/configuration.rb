@@ -124,18 +124,32 @@ class Configuration < ActiveRecord::Base
   # * *Returns* :
   #   - the copied configuration
   def copy(description=nil, internal_identifier=nil)
-    configuration_dup = self.clone(description, internal_identifier)
+    configuration_dup = self.dup
     configuration_dup.internal_identifier = internal_identifier || self.internal_identifier
     configuration_dup.description = description || self.description
+    configuration_dup.is_template = false
+
+    self.configuration_item_types.each do |configuration_item_type|
+      configuration_dup.configuration_item_types << configuration_item_type
+    end
+    configuration_dup.save
 
     #clone items
     self.configuration_items.each do |item|
       item_dup = item.dup
+
+      # remove old configuration id
+      item_dup.configuration_id = nil
+
       item_dup.configuration_item_type = item.configuration_item_type
       item.configuration_options.each do |option|
-        item_dup.configuration_options << option
+        if option.user_defined
+          item_dup.configuration_options << option.dup
+        else
+          item_dup.configuration_options << option
+        end
+
       end
-      item_dup.save
       configuration_dup.configuration_items << item_dup
     end
 

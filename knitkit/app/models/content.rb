@@ -16,7 +16,6 @@ class Content < ActiveRecord::Base
   acts_as_commentable
   acts_as_versioned :table_name => :content_versions
   can_be_published
-  has_relational_dynamic_attributes
 
   has_many :website_section_contents, :dependent => :destroy
   has_many :website_sections, :through => :website_section_contents
@@ -119,6 +118,8 @@ class Content < ActiveRecord::Base
       website_section_content.position = position
       website_section_content.save
     end
+
+    website_section_content
   end
 
   def content_area_by_website_section(section)

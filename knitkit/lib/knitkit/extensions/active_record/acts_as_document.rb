@@ -21,18 +21,6 @@ module Knitkit
 
             #from Document / FileAssets
             [:add_file, :files].each { |m| delegate m, :to => :document }
-
-            #from relational_dynamic_attributes
-            [
-            :add_dynamic_attribute,
-            :update_or_create_dynamic_attribute,
-            :update_first_dynamic_attribute_value_of_type,
-            :get_dynamic_attributes,
-            :get_dynamic_value_of_type,
-            :get_dynamic_attribute_of_type,
-            :has_dynamic_attribute_of_type?,
-            :destroy_dynamic_attribute_of_type
-            ].each { |m| delegate m, :to => :document }
           end
 
         end

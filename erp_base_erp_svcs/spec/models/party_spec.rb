@@ -94,5 +94,13 @@ describe Party do
     new_contact.id.should eq current_contact.id
   end
 
+  it "should have a custom_fields field which is used to store and retrive custom data" do
+    party = FactoryGirl.build(:party)
+    party.custom_fields["some_field"] = "Some Value"
+    party.save
+    party.reload.custom_fields["some_field"].should eq "Some Value"
+  end
+
+
 
 end

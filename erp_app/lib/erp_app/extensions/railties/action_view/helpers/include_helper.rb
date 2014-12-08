@@ -18,33 +18,36 @@ module ErpApp
                   end
             end
 
-            def setup_js_authentication(user, app_container)
-              current_user = {
-                  :username => user.username,
-                  :lastloginAt => user.last_login_at,
-                  :lastActivityAt => user.last_activity_at,
-                  :failedLoginCount => user.failed_logins_count,
-                  :email => user.email,
-                  :roles => user.all_roles.collect { |role| role.internal_identifier },
-                  :capabilities => user.class_capabilities_to_hash,
-                  :id => user.id,
-                  :description => user.party.to_s
-              }
-              js_string = static_javascript_include_tag('erp_app/authentication/compass_user.js')
-              js_string << (raw "<script type='text/javascript'>var currentUser = new ErpApp.CompassAccessNegotiator.CompassUser(#{current_user.to_json});</script>")
-              js_string
+            def setup_js_authentication(user=current_user)
+              # only setup user if a current_user is logged in
+              if current_user
+                current_user = {
+                    :username => user.username,
+                    :lastloginAt => user.last_login_at,
+                    :lastActivityAt => user.last_activity_at,
+                    :failedLoginCount => user.failed_logins_count,
+                    :email => user.email,
+                    :roles => user.all_roles.collect { |role| role.internal_identifier },
+                    :capabilities => user.class_capabilities_to_hash,
+                    :id => user.id,
+                    :partyId => user.party.id,
+                    :description => user.party.to_s
+                }
+                js_string = static_javascript_include_tag('erp_app/authentication/compass_user.js')
+                js_string << (raw "<script type='text/javascript'>var currentUser = new ErpApp.CompassAccessNegotiator.CompassUser(#{current_user.to_json});</script>")
+                js_string
+              end
             end
 
             def include_code_mirror_library(theme='vibrant-ink')
               resources = static_javascript_include_tag("erp_app/codemirror/lib/codemirror.js")
-              resources << static_javascript_include_tag("erp_app/codemirror/lib/runmode.js")
               resources << static_javascript_include_tag("erp_app/codemirror_highlight.js")
               resources << (raw "<link rel=\"stylesheet\" type=\"text/css\" href=\"/javascripts/erp_app/codemirror/lib/codemirror.css\" />")
               resources << (raw "<link rel=\"stylesheet\" type=\"text/css\" href=\"/javascripts/erp_app/codemirror/theme/"+theme+".css\" />")
               resources
             end
 
-            def include_compass_ae_instance_about
+            def include_compass_ae_instance
               compass_ae_instance = CompassAeInstance.find_by_internal_identifier('base')
               json_hash = {
                   :version => compass_ae_instance.version,
@@ -64,6 +67,10 @@ module ErpApp
               #redirect_milli_seconds = 9000
 
               raw "<script type='text/javascript'>Compass.ErpApp.Utility.SessionTimeout.setupSessionTimeout(#{warn_milli_seconds}, #{redirect_milli_seconds}, '#{redirect_to}') </script>" if current_user
+            end
+
+            def set_authenticity_token
+              raw "<script type='text/javascript'>Compass.ErpApp.Utility.createNamespace('Compass.ErpApp'); Compass.ErpApp.AuthentictyToken = '#{form_authenticity_token}';</script>" if current_user
             end
 
             # need to remove camel case not rubyish, will be deprecated at some point

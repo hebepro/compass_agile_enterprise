@@ -9,7 +9,7 @@ module Knitkit
         module ClassMethods
 
           def can_be_published
-            after_destroy :destroy_published_elements
+            after_destroy :delete_published_elements
 
             extend ActsAsPublishable::SingletonMethods
             include ActsAsPublishable::InstanceMethods
@@ -25,15 +25,12 @@ module Knitkit
             site.publish_element(comment, self, version, current_user)
           end
 
-          def destroy_published_elements
-            published_elements = PublishedElement.where('published_element_record_id = ? and (published_element_record_type = ? or published_element_record_type = ?)', self.id, self.class.to_s, self.class.superclass.to_s)
-            published_elements.each do |published_element|
-              published_element.destroy
-            end
+          def delete_published_elements
+            PublishedElement.delete_all("published_element_record_id = '#{id}' and (published_element_record_type = '#{self.class.to_s}' or published_element_record_type = '#{self.class.superclass.to_s}')")
           end
         end
 
-      end#ActsAsPublishable
-    end#ActiveRecord
-  end#Extensions
-end#Knitkit
+      end #ActsAsPublishable
+    end #ActiveRecord
+  end #Extensions
+end #Knitkit

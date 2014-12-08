@@ -8,6 +8,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = "erp_financial_accounting"
   s.version     = ErpFinancialAccounting::VERSION::STRING
+  s.licenses    = ['GPL-3-LICENSE']
   s.summary     = "The CompassAE Financial Accounting Engine implements the basic classes that allow either interface or implementation of general ledger, accounts payable and accounts receivable modules."
   s.description = "The CompassAE Financial Accounting Engine implements the basic classes that allow either interface or implementation of general ledger, accounts payable and accounts receivable modules. This module is experimental at this stage."
   s.authors     = ["Rick Koloski, Russell Holmes"]
@@ -18,11 +19,11 @@ Gem::Specification.new do |s|
   s.test_files = Dir["spec/**/*"]
 
   #compass dependencies
-  s.add_dependency "erp_app", "~> 3.1"
-  s.add_dependency "erp_txns_and_accts", "~> 3.1"
-  s.add_dependency "erp_agreements", "~> 3.1"
-  s.add_dependency "erp_products", "~> 3.1"
-  s.add_dependency "erp_orders", "~> 3.1"
-  s.add_dependency "erp_commerce", "~> 3.1"
-  s.add_development_dependency "erp_dev_svcs", "~> 3.1"
+  s.add_dependency "erp_app", "~> 4.0"
+  s.add_dependency "erp_txns_and_accts", "~> 4.0"
+  s.add_dependency "erp_agreements", "~> 4.0"
+  s.add_dependency "erp_products", "~> 4.0"
+  s.add_dependency "erp_orders", "~> 4.0"
+  s.add_dependency "erp_commerce", "~> 4.0"
+  s.add_development_dependency "erp_dev_svcs", "~> 4.0"
 end

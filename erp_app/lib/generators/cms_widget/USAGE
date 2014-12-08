@@ -13,9 +13,3 @@ Example:
         3. views folder with index.html.erb
 
         4. Widgets::[widget_name]::Base class that extends from ErpApp::Widgets::Base
-
-
-
-
-
-

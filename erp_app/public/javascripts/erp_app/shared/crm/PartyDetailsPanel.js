@@ -11,12 +11,6 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
     ],
 
     /**
-     * @cfg {String} applicationContainerId
-     * The id of the root application container that this panel resides in.
-     */
-    applicationContainerId: 'crmTaskTabPanel',
-
-    /**
      * @cfg {Array} additionalTabs
      * Array of additional tab panels to add.
      */
@@ -72,6 +66,29 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
      */
     partyRelationships: [],
 
+    /**
+     * @cfg {Array} contactPurposes
+     * Array of contactPurposes that can be added to a contact.
+     *
+     * @example
+     * {
+     *   fieldLabel: 'Default',
+     *   internalIdentifier: 'default'
+     * }
+     */
+    contactPurposes: [
+        {
+            fieldLabel: 'Default',
+            internalIdentifier: 'default'
+        }
+    ],
+
+    /**
+     * @cfg {String} contactPurposesTitle
+     * Title of contact purposes fieldset.
+     */
+    contactPurposesTitle: 'Contact Purpose',
+
     initComponent: function () {
         var me = this,
             tabPanels = [];
@@ -110,6 +127,10 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
             items: [
                 {
                     xtype: 'panel',
+                    style:{
+                        borderRight: 'solid 2px black'
+                    },
+                    header: false,
                     collapsible: true,
                     region: 'west',
                     width: 155,
@@ -158,35 +179,58 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
                     region: 'center',
                     layout: 'card',
                     items: [
-                        {xtype: 'phonenumbergrid', partyId: me.partyId, listeners: {
-                            contactcreated: {fn: me.contactCreated, scope: me},
-                            contactupdated: {fn: me.contactUpdated, scope: me},
-                            contactdestroyed: {fn: me.contactDestroyed, scope: me}
-                        }},
-                        {xtype: 'emailaddressgrid', partyId: me.partyId, listeners: {
-                            contactcreated: {fn: me.contactCreated, scope: me},
-                            contactupdated: {fn: me.contactUpdated, scope: me},
-                            contactdestroyed: {fn: me.contactDestroyed, scope: me}
-                        }},
-                        {xtype: 'postaladdressgrid', partyId: me.partyId, listeners: {
-                            contactcreated: {fn: me.contactCreated, scope: me},
-                            contactupdated: {fn: me.contactUpdated, scope: me},
-                            contactdestroyed: {fn: me.contactDestroyed, scope: me}
-                        }}
+                        {
+                            xtype: 'phonenumbergrid',
+                            contactPurposesTitle: 'Use Phone Number for:',
+                            contactPurposes: me.contactPurposes,
+                            partyId: me.partyId,
+                            listeners: {
+                                contactcreated: {fn: me.contactCreated, scope: me},
+                                contactupdated: {fn: me.contactUpdated, scope: me},
+                                contactdestroyed: {fn: me.contactDestroyed, scope: me}
+                            }
+                        },
+                        {
+                            xtype: 'emailaddressgrid',
+                            contactPurposesTitle: 'Use Email for:',
+                            contactPurposes: me.contactPurposes,
+                            partyId: me.partyId,
+                            listeners: {
+                                contactcreated: {fn: me.contactCreated, scope: me},
+                                contactupdated: {fn: me.contactUpdated, scope: me},
+                                contactdestroyed: {fn: me.contactDestroyed, scope: me}
+                            }
+                        },
+                        {
+                            xtype: 'postaladdressgrid',
+                            contactPurposesTitle: 'Use Address for:',
+                            contactPurposes: me.contactPurposes,
+                            partyId: me.partyId,
+                            listeners: {
+                                contactcreated: {fn: me.contactCreated, scope: me},
+                                contactupdated: {fn: me.contactUpdated, scope: me},
+                                contactdestroyed: {fn: me.contactDestroyed, scope: me}
+                            }
+                        }
                     ]
                 }
             ]
         });
 
         tabPanels.push(contactsPanel);
-        tabPanels.push({xtype: 'shared_notesgrid', partyId: me.partyId});
+        tabPanels.push({xtype: 'shared_notesgrid', recordType: 'Party', recordId: me.partyId});
 
         me.partyDetailsPanel = Ext.create('widget.panel', {
             itemId: 'partyDetails',
             html: 'Party Details',
             border: false,
             frame: false,
-            region: 'center',
+            region: 'north',
+            bodyStyle: 'border-bottom-left-radius: 5px; border-bottom-right-radius: 5px;',
+            height: 200,
+            header: false,
+            split: true,
+            collapsible: true,
             autoScroll: true
         });
 
@@ -194,9 +238,10 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
             tabPanels.push({
                 xtype: 'crmpartygrid',
                 title: partyRelationship.title,
+                contactPurposes: partyRelationship.contactPurposes || [{fieldLabel: 'Default',internalIdentifier: 'default'}],
+                formFields: partyRelationship.formFields || 'none',
                 securityRoles: partyRelationship.securityRoles || [],
                 allowedPartyType: partyRelationship.allowedPartyType || 'Both',
-                applicationContainerId: me.applicationContainerId,
                 addBtnDescription: partyRelationship.addBtnDescription || ('Add ' + Ext.String.capitalize(partyRelationship.fromRoleType)),
                 searchDescription: 'Search ' + partyRelationship.title,
                 toRole: partyRelationship.toRoleType,
@@ -219,14 +264,18 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
         });
 
         Ext.each(me.additionalTabs, function (tab) {
+
+            //
+            // Pass party id to each additional tab...
+            //
+            Ext.apply(tab, {partyId: me.partyId});
             tabPanels.push(tab);
         });
 
         me.partyDetailsTabPanel = Ext.create('widget.tabpanel', {
             //flex: 1,
-            height: 400,
-            collapsible: true,
-            region: 'south',
+            //height: 400,
+            region: 'center',
             items: tabPanels
         });
 

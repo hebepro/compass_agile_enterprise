@@ -35,12 +35,14 @@ module ErpBaseErpSvcs
 					  self.contact.save
           end
 
-          def contact_purpose_id
-            self.contact_purpose ? contact_purpose.id : nil
+          # return all contact purposes in one comma separated string
+          def contact_purposes_to_s
+            contact.contact_purposes.collect(&:description).join(', ')
           end
-				  
-				  def contact_purpose
-            contact.contact_purposes.count == 0 ? nil : contact.contact_purposes.first
+
+          # return all contact purpose iids in one comma separated string
+          def contact_purpose_iids
+            contact.contact_purposes.collect(&:internal_identifier).join(',')
           end
 
           # return all contact purposes

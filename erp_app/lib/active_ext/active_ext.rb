@@ -176,7 +176,7 @@ module ActiveExt
               @model.attributes= (model_params)
               @labels =active_ext_core.options[:labels]
               @model.save(false)
-            rescue Exception =>ex
+            rescue => ex
               flash[:error]=ex
             end
             flash[:notice]="#{@model.class} created"

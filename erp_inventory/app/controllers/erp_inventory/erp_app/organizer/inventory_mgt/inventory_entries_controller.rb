@@ -9,9 +9,16 @@ module ErpInventory
             limit = params[:limit] || 25
             query_filter = params[:query_filter].blank? ? nil : params[:query_filter].strip
             facility_id = params[:facility_id].blank? ? nil : params[:facility_id].strip
+            party_id = params[:party_id]
 
             inventory_entry_tbl = InventoryEntry.arel_table
-            statement = InventoryEntry.order('created_at asc')
+
+            # scope by party if have party id
+            if party_id.blank?
+              statement = InventoryEntry.order('created_at asc')
+            else
+              statement = InventoryEntry.joins(product_type: :product_type_pty_roles).where('product_type_pty_roles.party_id = ?', party_id).order('created_at asc')
+            end
 
             # apply filters if present
             statement = statement.where(inventory_entry_tbl[:description].matches(query_filter + '%')) if query_filter
@@ -55,6 +62,7 @@ module ErpInventory
                 entry.unit_of_measurement_id=params[:unit_of_measurement]
                 entry.number_in_stock=params[:number_in_stock]
                 entry.number_available=params[:number_available]
+                entry.product_type_id=params[:product_type_id]
                 entry.save
 
                 location_assignment = InventoryEntryLocation.new
@@ -64,10 +72,10 @@ module ErpInventory
 
                 render :json => {:success => true, :data => entry.to_hash(:only => [:id, :description, :created_at, :updated_at], :model => 'InventoryEntry')}
               end
-            rescue Exception => e
-              Rails.logger.error e.message
-              Rails.logger.error e.backtrace.join("\n")
-              render :json => {:success => false, :message => e.message}
+            rescue => ex
+              Rails.logger.error ex.message
+              Rails.logger.error ex.backtrace.join("\n")
+              render :json => {:success => false, :message => ex.message}
             end
           end
 
@@ -79,17 +87,21 @@ module ErpInventory
             begin
               ActiveRecord::Base.transaction do
                 entry = InventoryEntry.find(params[:inventory_entry_id])
+                current_facility = entry.current_storage_facility
                 entry.description=params[:description]
                 entry.sku=params[:sku]
                 entry.unit_of_measurement_id=params[:unit_of_measurement]
                 entry.number_available=params[:number_available]
                 entry.number_in_stock=params[:number_in_stock]
+                entry.product_type_id=params[:product_type_id]
                 entry.save
 
-                location_assignment = InventoryEntryLocation.new
-                location_assignment.inventory_entry = entry
-                location_assignment.facility_id = params[:inventory_facility]
-                location_assignment.save
+                if current_facility.id != params[:inventory_facility].to_i
+                  location_assignment = InventoryEntryLocation.new
+                  location_assignment.inventory_entry = entry
+                  location_assignment.facility_id = params[:inventory_facility]
+                  location_assignment.save
+                end
 
                 render :json => {:success => true, :data => entry.to_hash(:only => [:id, :description, :created_at, :updated_at], :model => 'InventoryEntry')}
               end

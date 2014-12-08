@@ -43,7 +43,7 @@ module Knitkit
                                @assets_model.add_file(data, File.join(@file_support.root, upload_path, name))
                              end
                 result = {:success => true, :url => file_asset.data.url}
-              rescue Exception => ex
+              rescue => ex
                 logger.error ex.message
                 logger.error ex.backtrace.join("\n")
                 result = {:success => false, :error => "Error uploading file."}

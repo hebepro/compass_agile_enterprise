@@ -38,13 +38,13 @@ Ext.define("Compass.ErpApp.Desktop.Applications.WebNavigator",{
             this.gotToPage(url);
         }
         else{
-            Ext.Msg.alert("Error", "Invaild web address must start with 'http://'")
+            Ext.Msg.alert("Error", "Invalid web address must start with 'http://'")
         }
     },
 
     init : function(){
         this.launcher = {
-            text: 'Web Navigator',
+            text: 'Web Shortcuts',
             iconCls:'icon-globe',
             handler : this.createWindow,
             scope: this
@@ -56,7 +56,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.WebNavigator",{
         var win = desktop.getWindow('web_navigator');
         if(!win){
             if(Compass.ErpApp.Utility.isBlank(url) || typeof(url) != "string"){
-                url = '/';
+                url = 'http://www.truenorthtechnology.com';
             }
 
             var tbarItems = [];
@@ -70,8 +70,18 @@ Ext.define("Compass.ErpApp.Desktop.Applications.WebNavigator",{
 
             tbarItems.push("|");
             tbarItems.push({
-                iconCls:'icon-monitor',
-                text:'Organizer',
+                iconCls:'icon-book',
+                text:'Online Documentation',
+                scope:this,
+                handler:function(button){
+                    this.gotToPage('http://www.truenorthtechnology.com');
+                }
+            });
+
+            tbarItems.push("|");
+            tbarItems.push({
+                iconCls:'icon-crm',
+                text:'CRM',
                 scope:this,
                 handler:function(button){
                     this.gotToPage('/erp_app/organizer/');
@@ -80,10 +90,10 @@ Ext.define("Compass.ErpApp.Desktop.Applications.WebNavigator",{
            
             win = desktop.createWindow({
                 id: 'web_navigator',
-                title:'Web Navigator',
+                title:'Web Shortcuts',
                 width:1000,
-                height:550,
-                iconCls: 'icon-globe',
+                height:650,
+                iconCls: 'icon-globe-light',
                 shim:false,
                 animCollapse:false,
                 constrainHeader:true,

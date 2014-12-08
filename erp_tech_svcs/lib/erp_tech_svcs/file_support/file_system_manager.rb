@@ -16,6 +16,13 @@ module ErpTechSvcs
         File.open(File.join(path,name), 'wb+') {|f| f.write(contents) }
       end
 
+      # copy a file
+      def copy_file(origination_file, path, name)
+        contents = get_contents(origination_file)
+
+        create_file(path, name, contents)
+      end
+
       def create_folder(path, name)
         FileUtils.mkdir_p File.join(path,name) unless File.directory? File.join(path,name)
       end

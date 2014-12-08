@@ -42,7 +42,7 @@ module ErpApp
         def download_file
           path = params[:path]
           contents, message = @file_support.get_contents(path)
-          send_data contents, :filename => File.basename(path)
+          send_data contents, :filename => File.basename(path), :disposition => :attachment
         end
 
         def save_move
@@ -58,7 +58,7 @@ module ErpApp
               messages << message
             end
             render :json => {:success => true, :msg => messages.join(',')}
-          rescue Exception => e
+          rescue => ex
             render :json => {:success => false, :error => ex.message}
           end
         end

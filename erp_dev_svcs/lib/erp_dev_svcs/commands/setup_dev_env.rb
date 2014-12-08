@@ -21,7 +21,7 @@ module ErpDevSvcs
                  "List of engines to operate on;"\
                  "defaults to all") {|engines| options[:engines] = engines}
           opt.on("-c", "--create-gemfiles", nil,
-                 "Create Gemfiles in engines from Gemfile.example") do |x|
+                 "Create Gemfiles in engines from Gemfile") do |x|
                    options[:create_gemfiles] = true
                  end
           opt.on("-b", "--bundle-engines", nil,
@@ -41,9 +41,9 @@ module ErpDevSvcs
 
         ErpDevSvcs::Commands::Helper.exec_in_engines(options[:engines]) do |engine_name|
           puts "\nOperating on engine #{engine_name}... \n"
-          puts %x[cp Gemfile.example Gemfile] if options[:create_gemfiles] == true
+          puts %x[cp Gemfile Gemfile] if options[:create_gemfiles] == true
           puts %x[bundle update] if options[:bundle] == true
-          #result = %x[cp Gemfile.example Gemfile]
+          #result = %x[cp Gemfile Gemfile]
           #puts result
         end
       end

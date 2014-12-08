@@ -10,6 +10,12 @@ module ErpApp
     # Download Prompt Example: /download/filename.ext?path=/directory&disposition=attachment
     def download
       filename = "#{params[:filename]}.#{params[:format]}"
+
+      # remove trailing period if present
+      if filename.last == '.'
+        filename.chop!
+      end
+
       path = params[:path].blank? ? nil : params[:path].gsub("/#{params[:filename]}.#{params[:format]}", '')
       disposition = params[:disposition]
 
@@ -29,7 +35,7 @@ module ErpApp
             end
           rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :text => ex.message and return
-          rescue Exception => ex
+          rescue => ex
             Rails.logger.error ex.message
             Rails.logger.error ex.backtrace.join("\n")
             render :text => ex.message and return

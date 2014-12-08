@@ -51,69 +51,6 @@ namespace :db do
 end #db
 
 namespace :compass_ae do
-  namespace :ec2 do
-
-    desc "Create EC2 instance"
-    task :create_instance => :environment do
-
-      account = YAML::load(File.open(File.join(Rails.root, 'config', 'aws_ec2.yaml')))
-
-      AWS.config(:access_key_id => account['access_key_id'],
-                 :secret_access_key => account['secret_access_key'])
-
-      ec2 = AWS::EC2.new.regions['us-west-2'] # choose region here
-      ami_name = 'compassae_base' # which AMI to search for and use
-      key_pair_name = 'compassae_win' # key pair name
-      security_group_name = 'root' # security group name
-      instance_type = 't1.micro' # machine instance type (must be approriate for chosen AMI)
-
-      # find the AMI based on name (memoize so only 1 api call made for image)
-      image = AWS.memoize do
-        ec2.images.filter("root-device-type", "ebs").filter('name', ami_name).first
-      end
-
-      if image
-        puts "Using AMI: #{image.id}"
-      else
-        raise "No image found matching #{ami_name}"
-      end
-
-      # find or create a key pair
-      key_pair = ec2.key_pairs[key_pair_name]
-      puts "Using keypair #{key_pair.name}, fingerprint: #{key_pair.fingerprint}"
-
-      # find security group
-      security_group = ec2.security_groups.find { |sg| sg.name == security_group_name }
-      puts "Using security group: #{security_group.name}"
-
-      # create the instance (and launch it)
-      instance = ec2.instances.create(:image_id => image.id,
-                                      :instance_type => instance_type,
-                                      :count => 1,
-                                      :security_groups => security_group,
-                                      :key_pair => key_pair)
-      puts "Launching machine ..."
-
-      # wait until battle station is fully operational
-      sleep 1 until instance.status != :pending
-      puts "Launched instance #{instance.id}, status: #{instance.status}, public dns: #{instance.dns_name}, public ip: #{instance.ip_address}"
-      exit 1 unless instance.status == :running
-
-      # machine is ready, ssh to it and run a commmand
-      puts "Launched: You can SSH to it with;"
-      puts "ssh -i #{private_key_file} #{ssh_username}@#{instance.ip_address}"
-      puts "Remember to terminate after your'e done!"
-
-      # machine is ready, ssh to it and run a commmand
-      #puts "Launched: setting up Elastic IP"
-
-      #ip = ec2.elastic_ips.allocate
-      #instance.associate_elastic_ip(ip)
-
-      #ec2.select{|ip| !ip.associated? }.each(&:release)
-    end
-  end
-
   namespace :install do
     desc "Install all CompassAE schema migrations"
     task :migrations => :environment do
@@ -130,6 +67,18 @@ namespace :compass_ae do
       ENV['FROM'] = compass_ae_railties
       Rake::Task[task].invoke
     end #data_migrations
+
+    desc "Install all CompassAE all migrations"
+    task :all_migrations => :environment do
+      compass_ae_railties = Rails.application.config.erp_base_erp_svcs.compass_ae_engines.collect { |e| "#{e.name.split("::").first.underscore}" }.join(',')
+      ENV['FROM'] = compass_ae_railties
+
+      task = "railties:install:migrations"
+      Rake::Task[task].invoke
+
+      task = "railties:install:data_migrations"
+      Rake::Task[task].invoke
+    end #migrations
   end #install
 
   desc "Upgrade you installation of Compass AE"
@@ -146,7 +95,7 @@ namespace :compass_ae do
 
       ActiveRecord::Migrator.cleanup_upgrade_migrations
       RussellEdge::DataMigrator.cleanup_upgrade_migrations
-    rescue Exception => ex
+    rescue => ex
       ActiveRecord::Migrator.cleanup_migrations
       ActiveRecord::Migrator.cleanup_upgrade_migrations
       RussellEdge::DataMigrator.cleanup_upgrade_migrations

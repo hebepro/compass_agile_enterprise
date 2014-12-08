@@ -4,7 +4,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Tail",{
     init : function(){
         this.launcher = {
             text: 'Tail',
-            iconCls:'icon-document_pulse',
+            iconCls:'icon-footprints',
             handler: this.createWindow,
             scope: this
         }
@@ -19,7 +19,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Tail",{
                 title:'Tail',
                 width:1000,
                 height:550,
-                iconCls: 'icon-document_pulse',
+                iconCls: 'icon-footprints-light',
                 shim:false,
                 animCollapse:false,
                 constrainHeader:true,

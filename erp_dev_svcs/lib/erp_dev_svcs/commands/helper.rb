@@ -119,7 +119,6 @@ module ErpDevSvcs
                      :erp_dev_svcs,
                      :erp_tech_svcs,
                      :erp_app,
-                     :erp_forms,
                      :erp_agreements,
                      :erp_products,
                      :erp_orders,

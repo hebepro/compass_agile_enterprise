@@ -74,7 +74,8 @@ module ErpApp
             preference
           end
         end
-      end
-    end
-  end
-end
+
+      end # HasUserPreferences
+    end # ActiveRecord
+  end # Extensions
+end # ErpApp

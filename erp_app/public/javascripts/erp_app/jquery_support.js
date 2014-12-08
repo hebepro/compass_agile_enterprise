@@ -6,25 +6,25 @@ if (jQuery) {
     });
 
     Compass.ErpApp.JQuerySupport.setupHtmlReplace = function () {
-        jQuery('body').unbind('ajax:success').bind('ajax:success', Compass.ErpApp.JQuerySupport.handleHtmlUpdateResponse);
+        jQuery(document).bind('ajaxSuccess', Compass.ErpApp.JQuerySupport.handleHtmlUpdateResponse);
     };
 
-    Compass.ErpApp.JQuerySupport.handleHtmlUpdateResponse = function (e, response) {
+    Compass.ErpApp.JQuerySupport.handleHtmlUpdateResponse = function (e, xhr, options, data) {
         var utility = Compass.ErpApp.Utility;
 
         //reset SessionTimeout
         if (utility.SessionTimeout.enabled) {
             utility.SessionTimeout.reset();
         }
-        if (!utility.isBlank(response) && !utility.isBlank(response.htmlId)) {
-            var updateDiv = $('#' + response.htmlId);
+        if (!utility.isBlank(data) && !utility.isBlank(data.htmlId)) {
+            var updateDiv = $('#' + data.htmlId);
             try {
                 updateDiv.closest('div.compass_ae-widget').unmask();
             }
             catch (ex) {
                 //messy catch for no update div
             }
-            updateDiv.get(0).innerHTML = response.html;
+            updateDiv.get(0).innerHTML = data.html;
             utility.evaluateScriptTags(updateDiv.get(0));
         }
     };

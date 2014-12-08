@@ -1,6 +1,6 @@
 class Application < ActiveRecord::Base
   attr_protected :created_at, :updated_at
-  
+
   has_user_preferences
 
   has_and_belongs_to_many :app_containers
@@ -9,9 +9,15 @@ class Application < ActiveRecord::Base
   validates_uniqueness_of :javascript_class_name, :allow_nil => true
   validates_uniqueness_of :internal_identifier, :scope => :type, :case_sensitive => false
 
+  class << self
+    def iid(internal_identifier)
+      find_by_internal_identifier(internal_identifier)
+    end
+  end
+
   def locate_resources(resource_type)
     resource_loader = ErpApp::ApplicationResourceLoader::DesktopOrganizerLoader.new(self)
     resource_loader.locate_resources(resource_type)
   end
-  
+
 end

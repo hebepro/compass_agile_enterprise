@@ -67,6 +67,10 @@ class Website < ActiveRecord::Base
     parents.each { |parent| parent.destroy }
   end
 
+  def publishing?
+    self.publishing
+  end
+
   def to_label
     self.name
   end
@@ -256,10 +260,8 @@ class Website < ActiveRecord::Base
     file_assets_path = Pathname.new(File.join(tmp_dir, 'files'))
     FileUtils.mkdir_p(file_assets_path) unless file_assets_path.exist?
 
-    sections.each do |website_section|
-      unless website_section.layout.blank?
-        File.open(File.join(sections_path, "#{website_section.internal_identifier}.rhtml"), 'wb+') { |f| f.puts(website_section.layout) }
-      end
+    sections.where('parent_id is null').each do |website_section|
+      save_section_layout_to_file(sections_path, website_section)
     end
 
     contents = sections.collect(&:contents).flatten.uniq
@@ -305,11 +307,49 @@ class Website < ActiveRecord::Base
         zip.add('setup.yml', tmp_dir + 'setup.yml')
       end
     end
+
+  end
+
+  def save_section_layout_to_file(sections_path, website_section)
+    unless website_section.layout.blank?
+      File.open(File.join(sections_path, "#{website_section.permalink}.rhtml"), 'wb+') { |f| f.puts(website_section.layout) }
+    end
+
+    # we need to handle child sections because internal identifier uniqueness is scoped by parent_id and website_id
+    # get all children of this section
+    unless website_section.children.empty?
+      sections_path = Pathname.new(File.join(sections_path, website_section.permalink))
+      FileUtils.mkdir_p(sections_path) unless sections_path.exist?
+
+      website_section.children.each do |website_section_child|
+        save_section_layout_to_file(sections_path, website_section_child)
+      end
+    end
+  end
+
+  def export_template
+    tmp_dir = Website.make_tmp_dir
+    template_zip_path = export
+
+    if !themes.active.first.is_a?(Theme)
+      return false
+    end
+
+    theme_zip_path = themes.active.first.export
+
+    zip_file_name = File.join(tmp_dir, self.iid + '-composite.zip')
+
+    Zip::ZipFile.open(zip_file_name, Zip::ZipFile::CREATE) do |zip_file|
+      zip_file.add(File.basename(template_zip_path, '.zip') + '-template.zip', template_zip_path)
+      zip_file.add(File.basename(theme_zip_path, '.zip') + '-theme.zip', theme_zip_path)
+    end
+
+    File.join(tmp_dir, self.iid + '-composite.zip')
   end
 
   class << self
     def make_tmp_dir
-      Pathname.new(Rails.root + "/tmp/website_export/tmp_#{Time.now.to_i.to_s}/").tap do |dir|
+      Pathname.new(File.join(Rails.root, "/tmp/website_export/tmp_#{Time.now.to_i.to_s}")).tap do |dir|
         FileUtils.mkdir_p(dir) unless dir.exist?
       end
     end
@@ -317,7 +357,7 @@ class Website < ActiveRecord::Base
     def import(file, current_user)
       file_support = ErpTechSvcs::FileSupport::Base.new(:storage => Rails.application.config.erp_tech_svcs.file_storage)
       message = ''
-      success = true
+      website = nil
 
       file = ActionController::UploadedTempfile.new("uploaded-theme").tap do |f|
         f.puts file.read
@@ -441,6 +481,173 @@ class Website < ActiveRecord::Base
 
           website.publish("Website Imported", current_user)
 
+        rescue => ex
+          Rails.logger.error "#{ex.inspect} #{ex.backtrace}"
+          website.destroy unless website.nil?
+          raise ex
+        end
+
+        website.save
+      else
+        message = 'Website already exists with that internal_identifier'
+      end
+
+      return website, message
+    end
+
+    def import_template_director(file, current_user)
+      file_object = file.tempfile
+      file_path = file_object.path
+
+      entries = []
+      begin
+        Zip::ZipFile.open(file_path) { |zip_file|
+          zip_file.each { |f|
+            f_path=File.join('public/waste', f.name)
+            FileUtils.mkdir_p(File.dirname(f_path))
+            zip_file.extract(f, f_path) unless File.exist?(f_path)
+            entries << f.name
+          }
+        }
+
+        entries.each do |entry|
+          if entry.match(/-template.zip/)
+            @website_result = import_template('public/waste/' + entry, current_user)
+          end
+        end
+        entries.each do |entry|
+          if entry.match(/-theme.zip/)
+            Theme.import_download_item('public/waste/' + entry, @website_result[0])
+          end
+        end
+        return @website_result[0], @website_result[1]
+      rescue Exception => e
+        return false, "Error"
+      end
+    end
+
+    def import_template(file, current_user)
+      file_support = ErpTechSvcs::FileSupport::Base.new(:storage => Rails.application.config.erp_tech_svcs.file_storage)
+      message = ''
+      website = nil
+
+      entries = []
+      setup_hash = nil
+
+      tmp_dir = Website.make_tmp_dir
+
+      Zip::ZipFile.open(file) do |zip|#passing in a file
+        #Zip::ZipFile.open(file.path) do |zip|
+        zip.each do |entry|
+          f_path = File.join(tmp_dir.to_s, entry.name)
+          FileUtils.mkdir_p(File.dirname(f_path))
+          zip.extract(entry, f_path) unless File.exist?(f_path)
+
+          next if entry.name =~ /__MACOSX\//
+          if entry.name =~ /setup.yml/
+            data = ''
+            entry.get_input_stream { |io| data = io.read }
+            data = StringIO.new(data) if data.present?
+            setup_hash = YAML.load(data)
+          else
+            type = entry.name.split('/')[0]
+            name = entry.name.split('/').last
+            next if name.nil?
+
+            if File.exist?(f_path) and !File.directory?(f_path)
+              entry_hash = {:type => type, :name => name, :path => entry.name}
+              entries << entry_hash unless name == 'sections' || name == 'articles' || name == 'excerpts' || name == 'documented contents'
+              entry_hash[:data] = File.open(f_path, "rb") { |io| io.read }
+            end
+          end
+
+        end
+      end
+      entries.uniq!
+      FileUtils.rm_rf(tmp_dir.to_s)
+
+      if Website.find_by_internal_identifier(setup_hash[:internal_identifier]).nil?
+        website = Website.new(
+            :name => setup_hash[:name],
+            :title => setup_hash[:title],
+            :subtitle => setup_hash[:subtitle],
+            :internal_identifier => setup_hash[:internal_identifier]
+        )
+
+        #TODO update to handle configurations
+
+        website.save!
+
+        #set default publication published by user
+        first_publication = website.published_websites.first
+        first_publication.published_by = current_user
+        first_publication.save
+
+        begin
+          #handle images
+          # entries.each do |entry|
+          #   puts "entry type '#{entry[:type]}'"
+          #   puts "entry name '#{entry[:name]}'"
+          #   puts "entry path '#{entry[:path]}'"
+          #   puts "entry data #{!entry[:data].blank?}"
+          # end
+          # puts "------------------"
+          setup_hash[:images].each do |image_asset|
+            filename = 'images' + image_asset[:path] + '/' + image_asset[:name]
+            #puts "image_asset '#{filename}'"
+            content = entries.find { |entry| entry[:type] == 'images' and entry[:path] == filename }
+            unless content.nil?
+              website.add_file(content[:data], File.join(file_support.root, image_asset[:path], image_asset[:name]))
+            end
+          end
+
+          #handle files
+          setup_hash[:files].each do |file_asset|
+            filename = 'files' + file_asset[:path] + '/' + file_asset[:name]
+            #puts "file_asset '#{filename}'"
+            content = entries.find { |entry| entry[:type] == 'files' and entry[:path] == filename }
+            unless content.nil?
+              file = website.add_file(content[:data], File.join(file_support.root, file_asset[:path], file_asset[:name]))
+
+              #handle security
+              unless file_asset[:roles].empty?
+                capability = file.add_capability(:download)
+                file_asset[:roles].each do |role_iid|
+                  role = SecurityRole.find_by_internal_identifier(role_iid)
+                  role.add_capability(capability)
+                end
+              end
+            end
+          end
+
+          #handle hosts
+          if WebsiteHost.last
+          setup_hash.merge(:hosts => 'localhost:3000')
+          end
+
+          if !setup_hash[:hosts].blank? and !setup_hash[:hosts].empty?
+            #set first host as primary host in configuration
+            website.configurations.first.update_configuration_item(ConfigurationItemType.find_by_internal_identifier('primary_host'), 'localhost:3000')
+            website.save
+          end
+
+          #handle sections
+          setup_hash[:sections].each do |section_hash|
+            build_section(section_hash, entries, website, current_user)
+          end
+          website.website_sections.update_paths!
+
+          #handle website_navs
+          setup_hash[:website_navs].each do |website_nav_hash|
+            website_nav = WebsiteNav.new(:name => website_nav_hash[:name])
+            website_nav_hash[:items].each do |item|
+              website_nav.website_nav_items << build_menu_item(item)
+            end
+            website.website_navs << website_nav
+          end
+
+          website.publish("Website Imported", current_user)
+
         rescue Exception => ex
           Rails.logger.error "#{ex.inspect} #{ex.backtrace}"
           website.destroy unless website.nil?
@@ -448,16 +655,37 @@ class Website < ActiveRecord::Base
         end
 
         website.save
-        success = true
       else
         message = 'Website already exists with that internal_identifier'
-        success = false
       end
 
-      return success, message
+      return website, message
     end
 
+
+    def find_site_entry_in_zip(file)
+      zf = Zip::ZipFile.open(file)
+      zf.each_with_index {  |entry, index|
+        if entry.name.match(/-template.zip/) && !entry.name.match(/_./)
+          return entry
+        end
+      }
+    end
+
+    def find_theme_entries_in_zip(file)
+      entries = []
+      zf = Zip::ZipFile.new(file)
+      zf.each_with_index {  |entry, index|
+        if entry.name.match(/-theme.zip/) && !entry.name.match(/_./)
+          entries << entry
+        end
+      }
+      entries
+    end
+
+
     protected
+
 
     def build_menu_item(hash)
       website_item = WebsiteNavItem.new(
@@ -496,7 +724,9 @@ class Website < ActiveRecord::Base
       section.internal_identifier = hash[:internal_identifier]
       section.permalink = hash[:permalink]
       section.path = hash[:path]
-      content = entries.find { |entry| entry[:type] == 'sections' and entry[:name] == "#{hash[:internal_identifier]}.rhtml" }
+      content = entries.find do |entry|
+        entry[:type] == 'sections' and entry[:name] == "#{hash[:permalink]}.rhtml" and entry[:path].split('.')[0] == "sections#{hash[:path]}"
+      end
 
       section.layout = content[:data] unless content.nil?
 
@@ -552,6 +782,9 @@ class Website < ActiveRecord::Base
           capability = section.add_capability(:view)
           hash[:roles].each do |role_iid|
             role = SecurityRole.find_by_internal_identifier(role_iid)
+            if role.nil?
+              role = SecurityRole.create(internal_identifier: role_iid, description: role_iid.humanize)
+            end
             role.add_capability(capability)
           end
         end
@@ -559,6 +792,7 @@ class Website < ActiveRecord::Base
 
       section
     end
+
 
   end
 

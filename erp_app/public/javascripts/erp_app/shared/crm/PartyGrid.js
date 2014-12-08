@@ -6,12 +6,6 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
     loadMask: true,
 
     /**
-     * @cfg {String} applicationContainerId
-     * The id of the root application container that this panel resides in.
-     */
-    applicationContainerId: 'crmTaskTabPanel',
-
-    /**
      * @cfg {String} partyRole
      * PartyRole to load for Grid Example (Customer, Prospect).
      */
@@ -143,33 +137,72 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
         }
      */
     partyRelationships: [],
+
     /**
      * @cfg {Boolean} canAddParty
      * True to allow party creation.
      */
     canAddParty: true,
+
     /**
      * @cfg {Boolean} canEditParty
      * True to allow party to be edited.
      */
     canEditParty: true,
+
     /**
      * @cfg {Boolean} canDeleteParty
      * True to allow party to be deleted.
      */
     canDeleteParty: true,
+
     /**
      * @cfg {Array} additionalTabs
      * Array of additional tab panels to add.
      */
     additionalTabs: [],
 
+    /**
+     * @cfg {Array} partyIds
+     * Array of partyIds to load
+     */
+    partyIds: null,
+
+    /**
+     * @cfg {boolean} showSearch
+     * false to hide search box
+     */
+    showSearch: true,
+
+    /**
+     * @cfg {Array} contactPurposes
+     * Array of contactPurposes that can be added to a contact.
+     *
+     * @example
+     * {
+     *   fieldLabel: 'Default',
+     *   internalIdentifier: 'default'
+     * }
+     */
+    contactPurposes: [
+        {
+            fieldLabel: 'Default',
+            internalIdentifier: 'default'
+        }
+    ],
+
+    /**
+     * @cfg {String} contactPurposesTitle
+     * Title of contact purposes fieldset.
+     */
+    contactPurposesTitle: 'Contact Purpose',
+
     constructor: function (config) {
         var listeners = {
             activate: function () {
                 this.store.load();
             },
-            itemdblclick: function(grid, record, item, index){
+            itemdblclick: function (grid, record, item, index) {
                 grid.ownerCt.showDetails(index);
             }
         };
@@ -251,18 +284,10 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                 iconCls: me.addBtnIconCls,
                 handler: function (button) {
                     // open tab with create user form.
-                    var tabPanel = button.up('crmpartygrid').up('#' + me.applicationContainerId);
-
-                    // check and see if tab already open
-                    var tab = tabPanel.down('crmpartyformpanel');
-                    if (tab) {
-                        tabPanel.setActiveTab(tab);
-                        return;
-                    }
+                    var tabPanel = button.up('crmpartygrid').up('applicationcontainer');
 
                     var crmPartyFormPanel = Ext.create("widget.crmpartyformpanel", {
                         title: me.addBtnDescription,
-                        applicationContainerId: me.applicationContainerId,
                         toPartyId: me.toPartyId,
                         partyRole: me.partyRole,
                         securityRoles: me.securityRoles,
@@ -288,39 +313,41 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
             }, '|');
         }
 
-        toolBarItems.push('Search',
-            {
-                xtype: 'textfield',
-                emptyText: me.searchDescription,
-                width: 200,
-                listeners: {
-                    specialkey: function (field, e) {
-                        if (e.getKey() == e.ENTER) {
-                            var button = field.up('toolbar').down('button');
-                            button.fireEvent('click', button);
+        if (me.showSearch) {
+            toolBarItems.push('Search',
+                {
+                    xtype: 'textfield',
+                    emptyText: me.searchDescription,
+                    width: 200,
+                    listeners: {
+                        specialkey: function (field, e) {
+                            if (e.getKey() == e.ENTER) {
+                                var button = field.up('toolbar').down('button');
+                                button.fireEvent('click', button);
+                            }
                         }
                     }
-                }
-            },
-            {
-                xtype: 'button',
-                itemId: 'searchbutton',
-                icon: '/images/erp_app/organizer/applications/crm/toolbar_find.png',
-                listeners: {
-                    click: function (button, e, eOpts) {
-                        var grid = button.up('crmpartygrid'),
-                            value = grid.down('toolbar').down('textfield').getValue();
+                },
+                {
+                    xtype: 'button',
+                    itemId: 'searchbutton',
+                    icon: '/images/erp_app/organizer/applications/crm/toolbar_find.png',
+                    listeners: {
+                        click: function (button, e, eOpts) {
+                            var grid = button.up('crmpartygrid'),
+                                value = grid.down('toolbar').down('textfield').getValue();
 
-                        grid.store.load({
-                            params: {
-                                query_filter: value,
-                                start: 0,
-                                limit: 25
-                            }
-                        });
+                            grid.store.load({
+                                params: {
+                                    query_filter: value,
+                                    start: 0,
+                                    limit: 25
+                                }
+                            });
+                        }
                     }
-                }
-            });
+                });
+        }
 
         var store = Ext.create('Ext.data.Store', {
             fields: [
@@ -337,7 +364,8 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                 extraParams: {
                     party_role: me.partyRole,
                     to_role: me.toRole,
-                    to_party_id: me.toPartyId
+                    to_party_id: me.toPartyId,
+                    party_ids: (Ext.isEmpty(me.partyIds) ? null : me.partyIds.join())
                 },
                 reader: {
                     type: 'json',
@@ -350,12 +378,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
 
         me.store = store;
 
-        me.dockedItems = [
-            {
-                xtype: 'toolbar',
-                docked: 'top',
-                items: toolBarItems
-            },
+        var dockedItems = [
             {
                 xtype: 'pagingtoolbar',
                 store: store,
@@ -363,6 +386,16 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                 displayInfo: true
             }
         ];
+
+        if(!Ext.isEmpty(toolBarItems)){
+            dockedItems.push({
+                xtype: 'toolbar',
+                docked: 'top',
+                items: toolBarItems
+            });
+        }
+
+        me.dockedItems = dockedItems;
 
         // setup columns
 
@@ -429,7 +462,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                         tooltip: 'Edit',
                         handler: function (grid, rowIndex, colIndex) {
                             var record = grid.getStore().getAt(rowIndex),
-                                crmTaskTabPanel = grid.up('crmpartygrid').up('#' + me.applicationContainerId),
+                                crmTaskTabPanel = grid.up('crmpartygrid').up('applicationcontainer'),
                                 itemId = 'editParty-' + record.get('id'),
                                 title = 'Edit ' + me.partyMgtTitle;
 
@@ -439,7 +472,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                                 editPartyForm = Ext.create('widget.crmpartyformpanel', {
                                     title: title,
                                     itemId: itemId,
-                                    applicationContainerId: me.applicationContainerId,
+                                    formFields: me.formFields,
                                     partyType: record.get('model'),
                                     partyId: record.get('id'),
                                     userId: record.get('userId'),
@@ -514,10 +547,10 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
         me.callParent(arguments);
     },
 
-    showDetails: function(index){
+    showDetails: function (index) {
         var me = this,
             record = me.getStore().getAt(index),
-            crmTaskTabPanel = me.up('#' + me.applicationContainerId),
+            crmTaskTabPanel = me.up('applicationcontainer'),
             itemId = 'detailsParty-' + record.get('id'),
             title = record.get('description'),
             partyId = record.get('id');
@@ -528,7 +561,8 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
             partyDetailsPanel = Ext.create('widget.crmpartydetailspanel', {
                 title: title,
                 itemId: itemId,
-                applicationContainerId: me.applicationContainerId,
+                contactPurposes: me.contactPurposes,
+                contactPurposesTitle: me.contactPurposesTitle,
                 partyId: partyId,
                 partyModel: record.get('model'),
                 partyRelationships: me.partyRelationships,

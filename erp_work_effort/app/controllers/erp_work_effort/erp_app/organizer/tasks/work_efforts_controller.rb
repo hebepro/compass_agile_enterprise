@@ -148,7 +148,7 @@ module ErpWorkEffort
                 result = {:success => true, :message => "Task Added"}
 
               end
-            rescue Exception => ex
+            rescue => ex
               Rails.logger.error ex.message
               Rails.logger.error ex.backtrace.join("\n")
               result = {:success => false, :message => "Error adding task"}

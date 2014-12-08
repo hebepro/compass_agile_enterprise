@@ -133,7 +133,7 @@ class Group < ActiveRecord::Base
   def remove_party(a_party)
     begin
       get_relationship(a_party).first.destroy
-    rescue Exception => e
+    rescue => e
       Rails.logger.error e.message
       return nil
     end

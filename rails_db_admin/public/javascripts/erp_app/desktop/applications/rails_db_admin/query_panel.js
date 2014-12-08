@@ -110,7 +110,8 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.QueryPanel", {
                         buttonAlign: 'center',
                         closeAction: 'hide',
                         plain: true,
-                        items: new Ext.FormPanel({
+                        items: {
+                            xtype: 'form',
                             frame: false,
                             bodyStyle: 'padding:5px 5px 0',
                             width: 500,
@@ -138,11 +139,11 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.QueryPanel", {
                                     name: 'database'
                                 }
                             ]
-                        }),
+                        },
                         buttons: [
                             {
                                 text: 'Save',
-                                handler: function () {
+                                handler: function (btn) {
                                     var fp = this.up('window').down('.form');
                                     if (fp.getForm().isValid()) {
                                         fp.getForm().submit({
@@ -159,7 +160,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.QueryPanel", {
                                                     }
                                                 });
                                                 self.module.queriesTreePanel().store.load();
-                                                save_window.hide();
+                                                btn.up('window').hide();
                                             }
                                         });
                                     }
@@ -167,23 +168,22 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.QueryPanel", {
                             },
                             {
                                 text: 'Cancel',
-                                handler: function () {
-                                    save_window.hide();
+                                handler: function (btn) {
+                                    btn.up('window').hide();
                                 }
                             }
                         ]
 
-                    });
-                    save_window.show();
+                    }).show();
                 }
             });
         }
 
         var codeMirrorPanel = {
-            height: 250,
-            region: 'north',
+            region: 'center',
             xtype: 'codemirror',
             mode: 'sql',
+            split: true,
             tbarItems: tbarItems,
             sourceCode: this.initialConfig['sqlQuery'],
             disableSave: true
@@ -197,9 +197,13 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.QueryPanel", {
         else {
             this.items.push({
                 layout: 'card',
-                region: 'center',
+                region: 'south',
                 margins: '0 0 0 0',
                 autoScroll: true,
+                split: true,
+                collapsible: true,
+                collapseDirection: 'bottom',
+                height: '50%',
                 itemId: 'resultCardPanel',
                 items: []
             })
@@ -216,5 +220,4 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.QueryPanel", {
         }, config);
         this.callParent([config]);
     }
-
 });

@@ -12,13 +12,14 @@ module Knitkit
               begin
                 ActiveRecord::Base.transaction do
 
-                  website = Website.find(params[:website_id])
+                  @website = Website.find(params[:website_id])
+                  @website_primary_host = @website.nil? ? nil : @website.config_value('primary_host')
 
                   if params[:title].to_s.downcase == 'blog' && params[:type] == 'Blog'
                     result = {:success => false, :message => 'Blog can not be the title of a Blog'}
                   else
                     website_section = WebsiteSection.new
-                    website_section.website_id = website.id
+                    website_section.website_id = @website.id
                     website_section.in_menu = params[:in_menu] == 'yes'
                     website_section.title = params[:title]
                     website_section.render_base_layout = params[:render_with_base_layout] == 'yes'
@@ -38,7 +39,7 @@ module Knitkit
                       end
 
                       website_section.update_path!
-                      result = {:success => true, :node => build_section_hash(website_section, website_section.website)}
+                      result = {:success => true, :node => build_section_hash(website_section)}
                     else
                       message = "<ul>"
                       website_section.errors.collect do |e, m|
@@ -50,10 +51,10 @@ module Knitkit
 
                   end
                 end
-              rescue Exception => e
+              rescue => ex
                 # TODO send error notification
-                Rails.logger.error e.message
-                Rails.logger.error e.backtrace.join("\n")
+                Rails.logger.error ex.message
+                Rails.logger.error ex.backtrace.join("\n")
                 result = {:success => false, :message => 'Could not create Section'}
               end
 
@@ -66,8 +67,17 @@ module Knitkit
 
         def delete
           begin
-            current_user.with_capability('delete', 'WebsiteSection') do
-              render :json => WebsiteSection.destroy(params[:id]) ? {:success => true} : {:success => false}
+            ActiveRecord::Base.transaction do
+              current_user.with_capability('delete', 'WebsiteSection') do
+                section = WebsiteSection.find(params[:id])
+
+                # we need to remove any content related to this section if it is an OnlineDocumentSection
+                if section.type == 'OnlineDocumentSection'
+                  section.website_section_contents.destroy_all
+                end
+
+                render :json => section.destroy ? {:success => true} : {:success => false}
+              end
             end
           rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
@@ -115,20 +125,25 @@ module Knitkit
               @website_section.render_base_layout = params[:render_with_base_layout] == 'yes'
               @website_section.internal_identifier = params[:internal_identifier]
 
-
               #check if this is a OnlineDocumentSection if so set markdown
               if @website_section.is_a?(OnlineDocumentSection) || @website_section.type == 'OnlineDocumentSection'
                 @website_section.use_markdown = (params[:use_markdown] == 'yes')
               end
 
-              website = @website_section.website
-              if @website_section.save
-                @website_section.publish(website, 'Auto Publish', @website_section.version, current_user) if website.publish_on_save?
+              #TODO this should probably be moved into the view
+              if @website_section.altered?
+                website = @website_section.website
+                if @website_section.save
+                  @website_section.publish(website, 'Auto Publish', @website_section.version, current_user) if website.publish_on_save?
 
-                render :json => {:success => true}
+                  render :json => {:success => true}
+                else
+                  render :json => {:success => false}
+                end
               else
-                render :json => {:success => false}
+                render :json => {:success => true}
               end
+
             end
           rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
@@ -163,9 +178,18 @@ module Knitkit
               unless result
                 website = @website_section.website
                 @website_section.layout = params[:content]
-                saved = @website_section.save
-                @website_section.publish(website, 'Auto Publish', @website_section.version, current_user) if saved and website.publish_on_save?
-                render :json => saved ? {:success => true} : {:success => false}
+
+                #TODO this should probably be moved into the view
+                if @website_section.altered?
+                  saved = @website_section.save
+                  @website_section.publish(website, 'Auto Publish', @website_section.version, current_user) if saved and website.publish_on_save?
+
+                  render :json => saved ? {:success => true} : {:success => false}
+                else
+
+                  render :json => {:success => true}
+                end
+
               else
                 render :json => {:success => false, :message => result}
               end

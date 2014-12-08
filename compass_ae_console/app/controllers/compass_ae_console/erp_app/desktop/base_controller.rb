@@ -2,8 +2,6 @@ module CompassAeConsole
   module ErpApp
     module Desktop
       class BaseController < ::ErpApp::Desktop::BaseController
-        before_filter :security_check
-
         def command
           begin
             result = ""
@@ -44,10 +42,6 @@ module CompassAeConsole
         end
 
         private
-        def security_check
-          console_app = Application.find_by_internal_identifier('compass_ae_console')
-          raise "Access Denied" unless current_user.desktop.applications.include?(console_app)
-        end
 
         #****************************************************************************
         def help_message()
@@ -99,8 +93,8 @@ module CompassAeConsole
 
                        "#{result_eval.inspect}"
                      end
-          rescue Exception => e
-            result = "<span style='color:red'>#{e.to_s}</span>"
+          rescue => ex
+            result = "<span style='color:red'>#{ex.to_s}</span>"
           end
 
           result

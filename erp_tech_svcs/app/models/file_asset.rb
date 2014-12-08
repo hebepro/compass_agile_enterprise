@@ -1,31 +1,31 @@
 require 'fileutils'
 
-Paperclip.interpolates(:file_path){|data, style|
+Paperclip.interpolates(:file_path) { |data, style|
   case ErpTechSvcs::Config.file_storage
-  when :filesystem
-    file_support = ErpTechSvcs::FileSupport::Base.new
-    File.join(file_support.root,data.instance.directory,data.instance.name)
-  when :s3
-    File.join(data.instance.directory,data.instance.name)
+    when :filesystem
+      file_support = ErpTechSvcs::FileSupport::Base.new
+      File.join(file_support.root, data.instance.directory, data.instance.name)
+    when :s3
+      File.join(data.instance.directory, data.instance.name)
   end
 }
 
-Paperclip.interpolates(:file_url){|data, style|
+Paperclip.interpolates(:file_url) { |data, style|
   url = File.join(data.instance.directory, data.instance.name)
   case ErpTechSvcs::Config.file_storage
-  when :filesystem
-    #if public is at the front of this path and we are using file_system remove it
-    dir_pieces = url.split('/')
-    path = unless dir_pieces[1] == 'public'
-      "/download/#{data.instance.name}?path=#{dir_pieces.delete_if{|name| name == data.instance.name}.join('/')}"
-    else
-      dir_pieces.delete_at(1) if dir_pieces[1] == 'public'
-      dir_pieces.join('/')
-    end
+    when :filesystem
+      #if public is at the front of this path and we are using file_system remove it
+      dir_pieces = url.split('/')
+      path = unless dir_pieces[1] == 'public'
+               "/download/#{data.instance.name}?path=#{dir_pieces.delete_if { |name| name == data.instance.name }.join('/')}"
+             else
+               dir_pieces.delete_at(1) if dir_pieces[1] == 'public'
+               dir_pieces.join('/')
+             end
 
-    "#{ErpTechSvcs::Config.file_protocol}://#{File.join(ErpTechSvcs::Config.installation_domain, path)}"
-  when :s3
-    url
+      "#{ErpTechSvcs::Config.file_protocol}://#{File.join(ErpTechSvcs::Config.installation_domain, path)}"
+    when :s3
+      url
   end
 }
 
@@ -42,25 +42,30 @@ class FileAsset < ActiveRecord::Base
     class_inheritable_writer :valid_extensions
   end
 
+  # setup scoping
+  add_scoped_by :scoped_by
+
   after_create :set_sti
+  # must fire after paperclip's after_save :save_attached_files
+  after_save :set_data_file_name, :save_dimensions
+  before_validation(on: :create) do
+    self.check_name_uniqueness
+  end
 
   belongs_to :file_asset_holder, :polymorphic => true
   instantiates_with_sti
 
   protected_with_capabilities
-  
+
   #paperclip
   has_attached_file :data,
-    :storage => ErpTechSvcs::Config.file_storage,
-    :s3_protocol => ErpTechSvcs::Config.s3_protocol,
-    :s3_permissions => :public_read,
-    :s3_credentials => "#{Rails.root}/config/s3.yml",
-    :path => ":file_path",
-    :url => ":file_url",
-    :validations => { :extension => lambda { |data, file| validate_extension(data, file) } }
-
-  # must fire after paperclip's after_save :save_attached_files
-  after_save   :set_data_file_name, :save_dimensions
+                    :storage => ErpTechSvcs::Config.file_storage,
+                    :s3_protocol => ErpTechSvcs::Config.s3_protocol,
+                    :s3_permissions => :public_read,
+                    :s3_credentials => "#{Rails.root}/config/s3.yml",
+                    :path => ":file_path",
+                    :url => (ErpTechSvcs::Config.file_storage == :filesystem ? ":file_url" : (ErpTechSvcs::Config.s3_url || ":file_url")),
+                    :validations => {:extension => lambda { |data, file| validate_extension(data, file) }}
 
   before_post_process :set_content_type
 
@@ -81,18 +86,18 @@ class FileAsset < ActiveRecord::Base
 
     def type_for(name)
       classes = all_subclasses.uniq
-      classes.detect{ |k| k.acceptable?(name) }.try(:name)
+      classes.detect { |k| k.acceptable?(name) }.try(:name)
     end
 
     def type_by_extension(extension)
-      klass = all_subclasses.detect{ |k| k.valid_extensions.include?(extension) }
+      klass = all_subclasses.detect { |k| k.valid_extensions.include?(extension) }
       klass = TextFile if klass.nil?
       klass
     end
 
     def validate_extension(data, file)
       if file.name && !file.class.valid_extensions.include?(File.extname(file.name))
-        types = all_valid_extensions.map{ |type| type.gsub(/^\./, '') }.join(', ')
+        types = all_valid_extensions.map { |type| type.gsub(/^\./, '') }.join(', ')
         "#{file.name} is not a valid file type. Valid file types are #{types}."
       end
     end
@@ -120,7 +125,7 @@ class FileAsset < ActiveRecord::Base
     base_path ||= data.original_filename if data.respond_to?(:original_filename)
 
     directory, name = FileAsset.split_path(base_path) if base_path and name.blank?
-    directory.gsub!(Rails.root.to_s,'')
+    directory.gsub!(Rails.root.to_s, '')
 
     @type ||= FileAsset.type_for(name) if name
     @type = "TextFile" if @type.nil?
@@ -131,8 +136,35 @@ class FileAsset < ActiveRecord::Base
     super attributes.merge(:directory => directory, :name => name, :data => data)
   end
 
+  def check_name_uniqueness
+    # check if name is already taken
+    unless FileAsset.where('directory = ? and name = ?',  self.directory, self.name).first.nil?
+      # if it is keeping add incrementing by 1 until we have a good name
+      counter = 0
+      while true
+        counter += 1
+
+        # break after 25, we don't want in infinite loop
+        break if counter == 25
+
+        new_name = "#{basename}-#{counter}.#{extname}"
+
+        if FileAsset.where('directory = ? and name = ?', self.directory, new_name).first.nil?
+          self.name = new_name
+          break
+        end
+      end
+    end
+  end
+
   def is_secured?
     self.protected_with_capability?('download')
+  end
+
+  def copy(path, name)
+    file_support = ErpTechSvcs::FileSupport::Base.new(:storage => ErpTechSvcs::Config.file_storage)
+
+    file_support.copy(self.path, path, name)
   end
 
   # compass file download url
@@ -145,7 +177,7 @@ class FileAsset < ActiveRecord::Base
     file_support = ErpTechSvcs::FileSupport::Base.new(:storage => ErpTechSvcs::Config.file_storage)
 
     if ErpTechSvcs::Config.file_storage == :s3
-      file_path = File.join(self.directory,self.name).sub(%r{^/},'')
+      file_path = File.join(self.directory, self.name).sub(%r{^/}, '')
       options = {}
       options[:expires] = ErpTechSvcs::Config.s3_url_expires_in_seconds if self.is_secured?
       return file_support.bucket.objects[file_path].url_for(:read, options).to_s
@@ -154,7 +186,7 @@ class FileAsset < ActiveRecord::Base
     end
   end
 
-  def save_dimensions 
+  def save_dimensions
     if type == 'Image'
       begin
         f = Paperclip::Geometry.from_file(self.path)
@@ -162,7 +194,7 @@ class FileAsset < ActiveRecord::Base
         h = f.height.to_i
         update_attribute(:width, w) if width != w
         update_attribute(:height, h) if height != h
-      rescue Exception=>ex
+      rescue => ex
         Rails.logger.error('Could not save width and height of image. Make sure Image Magick and the identify command are accessible')
       end
     end
@@ -170,11 +202,19 @@ class FileAsset < ActiveRecord::Base
   end
 
   def basename
-    data_file_name.gsub(/\.#{extname}$/, "")
+    name.gsub(/\.#{extname}$/, "")
+  end
+
+  def trim_name(size)
+    if self.name.length < size
+      self.name
+    else
+      self.name[0..size]
+    end
   end
 
   def extname
-    File.extname(self.data_file_name).gsub(/^\.+/, '')
+    File.extname(name).gsub(/^\.+/, '')
   end
 
   def set_sti

@@ -78,6 +78,12 @@ Ext.define("Compass.ErpApp.Shared.FileManagerTree", {
 
     selectedNode: null,
 
+    /**
+     * @cfg {boolean} handleRootContextMenu
+     * True to allow root node to be handled by context menu listener
+     */
+    handleRootContextMenu: false,
+
     constructor: function (config) {
         var self = this;
 
@@ -92,8 +98,8 @@ Ext.define("Compass.ErpApp.Shared.FileManagerTree", {
             rootConfig.autoLoad = false;
         }
         else {
-            rootConfig.expanded = true,
-                rootConfig.autoLoad = true;
+            rootConfig.expanded = true;
+            rootConfig.autoLoad = true;
         }
 
         var store = Ext.create('Ext.data.TreeStore', {
@@ -114,6 +120,9 @@ Ext.define("Compass.ErpApp.Shared.FileManagerTree", {
             fields: config['fields'] || [
                 {
                     name: 'text'
+                },
+                {
+                    name: 'iconCls'
                 },
                 {
                     name: 'downloadPath'
@@ -237,13 +246,14 @@ Ext.define("Compass.ErpApp.Shared.FileManagerTree", {
             'itemcontextmenu': function (view, record, item, index, e) {
                 e.stopEvent();
                 if (record.data['contextMenuDisabled']) return false;
-                if (record.data['handleContextMenu']) {
+                if (record.data['handleContextMenu'] || (record.isRoot() && self.handleRootContextMenu)) {
                     self.fireEvent('handleContextMenu', this, record, e);
                     return false;
                 }
 
                 self.selectedNode = record;
                 var menuItems = [];
+
 
                 //if this is a leaf (file) allow user to view Properties
                 if (record.data['leaf']) {
@@ -421,11 +431,11 @@ Ext.define("Compass.ErpApp.Shared.FileManagerTree", {
                                                 var responseObj = Ext.decode(response.responseText);
                                                 msg.hide();
                                                 if (responseObj.success) {
+                                                    self.fireEvent('fileDeleted', this, record);
                                                     store.load({
                                                         node: record.parentNode,
                                                         params: self.extraPostData
                                                     });
-                                                    self.fireEvent('fileDeleted', this, record);
                                                 }
                                                 else {
                                                     Ext.Msg.alert("Error", responseObj.error);

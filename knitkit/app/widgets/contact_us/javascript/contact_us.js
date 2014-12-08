@@ -1,16 +1,16 @@
 Compass.ErpApp.Widgets.ContactUs = {
-    template: new Ext.Template('<%= render_widget :contact_us, :params => {:use_dynamic_form => false} %>'),
+    template: new Ext.Template('<%= render_widget :contact_us %>'),
 
-    addContactUs:function(){
+    addContactUs: function () {
         Ext.getCmp('knitkitCenterRegion').addContentToActiveCodeMirror(Compass.ErpApp.Widgets.ContactUs.template.apply());
     }
-}
+};
 
 Compass.ErpApp.Widgets.AvailableWidgets.push({
-    name:'Contact Us',
-    iconUrl:'/images/icons/message/message_48x48.png',
-    onClick:Compass.ErpApp.Widgets.ContactUs.addContactUs,
-    about:'This widget creates a form to allow for website inqueries.'
+    name: 'Contact Us',
+    iconUrl: '/images/icons/mail/mail_48x48.png',
+    onClick: Compass.ErpApp.Widgets.ContactUs.addContactUs,
+    about: 'This widget creates a form to allow for website inquiries.'
 });
 
 

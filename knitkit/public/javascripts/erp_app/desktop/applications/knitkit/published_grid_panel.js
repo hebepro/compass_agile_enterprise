@@ -1,226 +1,247 @@
-Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.PublishedGridPanel",{
-  extend:"Ext.grid.Panel",
-  alias:'widget.knitkit_publishedgridpanel',
-  initComponent: function() {
-    this.callParent(arguments);
-    this.getStore().load();
-  },
+Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.PublishedGridPanel", {
+    extend: "Ext.grid.Panel",
+    alias: 'widget.knitkit_publishedgridpanel',
+    initComponent: function () {
+        this.callParent(arguments);
+        this.getStore().load();
+    },
 
-  activate : function(rec){
-    var self = this;
-    Ext.Ajax.request({
-      url: '/knitkit/erp_app/desktop/site/activate_publication',
-      timeout: 90000,
-      method: 'POST',
-      params:{
-        id:self.initialConfig.siteId,
-        version:rec.get('version')
-      },
-      success: function(response) {
-        var obj =  Ext.decode(response.responseText);
-        var msg = "";
-                if (obj.msg){
+    activate: function (rec) {
+        var self = this;
+        Ext.Ajax.request({
+            url: '/knitkit/erp_app/desktop/site/activate_publication',
+            timeout: 90000,
+            method: 'POST',
+            params: {
+                website_id: self.initialConfig.siteId,
+                version: rec.get('version')
+            },
+            success: function (response) {
+                var obj = Ext.decode(response.responseText);
+                var msg = "";
+                if (obj.msg) {
                     msg = obj.msg;
-                }else{
+                } else {
                     msg = 'Error activating publication';
                 }
-        if(obj.success){
-          self.getStore().load();
-        }
-        else{
-          Ext.Msg.alert('Error', msg);
-        }
-      },
-      failure: function(response) {
-        Ext.Msg.alert('Error', 'Error activating publication');
-      }
-    });
-  },
+                if (obj.success) {
+                    self.getStore().load();
+                }
+                else {
+                    Ext.Msg.alert('Error', msg);
+                }
+            },
+            failure: function (response) {
+                Ext.Msg.alert('Error', 'Error activating publication');
+            }
+        });
+    },
 
-  setViewingVersion : function(rec){
-    var self = this;
-    Ext.Ajax.request({
-      url: '/knitkit/erp_app/desktop/site/set_viewing_version',
-      method: 'POST',
-      params:{
-        id:self.initialConfig.siteId,
-        version:rec.get('version')
-      },
-      success: function(response) {
-        var obj =  Ext.decode(response.responseText);
-        if(obj.success){
-          self.getStore().load();
-        }
-        else{
-          Ext.Msg.alert('Error', 'Error setting viewing version');
-        }
-      },
-      failure: function(response) {
-        Ext.Msg.alert('Error', 'Error setting viewing version');
-      }
-    });
-  },
+    setViewingVersion: function (rec) {
+        var self = this;
+        Ext.Ajax.request({
+            url: '/knitkit/erp_app/desktop/site/set_viewing_version',
+            method: 'POST',
+            params: {
+                website_id: self.initialConfig.siteId,
+                version: rec.get('version')
+            },
+            success: function (response) {
+                var obj = Ext.decode(response.responseText);
+                if (obj.success) {
+                    self.getStore().load();
+                }
+                else {
+                    Ext.Msg.alert('Error', 'Error setting viewing version');
+                }
+            },
+            failure: function (response) {
+                Ext.Msg.alert('Error', 'Error setting viewing version');
+            }
+        });
+    },
 
-  constructor : function(config) {
-    var store = Ext.create("Ext.data.Store",{
-      proxy:{
-        type:'ajax',
-        url:'/knitkit/erp_app/desktop/site/website_publications',
-        reader:{
-          type:'json',
-          root:'data'
-        },
-        extraParams:{
-          id:config['siteId']
-        }
-      },
-      idProperty: 'id',
-      remoteSort: true,
-      fields: [
-      {
-        name:'id'
-      },
-      {
-        name:'version',
-        type: 'float'
-      },
-      {
-        name:'created_at',
-        type: 'date'
-      },
-      {
-        name:'published_by_username'
-      },
-      {
-        name:'comment'
-      },
-      {
-        name:'active',
-        type:'boolean'
-      },
-      {
-        name:'viewing',
-        type:'boolean'
-      }
-      ],
-      listeners:{
-        'exception':function(proxy, type, action, options, response, arg){
-          Ext.Msg.alert('Error',arg);
-        }
-      }
-    });
+    constructor: function (config) {
+        var store = Ext.create("Ext.data.Store", {
+            proxy: {
+                type: 'ajax',
+                url: '/knitkit/erp_app/desktop/site/website_publications',
+                reader: {
+                    type: 'json',
+                    root: 'data'
+                },
+                extraParams: {
+                    website_id: config['siteId']
+                }
+            },
+            idProperty: 'id',
+            remoteSort: true,
+            fields: [
+                {
+                    name: 'id'
+                },
+                {
+                    name: 'version',
+                    type: 'float'
+                },
+                {
+                    name: 'created_at',
+                    type: 'date'
+                },
+                {
+                    name: 'published_by_username'
+                },
+                {
+                    name: 'comment'
+                },
+                {
+                    name: 'active',
+                    type: 'boolean'
+                },
+                {
+                    name: 'viewing',
+                    type: 'boolean'
+                }
+            ],
+            listeners: {
+                'exception': function (proxy, type, action, options, response, arg) {
+                    Ext.Msg.alert('Error', arg);
+                }
+            }
+        });
 
-    config = Ext.apply({
-      store:store,
-      columns: [
-      {
-        header: "Version",
-        sortable:true,
-        width: 45,
-        dataIndex: 'version'
-      },
-      {
-        header: "Published",
-        width: 117,
-        sortable:true,
-        renderer: Ext.util.Format.dateRenderer('m/d/Y H:i:s'),
-        dataIndex: 'created_at'
-      },
-      {
-        header: "Published By",
-        width: 72,
-        sortable:true,
-        dataIndex: 'published_by_username'
-      },
-      {
-        menuDisabled:true,
-        resizable:false,
-        xtype:'actioncolumn',
-        header:'Viewing',
-        align:'center',
-        width:46,
-        items:[{
-          getClass: function(v, meta, rec) {  // Or return a class from a function
-            if (rec.get('viewing')) {
-              this.items[0].tooltip = 'Viewing';
-              return 'viewing-col';
-            } else {
-              this.items[0].tooltip = 'View';
-              return 'view-col';
-            }
-          },
-          handler: function(grid, rowIndex, colIndex) {
-            var rec = grid.getStore().getAt(rowIndex);
-            if(rec.get('viewing')){
-              return false;
-            }
-            else{
-              grid.ownerCt.setViewingVersion(rec);
-            }
-          }
-        }]
-      },
-      {
-        menuDisabled:true,
-        resizable:false,
-        xtype:'actioncolumn',
-        header:'Active',
-        align:'center',
-        width:44,
-        items:[{
-          getClass: function(v, meta, rec) {  // Or return a class from a function
-            if (rec.get('active')) {
-              this.items[0].tooltip = 'Active';
-              return 'active-col';
-            } else {
-              this.items[0].tooltip = 'Activate';
-              return 'activate-col';
-            }
-          },
-          handler: function(grid, rowIndex, colIndex) {
-             if (currentUser.hasCapability('activate','Website'))
-              {
-              var rec = grid.getStore().getAt(rowIndex);
-              if(rec.get('active')){
-                return false;
-              }
-              else{
-                grid.ownerCt.activate(rec);
-              }
-            }
-            else{
-              compassUser.showInvalidAccess();
-            }
-          }
-        }]
-      },
-      {
-        menuDisabled:true,
-        resizable:false,
-        xtype:'actioncolumn',
-        header:'Note',
-        align:'center',
-        width:40,
-        items:[{
-          getClass: function(v, meta, rec) {  // Or return a class from a function
-            this.items[0].tooltip = rec.get('comment');
-            return 'info-col';
-          },
-          handler: function(grid, rowIndex, colIndex) {
-            return false;
-          }
-        }]
-      }
-      ],
-      bbar: new Ext.PagingToolbar({
-        pageSize: 9,
-        store:store,
-        displayInfo: true,
-        displayMsg: '{0} - {1} of {2}',
-        emptyMsg: "Empty"
-      })
-    }, config);
+        config = Ext.apply({
+            store: store,
+            columns: [
+                {
+                    header: "Version",
+                    sortable: true,
+                    flex: 0.5,
+                    dataIndex: 'version'
+                },
+                {
+                    header: "Published",
+                    flex: 1,
+                    sortable: true,
+                    renderer: Ext.util.Format.dateRenderer('m/d/Y H:i:s'),
+                    dataIndex: 'created_at'
+                },
+                {
+                    header: "Published By",
+                    flex: 1,
+                    sortable: true,
+                    dataIndex: 'published_by_username'
+                },
+                {
+                    menuDisabled: true,
+                    resizable: false,
+                    xtype: 'actioncolumn',
+                    header: 'Actions',
+                    align: 'center',
+                    width: 100,
+                    items: [
+                        {
+                            getTip: function(value, meta, record){
+                                if (record.get('viewing')) {
+                                    return 'Already viewing this version';
+                                }
+                                else {
+                                    return 'View this version';
+                                }
+                            },
+                            getClass: function (v, meta, rec) {  // Or return a class from a function
+                                if (rec.get('viewing')) {
+                                    return 'viewing-col x-action-col-icon';
+                                } else {
+                                    return 'view-col x-action-col-icon';
+                                }
+                            },
+                            handler: function (grid, rowIndex, colIndex) {
+                                var rec = grid.getStore().getAt(rowIndex);
+                                if (rec.get('viewing')) {
+                                    return false;
+                                }
+                                else {
+                                    grid.ownerCt.setViewingVersion(rec);
+                                }
+                            }
+                        },
+                        {
+                            getTip: function(value, meta, record){
+                                if (record.get('active')) {
+                                    return 'Version is already active';
+                                } else {
+                                    return 'Set this version as the active version';
+                                }
+                            },
+                            getClass: function (v, meta, rec) {  // Or return a class from a function
+                                if (rec.get('active')) {
+                                    return 'active-col x-action-col-icon';
+                                } else {
+                                    return 'activate-col x-action-col-icon';
+                                }
+                            },
+                            handler: function (grid, rowIndex, colIndex) {
+                                if (currentUser.hasCapability('activate', 'Website')) {
+                                    var rec = grid.getStore().getAt(rowIndex);
+                                    if (rec.get('active')) {
+                                        return false;
+                                    }
+                                    else {
+                                        grid.ownerCt.activate(rec);
+                                    }
+                                }
+                                else {
+                                    compassUser.showInvalidAccess();
+                                }
+                            }
+                        },
+                        {
+                            icon: '/images/icons/document/document_16x16.png',
+                            tooltip: 'Comments',
+                            handler: function (grid, rowIndex, colIndex) {
+                                var rec = grid.getStore().getAt(rowIndex);
 
-    this.callParent([config]);
-  }
+                                Ext.create("Ext.window.Window", {
+                                    width: 325,
+                                    height: 400,
+                                    buttonAlign: 'center',
+                                    bodyPadding: 5,
+                                    title: 'Comments',
+                                    autoScroll: true,
+                                    layout: 'fit',
+                                    items: {
+                                        xtype: 'panel',
+                                        html: rec.get('comment')
+                                    },
+                                    buttons: [
+                                        {
+                                            text: 'Close',
+                                            handler: function (btn) {
+                                                btn.up('window').close();
+                                            }
+                                        }
+                                    ]
+                                }).show();
+                            }
+                        }
+                    ]
+                }
+            ],
+            dockedItems: [
+                {
+                    xtype: 'pagingtoolbar',
+                    dock: 'bottom',
+                    pageSize: 10,
+                    store: store,
+                    displayInfo: true,
+                    displayMsg: '{0} - {1} of {2}',
+                    emptyMsg: "Empty"
+
+                }
+            ]
+        }, config);
+
+        this.callParent([config]);
+    }
 });

@@ -1,7 +1,7 @@
 module ErpProducts
-	module Extensions
-		module ActiveRecord
-			module ActsAsProductInstance
+  module Extensions
+    module ActiveRecord
+      module ActsAsProductInstance
         def self.included(base)
           base.extend(ClassMethods)
         end
@@ -18,7 +18,19 @@ module ErpProducts
 
             has_one :product_instance, :as => :product_instance_record
 
-            [:product_type,:product_type=,:description,:description=].each do |m| delegate m, :to => :product_instance end
+            [
+                :product_type,
+                :product_type=,
+                :description,
+                :description=,
+                :external_identifier,
+                :external_identifier=,
+                :external_id_source,
+                :external_id_source=,
+                :product_feature_instances
+            ].each do |m|
+              delegate m, :to => :product_instance
+            end
 
           end
         end
@@ -40,7 +52,7 @@ module ErpProducts
           end
 
           def destroy_product_instance
-              self.product_instance.destroy if (self.product_instance && !self.product_instance.frozen?)
+            self.product_instance.destroy if (self.product_instance && !self.product_instance.frozen?)
           end
 
         end

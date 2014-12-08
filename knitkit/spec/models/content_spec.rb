@@ -11,7 +11,7 @@ describe Content do
 
   describe "self.find_by_section_id" do
     it "should return all articles belonging to the given section" do
-      if Object.const_defined?('WorkflowProcess')
+      if Object.class_exists?('WorkflowProcess')
         WorkflowProcess.create(:internal_identifier => "test_content_mgmt", :process_template => true)
         WorkflowStep.create(:internal_identifier => "Start", :executable_command_id => 1, :executable_command_type => "ManualWorkflowStep", :workflow_process_id => 1, :initial_step => true)
       end
@@ -27,7 +27,7 @@ describe Content do
 
   describe "self.find_by_section_id_filtered_by_id" do
     it "should return all articles conected to the given section that also have ids in the given filter list" do
-      if Object.const_defined?('WorkflowProcess')
+      if Object.class_exists?('WorkflowProcess')
         WorkflowProcess.create(:internal_identifier => "test_content_mgmt", :process_template => true)
         WorkflowStep.create(:internal_identifier => "Start", :executable_command_id => 1, :executable_command_type => "ManualWorkflowStep", :workflow_process_id => 1, :initial_step => true)
       end
@@ -52,7 +52,7 @@ describe Content do
       @website.website_sections << WebsiteSection.create(:title => "section title")
       @website.publish("Publish Sections", user)
 
-      if Object.const_defined?('WorkflowProcess')
+      if Object.class_exists?('WorkflowProcess')
         WorkflowProcess.create(:internal_identifier => "test_content_mgmt", :process_template => true)
         WorkflowStep.create(:internal_identifier => "Start", :executable_command_id => 1, :executable_command_type => "ManualWorkflowStep", :workflow_process_id => 1, :initial_step => true)
       end
@@ -84,7 +84,7 @@ describe Content do
       @website.website_sections << WebsiteSection.create(:title => "section title")
       @website.publish("Publish Sections", user)
 
-      if Object.const_defined?('WorkflowProcess')
+      if Object.class_exists?('WorkflowProcess')
         WorkflowProcess.create(:internal_identifier => "test_content_mgmt", :process_template => true)
         WorkflowStep.create(:internal_identifier => "Start", :executable_command_id => 1, :executable_command_type => "ManualWorkflowStep", :workflow_process_id => 1, :initial_step => true)
       end
@@ -116,7 +116,7 @@ describe Content do
       @website.hosts << WebsiteHost.create(:host => "some_host")
       @website.website_sections << WebsiteSection.create(:title => "section title")
       @website.website_sections << WebsiteSection.create(:title => "section title 2")
-      if Object.const_defined?('WorkflowProcess')
+      if Object.class_exists?('WorkflowProcess')
         WorkflowProcess.create(:internal_identifier => "test_content_mgmt", :process_template => true)
         WorkflowStep.create(:internal_identifier => "Start", :executable_command_id => 1, :executable_command_type => "ManualWorkflowStep", :workflow_process_id => 1, :initial_step => true)
       end
@@ -146,7 +146,7 @@ describe Content do
       @website = Website.create(:name => "Some Site")
       @website.hosts << WebsiteHost.create(:host => "some_host")
       @website.website_sections << WebsiteSection.create(:title => "section title")
-      if Object.const_defined?('WorkflowProcess')
+      if Object.class_exists?('WorkflowProcess')
         WorkflowProcess.create(:internal_identifier => "test_content_mgmt", :process_template => true)
         WorkflowStep.create(:internal_identifier => "Start", :executable_command_id => 1, :executable_command_type => "ManualWorkflowStep", :workflow_process_id => 1, :initial_step => true)
       end
@@ -161,7 +161,7 @@ describe Content do
 
   describe "add_comment" do
     it "should add a comment to the article" do
-      if Object.const_defined?('WorkflowProcess')
+      if Object.class_exists?('WorkflowProcess')
         WorkflowProcess.create(:internal_identifier => "test_content_mgmt", :process_template => true)
         WorkflowStep.create(:internal_identifier => "Start", :executable_command_id => 1, :executable_command_type => "ManualWorkflowStep", :workflow_process_id => 1, :initial_step => true)
       end
@@ -175,7 +175,7 @@ describe Content do
 
   describe "get_comments" do
     it "should return all comments for an article limited by the given limit" do
-      if Object.const_defined?('WorkflowProcess')
+      if Object.class_exists?('WorkflowProcess')
         WorkflowProcess.create(:internal_identifier => "test_content_mgmt", :process_template => true)
         WorkflowStep.create(:internal_identifier => "Start", :executable_command_id => 1, :executable_command_type => "ManualWorkflowStep", :workflow_process_id => 1, :initial_step => true)
       end
@@ -192,7 +192,7 @@ describe Content do
       @website = Website.create(:name => "Some Site")
       @website.hosts << WebsiteHost.create(:host => "some_host")
       @website.website_sections << WebsiteSection.create(:title => "section title")
-      if Object.const_defined?('WorkflowProcess')
+      if Object.class_exists?('WorkflowProcess')
         WorkflowProcess.create(:internal_identifier => "test_content_mgmt", :process_template => true)
         WorkflowStep.create(:internal_identifier => "Start", :executable_command_id => 1, :executable_command_type => "ManualWorkflowStep", :workflow_process_id => 1, :initial_step => true)
       end

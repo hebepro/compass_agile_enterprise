@@ -19,7 +19,7 @@ Ext.define("Compass.ErpApp.Shared.ConfigurationPanel", {
             store: {
                 proxy: {
                     type: 'ajax',
-                    url: setupConfigurationUrl +'/' + config.configurationId
+                    url: setupConfigurationUrl + '/' + config.configurationId
                 },
                 autoLoad: true,
                 root: {
@@ -45,10 +45,10 @@ Ext.define("Compass.ErpApp.Shared.ConfigurationPanel", {
             autoScroll: true,
             region: 'west',
             containerScroll: true,
-            border: false,
+            frame: false,
+            border: true,
             width: 200,
             height: 400,
-            frame: true,
             listeners: {
                 'itemclick': function (view, record, item, index, e) {
                     e.stopEvent();
@@ -76,10 +76,11 @@ Ext.define("Compass.ErpApp.Shared.ConfigurationPanel", {
                             tabPanel.add(configurationForm);
                             configurationForm = tabPanel.down('#' + itemId);
                         }
-                        else{
+                        else {
                             configurationForm.setup();
                         }
-                        tabPanel.setActiveTab(configurationForm);
+
+                        tabPanel.setActiveTab(itemId);
                     }
                 }
             }
@@ -118,6 +119,7 @@ Ext.define("Compass.ErpApp.Shared.ConfigurationPanel", {
 
         config = Ext.apply({
             layout: 'border',
+            border: false,
             items: [categoriesTreePanel, configurationFormsTabPanel]
         }, config);
 

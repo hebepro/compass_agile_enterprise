@@ -1,13 +1,18 @@
 Ext.ns("Compass.ErpApp.Organizer.Applications");
 
+Ext.define("Compass.ErpApp.Organizer.Applications.ApplicationContainer", {
+    extend: "Ext.tab.Panel",
+    alias: 'widget.applicationcontainer'
+});
+
 Compass.ErpApp.Organizer.Layout = function (config) {
 
     this.layoutConfig = config;
 
     //used to build accordion menu
     var accordionMenuItems = [];
-
     var menu = Ext.create('Ext.menu.Menu', {
+
         items: [
             {
                 text: 'Preferences',
@@ -96,6 +101,7 @@ Compass.ErpApp.Organizer.Layout = function (config) {
 
     this.centerPanel = Ext.create("Ext.Panel", {
         cls: 'masterPanel',
+
         id: 'erp_app_viewport_center',
         style: {
             marginRight: '20px',
@@ -157,7 +163,6 @@ Compass.ErpApp.Organizer.Layout = function (config) {
                                     tab = masterPanel.down('#' + menuItem.tabItemId);
 
                                 masterPanel.setActiveTab(tab);
-
                             }, component);
                         }
                     }
@@ -168,45 +173,15 @@ Compass.ErpApp.Organizer.Layout = function (config) {
                         cursor: 'pointer'
                     }
                 });
-
-            if (menuItem.filterPanel) {
-                menuItems.push({
-                    xtype: 'panel',
-                    hidden: true,
-                    itemId: 'filterPanel' + "_" + menuItem.tabItemId,
-                    frame: true,
-                    bodyPadding: '5px',
-                    style: {
-                        borderRadius: '5px'
-                    },
-                    dockedItems: [
-                        {
-                            xtype: 'toolbar',
-                            ui: 'cleantoolbar-dark',
-                            dock: 'top',
-                            items: [
-                                {
-                                    ui: 'cleanbutton',
-                                    text: 'Back',
-                                    handler: function (btn) {
-                                        var cardHolder = Ext.getCmp(cardHolderId),
-                                            menuPanel = cardHolder.down('#menuItems');
-
-                                        cardHolder.getLayout().setActiveItem(menuPanel, {transitionType: 'crossFade'});
-                                    }
-                                }
-                            ]
-                        }
-                    ],
-                    items: menuItem.filterPanel
-                });
-            }
         });
 
         var menuPanel = {
             xtype: 'panel',
             title: config.title,
-            layout: 'transitioncard',
+            layout: {
+                type: "vbox",
+                align: "center"
+            },
             id: cardHolderId,
             listeners: {
                 render: function (c) {
@@ -225,23 +200,13 @@ Compass.ErpApp.Organizer.Layout = function (config) {
                     });
                 }
             },
-            items: [
-                {
-                    xtype: 'container',
-                    itemId: 'menuItems',
-                    layout: {
-                        type: "vbox",
-                        align: "center"
-                    },
-                    items: menuItems
-                }
-            ]
+            items: menuItems
         };
 
         accordionMenuItems.push(menuPanel);
 
         //Create the main tab panel which will house instances of the main Task Types
-        var masterPanel = Ext.create('Ext.tab.Panel', {
+        var masterPanel = Ext.widget('applicationcontainer', {
             id: config.id,
             itemId: config.id,
             //These tasks we always want open
@@ -249,26 +214,6 @@ Compass.ErpApp.Organizer.Layout = function (config) {
         });
 
         this.centerPanel.add(masterPanel);
-
-        masterPanel.addListener('tabchange', function (tabPanel, newCard, oldCard, eOpt) {
-            var cardHolder = Ext.getCmp(cardHolderId),
-                menuPanel = cardHolder.down('#menuItems');
-
-            var itemId = newCard.itemId;
-            result = Ext.Array.findBy(config.menuItems, function (item) {
-                if (item.tabItemId == itemId) {
-                    return true;
-                }
-            });
-
-            if (Ext.isEmpty(result.filterPanel)) {
-                cardHolder.getLayout().setActiveItem(menuPanel, {transitionType: 'crossFade'});
-            }
-            else {
-                var filterPanel = cardHolder.down('#filterPanel' + "_" + result.tabItemId);
-                cardHolder.getLayout().setActiveItem(filterPanel, {transitionType: 'crossFade'});
-            }
-        });
     };
 
     this.setup = function () {
@@ -306,18 +251,17 @@ Compass.ErpApp.Organizer.Layout = function (config) {
                 }
             ]
         });
-
         this.viewPort.down('#organizerWelcomeMsg').setText('Welcome: ' + currentUser.description);
     };
 };
 
 Compass.ErpApp.Organizer.Layout.setActiveCenterItem = function (panel_id, menu_id, loadRemoteData) {
     // set panel as active
-    var panel = Ext.ComponentMgr.get('erp_app_viewport_center').down('#' + panel_id);
+    var panel = Ext.getCmp('erp_app_viewport_center').down('#' + panel_id);
     if (panel)
-        Ext.ComponentMgr.get('erp_app_viewport_center').layout.setActiveItem(panel);
+        Ext.getCmp('erp_app_viewport_center').layout.setActiveItem(panel);
 
-    var menu = Ext.ComponentMgr.get('erp_app_viewport_west').down('#' + menu_id);
+    var menu = Ext.getCmp('erp_app_viewport_west').down('#' + menu_id);
     if (menu)
         menu.expand();
 

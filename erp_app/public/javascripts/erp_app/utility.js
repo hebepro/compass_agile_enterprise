@@ -2,7 +2,7 @@ var Compass = window['Compass'] || {};
 Compass['ErpApp'] = Compass['ErpApp'] || {};
 Compass.ErpApp['Utility'] = Compass.ErpApp['Utility'] || {};
 
-//handle session timeout
+//helper to create namespaces
 Compass.ErpApp.Utility.createNamespace = function (namespaces) {
     var spaces = namespaces.split('.'),
         currentNamespace = null;
@@ -19,6 +19,7 @@ Compass.ErpApp.Utility.createNamespace = function (namespaces) {
     }
 };
 
+//handle session timeout
 Compass.ErpApp.Utility.SessionTimeout = {
     enabled: false,
     redirectTo: null,
@@ -32,7 +33,35 @@ Compass.ErpApp.Utility.SessionTimeout = {
             case 'start':
                 var self = this;
                 this.redirectTimer = window.setTimeout(function () {
-                    window.location = self.redirectTo;
+                    if (window['Ext']) {
+                        Ext.Ajax.request({
+                            method: 'POST',
+                            url: '/session/is_alive',
+                            success: function (response, request) {
+                                var result = Ext.decode(repsonse.responseText);
+                                if (result.success) {
+                                    self.resetRedirect();
+                                }
+                                else {
+                                    window.location = self.redirectTo;
+                                }
+                            }
+                        });
+                    }
+                    else{
+                        jQuery.ajax({
+                            method: 'GET',
+                            url: '/session/is_alive',
+                            success: function (result, request) {
+                                if (result.success) {
+                                    self.resetRedirect();
+                                }
+                                else {
+                                    window.location = self.redirectTo;
+                                }
+                            }
+                        });
+                    }
                 }, this.redirectInMilliseconds);
                 break;
             case 'stop':
@@ -124,12 +153,18 @@ Compass.ErpApp.Utility.SessionTimeout = {
         this.setWarnTimer('start');
     },
     reset: function () {
+        this.resetWarning();
+        this.resetRedirect();
+    },
+    resetWarning: function () {
         this.setWarnTimer('stop');
-        this.setForceRedirectTimer('stop');
-
         this.setWarnTimer('start');
+    },
+    resetRedirect: function () {
+        this.setForceRedirectTimer('stop');
         this.setForceRedirectTimer('start');
     }
+
 };
 //end handle session timeout
 
@@ -167,6 +202,37 @@ Compass.ErpApp.Utility.promptReload = function () {
                 window.location.reload();
             }
         });
+    }
+};
+
+Compass.ErpApp.Utility.preventBrowserBack = function () {
+    // Push some history into this windows history to help prevent back button
+    for (var i = 0; i < 10; i++) {
+        window.history.pushState("history", 'CompassAE Desktop', "#" + i * new Date().getMilliseconds());
+    }
+};
+
+Compass.ErpApp.Utility.setupErpAppLogoutRedirect = function () {
+    if (window['Ext']) {
+        var runner = new Ext.util.TaskRunner(),
+            task = runner.start({
+                run: function () {
+                    Ext.Ajax.request({
+                        url: '/session/is_alive',
+                        method: 'GET',
+                        success: function (response) {
+                            var responseObj = Ext.decode(response.responseText);
+                            if (!responseObj.alive) {
+                                window.location = '/erp_app/login';
+                            }
+                        },
+                        failure: function () {
+                            // Log or alert
+                        }
+                    });
+                },
+                interval: 60000
+            });
     }
 };
 
@@ -392,11 +458,21 @@ function OnDemandLoadByAjax() {
 
     this.onFailure = function () {
     };
-};
+}
 
 //Javascript Extensions
 
 //Array Extensions
+Array.prototype.split = function (n) {
+    var len = this.length, out = [], i = 0;
+    while (i < len) {
+        var size = Math.ceil((len - i) / n--);
+        out.push(this.slice(i, i + size));
+        i += size;
+    }
+    return out;
+};
+
 Array.prototype.contains = function (element) {
     for (var i = 0; i < this.length; i++) {
         if (this[i] == element) {
@@ -455,6 +531,57 @@ Array.prototype.last = function () {
     }
 };
 
+//Lazy enumerator methods for Array
+
+Array.prototype.next = function() {
+    if(this.currentIndex == undefined){
+      this.currentIndex = -1;
+    }
+  
+  if(this[this.currentIndex + 1] != undefined){
+       return this[++this.currentIndex];
+    }else{
+      return false;
+    }
+ 
+};
+
+Array.prototype.prev = function() {
+    if(this.currentIndex == undefined){
+      this.currentIndex = -1;
+    }
+  
+  if(this[this.currentIndex - 1] != undefined){
+       return this[--this.currentIndex];
+    }else{
+      return false;
+    }
+ 
+};
+
+Array.prototype.current = function(){
+  if(this.currentIndex == undefined){
+    this.currentIndex = -1;
+  }
+  return this[this.currentIndex]; 
+};
+
+Array.prototype.reset = function() {
+  this.currentIndex = -1;
+  return this[this.currentIndex];
+};
+
+Array.prototype.peek = function() {
+  return this[this.currentIndex + 1];
+};
+
+Array.prototype.seek = function() {
+  this.currentIndex = 0;
+  return this[this.currentIndex];
+};
+
+//End of lazy enumerator methods for Array  
+
 Array.prototype.collect = function (item) {
     var items = [];
     try {
@@ -473,6 +600,9 @@ Array.prototype.empty = function () {
 };
 
 //String Extensions
+String.prototype.contains = function () {
+    return String.prototype.indexOf.apply(this, arguments) !== -1;
+};
 
 String.prototype.underscore = function () {
     return this.replace(/\s/g, "_");
