@@ -373,8 +373,9 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addDocumentOptions = function (self,
                                                 }, this, true);
                                             }
 
-                                            if (parentNode)
-                                                parentNode.appendChild(obj.node);
+                                            if (parentNode && parentNode != record.getOwnerTree().getRootNode()){
+                                                record.getOwnerTree().getStore().load({node: parentNode});
+                                            }
 
                                             window.close();
                                         },

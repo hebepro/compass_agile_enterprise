@@ -57,40 +57,17 @@ module Knitkit
             parent_section = WebsiteSection.where('id = ?', params[:parent_section_id]).first
             section_to_copy = OnlineDocumentSection.find(params[:id])
 
-            new_section = section_to_copy.dup
+            new_section = section_to_copy.copy(params[:title].strip, true, current_user)
 
-            # clear out internal identifier
-            new_section.internal_identifier = nil
-
-            new_section.title = params[:title].strip
-            new_section.website_id = @website.id
-
-            if new_section.save
-              # copy documented content
-              documented_item = DocumentedItem.where('online_document_section_id = ?', section_to_copy.id).first
-              documented_content = DocumentedContent.find(documented_item.documented_content_id)
-              new_documented_content = documented_content.dup
-
-              # clear out internal identifier
-              new_documented_content.internal_identifier = nil
-
-              new_documented_content.created_by = current_user
-              new_documented_content.save!
-              DocumentedItem.create(:documented_content_id => new_documented_content.id, :online_document_section_id => new_section.id)
-
-              if parent_section
-                new_section.move_to_child_of(parent_section)
-                new_section.save
-              end
-
-              new_section.update_path!
-
-              result = {:success => true,
-                        :parentNodeId => params[:parent_section_id],
-                        :node => build_section_hash(new_section)}
-            else
-              result = {:success => false, :message => new_section.errors.full_messages.join('<br/>')}
+            if parent_section
+              new_section.move_to_child_of(parent_section)
+              new_section.save
             end
+
+            result = {:success => true,
+                      :parentNodeId => params[:parent_section_id],
+                      :node => build_section_hash(new_section)}
+
 
           rescue => ex
             # TODO send error notification

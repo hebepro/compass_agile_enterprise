@@ -74,7 +74,6 @@ module Knitkit
               :hasLayout => !website_section.layout.blank?,
               :url => "http://#{@website_primary_host}#{website_section.path}",
               :internal_identifier => website_section.internal_identifier
-
           }
 
           if website_section.is_a?(OnlineDocumentSection) || website_section.type == 'OnlineDocumentSection'
