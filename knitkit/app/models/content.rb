@@ -68,11 +68,11 @@ class Content < ActiveRecord::Base
   end
 
   def self.find_by_section_id(website_section_id)
-    Content.joins(:website_section_contents).where('website_section_id = ?', website_section_id).order("website_section_contents.position ASC, website_section_contents.created_at DESC").all
+    Content.joins(:website_section_contents).where('website_section_id = ?', website_section_id).order("website_section_contents.position ASC, website_section_contents.created_at DESC")
   end
 
   def self.find_by_section_id_filtered_by_id(website_section_id, id_filter_list)
-    Content.joins(:website_section_contents).where("website_section_id = ? AND contents.id IN (#{id_filter_list.join(',')})", website_section_id).all
+    Content.joins(:website_section_contents).where("website_section_id = ? AND contents.id IN (#{id_filter_list.join(',')})", website_section_id)
   end
 
   def self.find_published_by_section(active_publication, website_section)

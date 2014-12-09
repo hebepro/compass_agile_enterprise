@@ -1,6 +1,8 @@
 Compass.ErpApp.Desktop.Applications.Knitkit.addDocumentOptions = function (self, items, record) {
-    var sectionId = record.data.id.split('_')[1];
+    var sectionId = record.get('recordId');
+    var websiteId = compassDesktop.getModule('knitkit-win').currentWebsite.id;
 
+    // Update security
     if (currentUser.hasCapability('unsecure', 'WebsiteSection') || currentUser.hasCapability('secure', 'WebsiteSection')) {
         items.push({
             text: 'Security',
@@ -8,12 +10,13 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addDocumentOptions = function (self,
             listeners: {
                 'click': function () {
                     var westRegion = Ext.getCmp('knitkitWestRegion');
-                    westRegion.changeSecurity(record, '/knitkit/erp_app/desktop/section/update_security', record.data.id.split('_')[1]);
+                    westRegion.changeSecurity(record, '/knitkit/erp_app/desktop/section/update_security', record.get('recordId'));
                 }
             }
         });
     }
 
+    // Create Document Section
     if (currentUser.hasCapability('create', 'WebsiteSection')) {
         items.push({
             text: 'Add Document',
@@ -61,18 +64,6 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addDocumentOptions = function (self,
                                     triggerAction: 'all'
                                 },
                                 {
-                                    xtype: 'combo',
-                                    forceSelection: true,
-                                    store: [
-                                        ['Content', 'Content']
-                                    ],
-                                    value: 'Content',
-                                    fieldLabel: 'Document Type',
-                                    name: 'documenttype',
-                                    allowBlank: false,
-                                    triggerAction: 'all'
-                                },
-                                {
                                     xtype: 'radiogroup',
                                     fieldLabel: 'Display in menu?',
                                     name: 'in_menu',
@@ -95,7 +86,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addDocumentOptions = function (self,
                                 {
                                     xtype: 'hidden',
                                     name: 'website_section_id',
-                                    value: record.data.id.split('_')[1]
+                                    value: record.get('recordId')
                                 },
                                 {
                                     xtype: 'hidden',
@@ -155,6 +146,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addDocumentOptions = function (self,
         });
     }
 
+    // Edit Document Section
     if (currentUser.hasCapability('edit', 'WebsiteSection')) {
         var contentInfo = record.data['contentInfo'];
 
@@ -236,7 +228,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addDocumentOptions = function (self,
                                 {
                                     xtype: 'hidden',
                                     name: 'id',
-                                    value: record.data.id.split('_')[1]
+                                    value: record.get('recordId')
                                 }
                             ]
                         }),
@@ -281,6 +273,132 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addDocumentOptions = function (self,
         });
     }
 
+    // Copy Document Section
+    items.push({
+        text: 'Copy Document',
+        iconCls: 'icon-copy',
+        listeners: {
+            'click': function () {
+                Ext.widget("window", {
+                    layout: 'fit',
+                    modal: true,
+                    title: 'Copy Document',
+                    plain: true,
+                    buttonAlign: 'center',
+                    items: {
+                        xtype: 'form',
+                        labelWidth: 110,
+                        frame: false,
+                        bodyStyle: 'padding:5px 5px 0',
+                        url: '/knitkit/erp_app/desktop/online_document_sections/copy',
+                        defaults: {
+                            width: 375
+                        },
+                        items: [
+                            {
+                                xtype: 'combo',
+                                name: 'parent_section_id',
+                                width: 320,
+                                loadingText: 'Retrieving Sections...',
+                                store: Ext.create("Ext.data.Store", {
+                                    proxy: {
+                                        type: 'ajax',
+                                        url: '/knitkit/erp_app/desktop/online_document_sections/existing_documents',
+                                        reader: {
+                                            type: 'json'
+                                        },
+                                        extraParams: {
+                                            website_id: websiteId
+                                        }
+                                    },
+                                    autoLoad: true,
+                                    fields: [
+                                        {
+                                            name: 'id'
+                                        },
+                                        {
+                                            name: 'title_permalink'
+
+                                        }
+                                    ]
+                                }),
+                                forceSelection: true,
+                                allowBlank: true,
+                                fieldLabel: 'Parent Document',
+                                mode: 'local',
+                                displayField: 'title_permalink',
+                                valueField: 'id',
+                                triggerAction: 'all'
+                            },
+                            {
+                                xtype: 'textfield',
+                                fieldLabel: 'Title',
+                                width: 320,
+                                value: record.data.text,
+                                name: 'title'
+                            },
+                            {
+                                xtype: 'hidden',
+                                name: 'id',
+                                value: sectionId
+                            },
+                            {
+                                xtype: 'hidden',
+                                name: 'website_id',
+                                value: websiteId
+                            }
+                        ]
+                    },
+                    buttons: [
+                        {
+                            text: 'Submit',
+                            listeners: {
+                                'click': function (button) {
+                                    var window = button.findParentByType('window');
+                                    var formPanel = window.query('.form')[0];
+
+                                    formPanel.getForm().submit({
+                                        waitMsg: 'Copying document section...',
+                                        success: function (form, action) {
+                                            var obj = Ext.decode(action.response.responseText);
+                                            var values = formPanel.getValues();
+                                            var parentNode = record.getOwnerTree().getRootNode();
+
+                                            if (!Ext.isEmpty(values.parent_section_id)) {
+                                                parentNode = parentNode.findChildBy(function (node) {
+                                                    if (node.get('recordType') == 'WebsiteSection'
+                                                        && node.get('recordId') == values.parent_section_id) {
+                                                        return true;
+                                                    }
+                                                }, this, true);
+                                            }
+
+                                            if (parentNode)
+                                                parentNode.appendChild(obj.node);
+
+                                            window.close();
+                                        },
+                                        failure: function (form, action) {
+                                            var obj = Ext.decode(action.response.responseText);
+                                            Ext.Msg.alert("Error", obj.message);
+                                        }
+                                    });
+                                }
+                            }
+                        },
+                        {
+                            text: 'Close',
+                            handler: function (btn) {
+                                btn.up('window').close();
+                            }
+                        }
+                    ]
+                }).show();
+            }
+        }
+    });
+
+    // Delete Document Section
     if (currentUser.hasCapability('delete', 'WebsiteSection')) {
         items.push({
             text: 'Delete Document Section',

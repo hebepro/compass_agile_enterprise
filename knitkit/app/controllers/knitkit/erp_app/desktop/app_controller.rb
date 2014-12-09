@@ -72,7 +72,6 @@ module Knitkit
               :inMenu => website_section.in_menu,
               :renderWithBaseLayout => website_section.render_base_layout?,
               :hasLayout => !website_section.layout.blank?,
-              :id => "section_#{website_section.id}",
               :url => "http://#{@website_primary_host}#{website_section.path}",
               :internal_identifier => website_section.internal_identifier
 
@@ -108,9 +107,8 @@ module Knitkit
 
           {
               recordType: 'Article',
-              recordId: website_section_content.id,
+              recordId: website_section_content.content.id,
               :objectType => "Article",
-              :id => content.id,
               :siteId => website.id,
               :content_area => website_section_content.content_area,
               :parentItemId => website_section.id,
