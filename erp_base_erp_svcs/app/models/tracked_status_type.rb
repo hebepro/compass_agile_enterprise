@@ -3,4 +3,8 @@ class TrackedStatusType < ActiveRecord::Base
 
   has_many :status_applications
 
+  def self.iid(internal_identifier)
+    where('internal_identifier = ?', internal_identifier).first
+  end
+
 end
