@@ -29,7 +29,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.ArticlesGridPanel", {
 
     editArticle: function (record) {
         var self = this;
-        var itemId = 'editArticle-' + record.get('id');
+        var itemId = 'editArticle-' + record.get('recordId');
         var editArticleWindow = Ext.ComponentQuery.query('#' + itemId).first();
 
         if (Compass.ErpApp.Utility.isBlank(editArticleWindow)) {
@@ -110,7 +110,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.ArticlesGridPanel", {
                             allowBlank: false,
                             name: 'id',
                             itemId: 'record_id',
-                            value: record.data.id
+                            value: record.get('recordId')
                         }
                     ]
                 },

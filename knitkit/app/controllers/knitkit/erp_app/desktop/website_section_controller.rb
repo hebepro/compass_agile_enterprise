@@ -65,6 +65,32 @@ module Knitkit
           end
         end
 
+        def copy
+          begin
+
+            @website = Website.find(params[:website_id])
+            parent_section = WebsiteSection.where('id = ?', params[:parent_section_id]).first
+            section_to_copy = WebsiteSection.find(params[:id])
+
+            new_section = section_to_copy.copy(params[:title].strip, true, true)
+
+            if parent_section
+              new_section.move_to_child_of(parent_section)
+              new_section.save
+            end
+
+            result = {:success => true, :parentNodeId => params[:parent_section_id], :node => build_section_hash(new_section)}
+
+          rescue => ex
+            # TODO send error notification
+            Rails.logger.error ex.message
+            Rails.logger.error ex.backtrace.join("\n")
+            result = {:success => false, :message => 'Could not copy Section'}
+          end
+
+          render :json => result
+        end
+
         def delete
           begin
             ActiveRecord::Base.transaction do

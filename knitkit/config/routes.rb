@@ -30,6 +30,10 @@ Knitkit::Engine.routes.draw do
       end
       resources :website_host
       resources :online_document_sections do
+        collection do
+          post :copy
+          get :existing_documents
+        end
         member do
           get :content
         end

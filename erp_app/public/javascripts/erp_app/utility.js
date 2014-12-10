@@ -599,6 +599,12 @@ Array.prototype.empty = function () {
     return (this.length == 0);
 };
 
+Array.prototype.eachSlice = function (size, callback){
+  for (var i = 0, l = this.length; i < l; i += size){
+    callback.call(this, this.slice(i, i + size));
+  }
+};
+
 //String Extensions
 String.prototype.contains = function () {
     return String.prototype.indexOf.apply(this, arguments) !== -1;
