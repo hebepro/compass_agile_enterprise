@@ -158,8 +158,14 @@ module ErpCommerce
           :expiration_month => params[:exp_month],
           :expiration_year => params[:exp_year]
         )
+
         credit_card.card_number = params[:card_number]
-        result = CreditCardAccount.new.purchase(financial_txn, params[:cvvs], ErpCommerce::Config.active_merchant_gateway_wrapper, {}, credit_card)
+
+        result = if params[:active_merchant_gateway_wrapper]
+                   CreditCardAccount.new.purchase(financial_txn, params[:cvvs], "ErpCommerce::ActiveMerchantWrappers::#{params[:active_merchant_gateway_wrapper]}".constantize, {private_key:params[:private_key],public_key:params[:public_key]}, credit_card)
+                 else
+                   CreditCardAccount.new.purchase(financial_txn, params[:cvvs], ErpCommerce::Config.active_merchant_gateway_wrapper, {}, credit_card)
+                 end
 
         #make sure cedit card payment was successful
         if result[:payment].nil? or !result[:payment].success
@@ -173,12 +179,13 @@ module ErpCommerce
         order.status = 'Pending Shipment'
         #update inventory counts
         #should be moved to model somewhere
-        order.order_line_items.each do |oli|
-          inventory_entry = oli.product_type.inventory_entries.first
-          inventory_entry.number_available -= 1
-          inventory_entry.number_sold += 1
-          inventory_entry.save
-        end
+        ########TODO NEED TO IMPLEMENT
+        # order.order_line_items.each do |oli|
+        #   inventory_entry = oli.product_type.inventory_entries.first
+        #   inventory_entry.number_available -= 1
+        #   inventory_entry.number_sold += 1
+        #   inventory_entry.save
+        # end
         #clear order from session
         clear_order
       end

@@ -80,7 +80,16 @@ module Widgets
 
       def checkout_finalize
         @products_url = params[:products_url]
+        website_configuration_items =  Website.find_by_host(request.host_with_port).configurations.first.configuration_items
+        params[:active_merchant_gateway_wrapper] =
+            website_configuration_items.where(configuration_item_type_id:ConfigurationItemType.find_by_internal_identifier('active_merchant_gateway').id).first.value
+        params[:private_key] =
+            website_configuration_items.where(configuration_item_type_id:ConfigurationItemType.find_by_internal_identifier('private_key').id).first.value
+        params[:public_key] =
+            website_configuration_items.where(configuration_item_type_id:ConfigurationItemType.find_by_internal_identifier('public_key').id).first.value
+
         success, @message, @order, @payment = ErpCommerce::OrderHelper.new(self).complete_order(params)
+
         set_total_price(@order)
 
         if success
