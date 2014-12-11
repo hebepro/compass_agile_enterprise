@@ -67,7 +67,7 @@ class AddActiveMerchantConfiguration
   end
 
   def self.down
-    #remove data here
+    #remove data heree
   end
 
 end
