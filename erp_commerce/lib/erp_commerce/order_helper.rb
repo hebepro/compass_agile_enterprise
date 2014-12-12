@@ -164,6 +164,7 @@ module ErpCommerce
     def complete_order(params, charge_credit_card=true)
       success = true
       message = nil
+      result = nil
       order = get_order
 
       ActiveRecord::Base.transaction do

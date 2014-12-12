@@ -90,10 +90,12 @@ module Widgets
 
         success, @message, @order, @payment = ErpCommerce::OrderHelper.new(self).complete_order(params)
 
+        order_party = @order.root_txn.biz_txn_party_roles.first.party
+
         set_total_price(@order)
 
         if success
-          CheckoutMailer.email_confirmation(self.current_user.party.billing_email_address.email_address, @order, @payment).deliver
+          CheckoutMailer.email_confirmation(order_party.billing_email_address.email_address, @order, @payment).deliver
           render :update => {:id => "#{@uuid}_result", :view => :confirmation}
         else
           render :update => {:id => "#{@uuid}_result", :view => :payment}
