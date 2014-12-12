@@ -42,7 +42,7 @@ module Widgets
       def checkout_demographics
         unless self.current_user.nil?
           params[:ship_to_billing] = 'on'
-          params[:bill_to_email] = current_user.email
+          params[:bill_to_email] = current_user ? current_user.email : nil
           @products_url = params[:products_url]
           @order = ErpCommerce::OrderHelper.new(self).get_order
           set_total_price(@order)
