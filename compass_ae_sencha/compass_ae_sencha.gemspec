@@ -15,5 +15,5 @@ Gem::Specification.new do |s|
   s.description = "This gem provides the Sencha library for CompassAE."
   s.license     = "GPL-3"
 
-  s.files = Dir["{public,lib}/**/*"] + ["GPL-3-LICENSE", "Rakefile", "README.md"]
+  s.files = Dir["{public,app,lib}/**/*"] + ["GPL-3-LICENSE", "Rakefile", "README.md"]
 end

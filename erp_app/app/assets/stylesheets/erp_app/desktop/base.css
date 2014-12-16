@@ -1,0 +1,254 @@
+
+.x-window-default {
+    background-color: #537697 !important;
+    border-color: #537697 !important;
+}
+
+.x-toolbar-ide-main span.x-btn-inner {
+    color: #fff;
+}
+
+.x-toolbar-ide-main {
+    background-color: #537697 !important;
+    padding-bottom: 5px !important;
+    border-top-left-radius: 5px !important;
+    border-top-right-radius: 5px !important;
+}
+
+.x-toolbar-ide-main .x-btn {
+    background-color: #537697 !important;
+    background-image: none !important;
+}
+
+.x-border-layout-ct {
+    background-color: #537697 !important;
+}
+
+.x-btn-default-toolbar-small {
+    background-image: none !important;
+    border-style: none !important;
+    background-color: #fff;
+}
+
+.x-btn-toolbar {
+    background-image: none !important;
+}
+
+.x-toolbar-tasktoolbar .x-btn-default-toolbar-small {
+    background-color: #fff !important;
+    border-style: none;
+}
+
+#erp_app_viewport_center-body {
+    border-bottom-left-radius: 9px !important;
+    border-bottom-right-radius: 9px !important;
+}
+
+.x-tab-bar-strip-default {
+    border-color: white;
+    background-color: white;
+}
+
+.x-tab-default-active {
+    background-color: white;
+}
+
+.x-tab-bar-strip-default-top {
+    border-top-right-radius: 5px;
+}
+
+.x-panel-body-default {
+    border-width: 0;
+}
+
+/*----------------------------------------------------
+    Start Button
+*/
+
+.ux-start-button-icon {
+    background-image: url(/assets/erp_app/desktop/compass_logo_start_icon.png) !important;
+    background-color: transparent;
+}
+
+.ux-start-button .x-btn-arrow {
+    background-image: none;
+}
+
+.ux-start-button .x-btn-arrow-right {
+    padding-left: 10px;
+}
+
+.ux-taskbar {
+    padding-left: 4px !important;
+    background-color: #D8D8D8 !important;
+}
+
+.ux-start-button {
+    background-color: #D8D8D8 !important;
+}
+
+/*
+    Start Button (Black)
+*/
+
+.ux-desktop-black .ux-start-button {
+    height: 28px;
+    padding: 0px;
+    display: block;
+    background-color: #aaa !important;
+}
+
+.ux-desktop-black .ux-start-button em {
+    margin-top: 5px;
+}
+
+.ux-desktop-black .ux-start-button .x-btn-inner {
+    color: black;
+    font-size:11px;
+    font-weight: bold;
+}
+
+.ux-desktop-black .ux-start-button {
+    background-image: -moz-linear-gradient(center top , #E4F3FF, #D9EDFF 48%, #C2D8F2 52%, #C6DCF6);
+    border-radius: 8px 8px 8px 8px;
+    border-color: #81A4D0;
+    background-color: #D8D8D8 !important;
+}
+
+/*----------------------------------------------------
+    Start Menu
+*/
+
+.ux-start-menu-toolbar .x-btn-inner {
+    text-align: left;
+}
+
+.ux-start-menu-toolbar {
+    padding: 4px !important;
+}
+
+/*----------------------------------------------------
+    TaskBar
+*/
+
+.ux-taskbar .x-toolbar {
+    background: transparent none;
+    border-color: transparent;
+}
+
+.x-ie6 .ux-taskbar .x-toolbar {
+    border-color: #d3e1f1;
+}
+
+.ux-desktop-windowbar .x-btn-inner,
+.x-nbr .ux-desktop-windowbar .x-btn-icon-text-left button {
+    text-align: left !important;
+}
+
+.ux-taskbar .x-toolbar {
+    height: 28px;
+}
+
+.ux-taskbar {
+    height: 28px;
+    padding: 0;
+}
+
+.x-toolbar .x-toolbar {
+    padding: 0;
+}
+
+/*
+    TaskBar (Black)
+*/
+
+.ux-desktop-black .ux-taskbar {
+    background: transparent url('../images/taskbar/black/taskbar-start-panel-bg.gif') repeat-x left top;
+    border-color: transparent;
+    /*height: 30px;*/
+}
+
+.ux-desktop-black .ux-taskbar .x-splitter {
+    background: transparent url(../images/taskbar/black/taskbar-split-h.gif) no-repeat scroll 0 -2px;
+}
+
+.ux-desktop-black .ux-taskbar .x-toolbar-text {
+    color: white !important;
+}
+
+.ux-desktop-black .ux-taskbar .x-btn-default-toolbar-small-over {
+    background-color: yellow;
+}
+
+.ux-desktop-black .ux-taskbar .x-btn-inner {
+    color: white;
+}
+
+.ux-desktop-black .ux-taskbar .x-btn-pressed .x-btn-inner, .ux-taskbar .x-btn-over .x-btn-inner {
+    color: black;
+}
+
+/*----------------------------------------------------
+    Tray Clock
+*/
+
+.ux-desktop-trayclock {
+    text-align: center;
+    vertical-align: middle;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+/*----------------------------------------------------
+    Desktop DataView
+*/
+
+.ux-wallpaper {
+    background-color: #000;
+    background-image: url(/assets/art/compass-ae-logo-reverse-1.png) !important;
+    background-repeat: no-repeat;
+    background-position: 50% 15%;
+}
+
+.ux-wallpaper-tiled {
+    background-repeat: repeat;
+}
+
+
+.ux-desktop-shortcut-container {
+
+    width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20%;
+}
+
+.ux-desktop-shortcut {
+    display: inline-table;
+    cursor: pointer;
+    text-align: center;
+    padding: 8px;
+    width: 80px;
+    margin: 20px 0 8px 30px;
+}
+
+.ux-desktop-shortcut-icon {
+    width: 64px;
+    height: 64px;
+    background-color: transparent;
+    background-repeat: no-repeat;
+}
+
+.ux-desktop-shortcut-text {
+    font: normal 10px tahoma,arial,verdana,sans-serif;
+    text-decoration: none;
+    padding-top: 5px;
+    color: white;
+}
+
+.x-view-over .ux-desktop-shortcut-text {
+    text-decoration: underline;
+}
+
+/*Added to override a value set by extjs so that the ckeditor toolbar layouts out correctly */
+span.cke_browser_webkit *{box-sizing: content-box;}

@@ -5,20 +5,20 @@
 
       <%@desktop.applications.each do |application|%>
       .<%=application.shortcut_id%>-shortcut {
-          background-image: url("/images/icons/<%=application.icon.split('-')[1]%>/<%=application.icon.split('-')[1]%>_64x64.png");
+          background-image: url("/assets/icons/<%=application.icon.split('-')[1]%>/<%=application.icon.split('-')[1]%>_64x64.png");
           height: 64px;
           width: 64px;
       }
 
       <%end%>
       .control-panel-win-shortcut {
-          background-image: url("/images/icons/control_panel/control_panel_64x64.png");
+          background-image: url("/assets/icons/control_panel/control_panel_64x64.png");
           height: 64px;
           width: 64px;
       }
 
       .web-navigator-win-shortcut {
-          background-image: url("/images/icons/globe/globe_64x64.png");
+          background-image: url("/assets/icons/globe/globe_64x64.png");
           height: 64px;
           width: 64px;
       }
@@ -44,7 +44,7 @@
       }
 
       #loading .loading-indicator {
-          background: url(/images/erp_app/ext_loading_image.gif) no-repeat;
+          background: url(/assets/erp_app/ext_loading_image.gif) no-repeat;
           color: #555;
           font: bold 13px tahoma, arial, helvetica;
           padding: 8px 42px;
@@ -73,7 +73,14 @@
               "erp_app/ckeditor/ckeditor.js"
       ) %>
   <!-- application resources -->
-  <%= static_javascript_include_tag(@desktop.applications.collect { |app| app.locate_resources('javascripts') }.flatten) %>
+ <% if Rails.env.production? %>
+   <% @user.get_application_compiled_resources('desktop','javascripts').each do |resource|%>
+     <%= javascript_include_tag(resource) %>
+   <% end %>
+ <% else %>
+   <%= static_javascript_include_tag(@desktop.applications.collect { |app| app.locate_resources('javascripts') }.flatten) %>
+ <% end %>
+
   <!-- end application resources -->
   <%= include_compass_ae_instance %>
   <%= set_max_file_upload %>
@@ -131,7 +138,7 @@
                         <%=raw @desktop.shortcuts.collect{|app| "{name:'#{app.description}',iconCls:'#{app.shortcut_id}-shortcut',module:'#{app.shortcut_id}'}"}.join(",")%>
                     ]
                 }),
-                //wallpaper: "/images/wallpaper/<%=@desktop.get_preference(:desktop_background) %>",
+                //wallpaper: "/assets/images/wallpaper/<%=@desktop.get_preference(:desktop_background) %>",
                 wallpaperStretch: true
             })
         },

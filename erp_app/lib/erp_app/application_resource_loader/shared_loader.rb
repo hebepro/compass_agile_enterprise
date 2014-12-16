@@ -11,10 +11,10 @@ module ErpApp
 				# get shared resources (global js and css)
   			shared_files = []
   			root_and_engines_dirs.each do |engine_dir|
-    			if File.exists? File.join(engine_dir,"public/#{resource_type.to_s}/erp_app", folder)
-    		    shared_path = File.join(engine_dir,"public/#{resource_type.to_s}/erp_app", folder,"**/*.#{(resource_type == :javascripts) ? 'js' : 'css'}")
+    			if File.exists? File.join(engine_dir,"app/assets/#{resource_type.to_s}/erp_app", folder)
+    		    shared_path = File.join(engine_dir,"app/assets/#{resource_type.to_s}/erp_app", folder,"**/*.#{(resource_type == :javascripts) ? 'js' : 'css'}")
     		    paths = Dir.glob(shared_path)
-            shared_files = (shared_files | paths.collect{|path| path.gsub(File.join(engine_dir,'public',resource_type.to_s,'/'),'')}).flatten
+            shared_files = (shared_files | paths.collect{|path| path.gsub(File.join(engine_dir,'app/assets',resource_type.to_s,'/'),'')}).flatten
     		  end
         end
 

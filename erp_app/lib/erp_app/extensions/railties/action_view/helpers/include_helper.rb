@@ -42,8 +42,8 @@ module ErpApp
             def include_code_mirror_library(theme='vibrant-ink')
               resources = static_javascript_include_tag("erp_app/codemirror/lib/codemirror.js")
               resources << static_javascript_include_tag("erp_app/codemirror_highlight.js")
-              resources << (raw "<link rel=\"stylesheet\" type=\"text/css\" href=\"/javascripts/erp_app/codemirror/lib/codemirror.css\" />")
-              resources << (raw "<link rel=\"stylesheet\" type=\"text/css\" href=\"/javascripts/erp_app/codemirror/theme/"+theme+".css\" />")
+              resources << (raw "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/erp_app/codemirror/lib/codemirror.css\" />")
+              resources << (raw "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/erp_app/codemirror/theme/"+theme+".css\" />")
               resources
             end
 
