@@ -13,5 +13,7 @@ require "erp_app/widgets"
 require "erp_app/config"
 require "erp_app/engine"
 
+require "compass_ae_assets_compiler/compass_ae_assets_compiler"
+
 module ErpApp
 end

@@ -82,6 +82,19 @@ module ErpApp
               end
             end
 
+            def load_compiled_shared_application_resources(resource_type)
+              resource_type = resource_type.to_sym
+              shared_loader = ErpApp::ApplicationResourceLoader::SharedLoader.new
+              compiled_file_paths = shared_loader.locate_compiled_shared_files(resource_type)
+              case resource_type
+              when :javascripts
+                raw compiled_file_paths.collect {|file_path| javascript_include_tag file_path}.join("")
+              when :stylesheets
+                raw compiled_file_paths.collect {|file_path| raw javascript_include_tag file_path}.join("")
+              end
+            end
+
+
           end #IncludeHelper
         end #Helpers
       end #ActionView

@@ -65,7 +65,11 @@
   <%= static_javascript_include_tag('erp_app/widgets.js') %>
   <%= include_widgets %>
   <!-- shared application resources -->
-  <%= load_shared_application_resources(:javascripts) %>
+ <% if Rails.env.production? %>
+     <%= load_compiled_shared_application_resources(:javascripts) %>       
+   <% else %>
+     <%= load_shared_application_resources(:javascripts) %>
+ <% end %>
   <!-- end shared application resources -->
   <%= static_javascript_include_tag(
               "erp_app/desktop/applications/control_panel/module.js",
@@ -73,7 +77,7 @@
               "erp_app/ckeditor/ckeditor.js"
       ) %>
   <!-- application resources -->
- <% if Rails.env.production? %>
+  <% if Rails.env.production? %>
    <% @user.get_application_compiled_resources('desktop','javascripts').each do |resource|%>
      <%= javascript_include_tag(resource) %>
    <% end %>

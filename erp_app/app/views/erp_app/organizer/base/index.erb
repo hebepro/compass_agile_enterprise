@@ -14,14 +14,25 @@
   <%= static_javascript_include_tag("erp_app/utility.js") %>
 
   <!-- shared application resources -->
-  <%= load_shared_application_resources(:javascripts) %>
+ <% if Rails.env.production? %>
+     <%= load_compiled_shared_application_resources(:javascripts) %>       
+   <% else %>
+     <%= load_shared_application_resources(:javascripts) %>
+ <% end %>
   <!-- end shared application resources -->
 
   <%= static_javascript_include_tag("erp_app/organizer/preference_window.js", "erp_app/organizer/layout.js", "erp_app/organizer/default_menu_tree_panel.js") %>
   <%= setup_js_authentication(@user) %>
 
+
   <!-- application resources -->
-  <%= static_javascript_include_tag(@organizer.applications.collect { |app| app.locate_resources('javascripts') }.flatten) %>
+   <% if Rails.env.production? %>
+     <% @user.get_application_compiled_resources('organizer','javascripts').each do |resource|%>
+       <%= javascript_include_tag(resource) %>
+     <% end %>
+   <% else %>
+     <%= static_javascript_include_tag(@organizer.applications.collect { |app| app.locate_resources('javascripts') }.flatten) %>
+   <% end %>
   <!-- end application resources -->
 
   <%= set_max_file_upload %>

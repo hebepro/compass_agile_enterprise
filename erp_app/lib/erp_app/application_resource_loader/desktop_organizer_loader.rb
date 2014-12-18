@@ -16,15 +16,29 @@ module ErpApp
 
       def locate_application_paths(resource_type)
         engine_dirs = Rails::Application::Railties.engines.map{|p| p.config.root.to_s}
-
+        root_and_engines_dirs = (engine_dirs | [Rails.root])
         application_paths = []
         engine_dirs.each do |engine_dir|
-          if File.exists? File.join(engine_dir,"app/assets/#{resource_type}/erp_app/#{@app_type}/applications",@app_name)
-            application_paths << File.join(engine_dir,"app/assets/#{resource_type}/erp_app/#{@app_type}/applications",@app_name)
+          file_path = File.join(engine_dir,"app/assets/#{resource_type}/erp_app/#{@app_type}/applications",@app_name)
+          if File.exists? file_path
+            # if the path as the manifest push it in front 
+            if File.exists?(File.join(file_path, 'app.js'))
+              application_paths.insert(0, file_path)
+            else
+              application_paths << file_path
+            end
           end
         end
+        root_and_engines_dirs.each do |engine_dir|
+          app_extension_path = File.join(engine_dir,"app/assets/#{resource_type}/extensions/compass_ae/erp_app/#{@app_type}/applications",@app_name)
+          if File.exists? app_extension_path
+            application_paths << app_extension_path
+          end
+        end
+        
         application_paths
       end
+
       
       private
 
@@ -41,7 +55,6 @@ module ErpApp
         root_and_engines_dirs.each do |engine_dir|
           #get all files based on resource type we are loading for the
           #given application type andapplication
-          
           if File.exists? File.join(engine_dir,"app/assets/#{resource_type}/erp_app/#{@app_type}/applications",@app_name)
             application_path = File.join(engine_dir,"app/assets/#{resource_type}/erp_app/#{@app_type}/applications",@app_name)
             search_path = File.join(application_path,"**/*.#{extension}")
