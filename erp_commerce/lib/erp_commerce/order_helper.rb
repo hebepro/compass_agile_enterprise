@@ -23,7 +23,7 @@ module ErpCommerce
     end
 
     # add a product type to cart
-    def add_to_cart(product_type)
+    def add_to_cart(product_type, price = nil)
       order = get_order(true)
 
       ActiveRecord::Base.transaction do
@@ -36,7 +36,7 @@ module ErpCommerce
         if order_line_item.charge_lines.empty?
           money = Money.create(
               :description => pricing_plan.description,
-              :amount => 0,
+              :amount => price || pricing_plan.money_amount,
               :currency => pricing_plan.currency)
 
           charge_line = ChargeLine.create(
@@ -50,7 +50,7 @@ module ErpCommerce
         end
 
         # increment charge line by price of product
-        charge_line.money.amount += pricing_plan.money_amount
+        charge_line.money.amount += price || pricing_plan.money_amount
         charge_line.money.save
 
         order.current_status = 'items_added'
