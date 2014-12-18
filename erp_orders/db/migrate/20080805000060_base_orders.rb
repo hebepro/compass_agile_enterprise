@@ -6,11 +6,15 @@ class BaseOrders < ActiveRecord::Migration
 		    t.column    :state_machine,   		:string
 		    t.column    :description,     		:string
 		    t.column		:order_txn_type_id, 	:integer
+
 		    # Multi-table inheritance info 
-		    # MTI implemented using Rails' polymorphic associations    
+        t.column    :order_txn_record_id,   :integer
+        t.column    :order_txn_record_type, :string
+
 		    # Contact Information 
 		    t.column 		:email,              :string 
-		    t.column 		:phone_number,       :string 
+		    t.column 		:phone_number,       :string
+
 		    # Shipping Address 
 		    t.column 		:ship_to_first_name,     :string
 		    t.column 		:ship_to_last_name,      :string
@@ -22,13 +26,13 @@ class BaseOrders < ActiveRecord::Migration
 		    t.column    :ship_to_state,          :string
 		    t.column 		:ship_to_postal_code,    :string
 		    t.column 		:ship_to_country,        :string
+
 		    # Private parts 
 		    t.column 		:customer_ip, 			    :string 
 		    t.column    :order_number,          :integer
 		    t.column 		:status,                :string 
 		    t.column 		:error_message, 		    :string
-		    t.column    :order_txn_record_id,   :integer
-		    t.column    :order_txn_record_type, :string
+
 		    t.timestamps
       end
 

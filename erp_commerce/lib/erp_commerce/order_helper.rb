@@ -27,18 +27,16 @@ module ErpCommerce
       order = get_order(true)
 
       ActiveRecord::Base.transaction do
-        # see if we need to update quantity or create new line item
-        order_line_item = get_line_item_for_product_type(product_type)
-        if order_line_item.nil?
-          #create order line item
-          order_line_item = order.add_line_item(product_type)
-          order_line_item.quantity = 1
+        order_line_item = order.add_line_item(product_type)
 
-          # get pricing plan and create charge lines
-          pricing_plan = product_type.get_current_simple_plan
+        # get the pricing plan for the product type
+        pricing_plan = product_type.get_current_simple_plan
+
+        # check for charge line and if not present create it
+        if order_line_item.charge_lines.empty?
           money = Money.create(
               :description => pricing_plan.description,
-              :amount => pricing_plan.money_amount,
+              :amount => 0,
               :currency => pricing_plan.currency)
 
           charge_line = ChargeLine.create(
@@ -46,21 +44,17 @@ module ErpCommerce
               :money => money,
               :description => pricing_plan.description)
 
-          charge_line.save
           order_line_item.charge_lines << charge_line
-          order.status = 'Items Added'
-          order.save
         else
-          order_line_item.quantity ||= 1
-          order_line_item.quantity += 1
           charge_line = order_line_item.charge_lines.first
-          pricing_plan = product_type.get_current_simple_plan
-          charge_line.money.amount += pricing_plan.money_amount
-          order.status = 'Items Added'
-          charge_line.money.save
-          order_line_item.save
-          order.save
         end
+
+        # increment charge line by price of product
+        charge_line.money.amount += pricing_plan.money_amount
+        charge_line.money.save
+
+        order.current_status = 'items_added'
+        order.save
       end
 
       order
@@ -153,7 +147,7 @@ module ErpCommerce
         order.set_billing_info(party)
 
         # update status
-        order.status = 'Demographics Gathered'
+        order.current_status = 'demographics_gathered'
         order.save
       end
 
@@ -171,7 +165,8 @@ module ErpCommerce
         if charge_credit_card
           # make credit financial txns and payment txns
           # create financial txn for order
-          financial_txn = create_financial_txns(order)
+
+          financial_txn = create_financial_txn(order)
 
           credit_card = CreditCard.new(
               :first_name_on_card => params[:first_name],
@@ -188,16 +183,25 @@ module ErpCommerce
                      CreditCardAccount.new.purchase(financial_txn, params[:cvvs], ErpCommerce::Config.active_merchant_gateway_wrapper, {}, credit_card)
                    end
 
-          # make sure cedit card payment was successful
-          if result[:payment].nil? or !result[:payment].success
+
+          if result[:payment] && result[:payment].success
+            payment_application = PaymentApplication.new
+            payment_application.money = Money.create(:description => 'Payment Application',
+                                                     :amount => financial_txn.money.amount,
+                                                     :currency => financial_txn.money.currency)
+            payment_application.financial_txn = financial_txn
+            payment_application.payment_applied_to = order
+            payment_application.save
+          else
             success = false
             message = result[:message]
-            order.status = 'Credit Card Failed'
+            order.current_status = 'payment_failed'
           end
         end
 
         if success
-          order.status = 'Pending Shipment'
+          order.current_status = 'paid'
+          order.current_status = 'ready_to_ship'
           # update inventory counts
           # should be moved to model somewhere
           ########TODO NEED TO IMPLEMENT
@@ -232,26 +236,19 @@ module ErpCommerce
 
     private
 
-    def get_line_item_for_product_type(product_type)
-      order = get_order(true)
-      order.line_items.detect { |oli| oli.product_type == product_type }
-    end
-
     def clear_order
       session['order_txn_id'] = nil
     end
 
     def create_order
       order = OrderTxn.create
-      order.status = 'Initialized'
+      order.current_status = 'initialized'
       order.order_number = (Time.now.to_i / (rand(100)+2)).round
       order.save
       session['order_txn_id'] = order.id
       setup_biz_txn_party_roles(order, current_user.party) if current_user
       order
     end
-
-    private
 
     # sets up payor party role
     def setup_biz_txn_party_roles(order, party)
@@ -264,9 +261,9 @@ module ErpCommerce
       tpr.save
     end
 
-    # create financial_txn for charge lines
-    def create_financial_txns(order)
-      #total up all order line items charge lines
+    # create financial_txn
+    def create_financial_txn(order)
+      # total up all order line items charge lines
       total_payment = 0
       currency = nil
       order.get_total_charges.each do |money|
@@ -274,15 +271,12 @@ module ErpCommerce
         currency = money.currency
       end
 
-      financial_txn = FinancialTxn.create(:money => Money.create(:description => 'Order Payment', :amount => total_payment, :currency => currency))
+      money = Money.create(:description => 'Order Payment', :amount => total_payment, :currency => currency)
+
+      financial_txn = FinancialTxn.create(:money => money)
       financial_txn.description = 'Order Payment'
       financial_txn.txn_type = BizTxnType.iid('payment_txn')
       financial_txn.save
-
-      order.get_all_charge_lines.each do |charge_line|
-        charge_line.add_payment_txn(financial_txn)
-        charge_line.save
-      end
 
       financial_txn
     end
