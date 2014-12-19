@@ -1,8 +1,8 @@
 module CompassAeAssetsCompiler
   module Sprockets
-    class Shared
-      def initialize
-        @env = ::Sprockets::Environment.new(Rails.root)
+    class Shared < Base
+      def initialize(options = {})
+        super(options)
       end
 
       def compile
@@ -11,21 +11,21 @@ module CompassAeAssetsCompiler
         
         mime_type = 'application/javascript'
         
-        @env.unregister_processor(mime_type, ::Sprockets::DirectiveProcessor)
-        @env.register_processor(mime_type, ::CompassAeDirectiveProcessor)
-
+        env.unregister_processor(mime_type, ::Sprockets::DirectiveProcessor)
+        env.register_processor(mime_type, ::CompassAeDirectiveProcessor)
+        
         shared_loader =  ErpApp::ApplicationResourceLoader::SharedLoader.new
         shared_paths = shared_loader.locate_shared_paths('javascripts')
         
         # append the application directory path
         shared_paths.each do |shared_path|
           shared_logical_path = shared_path.gsub("#{Rails.root.to_s}/",'')
-          @env.append_path(shared_logical_path)
+          env.append_path(shared_logical_path)
         end
         
         shared_manifest_path = shared_paths.first
         #get BundledAsset instance for the app
-        asset = @env.find_asset("#{shared_manifest_path}/app.js")
+        asset = env.find_asset("#{shared_manifest_path}/app.js")
 
         # output path
         target = File.join(Rails.public_path, config.assets.prefix, 'erp_app', 'shared')

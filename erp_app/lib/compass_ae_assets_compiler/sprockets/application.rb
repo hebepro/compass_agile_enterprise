@@ -1,17 +1,17 @@
 module CompassAeAssetsCompiler
   module Sprockets
-    class Application
-      def initialize(application)
+    class Application < Base
+      def initialize(application, options = {})
+        super(options)
         @application = application
-        @env = ::Sprockets::Environment.new(Rails.root)
       end
       
       def compile
         config = Rails.application.config
         mime_type = 'application/javascript'
         
-        @env.unregister_processor(mime_type, ::Sprockets::DirectiveProcessor)
-        @env.register_processor(mime_type, ::CompassAeDirectiveProcessor)
+        env.unregister_processor(mime_type, ::Sprockets::DirectiveProcessor)
+        env.register_processor(mime_type, ::CompassAeDirectiveProcessor)
         
         app_type = (@application.type == 'DesktopApplication') ? 'desktop' : 'organizer'
         
@@ -19,13 +19,13 @@ module CompassAeAssetsCompiler
         app_paths = @application.locate_application_paths('javascripts')
         app_paths.each do |app_path|
           app_logical_path = app_path.gsub("#{Rails.root.to_s}/",'')
-          @env.append_path(app_logical_path)
+          env.append_path(app_logical_path)
         end
         
         app_manifest_path = app_paths.first
         
         #get BundledAsset instance for the app
-        asset = @env.find_asset("#{app_manifest_path}/app.js")
+        asset = env.find_asset("#{app_manifest_path}/app.js")
         
         # output path
         target = File.join(Rails.public_path, config.assets.prefix, 'erp_app', app_type)
