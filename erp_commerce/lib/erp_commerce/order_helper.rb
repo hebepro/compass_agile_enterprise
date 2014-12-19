@@ -36,7 +36,7 @@ module ErpCommerce
         if order_line_item.charge_lines.empty?
           money = Money.create(
               :description => pricing_plan.description,
-              :amount => price || pricing_plan.money_amount,
+              :amount => 0,
               :currency => pricing_plan.currency)
 
           charge_line = ChargeLine.create(
