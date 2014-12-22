@@ -8,13 +8,16 @@ class OrganizerApplicationGenerator < Rails::Generators::NamedBase
     template "controllers/controller_template.erb", "app/controllers/erp_app/organizer/#{file_name}/base_controller.rb"
 
     #make javascript
-    template "public/base.js.erb", "public/javascripts/erp_app/organizer/applications/#{file_name}/base.js"
+    template "assets/base.js.erb", "app/assets/javascripts/erp_app/organizer/applications/#{file_name}/base.js"
 
+    #make javascript manifest
+    template "assets/app.js.erb", "app/assets/javascripts/erp_app/desktop/applications/#{file_name}/app.js"
+    
     #make css folder
-    empty_directory "public/stylesheets/erp_app/organizer/applications/#{file_name}"
+    empty_directory "app/assets/stylesheets/erp_app/organizer/applications/#{file_name}"
 
     #make images folder
-    empty_directory "public/images/erp_app/organizer/applications/#{file_name}"
+    empty_directory "app/assets/images/erp_app/organizer/applications/#{file_name}"
     
     #add route
     route "match '/erp_app/organizer/#{file_name}(/:action)' => \"erp_app/organizer/#{file_name}/base\""

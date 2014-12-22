@@ -37,16 +37,20 @@
 
   <%= set_max_file_upload %>
 
-  <!-- shared application resources -->
-  <%= load_shared_application_resources(:stylesheets) %>
-  <!-- end application resources -->
-
   <!-- load base css file -->
   <%= static_stylesheet_link_tag('erp_app/organizer/base.css') %>
   <!-- end load base css file -->
 
   <!-- application resources -->
-  <%= static_stylesheet_link_tag(@organizer.applications.collect { |app| app.locate_resources('stylesheets') }.flatten) %>
+  <% if Rails.env.production? %>
+    <%= load_compiled_shared_application_resources(:stylesheets) %>
+    <% @user.get_application_compiled_resources('organizer','stylesheets').each do |resource|%>
+       <%= stylesheet_link_tag(resource) %>
+    <% end %>
+ <% else %>
+   <%= load_shared_application_resources(:stylesheets) %> 
+   <%= static_stylesheet_link_tag(@organizer.applications.collect { |app| app.locate_resources('stylesheets') }.flatten) %>
+ <% end %>
   <!-- end application resources -->
 
   <%= include_compass_ae_instance %>

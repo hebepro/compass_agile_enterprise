@@ -8,13 +8,17 @@ class DesktopApplicationGenerator < Rails::Generators::NamedBase
     template "controllers/controller_template.erb", "app/controllers/erp_app/desktop/#{file_name}/base_controller.rb"
 
     #make javascript
-    template "public/module.js.erb", "public/javascripts/erp_app/desktop/applications/#{file_name}/module.js"
+    template "assets/module.js.erb", "app/assets/javascripts/erp_app/desktop/applications/#{file_name}/module.js"
+
+    #make javascript manifest
+    template "assets/app.js.erb", "app/assets/javascripts/erp_app/desktop/applications/#{file_name}/app.js"
+    
 
     #make css folder
-    empty_directory "public/stylesheets/erp_app/desktop/applications/#{file_name}"
+    empty_directory "app/assets/stylesheets/erp_app/desktop/applications/#{file_name}"
 
     #make images folder
-    empty_directory "public/images/erp_app/desktop/applications/#{file_name}"
+    empty_directory "app/assets/images/erp_app/desktop/applications/#{file_name}"
     
     #add route
     route "match '/erp_app/desktop/#{file_name}(/:action)' => \"erp_app/desktop/#{file_name}/base\""

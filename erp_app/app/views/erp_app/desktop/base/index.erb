@@ -82,7 +82,7 @@
      <%= javascript_include_tag(resource) %>
    <% end %>
  <% else %>
-   <%= static_javascript_include_tag(@desktop.applications.collect { |app| app.locate_resources('javascripts') }.flatten) %>
+ <%= static_javascript_include_tag(@desktop.applications.collect { |app| app.locate_resources('javascripts') }.flatten) %>
  <% end %>
 
   <!-- end application resources -->
@@ -93,12 +93,23 @@
 
   <!--stylesheets-->
   <%= static_stylesheet_link_tag('erp_app/desktop/base.css') %>
+
+  <% if Rails.env.production? %>
+    <%= load_compiled_shared_application_resources(:stylesheets) %>
+    <% @user.get_application_compiled_resources('desktop','stylesheets').each do |resource|%>
+       <%= stylesheet_link_tag(resource) %>
+    <% end %>
+ <% else %>
+   <%= load_shared_application_resources(:stylesheets) %> 
+   <%= static_stylesheet_link_tag(@desktop.applications.collect { |app| app.locate_resources('stylesheets') }.flatten) %>
+ <% end %>
+
   <%= static_stylesheet_link_tag('extjs/resources/css/callout-default.css') %>
   <!-- shared application resources -->
-  <%= load_shared_application_resources(:stylesheets) %>
+  <!-- <%= load_shared_application_resources(:stylesheets) %> -->
   <!-- end application resources -->
   <!-- application resources -->
-  <%= static_stylesheet_link_tag(@desktop.applications.collect { |app| app.locate_resources('stylesheets') }.flatten) %>
+  <!-- <%= static_stylesheet_link_tag(@desktop.applications.collect { |app| app.locate_resources('stylesheets') }.flatten) %> -->
   <!-- end application resources -->
   <!-- compass extensions -->
   <%= include_code_mirror_library %>

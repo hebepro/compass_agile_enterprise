@@ -90,7 +90,7 @@ module ErpApp
               when :javascripts
                 raw compiled_file_paths.collect {|file_path| javascript_include_tag file_path}.join("")
               when :stylesheets
-                raw compiled_file_paths.collect {|file_path| raw javascript_include_tag file_path}.join("")
+                raw compiled_file_paths.collect {|file_path| stylesheet_link_tag file_path}.join("")
               end
             end
 
