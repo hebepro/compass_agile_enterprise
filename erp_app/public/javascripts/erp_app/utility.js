@@ -35,12 +35,12 @@ Compass.ErpApp.Utility.SessionTimeout = {
                 this.redirectTimer = window.setTimeout(function () {
                     if (window['Ext']) {
                         Ext.Ajax.request({
-                            method: 'POST',
+                            method: 'GET',
                             url: '/session/is_alive',
                             success: function (response, request) {
-                                var result = Ext.decode(repsonse.responseText);
+                                var result = Ext.decode(response.responseText);
                                 if (result.success) {
-                                    self.resetRedirect();
+                                    self.reset();
                                 }
                                 else {
                                     window.location = self.redirectTo;
@@ -48,13 +48,13 @@ Compass.ErpApp.Utility.SessionTimeout = {
                             }
                         });
                     }
-                    else{
+                    else {
                         jQuery.ajax({
                             method: 'GET',
                             url: '/session/is_alive',
                             success: function (result, request) {
                                 if (result.success) {
-                                    self.resetRedirect();
+                                    self.reset();
                                 }
                                 else {
                                     window.location = self.redirectTo;
@@ -83,8 +83,14 @@ Compass.ErpApp.Utility.SessionTimeout = {
                                 Ext.Ajax.request({
                                     method: 'POST',
                                     url: '/session/keep_alive',
-                                    success: function (result, request) {
-                                        self.reset();
+                                    success: function (response, request) {
+                                        var responseObj = Ext.decode(response.responseText);
+                                        if (responseObj.success) {
+                                            self.reset();
+                                        }
+                                        else {
+                                            window.location = self.redirectTo;
+                                        }
                                     }
                                 });
                             }
@@ -141,7 +147,11 @@ Compass.ErpApp.Utility.SessionTimeout = {
     },
     setupSessionTimeout: function (warnInMilliseconds, redirectInMilliseconds, redirectTo) {
         if (window['Ext']) {
-            Ext.Ajax.addListener('requestcomplete', this.reset, this);
+            Ext.Ajax.addListener('requestcomplete', function (conn, response, options) {
+                if (options.url != '/session/is_alive') {
+                    this.reset();
+                }
+            }, this);
         }
 
         this.enabled = true;
@@ -322,7 +332,7 @@ Compass.ErpApp.Utility.isBlank = function (obj) {
         return Ext.isEmpty(obj);
     }
     else {
-        return(!obj || jQuery.trim(obj) === "" || obj.length == 0);
+        return (!obj || jQuery.trim(obj) === "" || obj.length == 0);
     }
 };
 
@@ -368,7 +378,7 @@ Compass.ErpApp.Utility.formatCurrency = function (num) {
         cents = "0" + cents;
     for (var i = 0; i < Math.floor((num.length - (1 + i)) / 3); i++)
         num = num.substring(0, num.length - (4 * i + 3)) + ',' +
-            num.substring(num.length - (4 * i + 3));
+        num.substring(num.length - (4 * i + 3));
     return (((sign) ? '' : '-') + '$' + num + '.' + cents);
 };
 
@@ -533,51 +543,51 @@ Array.prototype.last = function () {
 
 //Lazy enumerator methods for Array
 
-Array.prototype.next = function() {
-    if(this.currentIndex == undefined){
-      this.currentIndex = -1;
+Array.prototype.next = function () {
+    if (this.currentIndex == undefined) {
+        this.currentIndex = -1;
     }
-  
-  if(this[this.currentIndex + 1] != undefined){
-       return this[++this.currentIndex];
-    }else{
-      return false;
+
+    if (this[this.currentIndex + 1] != undefined) {
+        return this[++this.currentIndex];
+    } else {
+        return false;
     }
- 
+
 };
 
-Array.prototype.prev = function() {
-    if(this.currentIndex == undefined){
-      this.currentIndex = -1;
+Array.prototype.prev = function () {
+    if (this.currentIndex == undefined) {
+        this.currentIndex = -1;
     }
-  
-  if(this[this.currentIndex - 1] != undefined){
-       return this[--this.currentIndex];
-    }else{
-      return false;
+
+    if (this[this.currentIndex - 1] != undefined) {
+        return this[--this.currentIndex];
+    } else {
+        return false;
     }
- 
+
 };
 
-Array.prototype.current = function(){
-  if(this.currentIndex == undefined){
+Array.prototype.current = function () {
+    if (this.currentIndex == undefined) {
+        this.currentIndex = -1;
+    }
+    return this[this.currentIndex];
+};
+
+Array.prototype.reset = function () {
     this.currentIndex = -1;
-  }
-  return this[this.currentIndex]; 
+    return this[this.currentIndex];
 };
 
-Array.prototype.reset = function() {
-  this.currentIndex = -1;
-  return this[this.currentIndex];
+Array.prototype.peek = function () {
+    return this[this.currentIndex + 1];
 };
 
-Array.prototype.peek = function() {
-  return this[this.currentIndex + 1];
-};
-
-Array.prototype.seek = function() {
-  this.currentIndex = 0;
-  return this[this.currentIndex];
+Array.prototype.seek = function () {
+    this.currentIndex = 0;
+    return this[this.currentIndex];
 };
 
 //End of lazy enumerator methods for Array  
@@ -599,10 +609,10 @@ Array.prototype.empty = function () {
     return (this.length == 0);
 };
 
-Array.prototype.eachSlice = function (size, callback){
-  for (var i = 0, l = this.length; i < l; i += size){
-    callback.call(this, this.slice(i, i + size));
-  }
+Array.prototype.eachSlice = function (size, callback) {
+    for (var i = 0, l = this.length; i < l; i += size) {
+        callback.call(this, this.slice(i, i + size));
+    }
 };
 
 //String Extensions
