@@ -10,7 +10,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.SplashScreen", {
         {
             xtype: 'image',
             style: 'padding-left: 50%; margin-left: -400px;',
-            src: '/images/splash/splash.png'   // src: 'http://placehold.it/800x250'
+            src: '/assets/splash/splash.png'   // src: 'http://placehold.it/800x250'
         },
         {
             html: "<div style='margin: 15px 50px 5px 50px;'><p style='margin: 0px; color: #222; text-align: center; font-size: 16px; font-weight: 300;'>Click on the shortcuts below to get started.</p></div>"
@@ -36,7 +36,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.SplashScreen", {
                     items: [
                         {
                             xtype: 'image',
-                            src: '/images/splash/images/data-model-icon.png',
+                            src: '/assets/splash/images/data-model-icon.png',
                             height: 80,
                             width: 80,
                             style: 'margin: 0px 0px 5px 10px;',
@@ -73,7 +73,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.SplashScreen", {
                     items: [
                         {
                             xtype: 'image',
-                            src: '/images/splash/images/console-icon.png',
+                            src: '/assets/splash/images/console-icon.png',
                             height: 80,
                             width: 80,
                             style: 'margin: 0px 0px 5px 10px;',
@@ -107,7 +107,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.SplashScreen", {
                     items: [
                         {
                             xtype: 'image',
-                            src: '/images/knitkit/splash/images/tutorials.png',
+                            src: '/assets/knitkit/splash/images/tutorials.png',
                             height: 80,
                             width: 80,
                             style: 'margin: 0px 0px 5px 10px;',
