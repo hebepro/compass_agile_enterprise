@@ -1,10 +1,44 @@
+# create_table :order_txns do |t|
+#   t.column    :description,     		:string
+#   t.column		:order_txn_type_id, 	:integer
+#
+#   # Multi-table inheritance info
+#   t.column    :order_txn_record_id,   :integer
+#   t.column    :order_txn_record_type, :string
+#
+#   # Contact Information
+#   t.column 		:email,              :string
+#   t.column 		:phone_number,       :string
+#
+#   # Shipping Address
+#   t.column 		:ship_to_first_name,     :string
+#   t.column 		:ship_to_last_name,      :string
+#   t.column 		:ship_to_address_line_1, :string
+#   t.column 		:ship_to_address_line_2, :string
+#   t.column 		:ship_to_city,           :string
+#   t.column    :ship_to_state,          :string
+#   t.column 		:ship_to_postal_code,    :string
+#   t.column 		:ship_to_country,        :string
+#
+#   # Private parts
+#   t.column 		:customer_ip, 			    :string
+#   t.column    :order_number,          :integer
+#   t.column 		:error_message, 		    :string
+#
+#   t.timestamps
+# end
+#
+# add_index :order_txns, :order_txn_type_id
+# add_index :order_txns, [:order_txn_record_id, :order_txn_record_type], :name => 'order_txn_record_idx'
+#
+# add_index :order_txns, :order_txn_type_id
+# add_index :order_txns, [:order_txn_record_id, :order_txn_record_type], :name => 'order_txn_record_idx'
+
 class OrderTxn < ActiveRecord::Base
   attr_protected :created_at, :updated_at
 
-  # serialize custom attributes
-  is_json :custom_fields
-
   acts_as_biz_txn_event
+  has_tracked_status
 
   belongs_to :order_txn_record, :polymorphic => true
   has_many   :order_line_items, :dependent => :destroy
@@ -34,7 +68,7 @@ class OrderTxn < ActiveRecord::Base
       cur_money = charge.money
       cur_total = total_hash[cur_money.currency.internal_identifier]
       if (cur_total.nil?)
-        cur_total = cur_money.clone
+        cur_total = cur_money.dup
       else
         cur_total.amount = 0 if cur_total.amount.nil?
         cur_total.amount += cur_money.amount if !cur_money.amount.nil?
@@ -77,8 +111,6 @@ class OrderTxn < ActiveRecord::Base
 
 	def add_product_type_line_item(product_type, reln_type = nil, to_role = nil, from_role = nil)
 
-    li = OrderLineItem.new
-
     if(product_type.is_a?(Array))
       if (product_type.size == 0)
         return
@@ -107,10 +139,20 @@ class OrderTxn < ActiveRecord::Base
       product_type_for_line_item = product_type
     end
 
-    li.product_type = product_type_for_line_item
-    self.line_items << li
-    li.save
-    return li
+    line_item = get_line_item_for_product_type(product_type_for_line_item)
+
+    if line_item
+      line_item.quantity += 1
+      line_item.save
+    else
+      line_item = OrderLineItem.new
+      line_item.product_type = product_type_for_line_item
+      line_item.quantity = 1
+      line_item.save
+      line_items << line_item
+    end
+
+    line_item
 	end
 
   def add_product_instance_line_item(product_instance, reln_type = nil, to_role = nil, from_role = nil)
@@ -150,6 +192,10 @@ class OrderTxn < ActiveRecord::Base
     self.line_items << li
     li.save
     return li
+  end
+
+  def get_line_item_for_product_type(product_type)
+    line_items.detect { |oli| oli.product_type == product_type }
   end
 
   def find_party_by_role(role_type_iid)

@@ -1,6 +1,8 @@
 Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, items, record) {
-    var sectionId = record.data.id.split('_')[1];
+    var sectionId = record.get('recordId');
+    var websiteId = compassDesktop.getModule('knitkit-win').currentWebsite.id;
 
+    // Add Article
     items.push({
         text: 'Add Article',
         iconCls: 'icon-document',
@@ -112,9 +114,9 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
                 }).show();
             }
         }
-    })
-    ;
+    });
 
+    // Attach Article
     items.push({
         text: 'Attach Article',
         iconCls: 'icon-copy',
@@ -298,6 +300,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
         }
     });
 
+    // Update Security
     if (currentUser.hasCapability('unsecure', 'WebsiteSection') || currentUser.hasCapability('secure', 'WebsiteSection')) {
         items.push({
             text: 'Security',
@@ -311,6 +314,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
         });
     }
 
+    // Create Section
     if (currentUser.hasCapability('create', 'WebsiteSection') && !record.get('isBlog')) {
         items.push({
             text: 'Add Section',
@@ -458,6 +462,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
         });
     }
 
+    // Edit Section
     if (currentUser.hasCapability('edit', 'WebsiteSection')) {
         items.push({
             text: 'Update ' + record.data["type"],
@@ -593,11 +598,11 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
                     }).show();
                 }
             }
-        })
-        ;
+        });
     }
 
-//no layouts for blogs.
+    // Edit / Update Layout
+    // no layouts for blogs.
     if (Compass.ErpApp.Utility.isBlank(record.data['isBlog']) && record.data['hasLayout']) {
         if (currentUser.hasCapability('edit', 'WebsiteSectionLayout')) {
             items.push({
@@ -647,6 +652,133 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
         }
     }
 
+    // Copy Section
+    items.push({
+        text: 'Copy ' + record.data["type"],
+        iconCls: 'icon-copy',
+        listeners: {
+            'click': function () {
+                Ext.widget("window", {
+                    layout: 'fit',
+                    modal: true,
+                    title: 'Copy' + record.data["type"],
+                    plain: true,
+                    buttonAlign: 'center',
+                    items: {
+                        xtype: 'form',
+                        labelWidth: 110,
+                        frame: false,
+                        bodyStyle: 'padding:5px 5px 0',
+                        url: '/knitkit/erp_app/desktop/section/copy',
+                        defaults: {
+                            width: 375
+                        },
+                        items: [
+                            {
+                                xtype: 'combo',
+                                name: 'parent_section_id',
+                                width: 320,
+                                loadingText: 'Retrieving Sections...',
+                                store: Ext.create("Ext.data.Store", {
+                                    proxy: {
+                                        type: 'ajax',
+                                        url: '/knitkit/erp_app/desktop/section/existing_sections',
+                                        reader: {
+                                            type: 'json'
+                                        },
+                                        extraParams: {
+                                            website_id: websiteId
+                                        }
+                                    },
+                                    autoLoad: true,
+                                    fields: [
+                                        {
+                                            name: 'id'
+                                        },
+                                        {
+                                            name: 'title_permalink'
+
+                                        }
+                                    ]
+                                }),
+                                forceSelection: true,
+                                allowBlank: true,
+                                fieldLabel: 'Parent Section',
+                                mode: 'local',
+                                displayField: 'title_permalink',
+                                valueField: 'id',
+                                triggerAction: 'all'
+                            },
+                            {
+                                xtype: 'textfield',
+                                fieldLabel: 'Title',
+                                width: 320,
+                                value: record.data.text,
+                                name: 'title'
+                            },
+                            {
+                                xtype: 'hidden',
+                                name: 'id',
+                                value: sectionId
+                            },
+                            {
+                                xtype: 'hidden',
+                                name: 'website_id',
+                                value: websiteId
+                            }
+                        ]
+                    },
+                    buttons: [
+                        {
+                            text: 'Submit',
+                            listeners: {
+                                'click': function (button) {
+                                    var window = button.findParentByType('window');
+                                    var formPanel = window.query('.form')[0];
+
+                                    formPanel.getForm().submit({
+                                        waitMsg: 'Copying section...',
+                                        success: function (form, action) {
+                                            var obj = Ext.decode(action.response.responseText);
+                                            var values = formPanel.getValues();
+                                            var parentNode = record.getOwnerTree().getRootNode();
+
+                                            if (!Ext.isEmpty(values.parent_section_id)) {
+                                                parentNode = parentNode.findChildBy(function (node) {
+                                                    if (node.get('recordType') == 'WebsiteSection'
+                                                        && node.get('recordId') == values.parent_section_id) {
+                                                        return true;
+                                                    }
+                                                }, this, true);
+                                            }
+
+                                            if (parentNode && parentNode != record.getOwnerTree().getRootNode()){
+                                                record.getOwnerTree().getStore().load({node: parentNode});
+                                            }
+
+                                            window.close();
+                                        },
+                                        failure: function (form, action) {
+                                            var obj = Ext.decode(action.response.responseText);
+                                            Ext.Msg.alert("Error", obj.message);
+                                        }
+                                    });
+                                }
+                            }
+                        },
+                        {
+                            text: 'Close',
+                            handler: function (btn) {
+                                btn.up('window').close();
+                            }
+                        }
+                    ]
+                }).show();
+            }
+        }
+    });
+
+    // Delete Section
     if (currentUser.hasCapability('delete', 'WebsiteSection')) {
         items.push({
             text: 'Delete ' + record.data["type"],
@@ -684,6 +816,6 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
             }
         });
     }
+
     return items;
-}
-;
+};

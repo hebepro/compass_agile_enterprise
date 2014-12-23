@@ -42,7 +42,7 @@ module Widgets
       def checkout_demographics
         unless self.current_user.nil?
           params[:ship_to_billing] = 'on'
-          params[:bill_to_email] = current_user.email
+          params[:bill_to_email] = current_user ? current_user.email : nil
           @products_url = params[:products_url]
           @order = ErpCommerce::OrderHelper.new(self).get_order
           set_total_price(@order)
@@ -80,11 +80,22 @@ module Widgets
 
       def checkout_finalize
         @products_url = params[:products_url]
+        website_configuration_items =  Website.find_by_host(request.host_with_port).configurations.first.configuration_items
+        params[:active_merchant_gateway_wrapper] =
+            website_configuration_items.where(configuration_item_type_id:ConfigurationItemType.find_by_internal_identifier('active_merchant_gateway').id).first.value
+        params[:private_key] =
+            website_configuration_items.where(configuration_item_type_id:ConfigurationItemType.find_by_internal_identifier('private_key').id).first.value
+        params[:public_key] =
+            website_configuration_items.where(configuration_item_type_id:ConfigurationItemType.find_by_internal_identifier('public_key').id).first.value
+
         success, @message, @order, @payment = ErpCommerce::OrderHelper.new(self).complete_order(params)
+
+        order_party = @order.root_txn.biz_txn_party_roles.first.party
+
         set_total_price(@order)
 
         if success
-          CheckoutMailer.email_confirmation(self.current_user.party.billing_email_address.email_address, @order, @payment).deliver
+          CheckoutMailer.email_confirmation(order_party.billing_email_address.email_address, @order, @payment).deliver
           render :update => {:id => "#{@uuid}_result", :view => :confirmation}
         else
           render :update => {:id => "#{@uuid}_result", :view => :payment}

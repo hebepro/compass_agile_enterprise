@@ -2,10 +2,11 @@ class WebsiteSection < ActiveRecord::Base
   attr_protected :created_at, :updated_at
 
   after_create :update_paths # must happen after has_roles so that after_create :save_secured_model fires first
-  before_save  :update_path, :check_internal_identifier
+  before_save :update_path, :check_internal_identifier
 
   extend FriendlyId
   friendly_id :title, :use => [:slugged, :scoped], :slug_column => :permalink, :scope => [:website_id, :parent_id]
+
   def should_generate_new_friendly_id?
     new_record?
   end
@@ -38,6 +39,42 @@ class WebsiteSection < ActiveRecord::Base
     end
   end
 
+  def copy(title=nil, copy_articles=false, copy_children=false)
+    new_section = WebsiteSection.new
+
+    new_section.title = title.nil? ? self.title : title
+    new_section.layout = self.layout
+    new_section.in_menu = self.in_menu
+    new_section.render_base_layout = self.render_base_layout
+    new_section.website_id = self.website_id
+
+    new_section.save!
+
+    # copy attached articles
+    if copy_articles
+      self.articles.readonly(false).each do |article|
+        article.website_sections << new_section
+        article.save
+      end
+    end
+
+    if copy_children
+      self.children.each do |child_section|
+        new_child_section = child_section.copy(nil, copy_articles, copy_children)
+        new_child_section.move_to_child_of(new_section)
+      end
+    end
+
+    new_section.update_path!
+
+    # update all children paths after all are saved.
+    new_section.descendants.each do |descendant|
+      descendant.update_path!
+    end
+
+    new_section
+  end
+
   def is_blog?
     self.is_a?(Blog) || self.attributes['type'] == 'Blog'
   end
@@ -68,7 +105,7 @@ class WebsiteSection < ActiveRecord::Base
   end
 
   def positioned_children
-    children.sort_by{|child| [child.position]}
+    children.sort_by { |child| [child.position] }
   end
 
   def paths
@@ -77,13 +114,13 @@ class WebsiteSection < ActiveRecord::Base
   end
 
   def child_by_path(path)
-    self.descendants.detect{|child| child.path == path}
+    self.descendants.detect { |child| child.path == path }
   end
 
   def type
     read_attribute(:type) || 'Page'
   end
-  
+
   def is_section?
     ['Page', 'Blog'].include? type
   end
@@ -91,7 +128,7 @@ class WebsiteSection < ActiveRecord::Base
   def display_in_menu?
     self.in_menu
   end
-  
+
   def is_secured?
     self.protected_with_capability?('view')
   end
@@ -101,7 +138,7 @@ class WebsiteSection < ActiveRecord::Base
   end
 
   def create_layout
-    self.layout = IO.read(File.join(WEBSITE_SECTIONS_TEMP_LAYOUT_PATH,"index.html.erb"))
+    self.layout = IO.read(File.join(WEBSITE_SECTIONS_TEMP_LAYOUT_PATH, "index.html.erb"))
     self.save
   end
 
@@ -111,7 +148,7 @@ class WebsiteSection < ActiveRecord::Base
     unless published_element.nil?
       layout_content = WebsiteSection::Version.where('version = ? and website_section_id = ?', published_element.version, published_element.published_element_record_id).first.layout
     else
-      layout_content = IO.read(File.join(WEBSITE_SECTIONS_TEMP_LAYOUT_PATH,"index.html.erb"))
+      layout_content = IO.read(File.join(WEBSITE_SECTIONS_TEMP_LAYOUT_PATH, "index.html.erb"))
     end
     layout_content
   end
@@ -133,7 +170,7 @@ class WebsiteSection < ActiveRecord::Base
     #               ORDER BY tags.name ASC"
     # ActsAsTaggableOn::Tag.find_by_sql(sql)
 
-    self.contents.tag_counts_on(:tags).sort_by{|t| t.name }
+    self.contents.tag_counts_on(:tags).sort_by { |t| t.name }
   end
 
   def update_path!
@@ -141,39 +178,39 @@ class WebsiteSection < ActiveRecord::Base
     self.path = new_path unless self.path == new_path
     self.save
   end
-  
+
   def build_section_hash
     section_hash = {
-      :name => self.title,
-      :has_layout => !self.layout.blank?,
-      :type => self.class.to_s,
-      :in_menu => self.in_menu,
-      :articles => [],
-      :roles => self.roles.collect(&:internal_identifier),
-      :path => self.path,
-      :permalink => self.permalink,
-      :internal_identifier => self.internal_identifier,
-      :render_base_layout => self.render_base_layout,
-      :position => self.position,
-      :sections => self.children.each.map{|child| child.build_section_hash}
+        :name => self.title,
+        :has_layout => !self.layout.blank?,
+        :type => self.class.to_s,
+        :in_menu => self.in_menu,
+        :articles => [],
+        :roles => self.roles.collect(&:internal_identifier),
+        :path => self.path,
+        :permalink => self.permalink,
+        :internal_identifier => self.internal_identifier,
+        :render_base_layout => self.render_base_layout,
+        :position => self.position,
+        :sections => self.children.each.map { |child| child.build_section_hash }
     }
 
     self.contents.each do |content|
       content_area = content.content_area_by_website_section(self)
       position = content.position_by_website_section(self)
       section_hash[:articles] << {
-        :name => content.title,
-        :tag_list => content.tag_list.join(', '),
-        :content_area => content_area,
-        :position => position,
-        :display_title => content.display_title,
-        :internal_identifier => content.internal_identifier
+          :name => content.title,
+          :tag_list => content.tag_list.join(', '),
+          :content_area => content_area,
+          :position => position,
+          :display_title => content.display_title,
+          :internal_identifier => content.internal_identifier
       }
     end
 
     section_hash
   end
-  
+
 
   protected
 
@@ -198,7 +235,7 @@ class WebsiteSection < ActiveRecord::Base
   def check_internal_identifier
     self.internal_identifier = self.permalink if self.internal_identifier.blank?
   end
-  
+
   private
 
   def self.get_published_version(active_publication, content)

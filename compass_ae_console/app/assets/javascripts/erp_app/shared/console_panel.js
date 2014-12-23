@@ -98,7 +98,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.CompassAeConsole.ConsolePanel", 
         if (includeOriginalCommand)
             self.update_history_panel("<span style='color:white'>" + command + "</span>");
 
-        if (command.startsWith("-clear")) {
+        if (Ext.String.startsWith(command, "-clear")) {
             self.clear_history_panel(self.startup_heading);
         } else {
 

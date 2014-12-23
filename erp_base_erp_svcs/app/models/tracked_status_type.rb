@@ -1,6 +1,8 @@
 class TrackedStatusType < ActiveRecord::Base
   attr_accessible :description, :internal_identifier
 
+  acts_as_nested_set
+
   has_many :status_applications
 
   def self.iid(internal_identifier)

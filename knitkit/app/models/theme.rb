@@ -14,6 +14,10 @@ class Theme < ActiveRecord::Base
   @knitkit_website_javascripts_path = "#{Knitkit::Engine.root.to_s}/public/javascripts/knitkit"
   @knitkit_website_images_path = "#{Knitkit::Engine.root.to_s}/public/images/knitkit"
 
+
+  validates :name, :presence => {:message => 'Name cannot be blank'}
+  validates_uniqueness_of :theme_id, :scope => :website_id, :case_sensitive => false
+
   protected_with_capabilities
   has_file_assets
 
@@ -122,11 +126,6 @@ class Theme < ActiveRecord::Base
   def should_generate_new_friendly_id?
     new_record?
   end
-
-  validates :name, :presence => {:message => 'Name cannot be blank'}
-  validates_uniqueness_of :theme_id, :scope => :website_id, :case_sensitive => false
-
-  before_destroy :delete_theme_files!
 
   def path
     "#{self.class.base_dir(website)}/#{theme_id}"
@@ -268,6 +267,9 @@ class Theme < ActiveRecord::Base
   end
 
   def delete_theme_files!
+    # destroy all related files
+    destroy_all_files
+
     file_support = ErpTechSvcs::FileSupport::Base.new(:storage => ErpTechSvcs::Config.file_storage)
     file_support.delete_file(File.join(file_support.root,self.url), :force => true)
   end

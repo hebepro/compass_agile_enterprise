@@ -199,22 +199,6 @@ class BaseProducts < ActiveRecord::Migration
       end
     end
     
-    unless table_exists?(:prod_availability_status_types)
-      create_table :prod_availability_status_types do |t|
-        #better nested set colummns
-        t.column :parent_id, :integer
-        t.column :lft,       :integer
-        t.column :rgt,       :integer
-        
-        t.column :description,             :string
-        t.column :internal_identifier,     :string
-        t.column :external_identifier,     :string
-        t.column :external_id_source,      :string
-        
-        t.timestamps
-      end
-    end
-    
 
   end
 

@@ -3,9 +3,12 @@ class ProductType < ActiveRecord::Base
 
   acts_as_nested_set
   include ErpTechSvcs::Utils::DefaultNestedSetMethods
+  acts_as_taggable
  
   has_file_assets
   is_describable
+
+  is_json :custom_fields
   
 	belongs_to :product_type_record, :polymorphic => true  
   has_one    :product_instance

@@ -100,8 +100,8 @@ var viewConfigItems = {
                         url: '/knitkit/erp_app/desktop/position/change_section_parent',
                         method: 'PUT',
                         params: {
-                            section_id: record.get('id').split('_')[1],
-                            parent_id: record.get('parentId').split('_')[1]
+                            section_id: record.get('recordId'),
+                            parent_id: record.parentNode.get('recordId')
                         },
                         success: function (response) {
                             var obj = Ext.decode(response.responseText);
@@ -120,7 +120,7 @@ var viewConfigItems = {
                     overModel.parentNode.eachChild(function (node) {
                         if (node.get('isSection') || record.get('isDocument')) {
                             positionArray.push({
-                                id: node.data.id.split('_')[1],
+                                id: node.get('recordId'),
                                 position: counter
                             });
                             counter++;
@@ -155,7 +155,7 @@ var viewConfigItems = {
                 else {
                     overModel.parentNode.eachChild(function (node) {
                         positionArray.push({
-                            id: node.get('id'),
+                            id: node.get('recordId'),
                             position: counter
                         });
                         counter++;
@@ -168,7 +168,7 @@ var viewConfigItems = {
                             position_array: positionArray
                         },
                         params: {
-                            section_id: record.parentNode.get('id').split('_')[1]
+                            section_id: record.parentNode.get('recordId')
                         },
                         success: function (response) {
                             var obj = Ext.decode(response.responseText);
@@ -260,18 +260,18 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SiteContentsTreePanel", {
                 self.initialConfig['centerRegion'].openIframeInTab(record.data.text, record.data['url']);
             }
             else if (record.data['objectType'] === "Article") {
-                var url = '/knitkit/erp_app/desktop/articles/show/' + record.data.id;
+                var url = '/knitkit/erp_app/desktop/articles/show/' + record.get('recordId');
 
                 Ext.Ajax.request({
                     url: url,
                     method: 'GET',
                     extraParams: {
-                        id: record.data.id
+                        id: record.get('recordId')
                     },
                     timeout: 90000,
                     success: function (response) {
                         var article = Ext.decode(response.responseText);
-                        self.initialConfig['centerRegion'].editContent(record.data.text, record.data.id, article.body_html, record.data['siteId'], 'article');
+                        self.initialConfig['centerRegion'].editContent(record.data.text, record.get('recordId'), article.body_html, record.data['siteId'], 'article');
                     },
                     failure: function(){
                         Ext.Msg.alert('Error', 'Could not load content');
@@ -279,7 +279,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SiteContentsTreePanel", {
                 });
             }
             else if (record.data['isDocument']) {
-                var url = '/knitkit/erp_app/desktop/online_document_sections/' + record.data.id.split('_').last() + '/content/';
+                var url = '/knitkit/erp_app/desktop/online_document_sections/' + record.get('recordId') + '/content/';
                 var contentInfo = record.data['contentInfo'];
 
                 Ext.Ajax.request({

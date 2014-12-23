@@ -1,4 +1,7 @@
-Version 3.1.2
+Version 4.0.1
+- Removed Order Manager Desktop Application migration
+Version 4.0.0 - 11-19-2014
+- Updated major version of CompassAE Platform release
 - Added acts_as_order_line_item mixin
 - Changed middleware to insert_before Rack::Runtime instead of Rack::Lock to allow for config.threadsafe!
 Version 3.1.1 - 7-26-2013

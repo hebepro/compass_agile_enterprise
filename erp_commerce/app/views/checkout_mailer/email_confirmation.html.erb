@@ -8,7 +8,7 @@
     <p>Your order is complete.
       <br/>Confirmation Number <%=@payment.authorization_code%>
       <br/>Your order number is <%=@order.order_number%>
-      <br/>Your order status is <%=@order.status%>
+      <br/>Your order status is <%=@order.current_status%>
       <br/>Total for this order was <%=number_to_currency(@order.get_total_charges.sum{|money| money.amount})%>
     </p>
   </body>

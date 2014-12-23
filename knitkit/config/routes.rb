@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   get 'knitkit_mobile' => 'knitkit/mobile#index'
   match 'pages/:section_id' => 'knitkit/website_sections#index', :as => 'page'
   get 'onlinedocumentsections/:section_id' => 'knitkit/online_document_sections#index', :as => 'document'
-  #get 'onlinedocumentsections/:section_id/:id' => 'knitkit/online_document_sections#show', :as => 'document'
+  get 'onlinedocumentsections/:section_id/show' => 'knitkit/online_document_sections#show'
   get 'blogs/:section_id(.:format)' => 'knitkit/blogs#index', :as => 'blogs'
   get 'blogs/:section_id/:id' => 'knitkit/blogs#show', :as => 'blog_article'
   get 'blogs/:section_id/tag/:tag_id(.:format)' => 'knitkit/blogs#tag', :as => 'blog_tag'
@@ -30,6 +30,10 @@ Knitkit::Engine.routes.draw do
       end
       resources :website_host
       resources :online_document_sections do
+        collection do
+          post :copy
+          get :existing_documents
+        end
         member do
           get :content
         end

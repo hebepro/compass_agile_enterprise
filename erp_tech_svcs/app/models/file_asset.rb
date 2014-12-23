@@ -1,3 +1,22 @@
+# create_table :file_assets do |t|
+#   t.string :type
+#   t.string :name
+#   t.string :directory
+#   t.string :data_file_name
+#   t.string :data_content_type
+#   t.integer :data_file_size
+#   t.datetime :data_updated_at
+#   t.text :scoped_by
+#   t.string :width
+#   t.string :height
+#
+#   t.timestamps
+# end
+# add_index :file_assets, :type
+# add_index :file_assets, [:file_asset_holder_id, :file_asset_holder_type], :name => 'file_asset_holder_idx'
+# add_index :file_assets, :name
+# add_index :file_assets, :directory
+
 require 'fileutils'
 
 Paperclip.interpolates(:file_path) { |data, style|
@@ -52,7 +71,11 @@ class FileAsset < ActiveRecord::Base
     self.check_name_uniqueness
   end
 
-  belongs_to :file_asset_holder, :polymorphic => true
+  has_many :file_asset_holders, :dependent => :destroy
+
+  is_json :custom_fields
+  acts_as_taggable
+
   instantiates_with_sti
 
   protected_with_capabilities

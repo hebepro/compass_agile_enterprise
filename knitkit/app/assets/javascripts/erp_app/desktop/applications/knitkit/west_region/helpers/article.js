@@ -4,7 +4,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addArticleOptions = function (self, 
         iconCls: 'icon-edit',
         listeners: {
             'click': function () {
-                var itemId = 'editArticle-' + record.get('id'),
+                var itemId = 'editArticle-' + record.get('recordId'),
                     editArticleWindow = Ext.ComponentQuery.query('#' + itemId).first();
 
                 if (Compass.ErpApp.Utility.isBlank(editArticleWindow)) {
@@ -88,7 +88,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addArticleOptions = function (self, 
                                     allowBlank: false,
                                     name: 'id',
                                     itemId: 'record_id',
-                                    value: record.data.id
+                                    value: record.get('recordId')
                                 },
                                 {
                                     xtype: 'hidden',
@@ -154,18 +154,18 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addArticleOptions = function (self, 
                     var centerRegion = Ext.getCmp('knitkitCenterRegion'),
                         websiteId = compassDesktop.getModule('knitkit-win').currentWebsite.id;
 
-                    var url = '/knitkit/erp_app/desktop/articles/show/' + record.data.id;
+                    var url = '/knitkit/erp_app/desktop/articles/show/' + record.get('recordId');
 
                     Ext.Ajax.request({
                         url: url,
                         method: 'GET',
                         extraParams: {
-                            id: record.data.id
+                            id: record.get('recordId')
                         },
                         timeout: 90000,
                         success: function (response) {
                             var article = Ext.decode(response.responseText);
-                            centerRegion.editExcerpt(article.title + ' - Excerpt', record.data.id, article.excerpt_html, websiteId);
+                            centerRegion.editExcerpt(article.title + ' - Excerpt', record.get('recordId'), article.excerpt_html, websiteId);
                         }
                     });
                 }
@@ -190,7 +190,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addArticleOptions = function (self, 
                             method: 'POST',
                             params: {
                                 id: record.data.parentItemId,
-                                article_id: record.data.id
+                                article_id: record.get('recordId')
                             },
                             success: function (response) {
                                 var obj = Ext.decode(response.responseText);

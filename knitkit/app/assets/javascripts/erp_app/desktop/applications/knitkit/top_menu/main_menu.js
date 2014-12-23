@@ -324,7 +324,9 @@ Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu = function () {
                             height: 120,
                             plain: true,
                             buttonAlign: 'center',
-                            items: new Ext.FormPanel({
+                            items: {
+                                xtype: 'form',
+                                timeout: 300,
                                 labelWidth: 110,
                                 frame: false,
                                 fileUpload: true,
@@ -343,7 +345,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu = function () {
                                         name: 'website_data'
                                     }
                                 ]
-                            }),
+                            },
                             buttons: [
                                 {
                                     text: 'Submit',
@@ -784,7 +786,9 @@ Compass.ErpApp.Desktop.Applications.Knitkit.uploadThemeMenuItem = {
             modal: true,
             title: 'New Theme',
             buttonAlign: 'center',
-            items: Ext.create('widget.form', {
+            items: {
+                xtype: 'form',
+                timeout: 300,
                 frame: false,
                 bodyStyle: 'padding:5px 5px 0',
                 fileUpload: true,
@@ -797,7 +801,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.uploadThemeMenuItem = {
                     },
                     {
                         xtype: 'fileuploadfield',
-						width: '350px',
+                        width: '350px',
                         fieldLabel: 'Upload Theme',
                         buttonText: 'Upload',
                         buttonOnly: false,
@@ -805,7 +809,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.uploadThemeMenuItem = {
                         name: 'theme_data'
                     }
                 ]
-            }),
+            },
             buttons: [
                 {
                     text: 'Submit',
@@ -1048,7 +1052,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.HostsMenu = function () {
     }
 };
 
-
+// Templates
 Compass.ErpApp.Desktop.Applications.Knitkit.TemplateMenu = function () {
     return {
         text: 'Templates',
@@ -1062,15 +1066,16 @@ Compass.ErpApp.Desktop.Applications.Knitkit.TemplateMenu = function () {
                     iconCls: 'icon-website-import',
                     handler: function (btn) {
                         var westRegion = Ext.ComponentQuery.query('#knitkitWestRegion').first(),
-                            themesTreePanel = westRegion.down('#themesTreePanel'),
-                            knitkitWin = compassDesktop.getModule('knitkit-win')
+                            themesTreePanel = westRegion.down('#themesTreePanel');
 
                         Ext.create("Ext.window.Window", {
                             modal: true,
                             title: 'Import Template',
                             buttonAlign: 'center',
-                            items: Ext.create('widget.form', {
+                            items: {
+                                xtype: 'form',
                                 frame: false,
+                                timeout: 300,
                                 bodyStyle: 'padding:5px 5px 0',
                                 fileUpload: true,
                                 url: '/knitkit/erp_app/desktop/site/importtemplate',
@@ -1086,7 +1091,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.TemplateMenu = function () {
                                         name: 'website_data'
                                     }
                                 ]
-                            }),
+                            },
                             buttons: [
                                 {
                                     text: 'Submit',
@@ -1154,11 +1159,11 @@ Compass.ErpApp.Desktop.Applications.Knitkit.TemplateMenu = function () {
                     iconCls: 'icon-website-export',
                     handler: function () {
                         var knitkitWin = compassDesktop.getModule('knitkit-win'),
-                        websiteId = knitkitWin.currentWebsite.id;
+                            websiteId = knitkitWin.currentWebsite.id;
                         ifrm = document.createElement("IFRAME");
                         ifrm.setAttribute("src", '/knitkit/erp_app/desktop/site/exporttemplate?website_id=' + websiteId);
-                        ifrm.style.width = 0+"px";
-                        ifrm.style.height = 0+"px";
+                        ifrm.style.width = 0 + "px";
+                        ifrm.style.height = 0 + "px";
                         document.body.appendChild(ifrm);
                     }
                 }
