@@ -388,7 +388,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
                 width: 75,
                 items: [
                     {
-                        icon: '/images/icons/edit/edit_16x16.png',
+                        icon: '/assets/icons/edit/edit_16x16.png',
                         tooltip: 'Edit',
                         handler: function (grid, rowIndex, colIndex) {
                             var record = grid.getStore().getAt(rowIndex);
@@ -439,7 +439,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
                 width: 75,
                 items: [
                     {
-                        icon: '/images/icons/delete/delete_16x16.png',
+                        icon: '/assets/icons/delete/delete_16x16.png',
                         tooltip: 'Delete',
                         handler: function (grid, rowIndex, colIndex) {
                             var record = grid.getStore().getAt(rowIndex);

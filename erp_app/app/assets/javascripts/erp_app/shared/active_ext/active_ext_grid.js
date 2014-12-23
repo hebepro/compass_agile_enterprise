@@ -236,7 +236,7 @@ Ext.define("Compass.ErpApp.Shared.ActiveExt.ActiveExtGrid",{
                     xtype: 'actioncolumn',
                     width: 30,
                     items: [{
-                        icon: '/images/icons/delete/delete_16x16.png',
+                        icon: '/assets/icons/delete/delete_16x16.png',
                         tooltip: 'Delete',
                         handler: function(grid, rowIndex, colIndex){
                             Ext.MessageBox.confirm('Confirm Delete?', 'Are you sure that you want to delete this record?', function(btn){
@@ -254,7 +254,7 @@ Ext.define("Compass.ErpApp.Shared.ActiveExt.ActiveExtGrid",{
                     xtype:'actioncolumn',
                     width:30,
                     items:[{
-                        icon:'/images/icons/edit/edit_16x16.png',
+                        icon:'/assets/icons/edit/edit_16x16.png',
                         tooltip:'Edit',
                         handler :function(grid, rowIndex, colIndex){
                             var rec = grid.getStore().getAt(rowIndex);
@@ -290,7 +290,7 @@ Ext.define("Compass.ErpApp.Shared.ActiveExt.ActiveExtGrid",{
                     xtype: 'actioncolumn',
                     width: 30,
                     items: [{
-                        icon: '/images/icons/view/view_16x16.png',
+                        icon: '/assets/icons/view/view_16x16.png',
                         tooltip: 'Show',
                         handler: function(grid, rowIndex, colIndex){
                             var rec = grid.getStore().getAt(rowIndex);

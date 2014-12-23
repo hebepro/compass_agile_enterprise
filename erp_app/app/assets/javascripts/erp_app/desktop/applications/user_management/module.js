@@ -266,7 +266,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
                 width: 50,
                 items: [
                     {
-                        icon: '/images/icons/delete/delete_16x16.png',
+                        icon: '/assets/icons/delete/delete_16x16.png',
                         tooltip: 'Delete',
                         handler: function (grid, rowIndex, colIndex) {
                             Ext.MessageBox.confirm('Confirm', 'Are you sure you want to delete this user?', function (btn) {

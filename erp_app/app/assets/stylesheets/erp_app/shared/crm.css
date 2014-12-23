@@ -25,7 +25,7 @@
     border-bottom-left-radius: 0.5em;
     border-right: none;
     margin-left: 3px;
-    background-image: url(/images/icons/simple_arrow/simple_arrow_16x16.png) !important;
+    background-image: url(/assets/icons/simple_arrow/simple_arrow_16x16.png) !important;
     background-repeat:no-repeat !important;
     background-position: 105% 50%  !important;
 }

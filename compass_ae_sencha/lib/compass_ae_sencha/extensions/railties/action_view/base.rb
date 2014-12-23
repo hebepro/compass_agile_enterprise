@@ -8,8 +8,6 @@ ActionView::Base.class_eval do
       raw srcs.flatten.map { |src| "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/#{src.include?('.css') ? src : "#{src}.css"}\" />" }.join("")
     end
 
-
-    
     def include_extjs(opt={})
       resources = ''
 

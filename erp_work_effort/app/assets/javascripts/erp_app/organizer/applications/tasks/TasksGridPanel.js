@@ -144,7 +144,7 @@ Ext.define("Compass.ErpApp.Organizer.Applications.Tasks.GridPanel", {
                         width: 50,
                         items: [
                             {
-                                icon: '/images/icons/delete/delete_16x16.png',
+                                icon: '/assets/icons/delete/delete_16x16.png',
                                 tooltip: 'Delete',
                                 handler: function (grid, rowIndex, colIndex) {
                                     var record = grid.getStore().getAt(rowIndex);

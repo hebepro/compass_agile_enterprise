@@ -56,7 +56,7 @@ Ext.define("Ext.ux.desktop.Desktop", {
     app: null,
     shortcuts: null,
     shortcutItemSelector: "div.ux-desktop-shortcut",
-    mainNavTpl: ["<a href='/signout' style='vertical-align: middle; color: #eee; text-decoration: none; float:right; margin-top: 10px; margin-right: 25px; padding: 0px 0px 3px 0px;'><img src='/images/icons/exit/exit_16x16.png' style='display: none; margin: 3px 4px 0px 0px;'/>Logout</a>"],
+    mainNavTpl: ["<a href='/signout' style='vertical-align: middle; color: #eee; text-decoration: none; float:right; margin-top: 10px; margin-right: 25px; padding: 0px 0px 3px 0px;'><img src='/assets/icons/exit/exit_16x16.png' style='display: none; margin: 3px 4px 0px 0px;'/>Logout</a>"],
     shortcutTpl: ['</div>',
         '<div id="desktop-shortcut-container" class="ux-desktop-shortcut-container">',
         '<tpl for=".">',

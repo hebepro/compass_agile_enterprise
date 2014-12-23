@@ -233,7 +233,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.ArticlesGridPanel", {
                     flex: 1,
                     items: [
                         {
-                            icon: '/images/icons/edit/edit_16x16.png',
+                            icon: '/assets/icons/edit/edit_16x16.png',
                             iconCls: 'actioncolumn_hover',
                             tooltip: 'Edit',
                             handler: function (grid, rowIndex, colIndex) {
@@ -255,7 +255,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.ArticlesGridPanel", {
                 flex: 1,
                 items: [
                     {
-                        icon: '/images/icons/document_text/document_text_16x16.png',
+                        icon: '/assets/icons/document_text/document_text_16x16.png',
                         iconCls: 'actioncolumn_hover',
                         tooltip: 'Comments',
                         handler: function (grid, rowIndex, colIndex) {
@@ -278,7 +278,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.ArticlesGridPanel", {
                     flex: 1,
                     items: [
                         {
-                            icon: '/images/icons/edit/edit_16x16.png',
+                            icon: '/assets/icons/edit/edit_16x16.png',
                             iconCls: 'actioncolumn_hover',
                             tooltip: 'Edit Excerpt',
                             handler: function (grid, rowIndex, colIndex) {
@@ -301,7 +301,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.ArticlesGridPanel", {
                 flex: 1,
                 items: [
                     {
-                        icon: '/images/icons/edit/edit_16x16.png',
+                        icon: '/assets/icons/edit/edit_16x16.png',
                         iconCls: 'actioncolumn_hover',
                         tooltip: 'Edit Content',
                         handler: function (grid, rowIndex, colIndex) {
@@ -324,7 +324,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.ArticlesGridPanel", {
                     flex: 1,
                     items: [
                         {
-                            icon: '/images/icons/delete/delete_16x16.png',
+                            icon: '/assets/icons/delete/delete_16x16.png',
                             iconCls: 'actioncolumn_hover',
                             tooltip: 'Delete',
                             handler: function (grid, rowIndex, colIndex) {

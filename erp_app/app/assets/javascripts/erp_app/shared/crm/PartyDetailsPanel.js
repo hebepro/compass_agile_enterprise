@@ -139,9 +139,9 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyDetailsPanel", {
                         store: Ext.create('Ext.data.SimpleStore', {
                             fields: ['title', 'xtype', 'iconSrc'],
                             data: [
-                                ['Phone Numbers', 'phonenumbergrid', '/images/icons/phone/phone_16x16.png'],
-                                ['Email Addresses', 'emailaddressgrid', '/images/icons/mail/mail_16x16.png'],
-                                ['Postal Addressses', 'postaladdressgrid', '/images/icons/home/home_16x16.png']
+                                ['Phone Numbers', 'phonenumbergrid', '/assets/icons/phone/phone_16x16.png'],
+                                ['Email Addresses', 'emailaddressgrid', '/assets/icons/mail/mail_16x16.png'],
+                                ['Postal Addressses', 'postaladdressgrid', '/assets/icons/home/home_16x16.png']
                             ]
                         }),
                         selModel: {

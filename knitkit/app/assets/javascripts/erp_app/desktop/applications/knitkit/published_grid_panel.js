@@ -197,7 +197,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.PublishedGridPanel", {
                             }
                         },
                         {
-                            icon: '/images/icons/document/document_16x16.png',
+                            icon: '/assets/icons/document/document_16x16.png',
                             tooltip: 'Comments',
                             handler: function (grid, rowIndex, colIndex) {
                                 var rec = grid.getStore().getAt(rowIndex);

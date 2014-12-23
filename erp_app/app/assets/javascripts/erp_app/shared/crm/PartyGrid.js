@@ -439,7 +439,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                 align: 'center',
                 items: [
                     {
-                        icon: '/images/icons/view/view_16x16.png',
+                        icon: '/assets/icons/view/view_16x16.png',
                         tooltip: 'Edit',
                         handler: function (grid, rowIndex, colIndex) {
                             grid.ownerCt.showDetails(rowIndex);
@@ -458,7 +458,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                 align: 'center',
                 items: [
                     {
-                        icon: '/images/icons/edit/edit_16x16.png',
+                        icon: '/assets/icons/edit/edit_16x16.png',
                         tooltip: 'Edit',
                         handler: function (grid, rowIndex, colIndex) {
                             var record = grid.getStore().getAt(rowIndex),
@@ -505,7 +505,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                 align: 'center',
                 items: [
                     {
-                        icon: '/images/icons/delete/delete_16x16.png',
+                        icon: '/assets/icons/delete/delete_16x16.png',
                         tooltip: 'Delete',
                         handler: function (grid, rowIndex, colIndex) {
                             var record = grid.getStore().getAt(rowIndex);

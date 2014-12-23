@@ -57,7 +57,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.VersionsGridPanel", {
                 flex: 0.5,
                 items: [
                     {
-                        icon: '/images/icons/eye/eye_16x16.png',
+                        icon: '/assets/icons/eye/eye_16x16.png',
                         tooltip: 'View',
                         getClass: function (v, meta, rec) {
                             return 'x-action-col-icon';
@@ -68,7 +68,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.VersionsGridPanel", {
                         }
                     },
                     {
-                        icon: '/images/icons/document_down/document_down_16x16.png',
+                        icon: '/assets/icons/document_down/document_down_16x16.png',
                         tooltip: 'Revert',
                         getClass: function (v, meta, rec) {
                             return 'x-action-col-icon';
@@ -385,7 +385,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.VersionsBlogGridPanel", 
                     width: 50,
                     items: [
                         {
-                            icon: '/images/icons/document_view/document_view_16x16.png',
+                            icon: '/assets/icons/document_view/document_view_16x16.png',
                             tooltip: 'View',
                             getClass: function (v, meta, rec) {
                                 return 'x-action-col-icon';
@@ -648,7 +648,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.NonPublishedVersionsGrid
                     flex: 0.5,
                     items: [
                         {
-                            icon: '/images/icons/document_view/document_view_16x16.png',
+                            icon: '/assets/icons/document_view/document_view_16x16.png',
                             tooltip: 'View',
                             getClass: function (v, meta, rec) {
                                 return 'x-action-col-icon';
@@ -659,7 +659,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.NonPublishedVersionsGrid
                             }
                         },
                         {
-                            icon: '/images/icons/document_down/document_down_16x16.png',
+                            icon: '/assets/icons/document_down/document_down_16x16.png',
                             tooltip: 'Revert',
                             getClass: function (v, meta, rec) {
                                 return 'x-action-col-icon';

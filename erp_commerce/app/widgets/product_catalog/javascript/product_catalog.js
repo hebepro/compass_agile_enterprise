@@ -59,6 +59,6 @@ Compass.ErpApp.Widgets.ProductCatalog = {
 
 Compass.ErpApp.Widgets.AvailableWidgets.push({
     name: 'Product Catalog',
-    iconUrl: '/images/icons/product/product_48x48.png',
+    iconUrl: '/assets/icons/product/product_48x48.png',
     onClick: Compass.ErpApp.Widgets.ProductCatalog.add
 });

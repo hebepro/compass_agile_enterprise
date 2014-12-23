@@ -114,7 +114,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.InquiriesGridPanel", {
                 flex: 0.5,
                 items: [
                     {
-                        icon: '/images/icons/eye/eye_16x16.png',
+                        icon: '/assets/icons/eye/eye_16x16.png',
                         tooltip: 'View',
                         getClass: function (v, meta, rec) {
                             return 'x-action-col-icon';
@@ -126,7 +126,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.InquiriesGridPanel", {
                         }
                     },
                     {
-                        icon: '/images/icons/delete/delete_16x16.png',
+                        icon: '/assets/icons/delete/delete_16x16.png',
                         tooltip: 'Delete',
                         getClass: function (v, meta, rec) {
                             return 'x-action-col-icon';

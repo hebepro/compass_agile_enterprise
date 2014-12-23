@@ -14,7 +14,7 @@
             editor.addCommand(b,a);
             editor.ui.addButton('CompassSave',{
                 label:'Save',
-                icon: '/images/icons/save/save_16x16.png',
+                icon: '/assets/icons/save/save_16x16.png',
                 command:b
             });
         }

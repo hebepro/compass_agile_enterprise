@@ -8,7 +8,7 @@ Compass.ErpApp.Widgets.ManageProfile = {
 
 Compass.ErpApp.Widgets.AvailableWidgets.push({
     name:'Manage Profile',
-    iconUrl:'/images/icons/document_edit/document_edit_48x48.png',
+    iconUrl:'/assets/icons/document_edit/document_edit_48x48.png',
     onClick:Compass.ErpApp.Widgets.ManageProfile.addManageProfile,
     about:'This widget allows users to manger thier user information, password and contact information.'
 });

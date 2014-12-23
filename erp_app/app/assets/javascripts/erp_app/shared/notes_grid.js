@@ -161,7 +161,7 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
             width: 50,
             items: [
                 {
-                    icon: '/images/icons/eye/eye_16x16.png',
+                    icon: '/assets/icons/eye/eye_16x16.png',
                     tooltip: 'View',
                     style: {
                         marginRight: '10px'
@@ -195,7 +195,7 @@ Ext.define("Compass.ErpApp.Shared.NotesGrid", {
                     }
                 },
                 {
-                    icon: '/images/icons/delete/delete_16x16.png',
+                    icon: '/assets/icons/delete/delete_16x16.png',
                     tooltip: 'Delete',
                     disabled: !currentUser.hasCapability('delete', 'Note'),
                     getClass: function (value, metadata) {

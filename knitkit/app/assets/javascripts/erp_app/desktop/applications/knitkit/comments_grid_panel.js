@@ -135,7 +135,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CommentsGridPanel", {
                     align: 'center',
                     width: 50,
                     items: [{
-                        icon: '/images/icons/document_view/document_view_16x16.png',
+                        icon: '/assets/icons/document_view/document_view_16x16.png',
                         tooltip: 'View',
                         handler: function (grid, rowIndex, colIndex) {
                             var rec = grid.getStore().getAt(rowIndex);
@@ -192,7 +192,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CommentsGridPanel", {
                     align: 'center',
                     width: 50,
                     items: [{
-                        icon: '/images/icons/delete/delete_16x16.png',
+                        icon: '/assets/icons/delete/delete_16x16.png',
                         tooltip: 'Delete',
                         handler: function (grid, rowIndex, colIndex) {
                             var rec = grid.getStore().getAt(rowIndex);

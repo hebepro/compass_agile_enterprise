@@ -26,7 +26,7 @@ Compass.ErpApp.Widgets.Search = {
 
 Compass.ErpApp.Widgets.AvailableWidgets.push({
     name:'Search',
-    iconUrl:'/images/icons/search/search_48x48.png',
+    iconUrl:'/assets/icons/search/search_48x48.png',
     onClick:Compass.ErpApp.Widgets.Search.addSearch,
     about:'This widget allows users to search for content in a website.'
 });

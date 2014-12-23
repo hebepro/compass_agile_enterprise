@@ -7,6 +7,6 @@ Compass.ErpApp.Widgets.Orders = {
 
 Compass.ErpApp.Widgets.AvailableWidgets.push({
     name:'Orders',
-    iconUrl:'/images/icons/package/package_48x48.png',
+    iconUrl:'/assets/icons/package/package_48x48.png',
     onClick:Compass.ErpApp.Widgets.Orders.add
 });

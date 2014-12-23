@@ -8,7 +8,7 @@ Compass.ErpApp.Widgets.ContactUs = {
 
 Compass.ErpApp.Widgets.AvailableWidgets.push({
     name: 'Contact Us',
-    iconUrl: '/images/icons/mail/mail_48x48.png',
+    iconUrl: '/assets/icons/mail/mail_48x48.png',
     onClick: Compass.ErpApp.Widgets.ContactUs.addContactUs,
     about: 'This widget creates a form to allow for website inquiries.'
 });

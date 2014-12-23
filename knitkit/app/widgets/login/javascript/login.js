@@ -161,7 +161,7 @@ Compass.ErpApp.Widgets.Login = {
 
 Compass.ErpApp.Widgets.AvailableWidgets.push({
     name: 'Login',
-    iconUrl: '/images/icons/login/login_48x48.png',
+    iconUrl: '/assets/icons/login/login_48x48.png',
     onClick: Compass.ErpApp.Widgets.Login.addLogin,
     about: 'This widget creates a login form to allow users to log into the website.'
 });

@@ -182,7 +182,7 @@ Compass.ErpApp.Widgets.GoogleMap = {
 
 Compass.ErpApp.Widgets.AvailableWidgets.push({
     name: 'Google Map',
-    iconUrl: '/images/icons/map/map_48x48.png',
+    iconUrl: '/assets/icons/map/map_48x48.png',
     onClick: Compass.ErpApp.Widgets.GoogleMap.addGoogleMap,
     about: 'This widget creates a google map with drop points you setup.'
 });
