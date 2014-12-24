@@ -38,7 +38,6 @@ module ErpApp
         
         application_paths
       end
-
       
       private
 

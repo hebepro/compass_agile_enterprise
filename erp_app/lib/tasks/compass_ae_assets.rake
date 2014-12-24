@@ -4,6 +4,8 @@ namespace :compass_ae_assets do
     config = Rails.application.config
     FileUtils.rm_rf(File.join(Rails.root.to_s, 'public', config.assets.prefix))
 
+    # compile images
+    CompassAeAssetsCompiler::Sprockets::Image.new.compile
     # compile shared assets
     shared_asset_compiler = CompassAeAssetsCompiler::Sprockets::Shared.new(uglify: true)
     shared_asset_compiler.compile
@@ -14,5 +16,6 @@ namespace :compass_ae_assets do
       application_asset_compiler.compile
     end
   end
+
 
 end
