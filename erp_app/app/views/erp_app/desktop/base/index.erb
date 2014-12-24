@@ -105,13 +105,6 @@
  <% end %>
 
   <%= static_stylesheet_link_tag('extjs/resources/css/callout-default.css') %>
-  <!-- shared application resources -->
-  <!-- <%= load_shared_application_resources(:stylesheets) %> -->
-  <!-- end application resources -->
-  <!-- application resources -->
-  <!-- <%= static_stylesheet_link_tag(@desktop.applications.collect { |app| app.locate_resources('stylesheets') }.flatten) %> -->
-  <!-- end application resources -->
-  <!-- compass extensions -->
   <%= include_code_mirror_library %>
 
   <%= setup_js_authentication(@user) %>
