@@ -19,7 +19,7 @@ module ErpProducts
 
             has_one :product_offer, :as => :product_offer_record
 
-            [:description, :description=].each do |m| delegate m, :to => :product_offer end
+            [:description, :description=, :valid_from, :valid_from=,:valid_to, :valid_to=].each do |m| delegate m, :to => :product_offer end
           end
         end
 

@@ -14,6 +14,7 @@ class ProductType < ActiveRecord::Base
   has_one    :product_instance
   belongs_to :unit_of_measurement
   has_many :product_type_pty_roles, :dependent => :destroy
+  has_one :simple_product_offer, dependent: :destroy
   
   def prod_type_relns_to
     ProdTypeReln.where('prod_type_id_to = ?',id)
@@ -52,5 +53,16 @@ class ProductType < ActiveRecord::Base
         :updated_at => self.updated_at
     }
   end
-  
+
+  def self.without_offers(ctx)
+    #TODO: implement context
+    arr = self.all.select do |pt|
+      self.no_valid_offer?(pt)
+    end
+    self.where(id: arr.map(&:id))
+  end
+
+  def self.no_valid_offer?(pt)
+    pt.simple_product_offer == nil || ( !pt.simple_product_offer.product_offer.valid_from || pt.simple_product_offer.product_offer.valid_from > Time.now ) || ( !pt.simple_product_offer.product_offer.valid_to || pt.simple_product_offer.product_offer.valid_to < Time.now )
+  end
 end
