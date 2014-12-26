@@ -21,11 +21,6 @@ class ProductOffer < ActiveRecord::Base
     end
   end
 
-  def self.available_product_offers(ctx)
-    # TODO: implement ctx
-    self.where(ProductOffer.arel_table[:valid_from].lt(Time.now)).where(ProductOffer.arel_table[:valid_to].gt(Time.now))
-  end
-
   def after_destroy
     if self.product_offer_record && !self.product_offer_record.frozen?
       self.product_offer_record.destroy

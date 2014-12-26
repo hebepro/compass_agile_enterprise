@@ -6,10 +6,8 @@ class SimpleProductOffer < ActiveRecord::Base
 
   belongs_to :product_type
 
-  def product_type=(value)
-    unless value.is_a? ProductType
-      super(ProductType.find(value.to_i))
-    end
+  def self.available_product_offers(ctx)
+    # TODO: implement ctx
+    self.includes(:product_offer).where(ProductOffer.arel_table[:valid_from].lt(Time.now)).where(ProductOffer.arel_table[:valid_to].gt(Time.now))
   end
-
 end
