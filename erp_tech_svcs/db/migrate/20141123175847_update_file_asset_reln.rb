@@ -32,7 +32,7 @@ class UpdateFileAssetReln < ActiveRecord::Migration
 
     current_file_assets.each do |file|
       FileAssetHolder.create(
-          file_asset: file[:id],
+          file_asset_id: file[:id],
           file_asset_holder_id: file[:holder_id],
           file_asset_holder_type: file[:holder_type],
       )
