@@ -64,6 +64,11 @@ module Knitkit
               new_section.save
             end
 
+            # update all children paths after all are saved.
+            new_section.self_and_descendants.each do |section|
+              section.update_path!
+            end
+
             result = {:success => true,
                       :parentNodeId => params[:parent_section_id],
                       :node => build_section_hash(new_section)}

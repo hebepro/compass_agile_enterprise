@@ -46,13 +46,6 @@ class OnlineDocumentSection < WebsiteSection
       end
     end
 
-    new_section.update_path!
-
-    # update all children paths after all are saved.
-    new_section.descendants.each do |descendant|
-      descendant.update_path!
-    end
-
     new_section
   end
 
