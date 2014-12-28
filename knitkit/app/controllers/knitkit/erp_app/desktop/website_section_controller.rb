@@ -79,6 +79,11 @@ module Knitkit
               new_section.save
             end
 
+            # update all children paths after all are saved.
+            new_section.self_and_descendants.each do |section|
+              section.update_path!
+            end
+
             result = {:success => true, :parentNodeId => params[:parent_section_id], :node => build_section_hash(new_section)}
 
           rescue => ex
@@ -270,7 +275,12 @@ module Knitkit
               "#{self.title} - #{self.path}"
             end
           end
-          render :inline => website.sections.to_json(:only => [:id], :methods => [:title_permalink])
+
+          if params[:exclude_document_sections].present?
+            render :inline => website.sections.where('type is null').to_json(:only => [:id], :methods => [:title_permalink])
+          else
+            render :inline => website.sections.to_json(:only => [:id], :methods => [:title_permalink])
+          end
         end
 
         protected

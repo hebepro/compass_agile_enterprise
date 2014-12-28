@@ -687,6 +687,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
                                             type: 'json'
                                         },
                                         extraParams: {
+                                            exclude_document_sections: true,
                                             website_id: websiteId
                                         }
                                     },
