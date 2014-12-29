@@ -28,30 +28,55 @@ class ProductType < ActiveRecord::Base
   acts_as_nested_set
   include ErpTechSvcs::Utils::DefaultNestedSetMethods
   acts_as_taggable
- 
+
   has_file_assets
   is_describable
 
   is_json :custom_fields
-  
-	belongs_to :product_type_record, :polymorphic => true  
-  has_one    :product_instance
+
+  belongs_to :product_type_record, polymorphic: true
+  has_one :product_instance
   belongs_to :unit_of_measurement
-  has_many :product_type_pty_roles, :dependent => :destroy
-  has_one :simple_product_offer, dependent: :destroy
-  
+  has_many :product_type_pty_roles, dependent: :destroy
+  has_many :simple_product_offers, dependent: :destroy
+
+  def self.without_offers(context={})
+    product_types_tbl = arel_table
+    product_offer_tbl = ProductOffer.arel_table
+    simple_product_offers_tbl = SimpleProductOffer.arel_table
+
+    valid_dates_sql = simple_product_offers_tbl.project(:product_type_id)
+                          .join(product_offer_tbl).on(product_offer_tbl[:product_offer_record_id].eq(simple_product_offers_tbl[:id])
+                                                          .and(product_offer_tbl[:product_offer_record_type].eq("SimpleProductOffer")))
+                          .where(product_offer_tbl[:valid_from].eq(nil).or(product_offer_tbl[:valid_from].lt(Time.now.utc)
+                                                                               .or(product_offer_tbl[:valid_to].gt(Time.now.utc))))
+
+    statement = where(product_types_tbl[:id].not_in(simple_product_offers_tbl.project(:product_type_id))
+                          .or(product_types_tbl[:id].not_in(valid_dates_sql)).to_sql)
+
+    # apply category if it is in the context
+    if context[:category_id]
+      statement = statement.joins("inner join category_classifications on
+                       category_classifications.classification_id = product_types.id and
+                       category_classifications.classification_type = 'ProductType' ")
+                      .where('category_classifications.category_id = ?', context[:category_id])
+    end
+
+    statement
+  end
+
   def prod_type_relns_to
-    ProdTypeReln.where('prod_type_id_to = ?',id)
+    ProdTypeReln.where('prod_type_id_to = ?', id)
   end
 
   def prod_type_relns_from
-    ProdTypeReln.where('prod_type_id_from = ?',id)
+    ProdTypeReln.where('prod_type_id_from = ?', id)
   end
- 
+
   def to_label
     "#{description}"
   end
-  
+
   def to_s
     "#{description}"
   end
@@ -59,10 +84,10 @@ class ProductType < ActiveRecord::Base
   def self.count_by_status(product_type, prod_availability_status_type)
     ProductInstance.count("product_type_id = #{product_type.id} and prod_availability_status_type_id = #{prod_availability_status_type.id}")
   end
-  
+
   def images_path
     file_support = ErpTechSvcs::FileSupport::Base.new(:storage => Rails.application.config.erp_tech_svcs.file_storage)
-    File.join(file_support.root,Rails.application.config.erp_tech_svcs.file_assets_location,'products','images',"#{self.description.underscore}_#{self.id}")
+    File.join(file_support.root, Rails.application.config.erp_tech_svcs.file_assets_location, 'products', 'images', "#{self.description.underscore}_#{self.id}")
   end
 
   def to_data_hash
@@ -76,17 +101,5 @@ class ProductType < ActiveRecord::Base
         :created_at => self.created_at,
         :updated_at => self.updated_at
     }
-  end
-
-  def self.without_offers(ctx)
-    #TODO: implement context
-    arr = self.all.select do |pt|
-      self.no_valid_offer?(pt)
-    end
-    self.where(id: arr.map(&:id))
-  end
-
-  def self.no_valid_offer?(pt)
-    pt.simple_product_offer == nil || ( !pt.simple_product_offer.product_offer.valid_from || pt.simple_product_offer.product_offer.valid_from > Time.now ) || ( !pt.simple_product_offer.product_offer.valid_to || pt.simple_product_offer.product_offer.valid_to < Time.now )
   end
 end
