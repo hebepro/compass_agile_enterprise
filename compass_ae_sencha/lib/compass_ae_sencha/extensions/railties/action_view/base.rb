@@ -1,30 +1,23 @@
 ActionView::Base.class_eval do
     
     def static_javascript_include_tag(*srcs)
-      raw srcs.flatten.map { |src| "<script type=\"text/javascript\" src=\"/assets/#{src.include?('.js') ? src : "#{src}.js"}\"></script>" }.join("")
+      raw srcs.flatten.map { |src| "<script type=\"text/javascript\" src=\"/javascripts/#{src.include?('.js') ? src : "#{src}.js"}\"></script>" }.join("")
     end
 
     def static_stylesheet_link_tag(*srcs)
-      raw srcs.flatten.map { |src| "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/#{src.include?('.css') ? src : "#{src}.css"}\" />" }.join("")
+      raw srcs.flatten.map { |src| "<link rel=\"stylesheet\" type=\"text/css\" href=\"/stylesheets/#{src.include?('.css') ? src : "#{src}.css"}\" />" }.join("")
     end
 
     def include_extjs(opt={})
       resources = ''
 
       if opt[:debug]
-        resources << static_javascript_include_tag("extjs/ext-all-debug.js")
+        resources << javascript_include_tag("extjs/app-debug.js")
       else
-        resources << static_javascript_include_tag("extjs/ext-all.js")
+        resources << javascript_include_tag("extjs/app.js")
       end
 
-      resources << static_javascript_include_tag("extjs/ext-theme-neptune.js")
-
-      resources << static_javascript_include_tag("extjs/helpQtip.js")
-      resources << static_javascript_include_tag("extjs/ext_ux_tab_close_menu.js")
-      resources << static_javascript_include_tag("extjs/Ext.ux.form.MultiSelect.js")
-      resources << static_javascript_include_tag("extjs/Ext.ux.CheckColumn.js")
-
-      resources << static_stylesheet_link_tag("extjs/resources/css/compass-ae-default-all.css") if opt[:theme] != false
+      resources << stylesheet_link_tag("extjs/resources/css/compass-ae-default-all.css") if opt[:theme] != false
 
       resources << add_authenticity_token_to_extjs
 
@@ -38,17 +31,17 @@ ActionView::Base.class_eval do
       resources = ''
 
       if (opt[:debug])
-        resources << static_javascript_include_tag("sencha_touch/sencha-touch-all-debug.js")
+        resources << javascript_include_tag("sencha_touch/app-debug.js")
       else
-        resources << static_javascript_include_tag("sencha_touch/sencha-touch-all.js")
+        resources << javascript_include_tag("sencha_touch/app.js")
       end
 
       if opt[:theme] === false
         #do nothing not theme loaded.
       elsif opt[:theme]
-        resources << static_stylesheet_link_tag("sencha_touch/resources/css/#{opt[:theme]}")
+        resources << stylesheet_link_tag("sencha_touch/resources/css/#{opt[:theme]}")
       else
-        resources << static_stylesheet_link_tag("sencha_touch/resources/css/sencha-touch.css")
+        resources << stylesheet_link_tag("sencha_touch/app.css")
       end
 
       raw resources

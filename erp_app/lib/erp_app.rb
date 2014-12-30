@@ -7,13 +7,10 @@ require 'friendly_id'
 
 require "erp_app/version"
 require "erp_app/extensions"
-require "erp_app/application_resource_loader"
 require "active_ext/active_ext"
 require "erp_app/widgets"
 require "erp_app/config"
 require "erp_app/engine"
-
-require "compass_ae_assets_compiler/compass_ae_assets_compiler"
 
 module ErpApp
 end

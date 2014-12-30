@@ -10,4 +10,7 @@
 // WARNING: THE FIRST BLANK LINE MARKS THE END OF WHAT'S TO BE PROCESSED, ANY BLANK LINE SHOULD
 // GO AFTER THE REQUIRES BELOW.
 //
-//= require_application_javascript_assets 'desktop' 'user_management' 
+//= require ./module
+//= require ./personal_info_panel
+//= require ./role_management_panel
+//= require ./user_application_mgt_panel

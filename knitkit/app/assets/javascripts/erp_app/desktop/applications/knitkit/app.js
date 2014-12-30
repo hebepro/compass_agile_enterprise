@@ -10,5 +10,16 @@
 // WARNING: THE FIRST BLANK LINE MARKS THE END OF WHAT'S TO BE PROCESSED, ANY BLANK LINE SHOULD
 // GO AFTER THE REQUIRES BELOW.
 //
-//= require_tree .
-//= require_application_javascript_assets 'desktop' 'knitkit' 
+//= require ./module
+//= require ./articles_grid_panel
+//= require ./center_region
+//= require ./comments_grid_panel
+//= require ./inquiries_grid_panel
+//= require ./publish_window
+//= require ./published_grid_panel
+//= require ./select_roles_window
+//= require ./splash_screen
+//= require ./versions_grid_panel
+//= require_tree ./east_region
+//= require_tree ./top_menu
+//= require_tree ./west_region

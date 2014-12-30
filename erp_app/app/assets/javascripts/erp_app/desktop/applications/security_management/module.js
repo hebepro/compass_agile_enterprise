@@ -167,7 +167,5 @@ Ext.define('Compass.ErpApp.Desktop.Applications.SecurityManagement.SearchBox', {
 
         }, config);
     }
-
 });
-new OnDemandLoadByAjax().load('/assets/erp_app/shared/dynamic_form_fields.js');
 

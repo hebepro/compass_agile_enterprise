@@ -1,4 +1,0 @@
-require 'erp_app/application_resource_loader/base_loader'
-require 'erp_app/application_resource_loader/desktop_organizer_loader'
-require 'erp_app/application_resource_loader/mobile_loader'
-require 'erp_app/application_resource_loader/shared_loader'

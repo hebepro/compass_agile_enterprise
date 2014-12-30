@@ -10,4 +10,17 @@
 // WARNING: THE FIRST BLANK LINE MARKS THE END OF WHAT'S TO BE PROCESSED, ANY BLANK LINE SHOULD
 // GO AFTER THE REQUIRES BELOW.
 //
-//= require_application_javascript_assets 'desktop' 'security_management' 
+//= require ./module
+//= require ./capabilities_panel
+//= require ./capabilities_widget
+//= require ./common_widget
+//= require ./groups_effective_security
+//= require ./groups_panel
+//= require ./groups_widget
+//= require ./north_panel
+//= require ./roles_panel
+//= require ./roles_widget
+//= require ./south_panel
+//= require ./users_effective_security
+//= require ./users_panel
+//= require ./users_widget

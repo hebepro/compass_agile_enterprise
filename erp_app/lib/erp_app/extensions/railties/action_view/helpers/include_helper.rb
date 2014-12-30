@@ -8,13 +8,13 @@ module ErpApp
             def include_highslide(options = {})
               raw case options[:version].to_s.downcase
                     when 'full'
-                      static_javascript_include_tag("erp_app/highslide/highslide/highslide-full.js")
+                      static_javascript_include_tag("highslide/highslide/highslide-full.js")
                     when 'gallery'
-                      static_javascript_include_tag("erp_app/highslide/highslide/highslide-with-gallery.js")
+                      static_javascript_include_tag("highslide/highslide/highslide-with-gallery.js")
                     when 'html'
-                      static_javascript_include_tag("erp_app/highslide/highslide/highslide-with-html.js")
+                      static_javascript_include_tag("highslide/highslide/highslide-with-html.js")
                     else
-                      static_javascript_include_tag("erp_app/highslide/highslide/highslide.js")
+                      static_javascript_include_tag("highslide/highslide/highslide.js")
                   end
             end
 
@@ -33,17 +33,16 @@ module ErpApp
                     :partyId => user.party.id,
                     :description => user.party.to_s
                 }
-                js_string = static_javascript_include_tag('erp_app/authentication/compass_user.js')
+                js_string = javascript_include_tag('erp_app/authentication/compass_user.js')
                 js_string << (raw "<script type='text/javascript'>var currentUser = new ErpApp.CompassAccessNegotiator.CompassUser(#{current_user.to_json});</script>")
                 js_string
               end
             end
 
             def include_code_mirror_library(theme='vibrant-ink')
-              resources = static_javascript_include_tag("erp_app/codemirror/lib/codemirror.js")
-              resources << static_javascript_include_tag("erp_app/codemirror_highlight.js")
-              resources << (raw "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/erp_app/codemirror/lib/codemirror.css\" />")
-              resources << (raw "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/erp_app/codemirror/theme/"+theme+".css\" />")
+              resources = static_javascript_include_tag("codemirror/lib/codemirror.js")
+              resources << (raw "<link rel=\"stylesheet\" type=\"text/css\" href=\"/javascripts/codemirror/lib/codemirror.css\" />")
+              resources << (raw "<link rel=\"stylesheet\" type=\"text/css\" href=\"/javascripts/codemirror/theme/"+theme+".css\" />")
               resources
             end
 
@@ -73,27 +72,13 @@ module ErpApp
             alias_method :setSessionTimeout, :set_session_timeout
 
             def load_shared_application_resources(resource_type)
-              resource_type = resource_type.to_sym
-              case resource_type
+              case resource_type.to_sym
                 when :javascripts
-                  raw static_javascript_include_tag(ErpApp::ApplicationResourceLoader::SharedLoader.new.locate_shared_files(resource_type))
+                  raw javascript_include_tag('erp_app/shared/app')
                 when :stylesheets
-                  raw static_stylesheet_link_tag(ErpApp::ApplicationResourceLoader::SharedLoader.new.locate_shared_files(resource_type))
+                  raw stylesheet_link_tag('erp_app/shared/app')
               end
             end
-
-            def load_compiled_shared_application_resources(resource_type)
-              resource_type = resource_type.to_sym
-              shared_loader = ErpApp::ApplicationResourceLoader::SharedLoader.new
-              compiled_file_paths = shared_loader.locate_compiled_shared_files(resource_type)
-              case resource_type
-              when :javascripts
-                raw compiled_file_paths.collect {|file_path| javascript_include_tag file_path}.join("")
-              when :stylesheets
-                raw compiled_file_paths.collect {|file_path| stylesheet_link_tag file_path}.join("")
-              end
-            end
-
 
           end #IncludeHelper
         end #Helpers

@@ -4,10 +4,12 @@
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
     <title>Compass AE Login</title>
 
-    <%= static_stylesheet_link_tag('erp_app/shared/compass-ext-all.css','erp_app/login/main.css') %>
-    <%= include_extjs(:theme => 'extjs:ext-all', :debug => (Rails.env != 'production') ) %>
+    <%= stylesheet_link_tag('erp_app/shared/compass-ext-all.css','erp_app/login/main.css') %>
 
-    <%= static_javascript_include_tag("erp_app/utility.js","erp_app/login/window.js")%>
+    <%= include_extjs(:debug => (Rails.env != 'production') ) %>
+
+    <%= javascript_include_tag("erp_app/utility.js","erp_app/login/window.js")%>
+
     <%= add_authenticity_token_to_extjs%>
 
   </head>

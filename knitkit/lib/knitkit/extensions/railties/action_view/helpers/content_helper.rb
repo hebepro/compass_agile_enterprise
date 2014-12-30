@@ -9,7 +9,7 @@ module Knitkit
               if can_inline_edit?
                 raw "<script type='text/javascript'>
                      jQuery(document).ready(function() {
-                         new OnDemandLoadByAjax().load('/javascripts/erp_app/ckeditor/ckeditor.js', function(){
+                         new OnDemandLoadByAjax().load('/javascripts/ckeditor/ckeditor.js', function(){
                             Knitkit.InlineEditing.setup(#{@website.id});
                           });
                       });

@@ -10,70 +10,61 @@
 
   <!--javascript-->
   <%= include_extjs(:debug => (Rails.env != 'production')) %>
-  <%= static_javascript_include_tag("extjs/overrides.js") %>
-  <%= static_javascript_include_tag("erp_app/utility.js") %>
+
+  <%= javascript_include_tag("erp_app/utility.js") %>
 
   <!-- shared application resources -->
- <% if Rails.env.production? %>
-     <%= load_compiled_shared_application_resources(:javascripts) %>       
-   <% else %>
-     <%= load_shared_application_resources(:javascripts) %>
- <% end %>
+  <%= load_shared_application_resources(:javascripts) %>
   <!-- end shared application resources -->
 
-  <%= static_javascript_include_tag("erp_app/organizer/preference_window.js", "erp_app/organizer/layout.js", "erp_app/organizer/default_menu_tree_panel.js") %>
+  <%= javascript_include_tag("erp_app/organizer/app.js") %>
+
   <%= setup_js_authentication(@user) %>
 
-
   <!-- application resources -->
-   <% if Rails.env.production? %>
-     <% @user.get_application_compiled_resources('organizer','javascripts').each do |resource|%>
-       <%= javascript_include_tag(resource) %>
-     <% end %>
-   <% else %>
-     <%= static_javascript_include_tag(@organizer.applications.collect { |app| app.locate_resources('javascripts') }.flatten) %>
-   <% end %>
+  <% @user.get_application_resource_paths('organizer').each do |resource| %>
+    <%= javascript_include_tag(resource) %>
+  <% end %>
   <!-- end application resources -->
 
   <%= set_max_file_upload %>
 
   <!-- load base css file -->
-  <%= static_stylesheet_link_tag('erp_app/organizer/base.css') %>
+  <%= stylesheet_link_tag('erp_app/organizer/base.css') %>
   <!-- end load base css file -->
 
   <!-- application resources -->
-  <% if Rails.env.production? %>
-    <%= load_compiled_shared_application_resources(:stylesheets) %>
-    <% @user.get_application_compiled_resources('organizer','stylesheets').each do |resource|%>
-       <%= stylesheet_link_tag(resource) %>
-    <% end %>
- <% else %>
-   <%= load_shared_application_resources(:stylesheets) %> 
-   <%= static_stylesheet_link_tag(@organizer.applications.collect { |app| app.locate_resources('stylesheets') }.flatten) %>
- <% end %>
+  <%= load_shared_application_resources(:stylesheets) %>
+
+  <% @user.get_application_resource_paths('organizer').each do |resource| %>
+    <%= stylesheet_link_tag(resource) %>
+  <% end %>
+
   <!-- end application resources -->
 
   <%= include_compass_ae_instance %>
 </head>
 <body scroll="no">
 <script type="text/javascript">
-    Ext.onReady(function () {
-        Ext.QuickTips.init();
+  Ext.onReady(function () {
+    Ext.QuickTips.init();
 
-        var organizerLayout = Ext.create("Compass.ErpApp.Organizer.Layout", {logout_url: '/session/sign_out'});
+    var organizerLayout = Ext.create("Compass.ErpApp.Organizer.Layout", {logout_url: '/session/sign_out'});
 
-        <%@organizer.applications.each do |application|%>
+    <%@organizer.applications.each do |application|%>
 
-        var <%=application.internal_identifier.camelize%> = Ext.create("Compass.ErpApp.Organizer.Applications.<%= raw application.internal_identifier.camelize%>.Base", {organizerLayout: organizerLayout});
-        <%=application.internal_identifier.camelize%>.setup();
+    var <%=application.internal_identifier.camelize%> =
+    Ext.create("Compass.ErpApp.Organizer.Applications.<%= raw application.internal_identifier.camelize%>.Base", {organizerLayout: organizerLayout});
+    <%=application.internal_identifier.camelize%>.
+    setup();
 
-        <%end%>
-        organizerLayout.setupLogoutButton();
-        organizerLayout.setup();
+    <%end%>
+    organizerLayout.setupLogoutButton();
+    organizerLayout.setup();
 
-        Compass.ErpApp.Utility.preventBrowserBack();
-        Compass.ErpApp.Utility.setupErpAppLogoutRedirect();
-    });
+    Compass.ErpApp.Utility.preventBrowserBack();
+    Compass.ErpApp.Utility.setupErpAppLogoutRedirect();
+  });
 </script>
 <%= setSessionTimeout %>
 </body>

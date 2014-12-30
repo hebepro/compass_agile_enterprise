@@ -14,21 +14,17 @@
 
   <%= javascript_include_tag :application %>
 
-  <!-- bootstrap -->
-  <%= static_javascript_include_tag 'knitkit/bootstrap.min.js' %>
-  <%= static_javascript_include_tag 'knitkit/theme.js' %>
-  <%= static_javascript_include_tag 'knitkit/bootstrap-datepicker.js' %>
-  <%= static_javascript_include_tag 'knitkit/confirm-bootstrap.js' %>
+  <%= javascript_include_tag 'erp_app/utility.js' %>
 
-  <%= static_stylesheet_link_tag 'knitkit/bootstrap.min.css' %>
-  <%= static_stylesheet_link_tag 'knitkit/bootstrap-responsive.min.css' %>
-  <%= static_stylesheet_link_tag 'knitkit/custom.css' %>
-  <%= static_stylesheet_link_tag 'knitkit/datepicker.css' %>
-  <!-- end bootstrap -->
+  <!-- Knitkit Helpers -->
+  <%= javascript_include_tag 'knitkit-web' %>
+  <%= stylesheet_link_tag 'knitkit-web' %>
+  <!-- end -->
 
-  <%= static_javascript_include_tag('erp_app/utility.js') %>
-  <%= static_javascript_include_tag('erp_app/jquery_support.js') %>
-  <%= static_javascript_include_tag('erp_app/widgets.js') %>
+  <!-- Bootstrap theme helpers -->
+  <%= javascript_include_tag 'knitkit/theme.js' %>
+  <%= stylesheet_link_tag 'knitkit/custom.css' %>
+  <!-- end -->
 
 </head>
 <body>

@@ -8,9 +8,12 @@ module Knitkit
     isolate_namespace Knitkit
 
     config.knitkit = Knitkit::Config
-	
-	  initializer "knikit.merge_public" do |app|
-      app.middleware.insert_before Rack::Runtime, ::ActionDispatch::Static, "#{root}/public"
+
+    initializer :assets do |config|
+      Rails.application.config.assets.paths << root.join("app", "assets", "images")
+      Rails.application.config.assets.precompile += %w{ knitkit-web.css knitkit/custom.css knitkit-web.js knitkit/theme.js }
+      Rails.application.config.assets.precompile += %w{ erp_app/desktop/applications/knitkit/app.js }
+      Rails.application.config.assets.precompile += %w{ erp_app/desktop/applications/knitkit/app.css }
     end
 
 	  ActiveSupport.on_load(:active_record) do
@@ -30,6 +33,6 @@ module Knitkit
 
     ErpBaseErpSvcs.register_as_compass_ae_engine(config, self)
     ::ErpApp::Widgets::Loader.load_compass_ae_widgets(config, self)
-    
+
   end#Engine
 end#Knitkit

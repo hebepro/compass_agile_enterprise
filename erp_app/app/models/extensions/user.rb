@@ -48,14 +48,10 @@ User.class_eval do
     end
   end
 
-  def get_application_compiled_resources(application_type, resource_type)
+  def get_application_resource_paths(application_type)
     config = Rails.application.config
-    extension = (resource_type == 'javascripts') ? 'js' : 'css'
     send(application_type).applications.collect do |app|
-      puts app.inspect
-      asset_path = File.join(Rails.root.to_s, 'public', config.assets.prefix, 'erp_app', application_type, app.internal_identifier, "**/*.#{extension}")
-      puts asset_path
-      Dir.glob(asset_path).collect {|path| path.gsub("#{Rails.root.to_s}/public", '')}
+      File.join(config.assets.prefix, 'erp_app', application_type, 'applications', app.internal_identifier, "app")
     end.flatten
   end
 

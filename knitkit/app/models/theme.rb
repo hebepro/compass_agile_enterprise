@@ -312,8 +312,8 @@ class Theme < ActiveRecord::Base
 
     unless ignored_files.any? { |w| path =~ /#{w}/ }
       contents = IO.read(path)
-      contents.gsub!("<%= static_stylesheet_link_tag 'knitkit/custom.css' %>","<%= theme_stylesheet_link_tag '#{self.theme_id}','custom.css' %>") unless path.scan('base.html.erb').empty?
-      contents.gsub!("<%= static_javascript_include_tag 'knitkit/theme.js' %>","<%= theme_javascript_include_tag '#{self.theme_id}','theme.js' %>") unless path.scan('base.html.erb').empty?
+      contents.gsub!("<%= stylesheet_link_tag 'knitkit/custom.css' %>","<%= theme_stylesheet_link_tag '#{self.theme_id}','custom.css' %>") unless path.scan('base.html.erb').empty?
+      contents.gsub!("<%= javascript_include_tag 'knitkit/theme.js' %>","<%= theme_javascript_include_tag '#{self.theme_id}','theme.js' %>") unless path.scan('base.html.erb').empty?
 
       path = case type
                when :widgets
