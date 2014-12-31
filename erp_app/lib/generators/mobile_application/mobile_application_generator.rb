@@ -4,22 +4,22 @@ class MobileApplicationGenerator < Rails::Generators::NamedBase
   argument :icon, :type => :string 
 
   def generate_mobile_application
-    #Controller
+    # Controller
     template "controllers/controller_template.erb", "app/controllers/erp_app/mobile/#{file_name}/base_controller.rb"
 
-    #make javascript
-    template "public/app.js.erb", "public/javascripts/erp_app/mobile/applications/#{file_name}/app.js"
+    # make javascript
+    template "assets/app.js.erb", "app/assets/javascripts/erp_app/mobile/applications/#{file_name}/app.js"
     
-    #make css folder
-    empty_directory "public/stylesheets/erp_app/mobile/applications/#{file_name}"
+    # make css folder
+    empty_directory "app/assets/stylesheets/erp_app/mobile/applications/#{file_name}"
 
-    #make images folder
-    empty_directory "public/images/erp_app/mobile/applications/#{file_name}"
+    # make images folder
+    empty_directory "app/assets/images/erp_app/mobile/applications/#{file_name}"
     
-    #add route
+    # add route
     route "match '/erp_app/mobile/#{file_name}(/:action)' => \"erp_app/mobile/#{file_name}/base\""
     
-    #migration
+    # migration
     template "migrate/migration_template.erb", "db/data_migrations/#{RussellEdge::DataMigrator.next_migration_number(1)}_create_#{file_name}_mobile_application.rb"
   end
 end

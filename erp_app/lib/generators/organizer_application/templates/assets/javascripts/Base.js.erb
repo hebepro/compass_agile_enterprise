@@ -5,8 +5,8 @@ Ext.ns("Compass.ErpApp.Organizer.Applications.<%= class_name %>");
 Compass.ErpApp.Organizer.Applications.<%= class_name %>.Base = function (config) {
     this.setup = function () {
         config.organizerLayout.addApplication({
-            title: 'Account Management',
-            id: 'accountManagementTabPanel',
+            title: '<%= class_name %>',
+            id: '<%= file_name %>',
             tabs: [
                 {
                     title: 'Hello World',

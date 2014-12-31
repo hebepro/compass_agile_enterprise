@@ -7,6 +7,8 @@ module CompassAeConsole
       Rails.application.config.assets.precompile += %w{ erp_app/desktop/applications/compass_ae_console/app.js }
       Rails.application.config.assets.precompile += %w{ erp_app/desktop/applications/compass_ae_console/app.css }
       Rails.application.config.assets.precompile += %w{ erp_app/shared/console_panel.js }
+
+      ErpApp::Config.shared_js_assets += %w{ erp_app/shared/console_panel.js }
     end
 
     ErpBaseErpSvcs.register_as_compass_ae_engine(config, self)

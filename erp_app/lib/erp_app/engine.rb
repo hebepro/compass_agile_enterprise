@@ -16,7 +16,8 @@ module ErpApp
       Rails.application.config.assets.paths << root.join("app", "assets", "images")
 
       # include css files
-      Rails.application.config.assets.precompile += %w{ erp_app/shared/app.css erp_app/shared/compass-ext-all.css jquery_plugins/jquery.loadmask.css erp_app/login/main.css erp_app/desktop/base.css erp_app/organizer/base.css }
+      Rails.application.config.assets.precompile += %w{ erp_app/shared/app.css erp_app/shared/compass-ext-all.css jquery_plugins/jquery.loadmask.css }
+      Rails.application.config.assets.precompile += %w{ erp_app/login/main.css erp_app/desktop/base.css erp_app/organizer/base.css }
       Rails.application.config.assets.precompile += %w{ erp_app/desktop/applications/security_management/app.css }
 
       # include organizer applications
@@ -74,6 +75,10 @@ module ErpApp
       # css
       Rails.application.config.assets.precompile += %w{ erp_app/mobile/applications/job_tracker/app.css }
       Rails.application.config.assets.precompile += %w{ erp_app/mobile/applications/user_management/app.css }
+
+      # add shared assets to included by Compass
+      ErpApp::Config.shared_js_assets += %w{ erp_app/shared/app.js }
+      ErpApp::Config.shared_css_assets += %w{ erp_app/shared/app.css erp_app/shared/compass-ext-all.css }
     end
 
     ActiveSupport.on_load(:active_record) do

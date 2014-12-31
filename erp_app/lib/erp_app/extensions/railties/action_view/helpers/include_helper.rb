@@ -59,8 +59,8 @@ module ErpApp
             end
 
             def set_session_timeout(warn_milli_seconds=((ErpApp::Config.session_warn_after*60)*1000),
-                redirect_milli_seconds=((ErpApp::Config.session_redirect_after*60)*1000),
-                redirect_to='/session/sign_out')
+                                    redirect_milli_seconds=((ErpApp::Config.session_redirect_after*60)*1000),
+                                    redirect_to='/session/sign_out')
               raw "<script type='text/javascript'>Compass.ErpApp.Utility.SessionTimeout.setupSessionTimeout(#{warn_milli_seconds}, #{redirect_milli_seconds}, '#{redirect_to}') </script>" if current_user
             end
 
@@ -72,12 +72,12 @@ module ErpApp
             alias_method :setSessionTimeout, :set_session_timeout
 
             def load_shared_application_resources(resource_type)
-              case resource_type.to_sym
-                when :javascripts
-                  raw javascript_include_tag('erp_app/shared/app')
-                when :stylesheets
-                  raw stylesheet_link_tag('erp_app/shared/app')
-              end
+              raw case resource_type.to_sym
+                    when :javascripts
+                      ErpApp::Config.shared_js_assets.collect { |path| javascript_include_tag(path) }.join(' ')
+                    when :stylesheets
+                      ErpApp::Config.shared_css_assets.collect { |path| stylesheet_link_tag(path) }.join(' ')
+                  end
             end
 
           end #IncludeHelper
