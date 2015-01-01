@@ -1,31 +1,31 @@
-load File.join(File.dirname(__FILE__),'../file_support.rb')
+load File.join(File.dirname(__FILE__), '../file_support.rb')
 
 File.unlink 'public/index.html' rescue Errno::ENOENT
-FileUtils.cp File.join(File.dirname(__FILE__),'../../../public','index.html'), 'public/index.html'
+FileUtils.cp File.join(File.dirname(__FILE__), '../../../public', 'index.html'), 'public/index.html'
 
 CompassAeStarterKit::FileSupport.patch_file 'config/initializers/session_store.rb',
-"# #{app_const}.config.session_store :active_record_store",
-"#{app_const}.config.session_store :active_record_store #use active_record for session storage, this is needed for knitkit",
-:patch_mode => :change
+                                            "# #{app_const}.config.session_store :active_record_store",
+                                            "#{app_const}.config.session_store :active_record_store #use active_record for session storage, this is needed for knitkit",
+                                            :patch_mode => :change
 
 CompassAeStarterKit::FileSupport.patch_file 'config/routes.rb',
-"#{app_const}.routes.draw do",
-"  #mount CompassAE engines
+                                            "#{app_const}.routes.draw do",
+                                            "  #mount CompassAE engines
   ErpBaseErpSvcs.mount_compass_ae_engines(self)",
-:patch_mode => :insert_after
+                                            :patch_mode => :insert_after
 
 CompassAeStarterKit::FileSupport.patch_file 'config/environments/production.rb',
-"  config.serve_static_assets = false",
-"  config.serve_static_assets = true",
-:patch_mode => :change
+                                            "  config.serve_static_assets = false",
+                                            "  config.serve_static_assets = true",
+                                            :patch_mode => :change
 
-CompassAeStarterKit::FileSupport.patch_file 'config/environments/production.rb',
-"  config.assets.compile = false",
-"  config.assets.compile = true",
-:patch_mode => :change
+CompassAeStarterKit::FileSupport.patch_file 'app/assets/javascripts/application.js',
+                                            "  //= require_tree .",
+                                            "  // require_tree. (this was removed by CompassAE because CompassAE loads different assets based on the application container you are using)",
+                                            :patch_mode => :change
 
 CompassAeStarterKit::FileSupport.append_file 'Gemfile',
-"
+                                             "
 gem 'erp_base_erp_svcs', '~> 4.0'
 gem 'erp_tech_svcs', '4.0'
 gem 'compass_ae_sencha', '2.0'

@@ -16,9 +16,10 @@ module ErpApp
       Rails.application.config.assets.paths << root.join("app", "assets", "images")
 
       # include css files
-      Rails.application.config.assets.precompile += %w{ erp_app/shared/app.css erp_app/shared/compass-ext-all.css jquery_plugins/jquery.loadmask.css }
+      Rails.application.config.assets.precompile += %w{ erp_app/shared/erp_app_shared.css erp_app/shared/compass-ext-all.css jquery_plugins/jquery.loadmask.css }
       Rails.application.config.assets.precompile += %w{ erp_app/login/main.css erp_app/desktop/base.css erp_app/organizer/base.css }
       Rails.application.config.assets.precompile += %w{ erp_app/desktop/applications/security_management/app.css }
+      Rails.application.config.assets.precompile += %w{ erp_app/mobile/app.css }
 
       # include organizer applications
       Rails.application.config.assets.precompile += %w{ erp_app/organizer/applications/crm/app.css }
@@ -26,14 +27,13 @@ module ErpApp
       # include js files
       Rails.application.config.assets.precompile += %w{ jquery_plugins/jquery.address.min.js jquery_plugins/jquery.loadmask.min.js }
       Rails.application.config.assets.precompile += %w{ erp_app/jquery_support.js erp_app/utility.js erp_app/widgets.js }
-      Rails.application.config.assets.precompile += %w{ erp_app/shared/app.js }
+      Rails.application.config.assets.precompile += %w{ erp_app/shared/erp_app_shared.js }
       Rails.application.config.assets.precompile += %w{ erp_app/authentication/compass_user.js }
       Rails.application.config.assets.precompile += %w{ erp_app/ecommerce/credit_card_window.js }
       Rails.application.config.assets.precompile += %w{ erp_app/login/mobile.js erp_app/login/window.js }
       Rails.application.config.assets.precompile += %w{ erp_app/organizer/app.js }
       Rails.application.config.assets.precompile += %w{ erp_app/desktop/app.js }
       Rails.application.config.assets.precompile += %w{ erp_app/mobile/app.js }
-      Rails.application.config.assets.precompile += %w{ erp_app/mobile/app.css }
 
       # include desktop applications
 
@@ -75,6 +75,9 @@ module ErpApp
       # css
       Rails.application.config.assets.precompile += %w{ erp_app/mobile/applications/job_tracker/app.css }
       Rails.application.config.assets.precompile += %w{ erp_app/mobile/applications/user_management/app.css }
+
+      # add root shared directory
+      Rails.application.config.assets.precompile += %w{ erp_app/shared/app.js }
 
       # add shared assets to included by Compass
       ErpApp::Config.shared_js_assets += %w{ erp_app/shared/erp_app_shared.js }
