@@ -74,7 +74,15 @@ module ErpApp
             def load_shared_application_resources(resource_type)
               raw case resource_type.to_sym
                     when :javascripts
-                      ErpApp::Config.shared_js_assets.collect { |path| javascript_include_tag(path) }.join(' ')
+                      sources = ErpApp::Config.shared_js_assets.collect { |path| javascript_include_tag(path) }.join(' ')
+
+                      # add the root apps shared assets if they exist
+                      if File.exists? File.join(Rails.root, 'app/assets/javascripts/erp_app/shared/app.js')
+                        sources +=  javascript_include_tag('erp_app/shared/app.js')
+                      end
+
+                      sources
+
                     when :stylesheets
                       ErpApp::Config.shared_css_assets.collect { |path| stylesheet_link_tag(path) }.join(' ')
                   end

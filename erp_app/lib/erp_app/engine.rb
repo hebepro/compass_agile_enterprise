@@ -77,8 +77,8 @@ module ErpApp
       Rails.application.config.assets.precompile += %w{ erp_app/mobile/applications/user_management/app.css }
 
       # add shared assets to included by Compass
-      ErpApp::Config.shared_js_assets += %w{ erp_app/shared/app.js }
-      ErpApp::Config.shared_css_assets += %w{ erp_app/shared/app.css erp_app/shared/compass-ext-all.css }
+      ErpApp::Config.shared_js_assets += %w{ erp_app/shared/erp_app_shared.js }
+      ErpApp::Config.shared_css_assets += %w{ erp_app/shared/erp_app_shared.css erp_app/shared/compass-ext-all.css }
     end
 
     ActiveSupport.on_load(:active_record) do
