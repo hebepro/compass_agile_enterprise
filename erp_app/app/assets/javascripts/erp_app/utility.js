@@ -646,6 +646,10 @@ String.prototype.upcase = function () {
     return this.toUpperCase();
 };
 
+String.prototype.capitalize = function () {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+};
+
 String.prototype.camelize = function () {
     var parts = this.replace(/_/, '-').split('-'), len = parts.length;
     if (len == 1) return parts[0];
