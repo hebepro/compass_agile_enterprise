@@ -5,22 +5,32 @@
 
     <%@desktop.applications.each do |application|%>
     .<%=application.shortcut_id%>-shortcut {
-      background-image: url("/assets/icons/<%=application.icon.split('-')[1]%>/<%=application.icon.split('-')[1]%>_64x64.png");
-      height: 64px;
-      width: 64px;
+      background-image: url("/assets/icons/<%=application.icon.split('-')[1]%>/<%=application.icon.split('-')[1]%>_105x105.png");
+      height: 105px;
+      width: 105px;
+    }
+    .<%=application.shortcut_id%>-shortcut:hover {
+      background-image: url("/assets/icons/<%=application.icon.split('-')[1]%>/<%=application.icon.split('-')[1]%>_105x105_active.png");
     }
 
     <%end%>
     .control-panel-win-shortcut {
-      background-image: url("/assets/icons/control_panel/control_panel_64x64.png");
-      height: 64px;
-      width: 64px;
+      background-image: url("/assets/icons/control_panel/control_panel_105x105.png");
+      height: 105px;
+      width: 105px;
+    }
+
+    .control-panel-win-shortcut:hover {
+      background-image: url("/assets/icons/control_panel/control_panel_105x105_active.png");
     }
 
     .web-navigator-win-shortcut {
-      background-image: url("/assets/icons/globe/globe_64x64.png");
+      background-image: url("/assets/icons/globe/globe_105x105.png");
       height: 64px;
       width: 64px;
+    }
+    .web-navigator-win-shortcut:hover {
+      background-image: url("/assets/icons/globe/globe_105x105_active.png");
     }
 
     #loading-mask {
