@@ -14,6 +14,39 @@
     }
 
     <%end%>
+
+    .user-mgt-win-shortcut {
+        background-image: url("/assets/icons/user/user_105x105.png");
+        height: 105px;
+        width: 105px;
+    }
+
+    .user-mgt-win-shortcut:hover {
+        background-image: url("/assets/icons/user/user_105x105_active.png");
+        height: 105px;
+        width: 105px;
+    }
+
+    .app-composer-win-shortcut {
+        background-image: url("/assets/icons/control_panel/control_panel_105x105.png");
+        height: 105px;
+        width: 105px;
+    }
+
+    .app-composer-win-shortcut:hover {
+        background-image: url("/assets/icons/control_panel/control_panel_105x105_active.png");
+    }
+
+    .db-admin-win-shortcut {
+        background-image: url("/assets/icons/database/database_105x105.png");
+        height: 105px;
+        width: 105px;
+    }
+
+    .db-admin-win-shortcut:hover {
+        background-image: url("/assets/icons/database/database_105x105_active.png");
+    }
+
     .control-panel-win-shortcut {
       background-image: url("/assets/icons/control_panel/control_panel_105x105.png");
       height: 105px;
@@ -25,12 +58,21 @@
     }
 
     .web-navigator-win-shortcut {
-      background-image: url("/assets/icons/globe/globe_105x105.png");
-      height: 64px;
-      width: 64px;
-    }
+             background-image: url("/assets/icons/globe/globe_105x105.png");
+             height: 64px;
+             width: 64px;
+         }
     .web-navigator-win-shortcut:hover {
-      background-image: url("/assets/icons/globe/globe_105x105_active.png");
+        background-image: url("/assets/icons/globe/globe_105x105_active.png");
+    }
+
+    .website-builder-win-shortcut {
+        background-image: url("/assets/icons/website/website_105x105.png");
+        height: 64px;
+        width: 64px;
+    }
+    .website-builder-win-shortcut:hover {
+        background-image: url("/assets/icons/website/website_105x105_active.png");
     }
 
     #loading-mask {
@@ -140,13 +182,21 @@
         shortcuts: Ext.create("Ext.data.Store", {
           model: "Ext.ux.desktop.ShortcutModel",
           data: [
-            {name: "Control Panel", iconCls: "control-panel-win-shortcut", module: "control-panel-win"},
-            {
-              name: "Web Navigator",
-              iconCls: "web-navigator-win-shortcut",
-              module: "web-navigator-win"
-            }<%=(@desktop.shortcuts.count > 0) ? ',' : '' %>
-            <%=raw @desktop.shortcuts.collect{|app| "{name:'#{app.description}',iconCls:'#{app.shortcut_id}-shortcut',module:'#{app.shortcut_id}'}"}.join(",")%>
+
+            { name: "User Management", iconCls: "user-mgt-win-shortcut", module: "user-management-win"},
+              { name: "Website Builder", iconCls: "website-builder-win-shortcut", module: "knitkit-win"},
+            { name: "App Composer", iconCls: "app-composer-win-shortcut", module: "application_management-win"},
+            { name: "DB Navigator", iconCls: "db-admin-win-shortcut", module: "rails_db_admin-win"}
+
+//##################################Support Dynamic Addition of desktop icons - maybe later#####################################################
+//            {
+//              name: "Web Navigator",
+//              iconCls: "web-navigator-win-shortcut",
+//              module: "web-navigator-win"
+//            }<%=(@desktop.shortcuts.count > 0) ? ',' : '' %>
+//            <!--<%=raw @desktop.shortcuts.collect{|app| "{name:'#{app.description}',iconCls:'#{app.shortcut_id}-shortcut',module:'#{app.shortcut_id}'}"}.join(",")%>-->
+//######################################################################################################################
+
           ]
         }),
         //wallpaper: "/assets/images/wallpaper/<%=@desktop.get_preference(:desktop_background) %>",
