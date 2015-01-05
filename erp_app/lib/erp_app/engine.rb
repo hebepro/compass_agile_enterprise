@@ -21,9 +21,6 @@ module ErpApp
       Rails.application.config.assets.precompile += %w{ erp_app/desktop/applications/security_management/app.css }
       Rails.application.config.assets.precompile += %w{ erp_app/mobile/app.css }
 
-      # include organizer applications
-      Rails.application.config.assets.precompile += %w{ erp_app/organizer/applications/crm/app.css }
-
       # include js files
       Rails.application.config.assets.precompile += %w{ jquery_plugins/jquery.address.min.js jquery_plugins/jquery.loadmask.min.js }
       Rails.application.config.assets.precompile += %w{ erp_app/jquery_support.js erp_app/utility.js erp_app/widgets.js }
@@ -36,45 +33,40 @@ module ErpApp
       Rails.application.config.assets.precompile += %w{ erp_app/mobile/app.js }
 
       # include desktop applications
+      desktop_js_path = File.join("app", "assets", "javascripts", "erp_app", "desktop", "applications")
+      desktop_css_path = File.join("app", "assets", "stylesheets", "erp_app", "desktop", "applications")
 
-      # javascript
-      Rails.application.config.assets.precompile += %w{ erp_app/desktop/applications/audit_log_viewer/app.js }
-      Rails.application.config.assets.precompile += %w{ erp_app/desktop/applications/configuration_management/app.js }
-      Rails.application.config.assets.precompile += %w{ erp_app/desktop/applications/control_panel/app.js }
-      Rails.application.config.assets.precompile += %w{ erp_app/desktop/applications/file_manager/app.js }
-      Rails.application.config.assets.precompile += %w{ erp_app/desktop/applications/job_tracker/app.js }
-      Rails.application.config.assets.precompile += %w{ erp_app/desktop/applications/scaffold/app.js }
-      Rails.application.config.assets.precompile += %w{ erp_app/desktop/applications/security_management/app.js }
-      Rails.application.config.assets.precompile += %w{ erp_app/desktop/applications/tail/app.js }
-      Rails.application.config.assets.precompile += %w{ erp_app/desktop/applications/user_management/app.js }
-      Rails.application.config.assets.precompile += %w{ erp_app/desktop/applications/web_navigator/app.js }
+      # add erp_app/desktop to assets compile path
+      Rails.application.config.assets.paths << root.join(desktop_js_path)
+      Rails.application.config.assets.paths << root.join(desktop_css_path)
 
-      # css
-      Rails.application.config.assets.precompile += %w{ erp_app/desktop/applications/audit_log_viewer/app.css }
-      Rails.application.config.assets.precompile += %w{ erp_app/desktop/applications/configuration_management/app.css }
-      Rails.application.config.assets.precompile += %w{ erp_app/desktop/applications/control_panel/app.css }
-      Rails.application.config.assets.precompile += %w{ erp_app/desktop/applications/file_manager/app.css }
-      Rails.application.config.assets.precompile += %w{ erp_app/desktop/applications/job_tracker/app.css }
-      Rails.application.config.assets.precompile += %w{ erp_app/desktop/applications/scaffold/app.css }
-      Rails.application.config.assets.precompile += %w{ erp_app/desktop/applications/security_management/app.css }
-      Rails.application.config.assets.precompile += %w{ erp_app/desktop/applications/tail/app.css }
-      Rails.application.config.assets.precompile += %w{ erp_app/desktop/applications/user_management/app.css }
-      Rails.application.config.assets.precompile += %w{ erp_app/desktop/applications/web_navigator/app.css }
+      # add Rails root erp_app/desktop assets path
+      Rails.application.config.assets.paths << Rails.root.join(desktop_js_path) if File.exists?(Rails.root.join(desktop_js_path))
+      Rails.application.config.assets.paths << Rails.root.join(desktop_css_path) if File.exists?(Rails.root.join(desktop_css_path))
 
       # include organizer applications
+      organizer_js_path = File.join("app", "assets", "javascripts", "erp_app", "organizer", "applications")
+      organizer_css_path = File.join("app", "assets", "stylesheets", "erp_app", "organizer", "applications")
 
-      # javascript
-      Rails.application.config.assets.precompile += %w{ erp_app/organizer/applications/crm/app.js }
+      # add erp_app/organizer to assets compile path
+      Rails.application.config.assets.paths << root.join(organizer_js_path)
+      Rails.application.config.assets.paths << root.join(organizer_css_path)
+
+      # add Rails root erp_app/organizer assets path
+      Rails.application.config.assets.paths << Rails.root.join(organizer_js_path) if File.exists?(Rails.root.join(organizer_js_path))
+      Rails.application.config.assets.paths << Rails.root.join(organizer_css_path) if File.exists?(Rails.root.join(organizer_css_path))
 
       # include mobile applications
+      mobile_js_path = File.join("app", "assets", "javascripts", "erp_app", "mobile", "applications")
+      mobile_css_path = File.join("app", "assets", "stylesheets", "erp_app", "mobile", "applications")
 
-      # javascript
-      Rails.application.config.assets.precompile += %w{ erp_app/mobile/applications/job_tracker/app.js }
-      Rails.application.config.assets.precompile += %w{ erp_app/mobile/applications/user_management/app.js }
+      # add erp_app/mobile to assets compile path
+      Rails.application.config.assets.paths << root.join(mobile_js_path)
+      Rails.application.config.assets.paths << root.join(mobile_css_path)
 
-      # css
-      Rails.application.config.assets.precompile += %w{ erp_app/mobile/applications/job_tracker/app.css }
-      Rails.application.config.assets.precompile += %w{ erp_app/mobile/applications/user_management/app.css }
+      # add Rails root erp_app/mobile assets path
+      Rails.application.config.assets.paths << Rails.root.join(mobile_js_path) if File.exists?(Rails.root.join(mobile_js_path))
+      Rails.application.config.assets.paths << Rails.root.join(mobile_css_path) if File.exists?(Rails.root.join(mobile_css_path))
 
       # add root shared directory
       Rails.application.config.assets.precompile += %w{ erp_app/shared/app.js }
