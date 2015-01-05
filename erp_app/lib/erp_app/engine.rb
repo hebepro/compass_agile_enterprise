@@ -32,48 +32,102 @@ module ErpApp
       Rails.application.config.assets.precompile += %w{ erp_app/desktop/app.js }
       Rails.application.config.assets.precompile += %w{ erp_app/mobile/app.js }
 
-      # include desktop applications
-      desktop_js_path = File.join("app", "assets", "javascripts", "erp_app", "desktop", "applications")
-      desktop_css_path = File.join("app", "assets", "stylesheets", "erp_app", "desktop", "applications")
-
-      # add erp_app/desktop to assets compile path
-      Rails.application.config.assets.paths << root.join(desktop_js_path)
-      Rails.application.config.assets.paths << root.join(desktop_css_path)
-
-      # add Rails root erp_app/desktop assets path
-      Rails.application.config.assets.paths << Rails.root.join(desktop_js_path) if File.exists?(Rails.root.join(desktop_js_path))
-      Rails.application.config.assets.paths << Rails.root.join(desktop_css_path) if File.exists?(Rails.root.join(desktop_css_path))
-
-      # include organizer applications
-      organizer_js_path = File.join("app", "assets", "javascripts", "erp_app", "organizer", "applications")
-      organizer_css_path = File.join("app", "assets", "stylesheets", "erp_app", "organizer", "applications")
-
-      # add erp_app/organizer to assets compile path
-      Rails.application.config.assets.paths << root.join(organizer_js_path)
-      Rails.application.config.assets.paths << root.join(organizer_css_path)
-
-      # add Rails root erp_app/organizer assets path
-      Rails.application.config.assets.paths << Rails.root.join(organizer_js_path) if File.exists?(Rails.root.join(organizer_js_path))
-      Rails.application.config.assets.paths << Rails.root.join(organizer_css_path) if File.exists?(Rails.root.join(organizer_css_path))
-
-      # include mobile applications
-      mobile_js_path = File.join("app", "assets", "javascripts", "erp_app", "mobile", "applications")
-      mobile_css_path = File.join("app", "assets", "stylesheets", "erp_app", "mobile", "applications")
-
-      # add erp_app/mobile to assets compile path
-      Rails.application.config.assets.paths << root.join(mobile_js_path)
-      Rails.application.config.assets.paths << root.join(mobile_css_path)
-
-      # add Rails root erp_app/mobile assets path
-      Rails.application.config.assets.paths << Rails.root.join(mobile_js_path) if File.exists?(Rails.root.join(mobile_js_path))
-      Rails.application.config.assets.paths << Rails.root.join(mobile_css_path) if File.exists?(Rails.root.join(mobile_css_path))
-
       # add root shared directory
       Rails.application.config.assets.precompile += %w{ erp_app/shared/app.js }
 
       # add shared assets to included by Compass
       ErpApp::Config.shared_js_assets += %w{ erp_app/shared/erp_app_shared.js }
       ErpApp::Config.shared_css_assets += %w{ erp_app/shared/erp_app_shared.css erp_app/shared/compass-ext-all.css }
+
+      #
+      # include desktop applications
+      #
+      desktop_js_path = File.join("app", "assets", "javascripts", "erp_app", "desktop", "applications")
+      desktop_css_path = File.join("app", "assets", "stylesheets", "erp_app", "desktop", "applications")
+
+      # add app.js files for desktop apps to precompile
+      Dir.foreach(root.join(desktop_js_path)) do |dir|
+        next if dir == '.' or dir == '..'
+        Rails.application.config.assets.precompile << File.join("erp_app", "desktop", "applications", dir, 'app.js')
+      end
+
+      # add app.css files for desktop apps to precompile
+      Dir.foreach(root.join(desktop_css_path)) do |dir|
+        next if dir == '.' or dir == '..'
+        Rails.application.config.assets.precompile << File.join("erp_app", "desktop", "applications", dir, 'app.css')
+      end
+
+      # add Rails root app.js files for desktop apps to precompile
+      Dir.foreach(Rails.root.join(desktop_js_path)) do |dir|
+        next if dir == '.' or dir == '..'
+        Rails.application.config.assets.precompile << File.join("erp_app", "desktop", "applications", dir, 'app.js')
+      end if File.exists?(Rails.root.join(desktop_js_path))
+
+      # add Rails root app.css files for desktop apps to precompile
+      Dir.foreach(Rails.root.join(desktop_css_path)) do |dir|
+        next if dir == '.' or dir == '..'
+        Rails.application.config.assets.precompile << File.join("erp_app", "desktop", "applications", dir, 'app.css')
+      end if File.exists?(Rails.root.join(desktop_css_path))
+
+      #
+      # include organizer applications
+      #
+      organizer_js_path = File.join("app", "assets", "javascripts", "erp_app", "organizer", "applications")
+      organizer_css_path = File.join("app", "assets", "stylesheets", "erp_app", "organizer", "applications")
+
+      # add app.js files for organizer apps to precompile
+      Dir.foreach(root.join(organizer_js_path)) do |dir|
+        next if dir == '.' or dir == '..'
+        Rails.application.config.assets.precompile << File.join("erp_app", "organizer", "applications", dir, 'app.js')
+      end
+
+      # add app.css files for organizer apps to precompile
+      Dir.foreach(root.join(organizer_css_path)) do |dir|
+        next if dir == '.' or dir == '..'
+        Rails.application.config.assets.precompile << File.join("erp_app", "organizer", "applications", dir, 'app.css')
+      end
+
+      # add Rails root app.js files for organizer apps to precompile
+      Dir.foreach(Rails.root.join(organizer_js_path)) do |dir|
+        next if dir == '.' or dir == '..'
+        Rails.application.config.assets.precompile << File.join("erp_app", "organizer", "applications", dir, 'app.js')
+      end if File.exists?(Rails.root.join(organizer_js_path))
+
+      # add Rails root app.css files for organizer apps to precompile
+      Dir.foreach(Rails.root.join(organizer_css_path)) do |dir|
+        next if dir == '.' or dir == '..'
+        Rails.application.config.assets.precompile << File.join("erp_app", "organizer", "applications", dir, 'app.css')
+      end if File.exists?(Rails.root.join(organizer_css_path))
+
+      #
+      # include mobile applications
+      #
+      mobile_js_path = File.join("app", "assets", "javascripts", "erp_app", "mobile", "applications")
+      mobile_css_path = File.join("app", "assets", "stylesheets", "erp_app", "mobile", "applications")
+
+      # add app.js files for organizer apps to precompile
+      Dir.foreach(root.join(mobile_js_path)) do |dir|
+        next if dir == '.' or dir == '..'
+        Rails.application.config.assets.precompile << File.join("erp_app", "mobile", "applications", dir, 'app.js')
+      end
+
+      # add app.css files for organizer apps to precompile
+      Dir.foreach(root.join(mobile_css_path)) do |dir|
+        next if dir == '.' or dir == '..'
+        Rails.application.config.assets.precompile << File.join("erp_app", "mobile", "applications", dir, 'app.css')
+      end
+
+      # add Rails root app.js files for organizer apps to precompile
+      Dir.foreach(Rails.root.join(mobile_js_path)) do |dir|
+        next if dir == '.' or dir == '..'
+        Rails.application.config.assets.precompile << File.join("erp_app", "mobile", "applications", dir, 'app.js')
+      end if File.exists?(Rails.root.join(mobile_js_path))
+
+      # add Rails root app.css files for organizer apps to precompile
+      Dir.foreach(Rails.root.join(mobile_css_path)) do |dir|
+        next if dir == '.' or dir == '..'
+        Rails.application.config.assets.precompile << File.join("erp_app", "mobile", "applications", dir, 'app.css')
+      end if File.exists?(Rails.root.join(mobile_css_path))
     end
 
     ActiveSupport.on_load(:active_record) do
