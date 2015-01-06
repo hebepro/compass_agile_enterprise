@@ -1,3 +1,19 @@
+#### Table Definition ###########################
+#  create_table :payments do |t|
+#
+#     t.column :success,             :boolean
+#     t.column :reference_number,    :string
+#     t.column :financial_txn_id,    :integer
+#     t.column :current_state,       :string
+#     t.column :authorization_code,  :string
+#     t.string :external_identifier
+#
+#     t.timestamps
+#   end
+#
+#   add_index :payments, :financial_txn_id
+#################################################
+
 class Payment < ActiveRecord::Base
   attr_protected :created_at, :updated_at
 

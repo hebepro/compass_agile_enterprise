@@ -1,8 +1,32 @@
+#### Table Definition ###########################
+#  create_table :invoice_items do |t|
+#    #foreign keys
+#    t.references :invoice
+#    t.references :invoice_item_type
+#
+#    #these columns support the polymporphic relationship to invoice-able items
+#    t.references :invoiceable_item, :polymorphic => true
+#
+#    #non-key columns
+#    t.integer    :item_seq_id
+#    t.string     :item_description
+#    t.decimal    :sales_tax, :precision => 8, :scale => 2
+#    t.decimal    :quantity, :precision => 8, :scale => 2
+#    t.decimal    :amount, :precision => 8, :scale => 2
+#
+#    t.timestamps
+#  end
+
+#  add_index :invoice_items, [:invoiceable_item_id, :invoiceable_item_type], :name => 'invoiceable_item_idx'
+#  add_index :invoice_items, :invoice_id, :name => 'invoice_id_idx'
+#  add_index :invoice_items, :invoice_item_type_id, :name => 'invoice_item_type_id_idx'
+#################################################
+
 class InvoiceItem < ActiveRecord::Base
   attr_protected :created_at, :updated_at
 
 	belongs_to 	:agreement
-	belongs_to	:agreement_item_type
+	belongs_to	:invoice_item_type
   belongs_to  :invoiceable_item, :polymorphic => true
 
 	#This line of code connects the invoice to a polymorphic payment application.

@@ -1,17 +1,18 @@
 # create_table :order_line_items do |t|
-#   t.column  	:order_txn_id,      		        :integer
-#   t.column  	:order_line_item_type_id,       :integer
-#   t.column    :product_instance_id,           :integer
-#   t.column    :product_instance_description,  :string
-#   t.column    :product_type_id,               :integer
-#   t.column    :product_type_description,      :string
-#   t.column  	:sold_price, 				            :decimal, :precision => 8, :scale => 2
-#   t.column	  :sold_price_uom, 			          :integer
-#   t.column  	:sold_amount, 				          :integer
-#   t.column    :sold_amount_uom, 		          :integer
-#   t.column    :product_offer_id,      	      :integer
-#   t.column    :quantity,                      :integer
-#   t.column    :unit_of_measurement_id,        :integer
+#   t.integer  	  :order_txn_id
+#   t.integer  	  :order_line_item_type_id
+#   t.integer     :product_offer_id
+#   t.string      :product_offer_description
+#   t.integer     :product_instance_id,
+#   t.string      :product_instance_description
+#   t.integer     :product_type_id
+#   t.string      :product_type_description
+#   t.decimal  	  :sold_price, :precision => 8, :scale => 2
+#   t.integer	    :sold_price_uom
+#   t.integer  	  :sold_amount
+#   t.integer     :sold_amount_uom
+#   t.integer     :quantity
+#   t.integer     :unit_of_measurement_id
 #   t.timestamps
 # end
 #
@@ -24,13 +25,14 @@
 class OrderLineItem < ActiveRecord::Base
   attr_protected :created_at, :updated_at
 
-	belongs_to :order_txn, :class_name => 'OrderTxn'
-	belongs_to :order_line_item_type
-	
+  belongs_to :order_txn, :class_name => 'OrderTxn'
+  belongs_to :order_line_item_type
+
   has_many :charge_lines, :as => :charged_item
 
   belongs_to :product_instance
   belongs_to :product_type
+  belongs_to :product_offer
 
   has_many :order_line_item_pty_roles, :dependent => :destroy
   has_many :role_types, :through => :order_line_item_pty_roles
@@ -52,6 +54,30 @@ class OrderLineItem < ActiveRecord::Base
       end
       total_hash[cur_money.currency.internal_identifier] = cur_total
     end
-    return total_hash.values
+
+    total_hash.values
+  end
+
+  # Alias for to_s
+  def to_label
+    to_s
+  end
+
+  # The description is pulled from the first descriptive record it finds trying
+  # product_offer then product_instance and lastly product_type
+  def to_s
+    description = ""
+
+    if product_offer_description.blank?
+      if product_instance_description.blank?
+        description = product_type_description
+      else
+        description =  product_instance_description
+      end
+    else
+      description = product_offer_description
+    end
+
+    description
   end
 end

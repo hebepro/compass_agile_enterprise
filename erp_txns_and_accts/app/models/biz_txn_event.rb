@@ -1,3 +1,22 @@
+#### Table Definition ###########################
+#  create_table :biz_txn_events do |t|
+#  	t.column  :description,  			    :string
+#  	t.column	:biz_txn_acct_root_id, 	:integer
+#  	t.column	:biz_txn_type_id,       :integer
+#  	t.column 	:entered_date,          :datetime
+#  	t.column 	:post_date,             :datetime
+#  	t.column  :biz_txn_record_id,    	:integer
+#  	t.column  :biz_txn_record_type,  	:string
+#  	t.column 	:external_identifier, 	:string
+#  	t.column 	:external_id_source, 	  :string
+#  	t.timestamps
+#  end
+#
+#  add_index :biz_txn_events, :biz_txn_acct_root_id
+#  add_index :biz_txn_events, :biz_txn_type_id
+#  add_index :biz_txn_events, [:biz_txn_record_id, :biz_txn_record_type], :name => "btai_1"
+#################################################
+
 class BizTxnEvent < ActiveRecord::Base
   attr_protected :created_at, :updated_at
 
