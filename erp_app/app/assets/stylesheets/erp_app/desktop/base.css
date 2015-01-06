@@ -207,18 +207,11 @@
     background-color: #253241;
     background-image: url(/assets/art/compass-ae-logo-reverse-1.jpg) !important;
     background-repeat: no-repeat;
-    background-position: 50% 15%;
+    background-position: 50% 80px;
 }
 
 .ux-wallpaper-tiled {
     background-repeat: repeat;
-}
-
-.ux-desktop-shortcut-container {
-    width: 516px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 20%;
 }
 
 .ux-desktop-shortcut {

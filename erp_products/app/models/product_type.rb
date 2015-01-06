@@ -40,30 +40,6 @@ class ProductType < ActiveRecord::Base
   has_many :product_type_pty_roles, dependent: :destroy
   has_many :simple_product_offers, dependent: :destroy
 
-  def self.without_offers(context={})
-    product_types_tbl = arel_table
-    product_offer_tbl = ProductOffer.arel_table
-    simple_product_offers_tbl = SimpleProductOffer.arel_table
-
-    valid_dates_sql = simple_product_offers_tbl.project(:product_type_id)
-                          .join(product_offer_tbl).on(product_offer_tbl[:product_offer_record_id].eq(simple_product_offers_tbl[:id])
-                                                          .and(product_offer_tbl[:product_offer_record_type].eq("SimpleProductOffer")))
-                          .where(product_offer_tbl[:valid_from].eq(nil).or(product_offer_tbl[:valid_from].lt(Time.now.utc)
-                                                                               .or(product_offer_tbl[:valid_to].gt(Time.now.utc))))
-
-    statement = where(product_types_tbl[:id].not_in(simple_product_offers_tbl.project(:product_type_id))
-                          .or(product_types_tbl[:id].not_in(valid_dates_sql)).to_sql)
-
-    # apply category if it is in the context
-    if context[:category_id]
-      statement = statement.joins("inner join category_classifications on
-                       category_classifications.classification_id = product_types.id and
-                       category_classifications.classification_type = 'ProductType' ")
-                      .where('category_classifications.category_id = ?', context[:category_id])
-    end
-
-    statement
-  end
 
   def prod_type_relns_to
     ProdTypeReln.where('prod_type_id_to = ?', id)
@@ -101,5 +77,23 @@ class ProductType < ActiveRecord::Base
         :created_at => self.created_at,
         :updated_at => self.updated_at
     }
+  end
+end
+
+module Arel
+  class SelectManager
+    def polymorphic_join(hash={polytable:nil, table:nil, model: nil, polymodel:nil, record_type_name:nil, record_id_name:nil, table_model:nil})
+      # Left Outer Join with 2 possible hash argument sets:
+      #   1) model (AR model), polymodel (AR model), record_type_name (symbol), record_id_name (symbol)
+      #   2) polytable (arel_table), table (arel_table), record_type_name (symbol), record_id_name (symbol), table_model (string)
+
+      if hash[:model] && hash[:polymodel]
+        self.join(hash[:polymodel].arel_table, Arel::Nodes::OuterJoin).on(hash[:polymodel].arel_table[hash[:record_id_name]].eq(hash[:model].arel_table[:id]).and(hash[:polymodel].arel_table[hash[:record_type_name]].eq(hash[:model].to_s)))
+      elsif hash[:polytable] && hash[:record_type_name]
+        self.join(hash[:polytable], Arel::Nodes::OuterJoin).on(hash[:polytable][hash[:record_id_name]].eq(hash[:table][:id]).and(hash[:polytable][hash[:record_type_name]].eq(hash[:table_model])))
+      else
+        raise 'Invalid Args'
+      end
+    end
   end
 end
