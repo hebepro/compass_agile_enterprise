@@ -651,28 +651,26 @@ String.prototype.capitalize = function () {
 };
 
 String.prototype.camelize = function () {
-    var parts = this.replace(/_/, '-').split('-'), len = parts.length;
-    if (len == 1) return parts[0];
-
-    var camelized = this.charAt(0) == '-'
-        ? parts[0].charAt(0).toUpperCase() + parts[0].substring(1)
-        : parts[0];
-
-    for (var i = 1; i < len; i++)
-        camelized += parts[i].charAt(0).toUpperCase() + parts[i].substring(1);
-
-    return camelized;
+    return this.replace(/(?:^|[-_])(\w)/g, function (_, c) {
+        return c ? c.toUpperCase() : '';
+    })
 };
 
 String.prototype.titleize = function () {
-    var parts = this.replace(/_/, '-').split('-'), len = parts.length, titleized = '';
-    for (var i = 0; i < len; i++) {
-        if (i > 0) titleized += ' ';
-        titleized += parts[i].charAt(0).toUpperCase() + parts[i].substring(1);
+    var str = this.toLowerCase();
+    str = str.replace(/_/g, ' ');
+    var str_arr = str.split(' ');
+    for (var x = 0; x < str_arr.length; x++) {
+        var d = str_arr[x].split('-');
+        for (var i = 0; i < d.length; i++) {
+            d[i] = d[i].capitalize();
+        }
+        str_arr[x] = d.join('-');
     }
-    return titleized;
+    str = str_arr.join(' ');
+    str = str.substring(0, 1).toUpperCase() + str.substring(1);
+    return str;
 };
-
 //Function Extensions
 
 Function.prototype.bindToEventHandler = function bindToEventHandler() {
