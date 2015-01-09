@@ -28,7 +28,7 @@ class PhoneNumber < ActiveRecord::Base
 
 	def to_data_hash
 		{
-				phone_number: email_address,
+				phone_number: phone_number,
 				description: description,
 				created_at: created_at,
 				updated_at: updated_at

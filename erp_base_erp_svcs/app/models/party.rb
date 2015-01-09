@@ -135,14 +135,21 @@ class Party < ActiveRecord::Base
   def contact_mechanisms_to_hash(contact_mechanism_klass, contact_purposes=nil)
     contact_mechanisms_data = []
 
+    if contact_purposes && contact_purposes.is_a?(String)
+      contact_purposes = [contact_purposes]
+    end
+
     if contact_purposes
       contact_purposes.each do |contact_purpose|
         contact_mechanism = find_contact_mechanisms_with_purpose(contact_mechanism_klass, contact_purpose)
-        if contact_mechanism
-          data = contact_mechanism.to_data_hash
-          data[:contact_purpose] = contact_purpose
 
-          contact_mechanisms_data.push(data)
+        unless contact_mechanism.empty?
+          contact_mechanism.collect do |item|
+            data = item.to_data_hash
+            data[:contact_purpose] = contact_purpose
+
+            contact_mechanisms_data.push(data)
+          end
         end
       end
     else
@@ -239,7 +246,7 @@ class Party < ActiveRecord::Base
 
   # find all contact mechanisms with purpose
   def find_contact_mechanisms_with_purpose(contact_mechanism_class, contact_purpose)
-    contacts = self.find_contact_with_purpose(contact_mechanism_class, contact_purpose)
+    contacts = self.find_contacts_with_purpose(contact_mechanism_class, contact_purpose)
 
     contacts.empty? ? [] : contacts.collect(&:contact_mechanism)
   end
@@ -275,7 +282,7 @@ class Party < ActiveRecord::Base
 
   # find first contact
   def find_contact(contact_mechanism_class, contact_mechanism_args={}, contact_purposes=[])
-    find_contacts(contact_mechanism_class, contact_mechanism_args={}, contact_purposes=[]).first
+    find_contacts(contact_mechanism_class, contact_mechanism_args, contact_purposes).first
   end
 
   # find all contacts
@@ -291,7 +298,7 @@ class Party < ActiveRecord::Base
       query = query.where("#{table_name}.#{key} = ?", value) unless value.nil?
     end unless contact_mechanism_args.nil?
 
-    query.first
+    query
   end
 
   # looks for contacts matching on value and purpose
