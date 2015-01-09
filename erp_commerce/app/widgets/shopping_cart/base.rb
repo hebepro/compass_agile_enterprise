@@ -19,7 +19,11 @@ module Widgets
         @item_count = order.line_items.count unless order.nil?
         set_total_price(order)
 
-        render
+        if request.xhr?
+          render :update => {:id => widget_result_id, :view => 'price_summary'}
+        else
+          render
+        end
       end
 
       def cart_items
@@ -29,6 +33,14 @@ module Widgets
         set_total_price(@order)
 
         render
+      end
+
+      def add_to_cart
+        @product_type   = ProductType.find(params[:id])
+        @cart_items_url = params[:cart_items_url]
+        ErpCommerce::OrderHelper.new(self).add_to_cart(@product_type)
+
+        render :update => {:id => "#{@uuid}_result", :view => 'add_to_cart'}
       end
 
       def remove_from_cart
@@ -109,7 +121,7 @@ module Widgets
 
         #if we have an order started get all charges
         unless order.nil?
-          order.get_total_charges.each do |money|
+          order.total_charges.each do |money|
             @price += money.amount
           end
         end

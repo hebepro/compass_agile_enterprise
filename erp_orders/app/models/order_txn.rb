@@ -41,17 +41,17 @@ class OrderTxn < ActiveRecord::Base
   has_tracked_status
 
   belongs_to :order_txn_record, :polymorphic => true
-  has_many   :order_line_items, :dependent => :destroy
-  has_many   :charge_lines, :as => :charged_item
+  has_many :order_line_items, :dependent => :destroy
+  has_many :charge_lines, :as => :charged_item
 
   alias :line_items :order_line_items
-  
+
   # validation
   validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, :on => :update, :allow_nil => true
 
   #find a order by given biz txn party role iid and party
   def self.find_by_party_role(biz_txn_party_role_type_iid, party)
-    BizTxnPartyRole.where('party_id = ? and biz_txn_party_role_type_id = ?', party.id, BizTxnPartyRoleType.find_by_internal_identifier(biz_txn_party_role_type_iid).id).all.collect{|item| item.biz_txn_event.biz_txn_record}
+    BizTxnPartyRole.where('party_id = ? and biz_txn_party_role_type_id = ?', party.id, BizTxnPartyRoleType.find_by_internal_identifier(biz_txn_party_role_type_iid).id).all.collect { |item| item.biz_txn_event.biz_txn_record }
   end
 
   # get the total charges for an order.
@@ -62,7 +62,7 @@ class OrderTxn < ActiveRecord::Base
   def get_total_charges
     # get all of the charge lines associated with the order and order_lines
     total_hash = Hash.new
-    all_charges = get_all_charge_lines
+    all_charges = all_charge_lines
     # loop through all of the charges and combine charges for each money type
     all_charges.each do |charge|
       cur_money = charge.money
@@ -75,17 +75,50 @@ class OrderTxn < ActiveRecord::Base
       end
       total_hash[cur_money.currency.internal_identifier] = cur_total
     end
-    return total_hash.values
+
+    total_hash
   end
 
-  #get all charge lines on order and order line items
-  def get_all_charge_lines
+  # gets the total amount of payments made against this order via charge line payments
+  def total_payment_amount
+    all_charge_lines.collect(&:total_payments).inject(:+)
+  end
+
+  # gets total amount due (total_charges - total_payments)
+  def total_amount_due
+    if get_total_charges[Currency.usd.internal_identifier]
+      get_total_charges[Currency.usd.internal_identifier].amount - total_payment_amount
+    else
+      0
+    end
+  end
+
+  # get the total quantity of this order
+  def total_quantity
+    order_line_items.pluck(:quantity).inject(:+)
+  end
+
+  # get all charge lines on order and order line items
+  def all_charge_lines
     all_charges = []
     all_charges.concat(charge_lines)
     order_line_items.each do |line_item|
       all_charges.concat(line_item.charge_lines)
     end
     all_charges
+  end
+
+  # creates payment applications for each charge line
+  def apply_payment_to_all_charge_lines(financial_txn)
+    total_charges.each do |charge_line|
+      payment_application = PaymentApplication.new
+      payment_application.money = Money.create(:description => charge_line.description + ' Payment',
+                                               :amount => charge_line.money.amount,
+                                               :currency => charge_line.money.currency)
+      payment_application.financial_txn = financial_txn
+      payment_application.payment_applied_to = charge_line
+      payment_application.save
+    end
   end
 
   def submit
@@ -96,22 +129,43 @@ class OrderTxn < ActiveRecord::Base
   def add_line_item(object, reln_type = nil, to_role = nil, from_role = nil)
     class_name = object.class.name
     if object.is_a?(Array)
-	    class_name = object.first.class.name
-	  else
-	    class_name = object.class.name
-	  end
+      class_name = object.first.class.name
+    else
+      class_name = object.class.name
+    end
 
-	  case class_name
-    when 'ProductType'
-      return add_product_type_line_item(object, reln_type, to_role, from_role)
-    when 'ProductInstance'
-      return add_product_instance_line_item(object, reln_type, to_role, from_role)
-	  end
+    case class_name
+      when 'ProductType'
+        add_product_type_line_item(object, reln_type, to_role, from_role)
+      when 'ProductInstance'
+        add_product_instance_line_item(object, reln_type, to_role, from_role)
+      when 'SimpleProductOffer'
+        add_simple_product_offer_line_item(object)
+    end
   end
 
-	def add_product_type_line_item(product_type, reln_type = nil, to_role = nil, from_role = nil)
+  def add_simple_product_offer_line_item(simple_product_offer)
 
-    if(product_type.is_a?(Array))
+    line_item = get_line_item_for_simple_product_offer(simple_product_offer)
+
+    if line_item
+      line_item.quantity += 1
+      line_item.save
+    else
+      line_item = OrderLineItem.new
+      line_item.product_offer = simple_product_offer.product_offer
+      line_item.product_type = simple_product_offer.product_type
+      line_item.quantity = 1
+      line_item.save
+      line_items << line_item
+    end
+
+    line_item
+  end
+
+  def add_product_type_line_item(product_type, reln_type = nil, to_role = nil, from_role = nil)
+
+    if (product_type.is_a?(Array))
       if (product_type.size == 0)
         return
       elsif (product_type.size == 1)
@@ -153,13 +207,13 @@ class OrderTxn < ActiveRecord::Base
     end
 
     line_item
-	end
+  end
 
   def add_product_instance_line_item(product_instance, reln_type = nil, to_role = nil, from_role = nil)
 
     li = OrderLineItem.new
 
-    if(product_instance.is_a?(Array))
+    if (product_instance.is_a?(Array))
       if (product_instance.size == 0)
         return
       elsif (product_instance.size == 1)
@@ -198,10 +252,14 @@ class OrderTxn < ActiveRecord::Base
     line_items.detect { |oli| oli.product_type == product_type }
   end
 
+  def get_line_item_for_simple_product_offer(simple_product_offer)
+    line_items.detect { |oli| oli.simple_product_offer == simple_product_offer }
+  end
+
   def find_party_by_role(role_type_iid)
     party = nil
 
-    tpr = self.root_txn.biz_txn_party_roles.find(:first, :include => :biz_txn_party_role_type, :conditions => ['biz_txn_party_role_types.internal_identifier = ?',role_type_iid])
+    tpr = self.root_txn.biz_txn_party_roles.find(:first, :include => :biz_txn_party_role_type, :conditions => ['biz_txn_party_role_types.internal_identifier = ?', role_type_iid])
     party = tpr.party unless tpr.nil?
 
     party
@@ -258,8 +316,8 @@ class OrderTxn < ActiveRecord::Base
   #BizTxnEvent Overrides
   ###############################################################################
   def create_dependent_txns
-	  #Template Method
-	end
+    #Template Method
+  end
 
   ################################################################
   ################################################################
@@ -320,9 +378,9 @@ class OrderTxn < ActiveRecord::Base
     unless use_delayed_jobs
       authorized_txns.each do |financial_txn|
         result = financial_txn.capture(credit_card, gateway, gateway_options)
-        unless(result[:success])
+        unless (result[:success])
           all_txns_captured = false
-          gateway_message   = result[:gateway_message]
+          gateway_message = result[:gateway_message]
           break
         end
       end
@@ -358,7 +416,7 @@ class OrderTxn < ActiveRecord::Base
     unless use_delayed_jobs
       authorized_txns.each do |financial_txn|
         result = financial_txn.reverse_authorization(credit_card, gateway, gateway_options)
-        unless(result[:success])
+        unless (result[:success])
           all_txns_rolledback = false
         end
       end

@@ -78,6 +78,18 @@ class ProductType < ActiveRecord::Base
         :updated_at => self.updated_at
     }
   end
+
+  def to_display_hash
+    {
+        id: id,
+        description: description,
+        offer_list_description: find_descriptions_by_view_type('list_description').first.try(:description),
+        offer_short_description: find_descriptions_by_view_type('short_description').first.try(:description),
+        offer_long_description: find_descriptions_by_view_type('long_description').first.try(:description),
+        offer_base_price: get_current_simple_amount_with_currency,
+        images: images.pluck(:id)
+    }
+  end
 end
 
 module Arel

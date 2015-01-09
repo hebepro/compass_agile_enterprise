@@ -54,6 +54,51 @@ class Invoice < ActiveRecord::Base
   alias :party_roles :invoice_party_roles
   alias :payment_strategy :invoice_payment_strategy_type
 
+  class << self
+
+    # generate an invoice from a order_txn
+    # options include
+    # message - Message to display on Invoice
+    # invoice_date - Date of Invoice
+    # due_date - Due date of Invoice
+    def generate_from_order(order_txn, options={})
+      invoice = Invoice.new
+
+      # create invoice
+      invoice.invoice_number = next_invoice_number
+      invoice.description 'Invoice for Order #' + order_txn.order_number
+      invoice.message = options[:message]
+      invoice.invoice_date = options[:invoice_date]
+      invoice.due_date = options[:due_date]
+
+      invoice.save
+
+      # add party relationship
+      party = order_txn.find_party_by_role('customer')
+      invoice.add_party_with_role_type(party, RoleType.customer)
+
+      # create invoice items from charge lines
+      order_txn.all_charge_lines.each do |charge_line|
+        invoice_item = InvoiceItem.new
+
+        invoice_item.invoice = invoice
+        invoice_item.item_description = charge_line.description
+        invoice_item.quantity = 1
+        invoice_item.amount = charge_line.money.amount
+        invoice_item.add_invoiced_record(charge_line)
+
+        invoice_item.save
+      end
+
+      invoice
+    end
+
+    def next_invoice_number
+      maximum('invoice_number').nil? ? 1 : maximum('invoice_number')
+    end
+
+  end
+
   def has_payments?(status)
     selected_payment_applications = self.get_payment_applications(status)
     !(selected_payment_applications.nil? or selected_payment_applications.empty?)
@@ -89,7 +134,7 @@ class Invoice < ActiveRecord::Base
           self.balance
       end
     else
-      self.balance
+      (self.balance - self.total_payments)
     end
   end
 
@@ -145,6 +190,14 @@ class Invoice < ActiveRecord::Base
 
   def find_parties_by_role_type(role_type)
     self.invoice_party_roles.where('role_type_id = ?', convert_role_type(role_type).id).all.collect(&:party)
+  end
+
+  def find_party_by_role_type(role_type)
+    parties = find_parties_by_role_type(role_type)
+
+    unless parties.empty?
+      parties.first
+    end
   end
 
   private

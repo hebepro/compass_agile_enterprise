@@ -47,7 +47,7 @@ class OrderLineItem < ActiveRecord::Base
       cur_money = charge.money
       cur_total = total_hash[cur_money.currency.internal_identifier]
       if (cur_total.nil?)
-        cur_total = cur_money.clone
+        cur_total = cur_money.dup
       else
         cur_total.amount = 0 if cur_total.amount.nil?
         cur_total.amount += cur_money.amount if !cur_money.amount.nil?
@@ -55,7 +55,16 @@ class OrderLineItem < ActiveRecord::Base
       total_hash[cur_money.currency.internal_identifier] = cur_total
     end
 
-    total_hash.values
+    total_hash
+  end
+
+  # get price of individual item in line item
+  def price_amount
+    if line_item_record.get_current_simple_plan
+      line_item_record.get_current_simple_plan.money_amount
+    else
+      0
+    end
   end
 
   # Alias for to_s
@@ -63,21 +72,25 @@ class OrderLineItem < ActiveRecord::Base
     to_s
   end
 
-  # The description is pulled from the first descriptive record it finds trying
-  # product_offer then product_instance and lastly product_type
+  # description of line_item_record
   def to_s
-    description = ""
-
-    if product_offer_description.blank?
-      if product_instance_description.blank?
-        description = product_type_description
-      else
-        description =  product_instance_description
-      end
-    else
-      description = product_offer_description
-    end
-
-    description
+    line_item_record.description
   end
+
+  private
+
+  # determine the record this OrderLineItem pertains to
+  # can be a ProductOffer, ProductInstance or ProductType
+  def line_item_record
+    if product_offer
+      product_offer
+    else
+      if product_instance
+        product_instance
+      else
+        product_type
+      end
+    end
+  end
+
 end

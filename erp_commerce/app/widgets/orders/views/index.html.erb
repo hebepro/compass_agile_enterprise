@@ -56,7 +56,7 @@
       <td><%=order.order_number%></td>
       <td><%=order.created_at.to_time.strftime("%m/%d/%Y %I:%M%p")%></td>
       <td><%=order.status%></td>
-      <td><%=number_to_currency(order.get_total_charges.sum{|money| money.amount})%></td>
+      <td><%=number_to_currency(order.get_total_charges[Currency.usd.internal_identifier].amount)%></td>
     </tr>
     <% end %>
   </tbody>

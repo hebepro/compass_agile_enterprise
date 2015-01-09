@@ -1,3 +1,10 @@
+#  create_table :phone_numbers do |t|
+#  	t.column :phone_number, :string
+#  	t.column :description, :string
+#
+#  	t.timestamps
+#  end
+
 class PhoneNumber < ActiveRecord::Base
   attr_protected :created_at, :updated_at
 
@@ -17,6 +24,15 @@ class PhoneNumber < ActiveRecord::Base
 	
 	def to_s
 	  "#{phone_number}"
-  end
+	end
+
+	def to_data_hash
+		{
+				phone_number: email_address,
+				description: description,
+				created_at: created_at,
+				updated_at: updated_at
+		}
+	end
 
 end

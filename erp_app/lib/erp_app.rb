@@ -7,7 +7,6 @@ require 'friendly_id'
 
 require "erp_app/version"
 require "erp_app/extensions"
-require "active_ext/active_ext"
 require "erp_app/widgets"
 require "erp_app/config"
 require "erp_app/engine"

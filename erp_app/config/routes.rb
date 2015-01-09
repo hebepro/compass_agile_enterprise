@@ -77,9 +77,6 @@ ErpApp::Engine.routes.draw do
 
     #Desktop Applications
 
-    #scaffold
-    match 'scaffold/:action((/:model_name)(/:id))' => "scaffold/base"
-
     #user_management
     match 'user_management/users(/:action(/:id))' => "user_management/base"
     match 'user_management/role_management/:action' => "user_management/role_management"

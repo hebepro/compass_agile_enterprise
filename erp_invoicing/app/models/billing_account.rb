@@ -2,6 +2,7 @@ class BillingAccount < ActiveRecord::Base
   attr_protected :created_at, :updated_at
 
   acts_as_financial_txn_account
+  has_payment_applications
 
   belongs_to :calculate_balance_strategy_type
   has_many :invoices, :dependent => :destroy do
@@ -13,14 +14,7 @@ class BillingAccount < ActiveRecord::Base
       all.sum(&:balance)
     end
   end
-  has_many :payment_applications, :as => :payment_applied_to, :dependent => :destroy do
-    def successful
-      all.select{|item| item.financial_txn.has_captured_payment?}
-    end
-    def pending
-      all.select{|item| item.is_pending?}
-    end
-  end
+
   has_one  :recurring_payment, :dependent => :destroy
 
   def self.find_by_account_number(account_number)
@@ -30,11 +24,6 @@ class BillingAccount < ActiveRecord::Base
 
   def has_recurring_payment_enabled?
     !self.recurring_payment.nil? and self.recurring_payment.enabled
-  end
-
-  def has_payments?(status)
-    selected_payment_applications = self.get_payment_applications(status)
-    !(selected_payment_applications.nil? or selected_payment_applications.empty?)
   end
 
   def all_documents
@@ -81,14 +70,6 @@ class BillingAccount < ActiveRecord::Base
   def outstanding_balance
      outstanding_balance_amt = (calculate_balance - total_pending_payments)
      outstanding_balance_amt == 0 ? 0 : outstanding_balance_amt.round(2)
-  end
-
-  def total_pending_payments
-    self.payment_applications.pending.sum{|item| item.money.amount}
-  end
-
-  def total_payments
-    self.payment_applications.successful.sum{|item| item.money.amount}
   end
 
   #payment due is determined by last invoice

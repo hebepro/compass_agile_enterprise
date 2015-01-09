@@ -1,10 +1,6 @@
 module ErpProducts
   class Engine < Rails::Engine
     isolate_namespace ErpProducts
-	
-	  initializer "erp_products.merge_public" do |app|
-      app.middleware.insert_before Rack::Runtime, ::ActionDispatch::Static, "#{root}/public"
-    end
 	  
 	  ActiveSupport.on_load(:active_record) do
       include ErpProducts::Extensions::ActiveRecord::ActsAsProductInstance

@@ -23,14 +23,28 @@ module ErpCommerce
     end
 
     # add a product type to cart
-    def add_to_cart(product_type, price = nil)
+    def add_to_cart(offer_data)
       order = get_order(true)
 
       ActiveRecord::Base.transaction do
-        order_line_item = order.add_line_item(product_type)
 
-        # get the pricing plan for the product type
-        pricing_plan = product_type.get_current_simple_plan
+        # check if there is a simple_product_offer_id present, if so
+        # then look up the simple product offer, if not get the product_type
+        if offer_data[:simple_product_offer_id]
+          simple_product_offer = SimpleProductOffer.find(offer_data[:simple_product_offer_id])
+
+          order_line_item = order.add_line_item(simple_product_offer)
+
+          # get the pricing plan for the product type
+          pricing_plan = simple_product_offer.get_current_simple_plan
+        else
+          product_type = ProductType.find(offer_data[:product_type_id])
+
+          order_line_item = order.add_line_item(product_type)
+
+          # get the pricing plan for the product type
+          pricing_plan = product_type.get_current_simple_plan
+        end
 
         # check for charge line and if not present create it
         if order_line_item.charge_lines.empty?
@@ -50,7 +64,7 @@ module ErpCommerce
         end
 
         # increment charge line by price of product
-        charge_line.money.amount += price || pricing_plan.money_amount
+        charge_line.money.amount += pricing_plan.money_amount
         charge_line.money.save
 
         order.current_status = 'items_added'
@@ -185,13 +199,7 @@ module ErpCommerce
 
 
           if result[:payment] && result[:payment].success
-            payment_application = PaymentApplication.new
-            payment_application.money = Money.create(:description => 'Payment Application',
-                                                     :amount => financial_txn.money.amount,
-                                                     :currency => financial_txn.money.currency)
-            payment_application.financial_txn = financial_txn
-            payment_application.payment_applied_to = order
-            payment_application.save
+            order.apply_payment_to_all_charge_lines(financial_txn)
           else
             success = false
             message = result[:message]
@@ -226,9 +234,7 @@ module ErpCommerce
       order = get_order
 
       ActiveRecord::Base.transaction do
-
         order.line_items.find(order_line_item_id).destroy
-
       end
 
       order
@@ -252,7 +258,7 @@ module ErpCommerce
 
     # sets up payor party role
     def setup_biz_txn_party_roles(order, party)
-      payor_role = BizTxnPartyRoleType.find_by_internal_identifier('payor')
+      payor_role = BizTxnPartyRoleType.find_by_internal_identifier('customer')
       biz_txn_event = order.root_txn
       tpr = BizTxnPartyRole.new
       tpr.biz_txn_event = biz_txn_event
@@ -266,7 +272,7 @@ module ErpCommerce
       # total up all order line items charge lines
       total_payment = 0
       currency = nil
-      order.get_total_charges.each do |money|
+      order.total_charges.each do |money|
         total_payment += money.amount
         currency = money.currency
       end

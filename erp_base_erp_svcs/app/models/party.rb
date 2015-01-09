@@ -17,7 +17,7 @@ class Party < ActiveRecord::Base
 
   # serialize ExtJs attributes
   is_json :custom_fields
-  
+
   # Gathers all party relationships that contain this particular party id
   # in either the from or to side of the relationship.
   def relationships
@@ -107,9 +107,56 @@ class Party < ActiveRecord::Base
     "#{description}"
   end
 
+  # method to convert party data to hash
+  def to_data_hash
+    {
+        description: description,
+        created_at: created_at,
+        updated_at: updated_at
+    }
+  end
+
   #************************************************************************************************
   #** Contact Methods
   #************************************************************************************************
+
+  def phone_numbers_to_hash(contact_purposes=nil)
+    contact_mechanisms_to_hash(PhoneNumber, contact_purposes)
+  end
+
+  def email_addresses_to_hash(contact_purposes=nil)
+    contact_mechanisms_to_hash(EmailAddress, contact_purposes)
+  end
+
+  def postal_addresses_to_hash(contact_purposes=nil)
+    contact_mechanisms_to_hash(PostalAddress, contact_purposes)
+  end
+
+  def contact_mechanisms_to_hash(contact_mechanism_klass, contact_purposes=nil)
+    contact_mechanisms_data = []
+
+    if contact_purposes
+      contact_purposes.each do |contact_purpose|
+        contact_mechanism = find_contact_mechanisms_with_purpose(contact_mechanism_klass, contact_purpose)
+        if contact_mechanism
+          data = contact_mechanism.to_data_hash
+          data[:contact_purpose] = contact_purpose
+
+          contact_mechanisms_data.push(data)
+        end
+      end
+    else
+      contact_mechanisms = find_all_contacts_by_contact_mechanism(contact_mechanism_klass)
+      contact_mechanisms.each do |contact_mechanism|
+        data = contact_mechanism.to_data_hash
+        data[:contact_purpose] = contact_mechanism.contact.contact_purpose.first.internal_identifier
+
+        contact_mechanisms_data.push(data)
+      end
+    end
+
+    contact_mechanisms_data
+  end
 
   def primary_phone_number
     contact_mechanism = nil
@@ -180,15 +227,24 @@ class Party < ActiveRecord::Base
     table_name = contact_mechanism_class.name.tableize
 
     self.contacts.joins("inner join #{table_name} on #{table_name}.id = contact_mechanism_id and contact_mechanism_type = '#{contact_mechanism_class.name}'")
-    .where('contacts.is_primary = ?', true).readonly(false).first
+        .where('contacts.is_primary = ?', true).readonly(false).first
   end
 
+  # find first contact mechanism with purpose
   def find_contact_mechanism_with_purpose(contact_mechanism_class, contact_purpose)
     contact = self.find_contact_with_purpose(contact_mechanism_class, contact_purpose)
 
     contact.contact_mechanism unless contact.nil?
   end
 
+  # find all contact mechanisms with purpose
+  def find_contact_mechanisms_with_purpose(contact_mechanism_class, contact_purpose)
+    contacts = self.find_contact_with_purpose(contact_mechanism_class, contact_purpose)
+
+    contacts.empty? ? [] : contacts.collect(&:contact_mechanism)
+  end
+
+  # find first contact with purpose
   def find_contact_with_purpose(contact_mechanism_class, contact_purpose)
     #if a symbol or string was passed get the model
     unless contact_purpose.is_a? ContactPurpose
@@ -198,6 +254,17 @@ class Party < ActiveRecord::Base
     self.find_contact(contact_mechanism_class, nil, [contact_purpose])
   end
 
+  # find all contacts with purpose
+  def find_contacts_with_purpose(contact_mechanism_class, contact_purpose)
+    #if a symbol or string was passed get the model
+    unless contact_purpose.is_a? ContactPurpose
+      contact_purpose = ContactPurpose.find_by_internal_identifier(contact_purpose.to_s)
+    end
+
+    self.find_contacts(contact_mechanism_class, nil, [contact_purpose])
+  end
+
+  # find all contacts by contact mechanism
   def find_all_contacts_by_contact_mechanism(contact_mechanism_class)
     table_name = contact_mechanism_class.name.tableize
 
@@ -206,7 +273,13 @@ class Party < ActiveRecord::Base
     contacts.collect(&:contact_mechanism)
   end
 
+  # find first contact
   def find_contact(contact_mechanism_class, contact_mechanism_args={}, contact_purposes=[])
+    find_contacts(contact_mechanism_class, contact_mechanism_args={}, contact_purposes=[]).first
+  end
+
+  # find all contacts
+  def find_contacts(contact_mechanism_class, contact_mechanism_args={}, contact_purposes=[])
     table_name = contact_mechanism_class.name.tableize
 
     query = self.contacts.joins("inner join #{table_name} on #{table_name}.id = contact_mechanism_id and contact_mechanism_type = '#{contact_mechanism_class.name}'

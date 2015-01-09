@@ -1,3 +1,10 @@
+#  create_table :email_addresses do |t|
+#    t.column :email_address, :string
+#    t.column :description, :string
+#
+#    t.timestamps
+#  end
+
 class EmailAddress < ActiveRecord::Base
   attr_protected :created_at, :updated_at
 
@@ -15,6 +22,15 @@ class EmailAddress < ActiveRecord::Base
 
   def to_s
     "#{email_address}"
+  end
+
+  def to_data_hash
+    {
+        email_address: email_address,
+        description: description,
+        created_at: created_at,
+        updated_at: updated_at
+    }
   end
 
 end
