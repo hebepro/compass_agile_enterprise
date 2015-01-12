@@ -38,6 +38,11 @@ module ErpTechSvcs
               end
             end
             after_initialize "initialize_#{attr_name}_json"
+
+            define_method("stringify_keys_for_#{attr_name}_json") do
+              send("#{attr_name}=", send(attr_name).stringify_keys)
+            end
+            before_save "stringify_keys_for_#{attr_name}_json".to_sym
           end
 
         end
