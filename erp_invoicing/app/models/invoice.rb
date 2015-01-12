@@ -22,33 +22,34 @@ class Invoice < ActiveRecord::Base
   attr_protected :created_at, :updated_at
 
   acts_as_document
-  
-  belongs_to  :billing_account
-  belongs_to	:invoice_type
-  belongs_to  :invoice_payment_strategy_type
-  belongs_to  :balance_record, :class_name => "Money", :foreign_key => 'balance_id', :dependent => :destroy
-  belongs_to  :calculate_balance_strategy_type
-  has_many    :invoice_payment_term_sets, :dependent => :destroy
-  has_many    :payment_applications, :as => :payment_applied_to, :dependent => :destroy do
+
+  belongs_to :billing_account
+  belongs_to :invoice_type
+  belongs_to :invoice_payment_strategy_type
+  belongs_to :balance_record, :class_name => "Money", :foreign_key => 'balance_id', :dependent => :destroy
+  belongs_to :calculate_balance_strategy_type
+  has_many :invoice_payment_term_sets, :dependent => :destroy
+  has_many :payment_applications, :as => :payment_applied_to, :dependent => :destroy do
     def successful
-      all.select{|item| item.financial_txn.has_captured_payment?}
+      all.select { |item| item.financial_txn.has_captured_payment? }
     end
+
     def pending
-      all.select{|item| item.is_pending?}
+      all.select { |item| item.is_pending? }
     end
   end
-  has_many 	  :invoice_items, :dependent => :destroy do
+  has_many :invoice_items, :dependent => :destroy do
     def by_date
       order('created_at')
     end
 
     def unpaid
-      select{|item| item.balance > 0 }
+      select { |item| item.balance > 0 }
     end
   end
-  has_many 	  :invoice_party_roles, :dependent => :destroy
-	has_many	  :parties, :through => :invoice_party_roles
-  
+  has_many :invoice_party_roles, :dependent => :destroy
+  has_many :parties, :through => :invoice_party_roles
+
   alias :items :invoice_items
   alias :type :invoice_type
   alias :party_roles :invoice_party_roles
@@ -62,39 +63,41 @@ class Invoice < ActiveRecord::Base
     # invoice_date - Date of Invoice
     # due_date - Due date of Invoice
     def generate_from_order(order_txn, options={})
-      invoice = Invoice.new
+      ActiveRecord::Base.connection.transaction do
+        invoice = Invoice.new
 
-      # create invoice
-      invoice.invoice_number = next_invoice_number
-      invoice.description 'Invoice for Order #' + order_txn.order_number
-      invoice.message = options[:message]
-      invoice.invoice_date = options[:invoice_date]
-      invoice.due_date = options[:due_date]
+        # create invoice
+        invoice.invoice_number = next_invoice_number
+        invoice.description = "Invoice for Order ##{order_txn.order_number.to_s}"
+        invoice.message = options[:message]
+        invoice.invoice_date = options[:invoice_date]
+        invoice.due_date = options[:due_date]
 
-      invoice.save
+        invoice.save
 
-      # add party relationship
-      party = order_txn.find_party_by_role('customer')
-      invoice.add_party_with_role_type(party, RoleType.customer)
+        # add party relationship
+        party = order_txn.find_party_by_role('customer')
+        invoice.add_party_with_role_type(party, RoleType.customer)
 
-      # create invoice items from charge lines
-      order_txn.all_charge_lines.each do |charge_line|
-        invoice_item = InvoiceItem.new
+        # create invoice items from charge lines
+        order_txn.all_charge_lines.each do |charge_line|
+          invoice_item = InvoiceItem.new
 
-        invoice_item.invoice = invoice
-        invoice_item.item_description = charge_line.description
-        invoice_item.quantity = 1
-        invoice_item.amount = charge_line.money.amount
-        invoice_item.add_invoiced_record(charge_line)
+          invoice_item.invoice = invoice
+          invoice_item.item_description = charge_line.description
+          invoice_item.quantity = 1
+          invoice_item.amount = charge_line.money.amount
+          invoice_item.add_invoiced_record(charge_line)
 
-        invoice_item.save
+          invoice_item.save
+        end
+
+        invoice
       end
-
-      invoice
     end
 
     def next_invoice_number
-      maximum('invoice_number').nil? ? 1 : maximum('invoice_number')
+      maximum('id').nil? ? 1 : maximum('id')
     end
 
   end
@@ -106,18 +109,18 @@ class Invoice < ActiveRecord::Base
 
   def get_payment_applications(status=:all)
     selected_payment_applications = case status.to_sym
-    when :pending
-      self.payment_applications.pending
-    when :successful
-      self.payment_applications.successful
-    when :all
-      self.payment_applications
-    end
+                                      when :pending
+                                        self.payment_applications.pending
+                                      when :successful
+                                        self.payment_applications.successful
+                                      when :all
+                                        self.payment_applications
+                                    end
 
     unless self.items.empty?
-      selected_payment_applications = (selected_payment_applications | self.items.collect{|item| item.get_payment_applications(status)}).flatten! unless (self.items.collect{|item| item.get_payment_applications(status)}.empty?)
+      selected_payment_applications = (selected_payment_applications | self.items.collect { |item| item.get_payment_applications(status) }).flatten! unless (self.items.collect { |item| item.get_payment_applications(status) }.empty?)
     end
-    
+
     selected_payment_applications
   end
 
@@ -127,7 +130,7 @@ class Invoice < ActiveRecord::Base
         when 'invoice_items_and_payments'
           (self.items.all.sum(&:total_amount) - self.total_payments)
         when 'payable_balances_and_payments'
-           (self.payable_balances.all.sum(&:balance).amount - self.total_payments)
+          (self.payable_balances.all.sum(&:balance).amount - self.total_payments)
         when 'payments'
           (self.balance - self.total_payments)
         else
@@ -139,7 +142,11 @@ class Invoice < ActiveRecord::Base
   end
 
   def balance
-    self.balance_record.amount
+    if items.empty?
+      self.balance_record.amount
+    else
+      self.items.all.sum(&:total_amount)
+    end
   end
 
   def balance=(amount, currency=Currency.usd)
@@ -156,7 +163,7 @@ class Invoice < ActiveRecord::Base
   end
 
   def total_payments
-    self.get_payment_applications(:successful).sum{|item| item.money.amount}
+    self.get_payment_applications(:successful).sum { |item| item.money.amount }
   end
 
   def transactions
@@ -164,23 +171,23 @@ class Invoice < ActiveRecord::Base
 
     self.items.each do |item|
       transactions << {
-        :date => item.created_at,
-        :description => item.item_description,
-        :quantity => item.quantity,
-        :amount => item.amount
+          :date => item.created_at,
+          :description => item.item_description,
+          :quantity => item.quantity,
+          :amount => item.amount
       }
     end
 
     self.get_payment_applications(:successful).each do |item|
       transactions << {
-        :date => item.financial_txn.payments.last.created_at,
-        :description => item.financial_txn.description,
-        :quantity => 1,
-        :amount => (0 - item.financial_txn.money.amount)
+          :date => item.financial_txn.payments.last.created_at,
+          :description => item.financial_txn.description,
+          :quantity => 1,
+          :amount => (0 - item.financial_txn.money.amount)
       }
     end
 
-    transactions.sort_by{|item| [item[:date]]}
+    transactions.sort_by { |item| [item[:date]] }
   end
 
   def add_party_with_role_type(party, role_type)
@@ -208,5 +215,5 @@ class Invoice < ActiveRecord::Base
 
     role_type
   end
-	
+
 end

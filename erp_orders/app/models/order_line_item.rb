@@ -40,7 +40,16 @@ class OrderLineItem < ActiveRecord::Base
   ## Allow for polymorphic subtypes of this class
   belongs_to :order_line_record, :polymorphic => true
 
-  def get_total_charges
+  # get the total charges for a order_line_item.
+  # The total will be returned as Money.
+  # There may be multiple Monies assocated with an order, such as points and
+  # dollars. To handle this, the method should return an array of Monies
+  # if a currency is passed in return the amount for only that currency
+  def get_total_charges(currency=nil)
+    if currency and currency.is_a?(String)
+      currency = Currency.send(currency)
+    end
+
     # get all of the charge lines associated with the order_line
     total_hash = Hash.new
     charge_lines.each do |charge|
@@ -55,7 +64,12 @@ class OrderLineItem < ActiveRecord::Base
       total_hash[cur_money.currency.internal_identifier] = cur_total
     end
 
-    total_hash
+    if currency
+      money = total_hash[currency.internal_identifier]
+      money.nil? ? nil : money.amount
+    else
+      total_hash
+    end
   end
 
   # get price of individual item in line item

@@ -11,11 +11,11 @@ module ErpCommerce
       order = nil
 
       ActiveRecord::Base.transaction do
-        unless session['order_txn_id'].nil?
+        if session['order_txn_id'].nil?
+          order = create_order if create
+        else
           order = OrderTxn.where('id = ?', session['order_txn_id']).first
           order = create_order if order.nil?
-        else
-          order = create_order if create
         end
       end
 
@@ -89,6 +89,11 @@ module ErpCommerce
           individual.current_last_name = params[:bill_to_last_name].strip
           individual.save
           party = individual.party
+        end
+
+        # check if the party has the customer PartyRole if not add it
+        unless party.has_role_type?('customer')
+          party.add_role_type('customer')
         end
 
         # if biz txn party roles have not been setup set them up
@@ -258,26 +263,20 @@ module ErpCommerce
 
     # sets up payor party role
     def setup_biz_txn_party_roles(order, party)
-      payor_role = BizTxnPartyRoleType.find_by_internal_identifier('customer')
+      biz_txn_role_type = BizTxnPartyRoleType.find_or_create('customer',
+                                                             'Customer',
+                                                             BizTxnPartyRoleType.iid('order_roles'))
       biz_txn_event = order.root_txn
       tpr = BizTxnPartyRole.new
       tpr.biz_txn_event = biz_txn_event
       tpr.party = party
-      tpr.biz_txn_party_role_type = payor_role
+      tpr.biz_txn_party_role_type = biz_txn_role_type
       tpr.save
     end
 
     # create financial_txn
     def create_financial_txn(order)
-      # total up all order line items charge lines
-      total_payment = 0
-      currency = nil
-      order.total_charges.each do |money|
-        total_payment += money.amount
-        currency = money.currency
-      end
-
-      money = Money.create(:description => 'Order Payment', :amount => total_payment, :currency => currency)
+      money = Money.create(:description => 'Order Payment', :amount => order.get_total_charges(Currency.usd), :currency => Currency.usd)
 
       financial_txn = FinancialTxn.create(:money => money)
       financial_txn.description = 'Order Payment'

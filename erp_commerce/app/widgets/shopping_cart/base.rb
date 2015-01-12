@@ -121,9 +121,7 @@ module Widgets
 
         #if we have an order started get all charges
         unless order.nil?
-          order.total_charges.each do |money|
-            @price += money.amount
-          end
+          @price = order.get_total_charges(Currency.usd)
         end
 
         #format it

@@ -58,8 +58,12 @@ class OrderTxn < ActiveRecord::Base
   # The total will be returned as Money.
   # There may be multiple Monies assocated with an order, such as points and
   # dollars. To handle this, the method should return an array of Monies
-  #
-  def get_total_charges
+  # if a currency is passed in return the amount for only that currency
+  def get_total_charges(currency=nil)
+    if currency and currency.is_a?(String)
+      currency = Currency.send(currency)
+    end
+
     # get all of the charge lines associated with the order and order_lines
     total_hash = Hash.new
     all_charges = all_charge_lines
@@ -76,7 +80,12 @@ class OrderTxn < ActiveRecord::Base
       total_hash[cur_money.currency.internal_identifier] = cur_total
     end
 
-    total_hash
+    if currency
+      money = total_hash[currency.internal_identifier]
+      money.nil? ? nil : money.amount
+    else
+      total_hash
+    end
   end
 
   # gets the total amount of payments made against this order via charge line payments
@@ -110,7 +119,7 @@ class OrderTxn < ActiveRecord::Base
 
   # creates payment applications for each charge line
   def apply_payment_to_all_charge_lines(financial_txn)
-    total_charges.each do |charge_line|
+    all_charge_lines.each do |charge_line|
       payment_application = PaymentApplication.new
       payment_application.money = Money.create(:description => charge_line.description + ' Payment',
                                                :amount => charge_line.money.amount,

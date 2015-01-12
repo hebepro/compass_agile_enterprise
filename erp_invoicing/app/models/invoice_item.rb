@@ -25,6 +25,7 @@
 class InvoiceItem < ActiveRecord::Base
   attr_protected :created_at, :updated_at
 
+  belongs_to :invoice
   belongs_to :agreement
   belongs_to :invoice_item_type
 
@@ -45,7 +46,7 @@ class InvoiceItem < ActiveRecord::Base
   end
 
   def to_s
-    description
+    item_description
   end
 
   def to_label

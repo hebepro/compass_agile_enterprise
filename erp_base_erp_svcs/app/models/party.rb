@@ -60,6 +60,12 @@ class Party < ActiveRecord::Base
     PartyRelationship.destroy_all("party_id_from = #{id} or party_id_to = #{id}")
   end
 
+  def add_role_type(role)
+    role = role.is_a?(RoleType) ? role : RoleType.iid(role)
+
+    PartyRole.create(party: self, role_type: role)
+  end
+
   def has_role_type?(*passed_roles)
     result = false
     passed_roles.flatten!

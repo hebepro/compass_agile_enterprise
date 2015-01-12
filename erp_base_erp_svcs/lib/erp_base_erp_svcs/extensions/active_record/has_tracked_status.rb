@@ -107,23 +107,28 @@ module ErpBaseErpSvcs
             else
               status = args
             end
+
             tracked_status_type = status.is_a?(TrackedStatusType) ? status : TrackedStatusType.find_by_internal_identifier(status.to_s)
             raise "TrackedStatusType does not exist #{status.to_s}" unless tracked_status_type
 
-            #set current StatusApplication thru_date to now
-            cta = self.current_status_application
-            unless cta.nil?
-              cta.thru_date = options[:thru_date].nil? ? Time.now : options[:thru_date]
-              cta.save
+            # if passed status is current status then do nothing
+            unless current_status == tracked_status_type.internal_identifier
+              #set current StatusApplication thru_date to now
+              cta = self.current_status_application
+              unless cta.nil?
+                cta.thru_date = options[:thru_date].nil? ? Time.now : options[:thru_date]
+                cta.save
+              end
+
+              status_application = StatusApplication.new
+              status_application.tracked_status_type = tracked_status_type
+              status_application.from_date = options[:from_date].nil? ? Time.now : options[:from_date]
+              status_application.save
+
+              self.status_applications << status_application
+              self.save
             end
 
-            status_application = StatusApplication.new
-            status_application.tracked_status_type = tracked_status_type
-            status_application.from_date = options[:from_date].nil? ? Time.now : options[:from_date]
-            status_application.save
-
-            self.status_applications << status_application
-            self.save
           end
 
           # add_status aliases current_status= for legacy support
