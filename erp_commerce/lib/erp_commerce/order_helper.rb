@@ -255,6 +255,7 @@ module ErpCommerce
       order = OrderTxn.create
       order.current_status = 'initialized'
       order.order_number = (Time.now.to_i / (rand(100)+2)).round
+      order.description = "Order #{order.order_number}"
       order.save
       session['order_txn_id'] = order.id
       setup_biz_txn_party_roles(order, current_user.party) if current_user

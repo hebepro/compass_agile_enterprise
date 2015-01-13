@@ -85,7 +85,7 @@ class Invoice < ActiveRecord::Base
 
           invoice_item.invoice = invoice
           invoice_item.item_description = charge_line.description
-          invoice_item.quantity = 1
+          invoice_item.quantity = charge_line.charged_item.quantity
           invoice_item.amount = charge_line.money.amount
           invoice_item.add_invoiced_record(charge_line)
 
