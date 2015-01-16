@@ -1,3 +1,9 @@
+### Table Definition ###############################
+#  create_table :credit_card_accounts do |t|
+#    t.timestamps
+#  end
+####################################################
+
 class CreditCardAccount < ActiveRecord::Base
   attr_protected :created_at, :updated_at
 
@@ -71,6 +77,21 @@ class CreditCardAccount < ActiveRecord::Base
     result
   end
 
+  def purchase_with_existing_card(financial_txn, gateway_wrapper, gateway_options={})
+    gateway_options[:debug] = true
+
+    result = gateway_wrapper.purchase_with_existing_card(self.credit_card, financial_txn.money.amount, gateway_options)
+
+    unless result[:payment].nil?
+      result[:payment].financial_txn = financial_txn
+      result[:payment].save
+      financial_txn.payments << result[:payment]
+      financial_txn.save
+    end
+
+    result
+  end
+
   #params
   #financial_txn
   #cvv
@@ -83,7 +104,7 @@ class CreditCardAccount < ActiveRecord::Base
     credit_card_to_use = self.credit_card unless credit_card_to_use
 
     result = {:success => true}
-    payment = Payment.find(:first, :order => 'created_at desc', :conditions => ["current_state = ? and success = ? and financial_txn_id = ?",'authorized', 1, financial_txn.id])
+    payment = Payment.where("current_state = ? and success = ? and financial_txn_id = ?",'authorized', 1, financial_txn.id).order('created_at desc').first
     #only capture this payment if it was authorized
     if !payment.nil? && payment.current_state.to_sym == :authorized
       gateway_options[:debug] = true
@@ -104,7 +125,7 @@ class CreditCardAccount < ActiveRecord::Base
     credit_card_to_use = self.credit_card unless credit_card_to_use
 
     result = {:success => true}
-    payment = Payment.find(:first, :order => 'created_at desc', :conditions => ["current_state = ? and success = ? and financial_txn_id = ?",'authorized', 1, financial_txn.id])
+    payment = Payment.where("current_state = ? and success = ? and financial_txn_id = ?",'authorized', 1, financial_txn.id).order('created_at desc').first
     #only reverse this payment if it was authorized
     if !payment.nil? && payment.current_state.to_sym == :authorized
       gateway_options[:debug] = true

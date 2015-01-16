@@ -11,5 +11,4 @@
 // GO AFTER THE REQUIRES BELOW.
 //
 //= require ./layout
-//= require ./default_menu_tree_panel
 //= require ./preference_window

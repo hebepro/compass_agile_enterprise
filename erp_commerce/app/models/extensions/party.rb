@@ -10,12 +10,15 @@ Party.class_eval do
 
   # return credit card by credit card account purpose using internal identifier
   def get_credit_card(internal_identifier)
+    credit_card = nil
+
     self.credit_card_account_party_roles.each do |ccapr|
       if ccapr.credit_card_account.credit_card_account_purpose.internal_identifier.eql?(internal_identifier)
-        return ccapr.credit_card
+        credit_card = ccapr.credit_card
       end
-    end 
-    return nil  
+    end
+
+    credit_card
   end
 
   def credit_card_accounts

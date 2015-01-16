@@ -3,7 +3,7 @@ module ErpCommerce
     isolate_namespace ErpCommerce
 
     config.erp_commerce = ErpCommerce::Config
-	  
+
 	  ActiveSupport.on_load(:active_record) do
       include ErpCommerce::Extensions::ActiveRecord::ActsAsFee
       include ErpCommerce::Extensions::ActiveRecord::ActsAsPriceable

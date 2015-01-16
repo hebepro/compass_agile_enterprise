@@ -217,10 +217,10 @@ class ErpCommerceBase < ActiveRecord::Migration
 
         t.timestamps
       end
+
+      add_index :payment_gateway_actions, :internal_identifier
     end
 
-    add_index :payment_gateway_actions, :internal_identifier
-    
     #tables
     unless table_exists?(:credit_cards)
       create_table :credit_cards do |t|

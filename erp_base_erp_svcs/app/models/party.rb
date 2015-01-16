@@ -71,11 +71,12 @@ class Party < ActiveRecord::Base
     passed_roles.flatten!
     passed_roles.each do |role|
       role_iid = role.is_a?(RoleType) ? role.internal_identifier : role.to_s
-      self.role_types.each do |this_role|
-        result = true if (this_role.internal_identifier == role_iid)
+
+      PartyRole.where(party_id: self.id).each do |party_role|
+        result = true if (party_role.role_type.internal_identifier == role_iid)
         break if result
       end
-      break if result
+
     end
     result
   end

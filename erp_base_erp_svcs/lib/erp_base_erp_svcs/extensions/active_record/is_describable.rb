@@ -23,7 +23,7 @@ module ErpBaseErpSvcs
 
         module InstanceMethods
           def find_descriptions_by_view_type(view_iid)
-            self.descriptions.where('view_type_id = ?', ViewType.find_by_internal_identifier(view_iid).id)
+            self.descriptions.where('view_type_id = ?', ViewType.find_by_internal_identifier(view_iid).id).collect(&:description).join(' ')
           end
 
           def find_description_by_iid(iid)

@@ -8,6 +8,5 @@ To override these settings simple create a erp_commerce.rb file in your initiali
 
     Rails.application.config.erp_commerce.configure do |config|
       config.encryption_key                   = 'my_secret_code'
-      config.active_merchant_gateway_wrapper = ErpCommerce::ActiveMerchantWrappers::BrainTreeGatewayWrapper
     end
     Rails.application.config.erp_commerce.configure!

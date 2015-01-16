@@ -61,7 +61,7 @@ module ErpApp
             #add any additional view paths to widgets
             if File.directory?(File.join(widgets_path,widget_name,'views'))
               view_path = File.join(widgets_path,widget_name,'views')
-              widget_hash[:view_paths].unshift(view_path)
+              widget_hash[:view_paths].push(view_path)
               #get all view files for theme generation
               get_widget_view_files(widget_hash, view_path)
             end

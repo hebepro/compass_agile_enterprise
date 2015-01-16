@@ -15,4 +15,6 @@
 //= require ./knitkit/jquery.maskedinput.min.js
 //= require ./knitkit/confirm-bootstrap.js
 //= require ./knitkit/inline_editing.js
+//= require ./knitkit/jquery.validate.min.js
+//= require ./knitkit/additional-methods.min.js
 

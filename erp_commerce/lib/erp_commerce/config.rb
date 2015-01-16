@@ -1,12 +1,11 @@
 module ErpCommerce
   module Config
     class << self
-      attr_accessor :encryption_key, :active_merchant_gateway_wrapper
+      attr_accessor :encryption_key
 
       def init!
         @defaults = {
-          :@encryption_key => 'my_secret_code',
-          :@active_merchant_gateway_wrapper => ErpCommerce::ActiveMerchantWrappers::BrainTreeGatewayWrapper
+          :@encryption_key => 'cd6fae94-9c2f-11e4-89d3-123b93f75cba'
         }
       end
 

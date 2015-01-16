@@ -16,7 +16,12 @@ module Knitkit
       Rails.application.config.assets.precompile += %w{ erp_app/desktop/applications/knitkit/app.css }
     end
 
-	  ActiveSupport.on_load(:active_record) do
+    # filter sensitive information during logging
+    initializer "kntikit.params.filter" do |app|
+      app.config.filter_parameters += [:card_number, :cvc, :exp_month, :exp_year]
+    end
+
+    ActiveSupport.on_load(:active_record) do
       include Knitkit::Extensions::ActiveRecord::ActsAsPublishable
       include Knitkit::Extensions::ActiveRecord::ThemeSupport::HasManyThemes
       include Knitkit::Extensions::ActiveRecord::ActsAsDocument

@@ -1,32 +1,20 @@
 class Individual < ActiveRecord::Base
   attr_protected :created_at, :updated_at
 
-  require 'attr_encrypted'
-
   after_create :create_party
   after_save :save_party
   after_destroy :destroy_party
 
   has_one :party, :as => :business_party
 
-  attr_encrypted :encrypted_ssn, :key => 'a secret key', :marshall => true
-  alias_attribute :unencypted_ssn, :social_security_number
+  attr_encrypted :ssn, :key => Rails.application.config.erp_base_erp_svcs.encryption_key, :attribute => :encrypted_ssn
 
   def after_initialize
     self.salt ||= Digest::SHA256.hexdigest((Time.now.to_i * rand(5)).to_s)
   end
 
-  def social_security_number=(ssn)
-    self.ssn_last_four = ssn[-4..-1]
-    self.encrypted_ssn = Individual.encrypt_encrypted_ssn(ssn)
-    self.save
-  end
-
-  def social_security_number
-    Individual.decrypt_encrypted_ssn(self.encrypted_ssn)
-  end
-
-  alias_method :ssn, :social_security_number
+  alias :social_security_number= :ssn=
+  alias :social_security_number :ssn
 
   def formatted_ssn_label
     (self.ssn_last_four.blank?) ? "" : "XXX-XX-#{self.ssn_last_four}"

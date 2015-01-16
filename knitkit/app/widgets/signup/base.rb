@@ -16,14 +16,14 @@ module Widgets
 
         @email = params[:email]
         @user = User.new(
-          :email => @email,
-          :username => params[:username],
-          :password => params[:password],
-          :password_confirmation => params[:password_confirmation]
+            :email => @email,
+            :username => params[:username],
+            :password => params[:password],
+            :password_confirmation => params[:password_confirmation]
         )
         @user.password_validator = {:regex => password_config_option.value, :error_message => password_config_option.comment}
         #set this to tell activation where to redirect_to for login and temp password
-        @user.add_instance_attribute(:login_url,params[:login_url])
+        @user.add_instance_attribute(:login_url, params[:login_url])
         @user.add_instance_attribute(:temp_password, params[:password])
         @user.add_instance_attribute(:domain, primary_host.value)
         begin
@@ -32,6 +32,17 @@ module Widgets
             @user.party = individual.party
             @user.add_role(@website.role)
             @user.save
+
+            # add party roles to party if present
+            unless params[:party_roles].blank?
+              party = @user.party
+              params[:party_roles].split(',').each do |role_type|
+                party.add_role_type(role_type)
+              end
+
+              party.save
+            end
+
             render :update => {:id => "#{@uuid}_result", :view => :success}
           else
             render :update => {:id => "#{@uuid}_result", :view => :error}
@@ -48,26 +59,26 @@ module Widgets
       def locate
         File.dirname(__FILE__)
       end
-        
+
       class << self
         def title
           "Sign Up"
         end
-          
+
         def widget_name
           File.basename(File.dirname(__FILE__))
         end
-          
+
         def base_layout
           begin
-            file = File.join(File.dirname(__FILE__),"/views/layouts/base.html.erb")
+            file = File.join(File.dirname(__FILE__), "/views/layouts/base.html.erb")
             IO.read(file)
           rescue
             return nil
           end
         end
       end
-        
+
     end
   end
 end

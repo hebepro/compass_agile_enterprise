@@ -1,11 +1,12 @@
 module ErpBaseErpSvcs
   module Config
     class << self
-      attr_accessor :compass_ae_engines
+      attr_accessor :compass_ae_engines, :encryption_key
 
       def init!
         @defaults = {
-          :@compass_ae_engines => []
+          :@compass_ae_engines => [],
+          :@encryption_key => '314465fe-9c2b-11e4-89d3-123b93f75cba'
         }
       end
 

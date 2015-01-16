@@ -1,3 +1,31 @@
+#### Table Definition ####################################
+#  create_table :pricing_plans do |t|
+#
+#    t.string  :description
+#    t.string  :comments
+#
+#    t.string 	:internal_identifier
+#
+#    t.string 	:external_identifier
+#    t.string 	:external_id_source
+#
+#    t.date    :from_date
+#    t.date    :thru_date
+#
+#    #this is here as a placeholder for an 'interpreter' or 'rule' pattern
+#    t.string  :matching_rules
+#    #this is here as a placeholder for an 'interpreter' or 'rule' pattern
+#    t.string  :pricing_calculation
+#
+#    #support for simple assignment of a single money amount
+#    t.boolean :is_simple_amount
+#    t.integer :currency_id
+#    t.decimal :money_amount, :precision => 8, :scale => 2
+#
+#    t.timestamps
+#  end
+#########################################################
+
 class PricingPlan < ActiveRecord::Base
   attr_protected :created_at, :updated_at
 
