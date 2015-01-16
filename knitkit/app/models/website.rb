@@ -98,15 +98,6 @@ class Website < ActiveRecord::Base
     config_value('email_inquiries') == 'yes'
   end
 
-  def self.find_by_host(host)
-    website = nil
-    unless host.nil?
-      website_host = WebsiteHost.find_by_host(host)
-      website = website_host.website unless website_host.nil?
-    end
-    website
-  end
-
   def deactivate_themes!
     themes.each do |theme|
       theme.deactivate!
@@ -347,7 +338,20 @@ class Website < ActiveRecord::Base
     File.join(tmp_dir, self.iid + '-composite.zip')
   end
 
+  def website_role_iid
+    "website_#{self.iid}_access"
+  end
+
   class << self
+    def find_by_host(host)
+      website = nil
+      unless host.nil?
+        website_host = WebsiteHost.find_by_host(host)
+        website = website_host.website unless website_host.nil?
+      end
+      website
+    end
+
     def make_tmp_dir
       Pathname.new(File.join(Rails.root, "/tmp/website_export/tmp_#{Time.now.to_i.to_s}")).tap do |dir|
         FileUtils.mkdir_p(dir) unless dir.exist?
@@ -536,7 +540,7 @@ class Website < ActiveRecord::Base
 
       tmp_dir = Website.make_tmp_dir
 
-      Zip::ZipFile.open(file) do |zip|#passing in a file
+      Zip::ZipFile.open(file) do |zip| #passing in a file
         #Zip::ZipFile.open(file.path) do |zip|
         zip.each do |entry|
           f_path = File.join(tmp_dir.to_s, entry.name)
@@ -622,7 +626,7 @@ class Website < ActiveRecord::Base
 
           #handle hosts
           if WebsiteHost.last
-          setup_hash.merge(:hosts => 'localhost:3000')
+            setup_hash.merge(:hosts => 'localhost:3000')
           end
 
           if !setup_hash[:hosts].blank? and !setup_hash[:hosts].empty?
@@ -662,10 +666,9 @@ class Website < ActiveRecord::Base
       return website, message
     end
 
-
     def find_site_entry_in_zip(file)
       zf = Zip::ZipFile.open(file)
-      zf.each_with_index {  |entry, index|
+      zf.each_with_index { |entry, index|
         if entry.name.match(/-template.zip/) && !entry.name.match(/_./)
           return entry
         end
@@ -675,7 +678,7 @@ class Website < ActiveRecord::Base
     def find_theme_entries_in_zip(file)
       entries = []
       zf = Zip::ZipFile.new(file)
-      zf.each_with_index {  |entry, index|
+      zf.each_with_index { |entry, index|
         if entry.name.match(/-theme.zip/) && !entry.name.match(/_./)
           entries << entry
         end
@@ -683,9 +686,7 @@ class Website < ActiveRecord::Base
       entries
     end
 
-
     protected
-
 
     def build_menu_item(hash)
       website_item = WebsiteNavItem.new(
@@ -722,13 +723,17 @@ class Website < ActiveRecord::Base
                           :position => hash[:position],
                           :render_base_layout => hash[:render_base_layout])
       section.internal_identifier = hash[:internal_identifier]
-      section.permalink = hash[:permalink]
-      section.path = hash[:path]
       content = entries.find do |entry|
         entry[:type] == 'sections' and entry[:name] == "#{hash[:permalink]}.rhtml" and entry[:path].split('.')[0] == "sections#{hash[:path]}"
       end
 
       section.layout = content[:data] unless content.nil?
+      section.save
+
+      # force the update of permalink and path
+      section.permalink = hash[:permalink]
+      section.path = hash[:path]
+      section.save
 
       hash[:articles].each do |article_hash|
         article = Article.find_by_internal_identifier(article_hash[:internal_identifier])
@@ -743,11 +748,11 @@ class Website < ActiveRecord::Base
           end
         end
         section.contents << article
-        section.save
         article.update_content_area_and_position_by_section(section, article_hash[:content_area], article_hash[:position])
       end
       website.website_sections << section
-      section.save
+      website.save
+
       if hash[:sections]
         hash[:sections].each do |section_hash|
           child_section = build_section(section_hash, entries, website, current_user)
@@ -793,10 +798,6 @@ class Website < ActiveRecord::Base
       section
     end
 
-
   end
 
-  def website_role_iid
-    "website_#{self.iid}_access"
-  end
 end
