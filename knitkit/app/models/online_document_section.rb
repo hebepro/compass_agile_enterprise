@@ -50,7 +50,7 @@ class OnlineDocumentSection < WebsiteSection
   end
 
   def build_section_hash
-    section_hash = {
+    {
         :name => self.title,
         :has_layout => false,
         :use_markdown => self.use_markdown,
@@ -68,6 +68,6 @@ class OnlineDocumentSection < WebsiteSection
             :internal_identifier => documented_item_content.internal_identifier
         }
     }
-    section_hash
   end
+
 end

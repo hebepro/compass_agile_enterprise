@@ -786,7 +786,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
             iconCls: 'icon-delete',
             listeners: {
                 'click': function () {
-                    Ext.MessageBox.confirm('Confirm', 'Are you sure you want to delete this section?<br> NOTE: Articles belonging to this section will be orphaned.<br><br>', function (btn) {
+                    Ext.MessageBox.confirm('Confirm', 'Are you sure you want to delete the section?<h3>'+record.data["text"]+'</h3> NOTE: Articles belonging to this section will be orphaned.<br><br>', function (btn) {
                         if (btn == 'no') {
                             return false;
                         }

@@ -103,11 +103,6 @@ module Knitkit
               current_user.with_capability('delete', 'WebsiteSection') do
                 section = WebsiteSection.find(params[:id])
 
-                # we need to remove any content related to this section if it is an OnlineDocumentSection
-                if section.type == 'OnlineDocumentSection'
-                  section.website_section_contents.destroy_all
-                end
-
                 render :json => section.destroy ? {:success => true} : {:success => false}
               end
             end
