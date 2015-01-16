@@ -19,6 +19,7 @@ module Knitkit
                     result = {:success => false, :message => 'Blog can not be the title of a Blog'}
                   else
                     website_section = WebsiteSection.new
+                    website_section.parent_id = params[:website_section_id] if params[:website_section_id]
                     website_section.website_id = @website.id
                     website_section.in_menu = params[:in_menu] == 'yes'
                     website_section.title = params[:title]
