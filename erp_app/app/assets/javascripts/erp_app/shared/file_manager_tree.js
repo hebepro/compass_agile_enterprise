@@ -300,8 +300,6 @@ Ext.define("Compass.ErpApp.Shared.FileManagerTree", {
                                 var renameForm = {
                                     xtype: 'form',
                                     autoDestroy: true,
-                                    width: 500,
-                                    frame: true,
                                     buttonAlign: 'center',
                                     bodyStyle: 'padding: 10px 10px 0 10px;',
                                     labelWidth: 50,
