@@ -2,7 +2,9 @@ class DocumentedItem < ActiveRecord::Base
   attr_protected :created_at, :updated_at
 
   belongs_to :online_document_section
-  
+
+  before_destroy :destroy_content
+
   def content
     if content?
       Content.find(documented_content_id)
@@ -30,4 +32,13 @@ class DocumentedItem < ActiveRecord::Base
   def self.find_by_section_id( website_section_id )
     DocumentedItem.where(["online_document_section_id = ?", website_section_id]).first
   end
+
+  private
+
+  def destroy_content
+    if content?
+      Content.find(documented_content_id).destroy
+    end
+  end
+
 end
