@@ -3,6 +3,7 @@ require 'fileutils'
 namespace :knitkit do
   namespace :website do
 
+    desc 'Import Knitkit website'
     task :import, [:website_iid, :username, :export_path] => :environment do |t, args|
       website = Website.find_by_internal_identifier(args[:website_iid])
       user = User.find_by_username(args[:username])
@@ -19,6 +20,7 @@ namespace :knitkit do
       end
     end
 
+    desc 'Export knitkit website'
     task :export, [:website_iid, :export_path] => :environment do |t, args|
       website = Website.find_by_internal_identifier(args[:website_iid])
 
@@ -33,6 +35,45 @@ namespace :knitkit do
 
       else
         puts "Could not find website"
+      end
+    end
+
+  end
+
+  namespace :theme do
+
+    desc 'Import Knitkit theme'
+    task :import, [:website_iid, :export_path] => :environment do |t, args|
+      website = Website.find_by_internal_identifier(args[:website_iid])
+
+      if website
+
+        puts 'Starting Import...'
+        Theme.import(File.open(args[:export_path]), website)
+        puts 'Import Complete'
+
+      else
+        puts "Website doesn't exists"
+      end
+    end
+
+    desc 'Export knitkit theme'
+    task :export, [:website_iid, :theme_id, :export_path] => :environment do |t, args|
+      website = Website.find_by_internal_identifier(args[:website_iid])
+      theme = website.themes.find_by_theme_id(args[:theme_id])
+
+      if website && theme
+
+        puts 'Starting Export...'
+
+        path = theme.export
+        FileUtils.mv(path, args[:export_path])
+
+        puts 'Export Complete'
+
+      else
+        puts "Could not find website" unless website
+        puts "Could not find theme" unless theme
       end
     end
 
