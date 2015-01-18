@@ -363,7 +363,7 @@ class Website < ActiveRecord::Base
       message = ''
       website = nil
 
-      file = ActionController::UploadedTempfile.new("uploaded-theme").tap do |f|
+      file = ActionController::UploadedTempfile.new("uploaded-website").tap do |f|
         f.puts file.read
         f.original_filename = file.original_filename
         f.read # no idea why we need this here, otherwise the zip can't be opened
