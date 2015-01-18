@@ -406,7 +406,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addDocumentOptions = function (self,
             iconCls: 'icon-delete',
             listeners: {
                 'click': function () {
-                    Ext.MessageBox.confirm('Confirm', 'Are you sure you want to delete this document section?', function (btn) {
+                    Ext.MessageBox.confirm('Confirm', 'Are you sure you want to delete the document section?<h3>'+record.data["text"]+'</h3>', function (btn) {
                         if (btn == 'no') {
                             return false;
                         }
@@ -418,7 +418,6 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addDocumentOptions = function (self,
                                     id: sectionId
                                 },
                                 success: function (response) {
-
                                     var obj = Ext.decode(response.responseText);
                                     if (obj.success) {
                                         record.remove();
@@ -433,8 +432,6 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addDocumentOptions = function (self,
                             });
                         }
                     });
-
-                    record.remove();
                 }
             }
         });

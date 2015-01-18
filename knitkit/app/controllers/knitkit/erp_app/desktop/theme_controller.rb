@@ -262,7 +262,7 @@ module Knitkit
               path = params[:node]
               name = params[:file_name]
 
-              result, message = @file_support.rename_file(@file_support.root+path, name)
+              result, message = @file_support.rename_file(File.join(@file_support.root, path), name)
               if result
                 theme_file = get_theme_file(path)
                 theme_file.name = name
