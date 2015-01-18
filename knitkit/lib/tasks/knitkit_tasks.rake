@@ -11,7 +11,11 @@ namespace :knitkit do
       if !website and user
 
         puts 'Starting Import...'
-        Website.import(File.open(args[:export_path]), user)
+        file = ActionDispatch::Http::UploadedFile.new(
+            tempfile: File.open(args[:export_path]),
+            filename: File.basename(args[:export_path])
+        )
+        Website.import(file, user)
         puts 'Import Complete'
 
       else
@@ -49,7 +53,11 @@ namespace :knitkit do
       if website
 
         puts 'Starting Import...'
-        Theme.import(File.open(args[:export_path]), website)
+        file = ActionDispatch::Http::UploadedFile.new(
+            tempfile: File.open(args[:export_path]),
+            filename: File.basename(args[:export_path])
+        )
+        Theme.import(file, website)
         puts 'Import Complete'
 
       else
