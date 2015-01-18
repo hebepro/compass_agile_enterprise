@@ -127,6 +127,11 @@ class Party < ActiveRecord::Base
   #** Contact Methods
   #************************************************************************************************
 
+  # check if party has contact with purpose
+  def has_contact?(contact_mechanism_klass, contact_purpose)
+    !contact_mechanisms_to_hash(contact_mechanism_klass, [contact_purpose]).empty?
+  end
+
   def phone_numbers_to_hash(contact_purposes=nil)
     contact_mechanisms_to_hash(PhoneNumber, contact_purposes)
   end

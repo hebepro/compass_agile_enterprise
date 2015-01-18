@@ -30,7 +30,13 @@ module Widgets
           if @user.save
             individual = Individual.create(:current_first_name => params[:first_name], :current_last_name => params[:last_name])
             @user.party = individual.party
+
+            # add website security role to user
             @user.add_role(@website.role)
+
+            # create website_party_role for this user as a member of the site
+            WebsitePartyRole.create(party: @user.party, website: @website, role_type: RoleType.find_by_ancestor_iids(['website', 'member']))
+
             @user.save
 
             # add party roles to party if present

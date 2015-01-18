@@ -43,6 +43,7 @@ class PostalAddress < ActiveRecord::Base
 
   def to_data_hash
     {
+        name: self.try(:contact).try(:party).try(:description),
         address_line_1: address_line_1,
         address_line_2: address_line_2,
         city: city,

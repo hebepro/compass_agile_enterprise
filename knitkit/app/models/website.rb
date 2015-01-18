@@ -202,7 +202,8 @@ class Website < ActiveRecord::Base
         :sections => [],
         :images => [],
         :files => [],
-        :website_navs => []
+        :website_navs => [],
+        :members => []
     }
 
     #TODO update to handle configurations
@@ -224,6 +225,13 @@ class Website < ActiveRecord::Base
 
     self.files.where("directory like '%/#{Rails.application.config.erp_tech_svcs.file_assets_location}/sites/#{self.iid}%'").all.each do |file_asset|
       setup_hash[:files] << {:path => file_asset.directory, :name => file_asset.name, :roles => file_asset.roles.uniq.collect { |r| r.internal_identifier }}
+    end
+
+    # get all members of the website
+    self.website_party_roles.where('role_type_id = ?', RoleType.find_by_ancestor_iids(['website', 'member'])).each do |website_party_role|
+      party = website_party_role.party
+
+      setup_hash[:members] << party.user.username
     end
 
     setup_hash
@@ -421,19 +429,28 @@ class Website < ActiveRecord::Base
 
         begin
           #handle images
-          # entries.each do |entry|
-          #   puts "entry type '#{entry[:type]}'"
-          #   puts "entry name '#{entry[:name]}'"
-          #   puts "entry path '#{entry[:path]}'"
-          #   puts "entry data #{!entry[:data].blank?}"
-          # end
-          # puts "------------------"
           setup_hash[:images].each do |image_asset|
             filename = 'images' + image_asset[:path] + '/' + image_asset[:name]
             #puts "image_asset '#{filename}'"
             content = entries.find { |entry| entry[:type] == 'images' and entry[:path] == filename }
             unless content.nil?
               website.add_file(content[:data], File.join(file_support.root, image_asset[:path], image_asset[:name]))
+            end
+          end
+
+          #handle members
+          setup_hash[:members].each do |member|
+            user = User.find_by_username(member)
+
+            if user
+              # add website security role to user
+              user.add_role(website.role)
+
+              # create website_party_role for this user as a member of the site
+              website_role_type_parent = RoleType.find_or_create('website', 'Website')
+              WebsitePartyRole.new(party: user.party, website: website, role_type: RoleType.find_or_create('member', 'Member', website_role_type_parent))
+
+              user.save
             end
           end
 

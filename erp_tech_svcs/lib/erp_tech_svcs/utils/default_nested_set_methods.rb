@@ -31,7 +31,7 @@ module ErpTechSvcs
 
       module ClassMethods
         def find_roots
-          where("parent_id = nil")
+          where("parent_id is null")
         end
 
         def find_children(parent_id = nil)
@@ -46,7 +46,7 @@ module ErpTechSvcs
         def find_by_ancestor_iids(iids)
           node = nil
 
-          unless iids.is_a? Array
+          if iids.is_a? Array
             iids.each do |iid|
               if (iid == iids.first)
                 node = where("parent_id is null and internal_identifier = ?", iid).first

@@ -6,4 +6,5 @@ class RoleType < ActiveRecord::Base
     
   has_many :party_roles
   has_many :parties, :through => :party_roles
+
 end
