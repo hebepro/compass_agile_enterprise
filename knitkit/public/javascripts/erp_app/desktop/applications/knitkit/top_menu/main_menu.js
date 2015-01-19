@@ -358,6 +358,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu = function () {
 
                                             formPanel.getForm().submit({
                                                 waitMsg: 'Please wait...',
+                                                timeout: 300000,
                                                 success: function (form, action) {
                                                     var obj = Ext.decode(action.response.responseText);
                                                     if (obj.success) {
@@ -428,8 +429,12 @@ Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu = function () {
                                 return false;
                             }
                             else if (btn == 'yes') {
+                                var loading = new Ext.LoadMask(knitkitWindow, {msg: 'Please wait...'});
+                                loading.show();
+
                                 Ext.Ajax.request({
                                     url: '/knitkit/erp_app/desktop/site/delete',
+                                    timeout: 300000,
                                     method: 'POST',
                                     params: {
                                         website_id: websiteId
@@ -437,6 +442,8 @@ Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu = function () {
                                     success: function (response) {
                                         var obj = Ext.decode(response.responseText);
                                         if (obj.success) {
+                                            loading.hide();
+
                                             var combo = knitkitWindow.down('websitescombo');
                                             combo.store.load({
                                                 callback: function (records, operation, succes) {
@@ -452,6 +459,8 @@ Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu = function () {
                                             });
                                         }
                                         else {
+                                            loading.hide();
+
                                             Ext.Msg.alert('Error', 'Error deleting Website');
                                         }
                                     },
@@ -741,6 +750,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.newThemeMenuItem = {
 
                             formPanel.getForm().submit({
                                 reset: true,
+                                timeout: 300000,
                                 success: function (form, action) {
                                     loading.hide();
                                     window.close();
@@ -820,6 +830,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.uploadThemeMenuItem = {
 
                             if (form.isValid()) {
                                 form.submit({
+                                    timeout: 300000,
                                     waitMsg: 'Creating theme...',
                                     success: function (form, action) {
                                         var obj = Ext.decode(action.response.responseText);
