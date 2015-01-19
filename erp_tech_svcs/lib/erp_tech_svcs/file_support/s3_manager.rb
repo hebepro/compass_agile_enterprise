@@ -132,7 +132,7 @@ module ErpTechSvcs
         result = false
         message = nil
         begin
-          if options[:force] or bucket.as_tree(:prefix => path).children.count <= 1 # aws-sdk includes the folder itself as a child (like . is current dir), this needs revisited as <= 1 is scary
+          if options[:force] or bucket.as_tree(:prefix => path).children.count == 0
             bucket.objects.with_prefix(path).delete_all
             message = "File was deleted successfully"
             result = true
