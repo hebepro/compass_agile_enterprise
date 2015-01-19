@@ -122,7 +122,7 @@ module Widgets
                                                    ContactPurpose.find_by_internal_identifier(contact_purpose))
 
             {:json => {success: true, message: 'Email added', email: email.to_hash(:only => [:id, :email_address],
-                                                                                   :contact_purpose => email.contact_purpose.description)}}
+                                                                                   :contact_purpose => ContactPurpose.find_by_internal_identifier(contact_purpose).description)}}
           rescue => ex
             Rails.logger.error ex.message
             Rails.logger.error ex.backtrace.join("\n")
@@ -162,7 +162,7 @@ module Widgets
                                                           ContactPurpose.find_by_internal_identifier(contact_purpose))
 
             {:json => {success: true, message: 'Phone number added', phone: phone_number.to_hash(:only => [:id, :phone_number],
-                                                                                                 :contact_purpose => phone_number.contact_purpose.description)}}
+                                                                                                 :contact_purpose => ContactPurpose.find_by_internal_identifier(contact_purpose).description)}}
           rescue => ex
             Rails.logger.error ex.message
             Rails.logger.error ex.backtrace.join("\n")
@@ -216,7 +216,7 @@ module Widgets
                        message: 'Address added',
                        address: postal_address.to_hash(:only => [:id, :address_line_1, :address_line_2,
                                                                  :city, :state, :zip],
-                                                       :contact_purpose => postal_address.contact_purpose.description)}}
+                                                       :contact_purpose => ContactPurpose.find_by_internal_identifier(contact_purpose).description)}}
           rescue => ex
             Rails.logger.error ex.message
             Rails.logger.error ex.backtrace.join("\n")
