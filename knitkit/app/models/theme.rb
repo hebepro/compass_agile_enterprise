@@ -303,6 +303,8 @@ class Theme < ActiveRecord::Base
     ]
 
     ignored_js = [
+        'additional-methods.min.js',
+        'jquery.validate.min.js',
         'bootstrap.min.js',
         'bootstrap-datepicker.js',
         'confirm-bootstrap.js',
