@@ -7,9 +7,9 @@ class Theme < ActiveRecord::Base
   THEME_STRUCTURE = ['stylesheets', 'javascripts', 'images', 'templates']
 
   @base_layouts_views_path = "#{Knitkit::Engine.root.to_s}/app/views"
-  @knitkit_website_stylesheets_path = "#{Knitkit::Engine.root.to_s}/public/stylesheets/knitkit"
-  @knitkit_website_javascripts_path = "#{Knitkit::Engine.root.to_s}/public/javascripts/knitkit"
-  @knitkit_website_images_path = "#{Knitkit::Engine.root.to_s}/public/images/knitkit"
+  @knitkit_website_stylesheets_path = "#{Knitkit::Engine.root.to_s}/app/assets/stylesheets/knitkit"
+  @knitkit_website_javascripts_path = "#{Knitkit::Engine.root.to_s}/app/assets/javascripts/knitkit"
+  @knitkit_website_images_path = "#{Knitkit::Engine.root.to_s}/app/assets/images/knitkit"
 
 
   validates :name, :presence => {:message => 'Name cannot be blank'}

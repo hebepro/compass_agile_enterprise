@@ -73,7 +73,6 @@ class FileAsset < ActiveRecord::Base
 
   has_many :file_asset_holders, :dependent => :destroy
 
-  is_json :custom_fields
   acts_as_taggable
 
   instantiates_with_sti
