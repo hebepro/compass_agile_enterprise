@@ -133,7 +133,7 @@ class Party < ActiveRecord::Base
                 and contacts.contact_mechanism_type = 'EmailAddress'")
         .where('contact_mechanism_type = ?', 'EmailAddress')
         .where('contact_purposes.internal_identifier = ?', contact_purpose)
-        .where('email_address = ?', value).first
+        .where('email_address = ?', value).readonly(false).first
   end
 
   # check if party has contact with purpose
