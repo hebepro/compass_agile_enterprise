@@ -28,8 +28,15 @@ module Widgets
         @user.add_instance_attribute(:domain, primary_host.value)
         begin
           if @user.save
-            individual = Individual.create(:current_first_name => params[:first_name], :current_last_name => params[:last_name])
-            @user.party = individual.party
+
+            # check if there is already a party with that email if there is tie the party to the user
+            party = Party.find_by_email_contact('billing', @email)
+            if party
+              @user.party = party
+            else
+              individual = Individual.create(:current_first_name => params[:first_name], :current_last_name => params[:last_name])
+              @user.party = individual.party
+            end
 
             # add website security role to user
             @user.add_role(@website.role)

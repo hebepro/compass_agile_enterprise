@@ -35,14 +35,12 @@ Paperclip.interpolates(:file_url) { |data, style|
     when :filesystem
       #if public is at the front of this path and we are using file_system remove it
       dir_pieces = url.split('/')
-      path = unless dir_pieces[1] == 'public'
-               "/download/#{data.instance.name}?path=#{dir_pieces.delete_if { |name| name == data.instance.name }.join('/')}"
-             else
-               dir_pieces.delete_at(1) if dir_pieces[1] == 'public'
-               dir_pieces.join('/')
-             end
-
-      "#{ErpTechSvcs::Config.file_protocol}://#{File.join(ErpTechSvcs::Config.installation_domain, path)}"
+      unless dir_pieces[1] == 'public'
+        "/download/#{data.instance.name}?path=#{dir_pieces.delete_if { |name| name == data.instance.name }.join('/')}"
+      else
+        dir_pieces.delete_at(1) if dir_pieces[1] == 'public'
+        dir_pieces.join('/')
+      end
     when :s3
       url
   end
@@ -160,7 +158,7 @@ class FileAsset < ActiveRecord::Base
 
   def check_name_uniqueness
     # check if name is already taken
-    unless FileAsset.where('directory = ? and name = ?',  self.directory, self.name).first.nil?
+    unless FileAsset.where('directory = ? and name = ?', self.directory, self.name).first.nil?
       # if it is keeping add incrementing by 1 until we have a good name
       counter = 0
       while true

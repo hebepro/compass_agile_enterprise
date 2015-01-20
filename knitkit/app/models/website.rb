@@ -438,19 +438,21 @@ class Website < ActiveRecord::Base
             end
           end
 
-          #handle members
-          setup_hash[:members].each do |member|
-            user = User.find_by_username(member)
+          if setup_hash[:members]
+            #handle members
+            setup_hash[:members].each do |member|
+              user = User.find_by_username(member)
 
-            if user
-              # add website security role to user
-              user.add_role(website.role)
+              if user
+                # add website security role to user
+                user.add_role(website.role)
 
-              # create website_party_role for this user as a member of the site
-              website_role_type_parent = RoleType.find_or_create('website', 'Website')
-              WebsitePartyRole.new(party: user.party, website: website, role_type: RoleType.find_or_create('member', 'Member', website_role_type_parent))
+                # create website_party_role for this user as a member of the site
+                website_role_type_parent = RoleType.find_or_create('website', 'Website')
+                WebsitePartyRole.new(party: user.party, website: website, role_type: RoleType.find_or_create('member', 'Member', website_role_type_parent))
 
-              user.save
+                user.save
+              end
             end
           end
 

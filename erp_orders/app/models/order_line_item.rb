@@ -72,15 +72,6 @@ class OrderLineItem < ActiveRecord::Base
     end
   end
 
-  # get price of individual item in line item
-  def price_amount
-    if line_item_record.get_current_simple_plan
-      line_item_record.get_current_simple_plan.money_amount
-    else
-      0
-    end
-  end
-
   # Alias for to_s
   def to_label
     to_s
