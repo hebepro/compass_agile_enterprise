@@ -137,7 +137,9 @@ class Invoice < ActiveRecord::Base
           self.balance
       end
     else
-      (self.balance - self.total_payments)
+      unless self.balance.nil?
+        (self.balance - self.total_payments)
+      end
     end
   end
 
