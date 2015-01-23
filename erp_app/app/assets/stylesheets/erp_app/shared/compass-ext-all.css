@@ -338,6 +338,11 @@
     filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/assets/icons/information/information_16x16.png', sizingMethod='crop');
 }
 
+.icon-info-light {
+    background-image: url(/assets/icons/information/information_light_16x16.png) !important;
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/assets/icons/information/information_16x16.png', sizingMethod='crop');
+}
+
 .icon-gear {
     background-image: url(/assets/icons/gear/gear_16x16.png) !important;
     filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/assets/icons/gear/gear_16x16.png', sizingMethod='crop');
