@@ -68,7 +68,7 @@ class Invoice < ActiveRecord::Base
 
         # create invoice
         invoice.invoice_number = next_invoice_number
-        invoice.description = "Invoice for Order ##{order_txn.order_number.to_s}"
+        invoice.description = "Invoice for #{order_txn.order_number.to_s}"
         invoice.message = options[:message]
         invoice.invoice_date = options[:invoice_date]
         invoice.due_date = options[:due_date]
@@ -84,10 +84,21 @@ class Invoice < ActiveRecord::Base
           invoice_item = InvoiceItem.new
 
           invoice_item.invoice = invoice
+          charged_item = charge_line.charged_item
           invoice_item.item_description = charge_line.description
-          invoice_item.quantity = charge_line.charged_item.quantity
-          invoice_item.amount = charge_line.money.amount
-          invoice_item.add_invoiced_record(charge_line)
+
+          # set data based on charged item either a OrderTxn or OrderLineItem
+          if charged_item.is_a?(OrderLineItem)
+            invoice_item.quantity = charged_item.quantity
+            invoice_item.unit_price = charged_item.sold_price
+            invoice_item.amount = charged_item.sold_amount
+            invoice_item.add_invoiced_record(charged_item.line_item_record)
+          elsif charged_item.is_a?(OrderTxn)
+            invoice_item.quantity = 1
+            invoice_item.unit_price = charge_line.money.amount
+            invoice_item.amount = charge_line.money.amount
+            invoice_item.add_invoiced_record(charge_line)
+          end
 
           invoice_item.save
         end
@@ -97,7 +108,7 @@ class Invoice < ActiveRecord::Base
     end
 
     def next_invoice_number
-      maximum('id').nil? ? 1 : maximum('id')
+      "Inv-#{(maximum('id').nil? ? 1 : maximum('id'))}"
     end
 
   end
@@ -124,6 +135,48 @@ class Invoice < ActiveRecord::Base
     selected_payment_applications
   end
 
+  def sub_total
+    if items.empty?
+      self.balance_record.amount
+    else
+      self.items.all.sum(&:sub_total)
+    end
+  end
+
+  def balance
+    if items.empty?
+      self.balance_record.amount
+    else
+      self.items.all.sum(&:total_amount)
+    end
+  end
+  alias payment_due balance
+
+  def balance=(amount, currency=Currency.usd)
+    if self.balance_record
+      self.balance_record.amount = amount
+    else
+      self.balance_record = Money.create(:amount => amount, :currency => currency)
+    end
+    self.balance_record.save
+  end
+
+  def total_payments
+    self.get_payment_applications(:successful).sum { |item| item.money.amount }
+  end
+
+  def total_tax
+    total = 0
+
+    items.each do |item|
+      if item.taxable?
+        total += item.sales_tax
+      end
+    end
+
+    total
+  end
+
   def calculate_balance
     unless self.calculate_balance_strategy_type.nil?
       case self.calculate_balance_strategy_type.internal_identifier
@@ -141,31 +194,6 @@ class Invoice < ActiveRecord::Base
         (self.balance - self.total_payments)
       end
     end
-  end
-
-  def balance
-    if items.empty?
-      self.balance_record.amount
-    else
-      self.items.all.sum(&:total_amount)
-    end
-  end
-
-  def balance=(amount, currency=Currency.usd)
-    if self.balance_record
-      self.balance_record.amount = amount
-    else
-      self.balance_record = Money.create(:amount => amount, :currency => currency)
-    end
-    self.balance_record.save
-  end
-
-  def payment_due
-    self.items.all.sum(&:total_amount)
-  end
-
-  def total_payments
-    self.get_payment_applications(:successful).sum { |item| item.money.amount }
   end
 
   def transactions

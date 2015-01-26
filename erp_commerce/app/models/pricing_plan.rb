@@ -50,7 +50,7 @@ class PricingPlan < ActiveRecord::Base
       rule_ctx[:price] = price
       eval(self.pricing_calculation)
 
-    #finanlly if this is not a simple amount and has no pricing calcuation use the price components associated to this plan
+    #finanlly if this is not a simple amount and has no pricing calculation use the price components associated to this plan
     else
       self.pricing_plan_components.each do |pricing_plan_component|
         price_component = pricing_plan_component.get_price_component(rule_ctx)

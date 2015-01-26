@@ -270,7 +270,7 @@ Compass.ErpApp.Utility.handleFormFailure = function (action) {
                 Ext.Msg.alert('Failure', 'Ajax communication failed');
                 break;
             case Ext.form.action.Action.SERVER_INVALID:
-                Ext.Msg.alert('Failure', action.result.msg);
+                Ext.Msg.alert('Failure', (action.result.msg || action.result.message));
         }
     }
 };

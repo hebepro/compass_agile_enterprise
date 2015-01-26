@@ -1,3 +1,4 @@
+# Table Definition ##########################################
 # create_table :order_txns do |t|
 #   t.column    :description,     		:string
 #   t.column		:order_txn_type_id, 	:integer
@@ -22,7 +23,7 @@
 #
 #   # Private parts
 #   t.column 		:customer_ip, 			    :string
-#   t.column    :order_number,          :integer
+#   t.column    :order_number,          :string
 #   t.column 		:error_message, 		    :string
 #
 #   t.timestamps
@@ -42,16 +43,22 @@ class OrderTxn < ActiveRecord::Base
 
   belongs_to :order_txn_record, :polymorphic => true
   has_many :order_line_items, :dependent => :destroy
-  has_many :charge_lines, :as => :charged_item
+  has_many :charge_lines, :as => :charged_item, :dependent => :destroy
 
   alias :line_items :order_line_items
 
   # validation
   validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, :on => :update, :allow_nil => true
 
-  #find a order by given biz txn party role iid and party
-  def self.find_by_party_role(biz_txn_party_role_type_iid, party)
-    BizTxnPartyRole.where('party_id = ? and biz_txn_party_role_type_id = ?', party.id, BizTxnPartyRoleType.find_by_internal_identifier(biz_txn_party_role_type_iid).id).all.collect { |item| item.biz_txn_event.biz_txn_record }
+  class << self
+    #find a order by given biz txn party role iid and party
+    def find_by_party_role(biz_txn_party_role_type_iid, party)
+      BizTxnPartyRole.where('party_id = ? and biz_txn_party_role_type_id = ?', party.id, BizTxnPartyRoleType.find_by_internal_identifier(biz_txn_party_role_type_iid).id).all.collect { |item| item.biz_txn_event.biz_txn_record }
+    end
+
+    def next_order_number
+      "Order-#{(maximum('id').nil? ? 1 : maximum('id'))}"
+    end
   end
 
   # get the total charges for an order.
@@ -59,32 +66,42 @@ class OrderTxn < ActiveRecord::Base
   # There may be multiple Monies assocated with an order, such as points and
   # dollars. To handle this, the method should return an array of Monies
   # if a currency is passed in return the amount for only that currency
-  def get_total_charges(currency=nil)
+  def total_amount(currency=nil)
     if currency and currency.is_a?(String)
       currency = Currency.send(currency)
     end
 
-    # get all of the charge lines associated with the order and order_lines
-    total_hash = Hash.new
-    all_charges = all_charge_lines
-    # loop through all of the charges and combine charges for each money type
-    all_charges.each do |charge|
-      cur_money = charge.money
-      cur_total = total_hash[cur_money.currency.internal_identifier]
-      if (cur_total.nil?)
-        cur_total = cur_money.dup
-      else
-        cur_total.amount = 0 if cur_total.amount.nil?
-        cur_total.amount += cur_money.amount if !cur_money.amount.nil?
+    charges = {}
+
+    # get any charges directly on this order_txn or on order_line_items
+    all_charge_lines.each do |charge|
+      charge_money = charge.money
+
+      total_by_currency = charges[charge_money.currency.internal_identifier]
+      unless total_by_currency
+        total_by_currency = {
+            amount: 0
+        }
       end
-      total_hash[cur_money.currency.internal_identifier] = cur_total
+
+      total_by_currency[:amount] += charge_money.amount unless charge_money.amount.nil?
+
+      charges[charge_money.currency.internal_identifier] = total_by_currency
     end
 
-    if currency
-      money = total_hash[currency.internal_identifier]
-      money.nil? ? nil : money.amount
+    if charges.empty?
+      0
     else
-      total_hash
+      # if currency was based only return that amount
+      # if there is only one currency then return that amount
+      # if there is more than once currency return the hash
+      if currency
+        charges[currency.internal_identifier][:amount]
+      elsif charges.keys.count == 1
+        charges.values.first
+      else
+        charges
+      end
     end
   end
 
@@ -93,18 +110,14 @@ class OrderTxn < ActiveRecord::Base
     all_charge_lines.collect(&:total_payments).inject(:+)
   end
 
-  # gets total amount due (total_charges - total_payments)
+  # gets total amount due (total_amount - total_payments)
+  # only returns Currency USD
   def total_amount_due
-    if get_total_charges[Currency.usd.internal_identifier]
-      get_total_charges[Currency.usd.internal_identifier].amount - total_payment_amount
+    if total_amount(Currency.usd)
+      total_amount(Currency.usd) - total_payment_amount
     else
       0
     end
-  end
-
-  # get the total quantity of this order
-  def total_quantity
-    order_line_items.pluck(:quantity).inject(:+)
   end
 
   # get all charge lines on order and order line items
@@ -115,6 +128,11 @@ class OrderTxn < ActiveRecord::Base
       all_charges.concat(line_item.charge_lines)
     end
     all_charges
+  end
+
+  # get the total quantity of this order
+  def total_quantity
+    order_line_items.pluck(:quantity).inject(:+)
   end
 
   # creates payment applications for each charge line
@@ -159,9 +177,12 @@ class OrderTxn < ActiveRecord::Base
 
     if line_item
       line_item.quantity += 1
+      line_item.sold_amount += simple_product_offer.get_current_simple_plan.money_amount
       line_item.save
     else
       line_item = OrderLineItem.new
+      line_item.sold_price = simple_product_offer.get_current_simple_plan.money_amount
+      line_item.sold_amount = simple_product_offer.get_current_simple_plan.money_amount
       line_item.product_offer = simple_product_offer.product_offer
       line_item.product_type = simple_product_offer.product_type
       line_item.quantity = 1
@@ -206,9 +227,12 @@ class OrderTxn < ActiveRecord::Base
 
     if line_item
       line_item.quantity += 1
+      line_item.sold_amount += product_type_for_line_item.get_current_simple_plan.money_amount
       line_item.save
     else
       line_item = OrderLineItem.new
+      line_item.sold_price = product_type_for_line_item.get_current_simple_plan.money_amount
+      line_item.sold_amount = product_type_for_line_item.get_current_simple_plan.money_amount
       line_item.product_type = product_type_for_line_item
       line_item.quantity = 1
       line_item.save
