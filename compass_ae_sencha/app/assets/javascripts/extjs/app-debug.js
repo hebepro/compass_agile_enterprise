@@ -17,4 +17,5 @@
 //= require ./Ext.ux.CheckColumn.js
 //= require ./Callout.js
 //= require ./MultiCellSelectionModel.js
+//= require ./helpQtip.js
 //= require ./overrides.js
