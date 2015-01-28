@@ -145,11 +145,16 @@ class Invoice < ActiveRecord::Base
 
   def balance
     if items.empty?
-      self.balance_record.amount
+      if self.balance_record
+        self.balance_record.amount
+      else
+        0
+      end
     else
       self.items.all.sum(&:total_amount)
     end
   end
+
   alias payment_due balance
 
   def balance=(amount, currency=Currency.usd)
