@@ -16,4 +16,5 @@
 //= require ./Ext.ux.form.MultiSelect.js
 //= require ./Ext.ux.CheckColumn.js
 //= require ./MultiCellSelectionModel.js
+//= require ./helpQtip.js
 //= require ./overrides.js
