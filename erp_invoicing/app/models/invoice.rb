@@ -22,6 +22,7 @@ class Invoice < ActiveRecord::Base
   attr_protected :created_at, :updated_at
 
   acts_as_document
+  can_be_generated
 
   belongs_to :billing_account
   belongs_to :invoice_type
@@ -102,6 +103,8 @@ class Invoice < ActiveRecord::Base
 
           invoice_item.save
         end
+
+        invoice.generated_by = order_txn
 
         invoice
       end

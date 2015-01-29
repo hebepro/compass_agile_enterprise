@@ -3,6 +3,7 @@ require 'erp_base_erp_svcs/extensions/core/array'
 require 'erp_base_erp_svcs/extensions/core/hash'
 require 'erp_base_erp_svcs/extensions/core/numbers'
 require 'erp_base_erp_svcs/extensions/core/object'
+require 'erp_base_erp_svcs/extensions/core/string'
 require 'erp_base_erp_svcs/extensions/core/acts_as_aspector_on'
 
 #active record extensions
@@ -18,4 +19,5 @@ require 'erp_base_erp_svcs/extensions/active_record/to_hash'
 require 'erp_base_erp_svcs/extensions/active_record/migration'
 require 'erp_base_erp_svcs/extensions/active_record/acts_as_fixed_asset'
 require 'erp_base_erp_svcs/extensions/active_record/acts_as_facility'
+require 'erp_base_erp_svcs/extensions/active_record/can_be_generated'
 
