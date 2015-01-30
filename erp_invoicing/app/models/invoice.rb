@@ -116,7 +116,7 @@ class Invoice < ActiveRecord::Base
 
   end
 
-  def has_payments?(status)
+  def has_payments?(status=:all)
     selected_payment_applications = self.get_payment_applications(status)
     !(selected_payment_applications.nil? or selected_payment_applications.empty?)
   end
