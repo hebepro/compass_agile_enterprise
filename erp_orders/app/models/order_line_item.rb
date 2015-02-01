@@ -28,7 +28,7 @@ class OrderLineItem < ActiveRecord::Base
   belongs_to :order_txn, :class_name => 'OrderTxn'
   belongs_to :order_line_item_type
 
-  has_many :charge_lines, :as => :charged_item
+  has_many :charge_lines, :as => :charged_item, :dependent => :destroy
 
   belongs_to :product_instance
   belongs_to :product_type
@@ -45,30 +45,37 @@ class OrderLineItem < ActiveRecord::Base
   # There may be multiple Monies assocated with an order, such as points and
   # dollars. To handle this, the method should return an array of Monies
   # if a currency is passed in return the amount for only that currency
-  def get_total_charges(currency=nil)
+  def total_amount(currency=nil)
     if currency and currency.is_a?(String)
       currency = Currency.send(currency)
     end
 
     # get all of the charge lines associated with the order_line
-    total_hash = Hash.new
+    charges = {}
     charge_lines.each do |charge|
-      cur_money = charge.money
-      cur_total = total_hash[cur_money.currency.internal_identifier]
-      if (cur_total.nil?)
-        cur_total = cur_money.dup
-      else
-        cur_total.amount = 0 if cur_total.amount.nil?
-        cur_total.amount += cur_money.amount if !cur_money.amount.nil?
+      charge_money = charge.money
+
+      total_by_currency = charges[charge_money.currency.internal_identifier]
+      unless total_by_currency
+        total_by_currency = {
+            amount: 0
+        }
       end
-      total_hash[cur_money.currency.internal_identifier] = cur_total
+
+      total_by_currency[:amount] += charge_money.amount unless charge_money.amount.nil?
+
+      charges[charge_money.currency.internal_identifier] = total_by_currency
     end
 
+    # if currency was based only return that amount
+    # if there is only one currency then return that amount
+    # if there is more than once currency return the hash
     if currency
-      money = total_hash[currency.internal_identifier]
-      money.nil? ? nil : money.amount
+      charges[currency.internal_identifier][:amount]
+    elsif charges.keys.count == 1
+      charges.values.first
     else
-      total_hash
+      charges
     end
   end
 
@@ -81,8 +88,6 @@ class OrderLineItem < ActiveRecord::Base
   def to_s
     line_item_record.description
   end
-
-  private
 
   # determine the record this OrderLineItem pertains to
   # can be a ProductOffer, ProductInstance or ProductType

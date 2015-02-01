@@ -31,6 +31,10 @@ class InvoiceItem < ActiveRecord::Base
 
   has_payment_applications
 
+  def sub_total
+    (self.unit_price * self.quantity)
+  end
+
   def total_amount
     if taxable?
       ((self.unit_price * self.quantity) + self.sales_tax)

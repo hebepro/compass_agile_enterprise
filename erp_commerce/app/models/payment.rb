@@ -30,6 +30,7 @@ class Payment < ActiveRecord::Base
   aasm_state :declined
   aasm_state :authorized
   aasm_state :captured
+  aasm_state :refunded
   aasm_state :authorization_reversed
   aasm_state :canceled
   aasm_state :returned
@@ -60,6 +61,10 @@ class Payment < ActiveRecord::Base
 
   aasm_event :return do
     transitions :to => :returned, :from => [:pending, :captured]
+  end
+
+  aasm_event :refund do
+    transitions :to => :refunded, :from => [:captured]
   end
 
 end

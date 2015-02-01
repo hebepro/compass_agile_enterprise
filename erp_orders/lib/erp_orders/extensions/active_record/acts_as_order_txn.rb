@@ -68,7 +68,7 @@ module ErpOrders
              :authorize_payments,
              :capture_payments,
              :rollback_authorizations,
-             :submit, :get_total_charges
+             :submit, :total_amount
             ].each { |m| delegate m, :to => :order_txn }
 
             #from OrderTxn And BizTxnEvent

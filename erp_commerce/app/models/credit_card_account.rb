@@ -40,7 +40,6 @@ class CreditCardAccount < ActiveRecord::Base
   def authorize(financial_txn, cvv, gateway_wrapper, gateway_options={}, credit_card_to_use=nil)
     credit_card_to_use = self.credit_card unless credit_card_to_use
 
-    gateway_options[:debug] = true
     result = gateway_wrapper.authorize(credit_card_to_use, financial_txn.money.amount, cvv, gateway_options)
 
     unless result[:payment].nil?
@@ -64,7 +63,6 @@ class CreditCardAccount < ActiveRecord::Base
   def purchase(financial_txn, cvv, gateway_wrapper, gateway_options={}, credit_card_to_use=nil)
     credit_card_to_use = self.credit_card unless credit_card_to_use
 
-    gateway_options[:debug] = true
     result = gateway_wrapper.purchase(credit_card_to_use, financial_txn.money.amount, cvv, gateway_options)
 
     unless result[:payment].nil?
@@ -77,9 +75,8 @@ class CreditCardAccount < ActiveRecord::Base
     result
   end
 
+  # purchase with credit card associated to this CreditCardAccount
   def purchase_with_existing_card(financial_txn, gateway_wrapper, gateway_options={})
-    gateway_options[:debug] = true
-
     result = gateway_wrapper.purchase_with_existing_card(self.credit_card, financial_txn.money.amount, gateway_options)
 
     unless result[:payment].nil?
@@ -90,6 +87,15 @@ class CreditCardAccount < ActiveRecord::Base
     end
 
     result
+  end
+
+  # purchase with credit card associated to this CreditCardAccount
+  def refund(financial_txn, gateway_wrapper, gateway_options={}, amount=nil)
+    if amount.nil?
+      amount = financial_txn.money.amount
+    end
+
+    gateway_wrapper.refund(financial_txn.most_recent_payment, amount, gateway_options)
   end
 
   #params
@@ -139,10 +145,6 @@ class CreditCardAccount < ActiveRecord::Base
     # implement a void transaction of a transaction
   end
 
-  def refund
-    # implement a refund on a card
-  end
-
   #params
   #financial_txn
   #gateway_wrapper
@@ -155,7 +157,6 @@ class CreditCardAccount < ActiveRecord::Base
     credit_card_to_use = self.credit_card unless credit_card_to_use
     result = {:success => true}
 
-    gateway_options[:debug] = true
     if money_amount == nil
       money_amount = financial_txn.money.amount
     end

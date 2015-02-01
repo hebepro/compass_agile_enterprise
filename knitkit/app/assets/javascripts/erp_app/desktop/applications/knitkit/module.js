@@ -12,7 +12,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
     init: function () {
 
         this.launcher = {
-            text: 'KnitKit',
+            text: 'Website Builder',
             iconCls: 'icon-knitkit',
             handler: this.createWindow,
             scope: this
@@ -209,7 +209,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit", {
 
             win = desktop.createWindow({
                 id: 'knitkit',
-                title: 'KnitKit',
+                title: 'Website Builder',
                 width: 1200,
                 height: 550,
                 maximized: true,
