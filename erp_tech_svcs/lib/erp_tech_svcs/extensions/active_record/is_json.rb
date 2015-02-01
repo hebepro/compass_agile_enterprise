@@ -19,7 +19,7 @@ module ErpTechSvcs
                          else
                            case ::ActiveRecord::Base.connection.instance_values["config"][:adapter]
                              when 'postgresql'
-                             ::ActiveRecord::Coders::NestedHstore
+                               ::ActiveRecord::Coders::NestedHstore
                              else
                                JSON
                            end
@@ -50,6 +50,16 @@ module ErpTechSvcs
         end
 
         module SingletonMethods
+          def matches_is_json(attr_name, keyword)
+            if ::ActiveRecord::Base.connection.instance_values["config"][:adapter] == 'postgresql'
+              avals = Arel::Nodes::NamedFunction.new "AVALS", [ arel_table[attr_name.to_sym] ]
+              cast = Arel::Nodes::NamedFunction.new "CAST", [ avals.as("text") ]
+
+              cast.matches("%#{keyword}%")
+            else
+              arel_table[attr_name.to_sym].matches("%#{keyword}%")
+            end
+          end
         end
 
         module InstanceMethods

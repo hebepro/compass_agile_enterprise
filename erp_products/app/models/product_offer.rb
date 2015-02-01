@@ -1,13 +1,11 @@
 class ProductOffer < ActiveRecord::Base
   attr_protected :created_at, :updated_at
 
-  DATE_FORMAT = "%m/%d/%Y"
-
   belongs_to :product_offer_record, :polymorphic => true
 
   def valid_from=(date)
     if date.is_a? String
-      write_attribute(:valid_from, Date.strptime(date, DATE_FORMAT))
+      write_attribute(:valid_from, date.to_date)
     else
       super
     end
@@ -15,7 +13,7 @@ class ProductOffer < ActiveRecord::Base
 
   def valid_to=(date)
     if date.is_a? String
-      write_attribute(:valid_to, Date.strptime(date, DATE_FORMAT))
+      write_attribute(:valid_to, date.to_date)
     else
       super
     end
