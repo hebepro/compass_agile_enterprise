@@ -142,7 +142,7 @@ class Invoice < ActiveRecord::Base
     if items.empty?
       self.balance_record.amount
     else
-      self.items.all.sum(&:sub_total)
+      self.items.all.sum(&:sub_total).round(2)
     end
   end
 
@@ -154,7 +154,7 @@ class Invoice < ActiveRecord::Base
         0
       end
     else
-      self.items.all.sum(&:total_amount)
+      self.items.all.sum(&:total_amount).round(2)
     end
   end
 
@@ -182,24 +182,24 @@ class Invoice < ActiveRecord::Base
       end
     end
 
-    total
+    total.round(2)
   end
 
   def calculate_balance
     unless self.calculate_balance_strategy_type.nil?
       case self.calculate_balance_strategy_type.internal_identifier
         when 'invoice_items_and_payments'
-          (self.items.all.sum(&:total_amount) - self.total_payments)
+          (self.items.all.sum(&:total_amount) - self.total_payments).round(2)
         when 'payable_balances_and_payments'
-          (self.payable_balances.all.sum(&:balance).amount - self.total_payments)
+          (self.payable_balances.all.sum(&:balance).amount - self.total_payments).round(2)
         when 'payments'
-          (self.balance - self.total_payments)
+          (self.balance - self.total_payments).round(2)
         else
           self.balance
       end
     else
       unless self.balance.nil?
-        (self.balance - self.total_payments)
+        (self.balance - self.total_payments).round(2)
       end
     end
   end
