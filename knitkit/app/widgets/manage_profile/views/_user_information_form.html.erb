@@ -16,29 +16,6 @@
       <%= text_field_tag :middle_name, @individual.current_middle_name, :class => 'form-control' %>
     </div>
     <div class="form-group">
-      <label for="birth_date">Date of Birth</label>
-      <%= text_field_tag :birth_date,
-                         (@individual.birth_date.nil? ? Date.today.strftime('%m/%d/%Y') : @individual.birth_date.strftime('%m/%d/%Y')),
-                         :class => 'form-control',
-                         :required => true %>
-    </div>
-    <div class="form-group">
-      <label>Gender</label>
-      <br/>
-      <div class="radio-inline">
-        <label>
-          <input type="radio" name="gender" id="male" <%= if @individual.gender == 'm' then 'checked=true' end %> value="m">
-          Male
-        </label>
-      </div>
-      <div class="radio-inline">
-        <label>
-          <input type="radio" name="gender" id="female" <%= if @individual.gender == 'f' then 'checked=true' end %> value="f">
-          Female
-        </label>
-      </div>
-    </div>
-    <div class="form-group">
       <%= submit_tag "Submit", :disable_with => "Please wait...", :class => "btn btn-lg btn-primary btn-block" %>
     </div>
 <% end %>

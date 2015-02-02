@@ -24,7 +24,6 @@ module Widgets
         @user.password_validator = {:regex => password_config_option.value, :error_message => password_config_option.comment}
         #set this to tell activation where to redirect_to for login and temp password
         @user.add_instance_attribute(:login_url, params[:login_url])
-        @user.add_instance_attribute(:temp_password, params[:password])
         @user.add_instance_attribute(:domain, primary_host.value)
         begin
           if @user.save

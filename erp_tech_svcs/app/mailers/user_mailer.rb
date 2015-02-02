@@ -13,13 +13,14 @@ class UserMailer < ActionMailer::Base
 
   def reset_password_email(user)
     @user = user
+
     @url  = "#{get_domain(user.instance_attributes[:domain])}#{@user.instance_attributes[:login_url]}"
     mail(:to => user.email, :subject => "Your password has been reset")
   end
 
   def get_domain(domain)
     domain = domain || ErpTechSvcs::Config.installation_domain
-    domain = "http://#{domain}" if domain.index('http').nil?
-    domain
+
+   "#{ErpTechSvcs::Config.file_protocol}://#{domain}"
   end
 end

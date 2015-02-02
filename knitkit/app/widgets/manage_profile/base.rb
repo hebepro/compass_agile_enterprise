@@ -41,8 +41,6 @@ module Widgets
         @individual.current_first_name = params[:first_name]
         @individual.current_last_name = params[:last_name]
         @individual.current_middle_name = params[:middle_name]
-        @individual.gender = params[:gender]
-        @individual.birth_date = Date.strptime(params[:birth_date], '%m/%d/%Y')
         @user.email = params[:email]
 
         #### check validation then save and render message ####

@@ -16,12 +16,11 @@ Ext.define("Compass.ErpApp.Login.Window", {
     extend: "Ext.window.Window",
     alias: "compass.erpapp.login.window",
     requires: ["Ext.Window"],
-    layout: 'fit',
     width: 400,
+    height: 300,
     defaultButton: 'login',
     buttonAlign: 'center',
     closable: false,
-    plain: true,
     ui: 'main-login-window',
     submitForm: function () {
         var form = this.query('form')[0];
@@ -43,18 +42,44 @@ Ext.define("Compass.ErpApp.Login.Window", {
                 failure: function (form, action) {
                     var result = Ext.decode(action.response.responseText);
 
-                    if(result['errors']){
+                    if (result['errors']) {
                         Ext.Msg.alert("Error", result.errors['reason']);
                     }
-                    else{
+                    else {
                         Ext.Msg.alert("Error", "Login failed. Try again");
                     }
                 }
             });
         }
     },
+    submitResetPassword: function (window, extForm) {
+        if (extForm.isValid()) {
+            extForm.submit({
+                url: '/users/reset_password',
+                params:{
+                    loginUrl: '/erp_app/login'
+                },
+                waitMsg: 'Resetting Password...',
+                success: function (form, action) {
+                    var result = Ext.decode(action.response.responseText);
+                    if (result.success) {
+                        window.close();
+                        Ext.Msg.alert('Success', 'An email has been sent with further instructions.');
+                    }
+                    else {
+                        extForm.down('#errorMessage').setText('Could not reset password');
+                    }
+                },
+                failure: function (form, action) {
+                    extForm.down('#errorMessage').setText('Could not reset password');
+                }
+            });
+        }
+    },
     constructor: function (config) {
-        this.applicationContainerCombo = Ext.create('Ext.form.field.ComboBox', {
+        var me = this;
+
+        me.applicationContainerCombo = Ext.create('Ext.form.field.ComboBox', {
             width: 375,
             fieldLabel: 'Login To',
             allowBlank: false,
@@ -77,10 +102,11 @@ Ext.define("Compass.ErpApp.Login.Window", {
             items: [
                 {
                     xtype: 'label',
+                    itemId: 'errorMessage',
                     cls: 'error_message',
                     text: config.message
                 },
-                this.applicationContainerCombo,
+                me.applicationContainerCombo,
                 {
                     xtype: 'textfield',
                     fieldLabel: 'Username or Email Address',
@@ -91,7 +117,7 @@ Ext.define("Compass.ErpApp.Login.Window", {
                     listeners: {
                         'specialkey': function (field, e) {
                             if (e.getKey() == e.ENTER) {
-                                this.up('window').submitForm();
+                                me.submitForm();
                             }
                         }
                     }
@@ -107,7 +133,7 @@ Ext.define("Compass.ErpApp.Login.Window", {
                     listeners: {
                         'specialkey': function (field, e) {
                             if (e.getKey() == e.ENTER) {
-                                this.up('window').submitForm();
+                                me.submitForm();
                             }
                         }
                     }
@@ -123,7 +149,77 @@ Ext.define("Compass.ErpApp.Login.Window", {
                     text: 'Submit',
                     listeners: {
                         'click': function (button) {
-                            this.up('window').submitForm();
+                            me.submitForm();
+                        }
+                    }
+                },
+                {
+                    text: 'Forgot Password',
+                    listeners: {
+                        'click': function (button) {
+                            Ext.widget('window', {
+                                width: 400,
+                                height: 300,
+                                ui: 'main-login-window',
+                                title: 'Forgot Password',
+                                closable: false,
+                                buttonAlign: 'center',
+                                items: [
+                                    {
+                                        xtype: 'form',
+                                        frame: false,
+                                        bodyStyle: 'padding:5px 5px 0',
+                                        fieldDefaults: {
+                                            labelAlign: 'top',
+                                            msgTarget: 'side'
+                                        },
+                                        items: [
+                                            {
+                                                xtype: 'label',
+                                                itemId: 'errorMessage',
+                                                cls: 'error_message'
+                                            },
+                                            {
+                                                xtype: 'textfield',
+                                                fieldLabel: 'Username or Email Address',
+                                                width: 375,
+                                                allowBlank: false,
+                                                name: 'login',
+                                                listeners: {
+                                                    'specialkey': function (field, e) {
+                                                        if (e.getKey() == e.ENTER) {
+                                                            var form = field.up('form');
+                                                            var window = form.up('window');
+
+                                                            me.submitResetPassword(window, form);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                ],
+                                buttons: [
+                                    {
+                                        text: 'Submit',
+                                        handler: function (btn) {
+                                            var window = btn.up('window');
+                                            var form = window.down('form');
+
+                                            me.submitResetPassword(window, form);
+                                        }
+                                    },
+                                    {
+                                        text: 'Cancel',
+                                        handler: function (btn) {
+                                            var window = btn.up('window');
+                                            var form = window.down('form');
+
+                                            window.close();
+                                        }
+                                    }
+                                ]
+                            }).show();
                         }
                     }
                 }
