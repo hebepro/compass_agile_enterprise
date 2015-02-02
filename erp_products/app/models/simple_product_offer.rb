@@ -5,6 +5,4 @@ class SimpleProductOffer < ActiveRecord::Base
   acts_as_product_offer
 
   belongs_to :product_type
-  belongs_to :product_offer, as: :product_offer_record
-
 end
