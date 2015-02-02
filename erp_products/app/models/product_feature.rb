@@ -63,7 +63,7 @@ class ProductFeature < ActiveRecord::Base
       # Are none of the invalidators of this product feature in the given product_features?
       test_product_feature.invalid_interactions.each do |interaction|
         has_invalidator = product_features.detect do |pf|
-          pf.product_feature_type_id == interaction.product_feature_type_id && pf.product_feature_value_id == interaction.interacted_product_feature_value_id
+          pf.product_feature_type_id == interaction.interacted_product_feature.product_feature_type_id && pf.product_feature_value_id == interaction.interacted_product_feature.product_feature_value_id
         end
         valid_feature_value_ids -= [value_id] if has_invalidator
       end
