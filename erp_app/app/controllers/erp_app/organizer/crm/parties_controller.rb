@@ -84,10 +84,27 @@ module ErpApp
           offset = params[:start] || 0
           limit = params[:limit] || 25
           query_filter = params[:query_filter] || nil
-
+          sort_hash = params[:sort].blank? ? {} : Hash.symbolize_keys(JSON.parse(params[:sort]).first)
           to_role = params[:to_role]
           party_role = params[:party_role]
           to_party_id = params[:to_party_id]
+
+          #
+          # Convert sort parameters that are mapped Extjs fields
+          #
+          if sort_hash[:property] == 'createdAt'
+            sort_hash[:property] = 'created_at'
+          elsif sort_hash[:property] == 'updatedAt'
+            sort_hash[:property] = 'updated_at'
+          elsif sort_hash[:property] == 'model'
+            sort_hash[:property] = 'business_party_type'
+          end
+
+          #
+          # Default to sort by description ascending if no sort parameters
+          #
+          order_by = sort_hash[:property] || 'description'
+          direction = sort_hash[:direction] || 'asc'
 
           if params[:party_ids].present?
             statement = Party.where(:id => params[:party_ids].split(','))
@@ -121,7 +138,7 @@ module ErpApp
           total = statement.uniq.count
 
           # Apply limit and offset
-          parties = statement.uniq.limit(limit).offset(offset).all
+          parties = statement.uniq.order("#{order_by} #{direction}").limit(limit).offset(offset).all
 
           render :json => {
               :success => true,

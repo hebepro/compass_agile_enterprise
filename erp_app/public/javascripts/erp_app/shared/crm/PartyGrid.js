@@ -373,7 +373,8 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                     root: 'parties',
                     totalProperty: 'total'
                 }
-            }
+            },
+            remoteSort: true
         });
 
         me.store = store;
@@ -437,6 +438,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                 flex: 1,
                 header: 'Details',
                 align: 'center',
+                sortable: false,
                 items: [
                     {
                         icon: '/images/icons/view/view_16x16.png',
@@ -456,6 +458,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                 header: 'Edit',
                 width: 100,
                 align: 'center',
+                sortable: false,
                 items: [
                     {
                         icon: '/images/icons/edit/edit_16x16.png',
@@ -503,6 +506,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.PartyGrid", {
                 header: 'Delete',
                 width: 100,
                 align: 'center',
+                sortable: false,
                 items: [
                     {
                         icon: '/images/icons/delete/delete_16x16.png',
