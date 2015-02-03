@@ -5,5 +5,8 @@ ErpProducts::Engine.routes.draw do
   namespace 'shared' do
     resources 'product_types'
     get 'product_types/show_details(/:id)' => 'product_types#show_details'
+    get 'product_types/show_details(/:id)' => 'product_types#show_details'
+    resources :product_features, except: [:show]
+    get '/product_features/get_values' => 'product_features#get_values'
   end
 end

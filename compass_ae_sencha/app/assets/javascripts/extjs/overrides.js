@@ -24,36 +24,32 @@ Ext.override(Ext.ZIndexManager, {
   }
 });
 
-// Ext.override(Ext.data.TreeStore, {
-//   load: function(options) {
-//     options = options || {};
-//     options.params = options.params || {};
+Ext.define('Compass.ErpApp.Shared.RowEditingOverride', {
+  override: 'Ext.grid.plugin.RowEditing',
+  startEdit: function (record, columnHeader) {
+    var me = this,
+        editor = me.getEditor(),
+        context;
 
-//     var me = this,
-//     node = options.node || me.tree.getRootNode(),
-//     root;
+    if (Ext.isEmpty(columnHeader)) {
+      columnHeader = me.grid.getTopLevelVisibleColumnManager().getHeaderAtIndex(0);
+    }
 
-//     // If there is not a node it means the user hasnt defined a rootnode yet. In this case lets just
-//     // create one for them.
-//     if (!node) {
-//       node = me.setRootNode({
-//         expanded: true
-//       });
-//     }
+    if (editor.beforeEdit() !== false) {
+      context = me.callSuper([record, columnHeader]);
+      if (context) {
+        me.context = context;
 
-//     if (me.clearOnLoad) {
-//       node.removeAll(false);
-//     }
-
-//     Ext.applyIf(options, {
-//       node: node
-//     });
-//     options.params[me.nodeParam] = node ? node.getId() : 'root';
-
-//     if (node) {
-//       node.set('loading', true);
-//     }
-
-//     return me.callParent([options]);
-//   }
-// });
+        // If editing one side of a lockable grid, cancel any edit on the other side.
+        if (me.lockingPartner) {
+          me.lockingPartner.cancelEdit();
+        }
+        editor.startEdit(context.record, context.column, context);
+        me.fireEvent('editstarted', editor);
+        me.editing = true;
+        return true;
+      }
+    }
+    return false;
+  }
+});

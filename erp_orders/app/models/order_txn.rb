@@ -278,7 +278,8 @@ class OrderTxn < ActiveRecord::Base
     li.product_instance = product_instance_for_line_item
     self.line_items << li
     li.save
-    return li
+
+    li
   end
 
   def get_line_item_for_product_type(product_type)
@@ -286,13 +287,15 @@ class OrderTxn < ActiveRecord::Base
   end
 
   def get_line_item_for_simple_product_offer(simple_product_offer)
-    line_items.detect { |oli| oli.simple_product_offer == simple_product_offer }
+    line_items.detect { |oli| oli.product_offer.product_offer_record == simple_product_offer }
   end
 
   def find_party_by_role(role_type_iid)
     party = nil
 
-    tpr = self.root_txn.biz_txn_party_roles.find(:first, :include => :biz_txn_party_role_type, :conditions => ['biz_txn_party_role_types.internal_identifier = ?', role_type_iid])
+    tpr = self.root_txn.biz_txn_party_roles.includes(:biz_txn_party_role_type)
+              .where('biz_txn_party_role_types.internal_identifier = ?', role_type_iid).first
+
     party = tpr.party unless tpr.nil?
 
     party
