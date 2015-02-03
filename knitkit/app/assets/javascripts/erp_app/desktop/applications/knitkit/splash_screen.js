@@ -40,7 +40,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SplashScreen", {
 
                         {
                             xtype: 'image',
-                            src: '/assets/knitkit/splash/images/browse_db_105x105.png',
+                            src: '/assets/knitkit/splash/images/add_website_105x105.png',
                             height: 115,
                             width: 115,
                             style: 'background-color: #fff; margin-left: 15px;',
@@ -48,27 +48,112 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SplashScreen", {
                                 render: function (component) {
                                     component.getEl().on('click', function (e) {
 
-                                        var cr = this.findParentByType('applicationmanagementcenterregion');
+                                        Ext.create("Ext.window.Window", {
+                                            modal: true,
+                                            title: 'New Website',
+                                            buttonAlign: 'center',
+                                            width: 360,
+                                            items: Ext.create('widget.form', {
+                                                labelWidth: 110,
+                                                frame: false,
+                                                bodyStyle: 'padding:5px 5px 0',
+                                                url: '/knitkit/erp_app/desktop/site/new',
+                                                defaults: {
+                                                    width: 320
+                                                },
+                                                items: [
+                                                    {
+                                                        xtype: 'textfield',
+                                                        fieldLabel: 'Name *',
+                                                        allowBlank: false,
+                                                        name: 'name',
+                                                        //plugins: [new helpQtip("This is required and must be unique. Spaces are OK.")]
+                                                    },
+                                                    {
+                                                        xtype: 'textfield',
+                                                        fieldLabel: 'Host *',
+                                                        allowBlank: false,
+                                                        name: 'host',
+                                                        //plugins: [new helpQtip("If you are running locally, this will probably be localhost:3000.<br> Otherwise, it is the domain or subdomain for this CompassAE instance")]
+                                                    },
+                                                    {
+                                                        xtype: 'textfield',
+                                                        fieldLabel: 'Title *',
+                                                        allowBlank: false,
+                                                        name: 'title'
+                                                    },
+                                                    {
+                                                        xtype: 'textfield',
+                                                        fieldLabel: 'Sub Title',
+                                                        allowBlank: true,
+                                                        name: 'subtitle'
+                                                    }
+                                                ]
+                                            }),
+                                            buttons: [
+                                                {
+                                                    text: 'Submit',
+                                                    listeners: {
+                                                        'click': function (button) {
+                                                            var knitkitModule = compassDesktop.getModule('knitkit-win'),
+                                                                knitkitWindow = compassDesktop.desktop.getWindow('knitkit'),
+                                                                window = button.findParentByType('window'),
+                                                                formPanel = window.query('.form')[0];
 
-                                        cr.setWindowStatus('Opening CompassAE Console...');
-                                        cr.addConsolePanel();
-                                        cr.clearWindowStatus();
+                                                            formPanel.getForm().submit({
+                                                                waitMsg: 'Please wait...',
+                                                                success: function (form, action) {
+                                                                    var obj = Ext.decode(action.response.responseText);
+                                                                    if (obj.success) {
+                                                                        var combo = knitkitWindow.down('websitescombo');
+                                                                        combo.store.load({
+                                                                            callback: function (records, operation, succes) {
+                                                                                for (i = 0; i < records.length; i++) {
+                                                                                    if (records[i].data.id == obj.website.id) {
+                                                                                        combo.select(records[i]);
+
+                                                                                        knitkitModule.selectWebsite(records[i]);
+                                                                                        window.close();
+
+                                                                                        break;
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        });
+                                                                    }
+                                                                },
+                                                                failure: function (form, action) {
+                                                                    Ext.Msg.alert("Error", "Error creating website");
+                                                                }
+                                                            });
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    text: 'Close',
+                                                    handler: function (btn) {
+                                                        btn.up('window').close();
+                                                    }
+                                                }
+                                            ]
+                                        }).show();
+
 
                                     }, component);
 
                                     component.getEl().on('mouseover', function () {
-                                            component.setSrc('/assets/knitkit/splash/images/browse_db_105x105-active.png');
+                                            component.setSrc('/assets/knitkit/splash/images/add_website_105x105-active.png');
                                         }
                                     );
                                     component.getEl().on('mouseout', function () {
-                                            component.setSrc('/assets/knitkit/splash/images/browse_db_105x105.png');
+                                            component.setSrc('/assets/knitkit/splash/images/add_website_105x105.png');
                                         }
                                     );
                                 }
                             }
                         },
                         {
-                            html: "<p style='background-color: #fff; margin: 0px 0px 0px 0px; text-align: center'>Open a console</p>"
+                            html: "<p style='background-color: #fff; margin: 0px 0px 0px 0px; text-align: center'>Create a website</p>"
                         }
                     ]
                 },
@@ -89,7 +174,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SplashScreen", {
 
                         {
                             xtype: 'image',
-                            src: '/assets/knitkit/splash/images/console_105x105.png',
+                            src: '/assets/knitkit/splash/images/find_themes_105x105.png',
                             height: 115,
                             width: 115,
                             style: 'background-color: #fff; margin-left: 15px;',
@@ -97,27 +182,25 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SplashScreen", {
                                 render: function (component) {
                                     component.getEl().on('click', function (e) {
 
-                                        var cr = this.findParentByType('applicationmanagementcenterregion');
+                                        var cr = this.findParentByType('knitkit_centerregion');
+                                        cr.openIframeInTab('Themes and Widgets', 'http://localhost:3000/template/widgets.html');
 
-                                        cr.setWindowStatus('Opening CompassAE Console...');
-                                        cr.addConsolePanel();
-                                        cr.clearWindowStatus();
 
                                     }, component);
 
                                     component.getEl().on('mouseover', function () {
-                                            component.setSrc('/assets/knitkit/splash/images/console_105x105-active.png');
+                                            component.setSrc('/assets/knitkit/splash/images/find_themes_105x105-active.png');
                                         }
                                     );
                                     component.getEl().on('mouseout', function () {
-                                            component.setSrc('/assets/knitkit/splash/images/console_105x105.png');
+                                            component.setSrc('/assets/knitkit/splash/images/find_themes_105x105.png');
                                         }
                                     );
                                 }
                             }
                         },
                         {
-                            html: "<p style='background-color: #fff; margin: 0px 0px 0px 0px; text-align: center'>Open a console</p>"
+                            html: "<p style='background-color: #fff; margin: 0px 0px 0px 0px; text-align: center'>Find themes and assets</p>"
                         }
                     ]
                 },
@@ -145,11 +228,8 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SplashScreen", {
                                 render: function (component) {
                                     component.getEl().on('click', function (e) {
 
-                                        var cr = this.findParentByType('applicationmanagementcenterregion');
-
-                                        cr.setWindowStatus('Opening CompassAE Console...');
-                                        cr.addConsolePanel();
-                                        cr.clearWindowStatus();
+                                        var cr = this.findParentByType('knitkit_centerregion');
+                                        cr.openIframeInTab('Building Websites', 'http://localhost:3000/template/pages-search-results.html');
 
                                     }, component);
 
@@ -165,7 +245,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SplashScreen", {
                             }
                         },
                         {
-                            html: "<p style='background-color: #fff; margin: 0px 0px 0px 0px; text-align: center'>Open a console</p>"
+                            html: "<p style='background-color: #fff; margin: 0px 0px 0px 0px; text-align: center'>Learn more</p>"
                         }
                     ]
                 }

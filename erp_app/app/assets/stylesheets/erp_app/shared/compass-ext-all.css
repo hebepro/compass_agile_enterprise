@@ -283,6 +283,11 @@
     filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/assets/icons/key/key_16x16.png', sizingMethod='crop');
 }
 
+.icon-key-light {
+    background-image: url(/assets/icons/key/key_16x16-light.png) !important;
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/assets/icons/key/key_16x16-light.png', sizingMethod='crop');
+}
+
 .icon-add {
     background-image: url(/assets/icons/add/add_16x16.png) !important;
     filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/assets/icons/add/add_16x16.png', sizingMethod='crop');
@@ -439,7 +444,12 @@
 }
 
 .icon-upload {
-    background-image: url(/assets/erp_app/desktop/image_add.png) !important;
+    background-image: url(/assets/icons/file-upload/file_upload_16x16.png) !important;
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/assets/erp_app/desktop/image_add.png', sizingMethod='crop');
+}
+
+.icon-upload-light {
+    background-image: url(/assets/icons/file-upload/file_upload_16x16-light.png) !important;
     filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/assets/erp_app/desktop/image_add.png', sizingMethod='crop');
 }
 

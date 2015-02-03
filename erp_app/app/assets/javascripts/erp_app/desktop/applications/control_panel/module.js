@@ -16,34 +16,41 @@ Ext.define("Compass.ErpApp.Desktop.Applications.ControlPanel", {
         if (!win) {
             var tabPanel = Ext.create('Ext.tab.Panel', {
                 items: [
-                    {
-                        xtype: 'sharedpreferencesapplicationmanagementpanel',
-                        updatePreferencesUrl: '/erp_app/desktop/control_panel/application_management/update',
-                        setupPreferencesUrl: '/erp_app/desktop/control_panel/application_management/setup',
-                        loadPreferencesUrl: '/erp_app/desktop/control_panel/application_management/preferences',
-                        applicationsUrl: '/erp_app/desktop/control_panel/application_management/current_user_applications',
-                        listeners: {
-                            'afterUpdate': function (form, preferences, response) {
-                                var responseObj = Ext.decode(response.responseText);
-                                if (responseObj.success) {
-                                    var shortcut = Ext.create("Ext.ux.desktop.ShortcutModel", {
-                                        name: responseObj.description,
-                                        iconCls: responseObj.shortcutId + "-shortcut",
-                                        module: responseObj.shortcutId
-                                    });
-                                    if (responseObj.shortcut == 'yes') {
-                                        compassDesktop.getDesktop().addShortcut(shortcut);
-                                    }
-                                    else {
-                                        compassDesktop.getDesktop().removeShortcut(shortcut);
-                                    }
-                                }
-                                else {
-                                    Ext.Msg.alert('Status', 'Error updating application settings.');
-                                }
-                            }
-                        }
-                    },
+
+// This functionality has been turned off for the time being in favor of simplicity.
+//
+// We may add it back when and if we rework the desktop geometry such that adding new app shortcuts to the
+// desktop is more useful than it is confusing
+//
+//                    {
+//                        xtype: 'sharedpreferencesapplicationmanagementpanel',
+//                        updatePreferencesUrl: '/erp_app/desktop/control_panel/application_management/update',
+//                        setupPreferencesUrl: '/erp_app/desktop/control_panel/application_management/setup',
+//                        loadPreferencesUrl: '/erp_app/desktop/control_panel/application_management/preferences',
+//                        applicationsUrl: '/erp_app/desktop/control_panel/application_management/current_user_applications',
+//                        listeners: {
+//                            'afterUpdate': function (form, preferences, response) {
+//                                var responseObj = Ext.decode(response.responseText);
+//                                if (responseObj.success) {
+//                                    var shortcut = Ext.create("Ext.ux.desktop.ShortcutModel", {
+//                                        name: responseObj.description,
+//                                        iconCls: responseObj.shortcutId + "-shortcut",
+//                                        module: responseObj.shortcutId
+//                                    });
+//                                    if (responseObj.shortcut == 'yes') {
+//                                        compassDesktop.getDesktop().addShortcut(shortcut);
+//                                    }
+//                                    else {
+//                                        compassDesktop.getDesktop().removeShortcut(shortcut);
+//                                    }
+//                                }
+//                                else {
+//                                    Ext.Msg.alert('Status', 'Error updating application settings.');
+//                                }
+//                            }
+//                        }
+//                    },
+//***************************************End of suspended function**********************************************
                     {
                         xtype: 'shared_profilemanagementpanel'
                     }

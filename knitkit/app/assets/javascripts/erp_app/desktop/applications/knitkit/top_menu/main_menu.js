@@ -240,14 +240,14 @@ Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu = function () {
                                         fieldLabel: 'Name *',
                                         allowBlank: false,
                                         name: 'name',
-                                        plugins: [new helpQtip("This is required and must be unique. Spaces are OK.")]
+                                        //plugins: [new helpQtip("This is required and must be unique. Spaces are OK.")]
                                     },
                                     {
                                         xtype: 'textfield',
                                         fieldLabel: 'Host *',
                                         allowBlank: false,
                                         name: 'host',
-                                        plugins: [new helpQtip("If you are running locally, this will probably be localhost:3000.<br> Otherwise, it is the domain or subdomain for this CompassAE instance")]
+                                        //plugins: [new helpQtip("If you are running locally, this will probably be localhost:3000.<br> Otherwise, it is the domain or subdomain for this CompassAE instance")]
                                     },
                                     {
                                         xtype: 'textfield',

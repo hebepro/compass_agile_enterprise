@@ -26,7 +26,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.AuditLogViewer", {
                 autoScroll: true,
                 width: 1000,
                 height: 540,
-                iconCls: 'icon-history',
+                iconCls: 'icon-history-light',
                 shim: false,
                 animCollapse: false,
                 constrainHeader: true,

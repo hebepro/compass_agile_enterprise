@@ -244,3 +244,8 @@
 
 /*Added to override a value set by extjs so that the ckeditor toolbar layouts out correctly */
 span.cke_browser_webkit *{box-sizing: content-box;}
+
+.clean-image-icon {
+    background: none !important;
+    border-style: none !important;
+}

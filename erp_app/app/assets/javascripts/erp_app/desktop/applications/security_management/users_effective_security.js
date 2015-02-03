@@ -62,7 +62,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SecurityManagement.UsersEffectiv
             autoScroll: true,
             bodyPadding: 10,
             height: 300,
-            width: 200,
+            width: 300,
             tpl: roles_tpl,
             listeners: {
                 'afterrender': function (comp) {
@@ -84,9 +84,10 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SecurityManagement.UsersEffectiv
             itemId: 'capabilities',
             title: 'Capabilities',
             height: 300,
-            width: 200,
+            width: 500,
             autoScroll: true,
             bodyPadding: 10,
+            flex: 1,
             html: 'Test',
             tpl: capabilities_tpl,
             listeners: {

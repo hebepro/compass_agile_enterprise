@@ -19,8 +19,9 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement", {
             win = desktop.createWindow({
                 id: 'user_management',
                 title: 'User Management',
-                width: 1150,
+                width: 1200,
                 height: 550,
+                maximized: true,
                 iconCls: 'icon-user-mgt-light',
                 shim: false,
                 animCollapse: false,
@@ -216,7 +217,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
                 resizable: false,
                 xtype: 'actioncolumn',
                 align: 'center',
-                width: 50,
+                width: 45,
                 items: [
                     {
                         icon: '/assets/icons/person/person_16x16.png',
@@ -236,7 +237,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
                 resizable: false,
                 xtype: 'actioncolumn',
                 align: 'center',
-                width: 50,
+                width: 45,
                 items: [
                     {
                         icon: '/assets/icons/secure/secure_16x16.png',
@@ -263,7 +264,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
                 resizable: false,
                 xtype: 'actioncolumn',
                 align: 'center',
-                width: 50,
+                width: 45,
                 items: [
                     {
                         icon: '/assets/icons/delete/delete_16x16.png',
@@ -438,7 +439,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
         });
 
         config = Ext.apply({
-            width: 460,
+            width: 430,
             region: 'west',
             split:true,
             collapsible: true,

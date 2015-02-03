@@ -45,11 +45,8 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.SplashScreen", {
                                 render: function (component) {
                                     component.getEl().on('click', function (e) {
 
-                                        var cr = this.findParentByType('applicationmanagementcenterregion');
-
-                                        cr.setWindowStatus('Opening CompassAE Console...');
-                                        cr.addConsolePanel();
-                                        cr.clearWindowStatus();
+                                        var module = compassDesktop.getModule('rails_db_admin-win');
+                                        module.addConsolePanel();
 
                                     }, component);
 
@@ -93,11 +90,8 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.SplashScreen", {
                                 render: function (component) {
                                     component.getEl().on('click', function (e) {
 
-                                        var cr = this.findParentByType('applicationmanagementcenterregion');
-
-                                        cr.setWindowStatus('Opening CompassAE Console...');
-                                        cr.addConsolePanel();
-                                        cr.clearWindowStatus();
+                                        var module = compassDesktop.getModule('rails_db_admin-win');
+                                        module.openIframeInTab('CompassAE Documentation - Data Models', 'http://www.truenorthtechnology.com/coming-soon');
 
                                     }, component);
 
@@ -140,11 +134,8 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.SplashScreen", {
                                 render: function (component) {
                                     component.getEl().on('click', function (e) {
 
-                                        var cr = this.findParentByType('applicationmanagementcenterregion');
-
-                                        cr.setWindowStatus('Opening CompassAE Console...');
-                                        cr.addConsolePanel();
-                                        cr.clearWindowStatus();
+                                        var module = compassDesktop.getModule('rails_db_admin-win');
+                                        module.openIframeInTab('CompassAE Documentation - Data Models', 'http://www.truenorthtechnology.com/coming-soon');
 
                                     }, component);
 

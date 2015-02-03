@@ -22,7 +22,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SecurityManagement", {
                 width: 1000,
                 height: 550,
                 bodyPadding: '10px',
-                iconCls: 'icon-key',
+                iconCls: 'icon-key-light',
                 shim: false,
                 animCollapse: false,
                 constrainHeader: true,
@@ -71,11 +71,11 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SecurityManagement", {
                 xtype: 'image',
                 src: tabItemConfig.iconSrc,
                 style: {
-                    cursor: 'pointer',
-                    marginTop: '10px'
+                    cursor: 'pointer'
                 },
                 height: 64,
                 width: 64,
+                margin: 5,
                 html: tabItemConfig.title,
                 listeners: {
                     render: function (component) {

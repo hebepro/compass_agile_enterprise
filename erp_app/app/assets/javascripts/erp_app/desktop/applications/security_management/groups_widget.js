@@ -40,6 +40,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SecurityManagement.GroupsWidget"
         var available_grid = Ext.apply(commonWidgetProperties.available_grid, {
             xtype: 'security_management_group_grid',
             title: 'Available Groups',
+            height: 250,
             setupUrl: '/erp_app/desktop/security_management/groups/available_setup',
             dataUrl: '/erp_app/desktop/security_management/groups/available',
             autoLoad: false
@@ -48,6 +49,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SecurityManagement.GroupsWidget"
         var selected_grid = Ext.apply(commonWidgetProperties.selected_grid, {
             xtype: 'security_management_group_grid',
             title: 'Selected Groups',
+            height: 250,
             setupUrl: '/erp_app/desktop/security_management/groups/selected_setup',
             dataUrl: '/erp_app/desktop/security_management/groups/selected',
             autoLoad: false
@@ -148,7 +150,8 @@ Ext.define('Compass.ErpApp.Desktop.Applications.SecurityManagement.AddGroupButto
     extend: 'Ext.button.Button',
     alias: 'widget.SecurityManagement-AddGroupButton',
     itemId: 'AddGroupButton',
-    cls: 'x-btn-text-icon',
+    style: 'margin-top: 100px !important;',
+    cls: 'clean-image-icon',
     iconCls: 'icon-arrow-right-blue',
     formBind: false,
     tooltip: 'Add to Selected',
@@ -196,7 +199,7 @@ Ext.define('Compass.ErpApp.Desktop.Applications.SecurityManagement.RemoveGroupBu
     extend: 'Ext.button.Button',
     alias: 'widget.SecurityManagement-RemoveGroupButton',
     itemId: 'RemoveGroupButton',
-    cls: 'x-btn-text-icon',
+    cls: 'clean-image-icon',
     iconCls: 'icon-arrow-left-blue',
     formBind: false,
     tooltip: 'Remove from Selected',

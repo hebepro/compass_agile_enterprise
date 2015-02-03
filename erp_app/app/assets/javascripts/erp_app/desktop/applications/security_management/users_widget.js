@@ -148,11 +148,8 @@ Ext.define('Compass.ErpApp.Desktop.Applications.SecurityManagement.AddUserButton
     extend: 'Ext.button.Button',
     alias: 'widget.SecurityManagement-AddUserButton',
     itemId: 'AddUserButton',
-    cls: 'x-btn-text-icon',
-    style: {
-        marginTop: '5px',
-        marginBottom: '5px'
-    },
+    cls: 'clean-image-icon',
+    style: 'margin-top: 100px !important;',
     iconCls: 'icon-arrow-right-blue',
     formBind: false,
     tooltip: 'Add to Selected',
@@ -200,7 +197,7 @@ Ext.define('Compass.ErpApp.Desktop.Applications.SecurityManagement.RemoveUserBut
     extend: 'Ext.button.Button',
     alias: 'widget.SecurityManagement-RemoveUserButton',
     itemId: 'RemoveUserButton',
-    cls: 'x-btn-text-icon',
+    cls: 'clean-image-icon',
     iconCls: 'icon-arrow-left-blue',
     formBind: false,
     tooltip: 'Remove from Selected',

@@ -53,7 +53,7 @@ Ext.define("Compass.ErpApp.Shared.UploadWindow",{
       autoWidth:true,
       height:300,
       width:800,
-      iconCls:'icon-upload',
+      iconCls:'icon-upload-light',
       items:[this.plUploader]
     }, config);
 
