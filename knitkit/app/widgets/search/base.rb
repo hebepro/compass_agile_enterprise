@@ -6,12 +6,12 @@ module Widgets
       include WillPaginate::ActionView
 
       def index
-        @section_unique_name = params[:section_unique_name]
+        @section_unique_name = params[:section_to_search]
         @content_type = params[:content_type]
-        @search_url = params[:search_url]
+        @results_permalink = params[:results_permalink]
         @per_page = params[:per_page] || 10
         @redirect_results = params[:redirect_results] || false
-        @inline = params[:inline]
+        @inline = !@results_permalink.blank?
         @results = nil
 
         if params[:query].present?

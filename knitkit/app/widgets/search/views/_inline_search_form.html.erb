@@ -1,4 +1,4 @@
-<%= form_tag @search_url, :class => "form-inline" do %>
+<%= form_tag @results_permalink, :class => "form-inline" do %>
     <div class="form-group">
       <%= label_tag :search_for, 'Search For', :class => "sr-only" %>
       <%= text_field_tag :query, @query, class: 'form-control', required: true %>

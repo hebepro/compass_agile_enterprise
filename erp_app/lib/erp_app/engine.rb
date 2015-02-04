@@ -8,7 +8,7 @@ module ErpApp
 
     config.erp_app = ErpApp::Config
 
-    initializer "knikit.merge_public" do |app|
+    initializer "erp_app.merge_public" do |app|
       app.middleware.insert_before Rack::Runtime, ::ActionDispatch::Static, "#{root}/public"
     end
 
