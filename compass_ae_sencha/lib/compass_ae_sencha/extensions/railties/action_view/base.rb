@@ -30,7 +30,7 @@ ActionView::Base.class_eval do
     def include_sencha_touch(opt={})
       resources = ''
 
-      if (opt[:debug])
+      if opt[:debug]
         resources << javascript_include_tag("sencha_touch/app-debug.js")
       else
         resources << javascript_include_tag("sencha_touch/app.js")

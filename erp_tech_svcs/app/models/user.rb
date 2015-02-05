@@ -28,6 +28,13 @@ class User < ActiveRecord::Base
     end
   end
 
+  # auth token used for mobile app security
+  def generate_auth_token!
+    self.auth_token = SecureRandom.uuid
+    self.auth_token_expires_at = Time.now + 30.days
+    self.save
+  end
+
   # This allows the disabling of the activation email sent via the sorcery user_activation submodule
   def send_activation_needed_email!
     super unless skip_activation_email
@@ -183,6 +190,16 @@ class User < ActiveRecord::Base
         :capability_resource_type => capability.capability_resource_type 
       }
     }.compact
+  end
+
+  def to_data_hash
+    {
+        :authToken => self.auth_token,
+        :firstName => self.party.business_party.current_first_name,
+        :lastName => self.party.business_party.current_last_name,
+        :displayName => self.party.description,
+        :internalId => self.id
+    }
   end
 
 end

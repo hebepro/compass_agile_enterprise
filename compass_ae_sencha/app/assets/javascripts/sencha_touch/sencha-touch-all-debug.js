@@ -1,7 +1,7 @@
 /*
-This file is part of Sencha Touch 2.3
+This file is part of Sencha Touch 2.4
 
-Copyright (c) 2011-2013 Sencha Inc
+Copyright (c) 2011-2014 Sencha Inc
 
 Contact:  http://www.sencha.com/contact
 
@@ -13,7 +13,7 @@ terms contained in a written agreement between you and Sencha.
 If you are unsure which license is appropriate for your use, please contact the sales department
 at http://www.sencha.com/contact.
 
-Build date: 2013-09-24 16:24:22 (5e4fc2d806d7b959eddaf31a21c4d4837b133e07)
+Build date: 2014-10-22 11:38:23 (733f32116ad89611b6e3f1861049fa2f7733e61d)
 */
 //@tag foundation,core
 //@define Ext
@@ -676,7 +676,7 @@ Build date: 2013-09-24 16:24:22 (5e4fc2d806d7b959eddaf31a21c4d4837b133e07)
 (function() {
 
 // Current core version
-var version = '4.1.0', Version;
+var version = '2.4.1.527', Version;
     Ext.Version = Version = Ext.extend(Object, {
 
         /**
@@ -3712,7 +3712,7 @@ Ext.JSON = new(function() {
      * __The returned value includes enclosing double quotation marks.__
      *
      * The default return format is "yyyy-mm-ddThh:mm:ss".
-     * 
+     *
      * To override this:
      *
      *     Ext.JSON.encodeDate = function(d) {
@@ -3723,7 +3723,7 @@ Ext.JSON = new(function() {
      * @return {String} The string literal to use in a JSON string.
      */
     this.encodeDate = function(o) {
-        return '"' + o.getFullYear() + "-" 
+        return '"' + o.getFullYear() + "-"
         + pad(o.getMonth() + 1) + "-"
         + pad(o.getDate()) + "T"
         + pad(o.getHours()) + ":"
@@ -3779,6 +3779,13 @@ Ext.JSON = new(function() {
     }();
 
 })();
+
+//@private Alias for backwards compatibility
+if (!Ext.util) {
+    Ext.util = {};
+}
+Ext.util.JSON = Ext.JSON;
+
 /**
  * Shorthand for {@link Ext.JSON#encode}.
  * @member Ext
@@ -9030,7 +9037,7 @@ var noArgs = [],
  *
  * [getting_started]: #!/guide/getting_started
  */
-Ext.setVersion('touch', '2.3.0');
+Ext.setVersion('touch', '2.4.1.527');
 
 Ext.apply(Ext, {
     /**
@@ -9665,7 +9672,7 @@ Ext.apply(Ext, {
             addMeta('viewport', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0');
         }
         else {
-            addMeta('viewport', 'initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0');
+            addMeta('viewport', 'initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, minimum-ui');
         }
         addMeta('apple-mobile-web-app-capable', 'yes');
         addMeta('apple-touch-fullscreen', 'yes');
@@ -10653,6 +10660,10 @@ Ext.define('Ext.env.Browser', {
             browserVersion = new Ext.Version(browserMatch[1]);
         }
 
+        if(browserName === 'Safari' && userAgent.match(/BB10/)) {
+            browserName = 'BlackBerry';
+        }
+
         Ext.apply(this, {
             engineName: engineName,
             engineVersion: engineVersion,
@@ -10703,6 +10714,10 @@ Ext.define('Ext.env.Browser', {
         else if (!!window.isNK) {
             isWebView = true;
             this.setFlag('Sencha');
+        }
+
+        if (/(Glass)/i.test(userAgent)) {
+            this.setFlag('GoogleGlass');
         }
 
         // Check if running in UIWebView
@@ -11115,6 +11130,9 @@ Ext.define('Ext.env.Feature', {
             };
         }
 
+        Ext.theme.is = {};
+        Ext.theme.is[Ext.theme.name] = true;
+
         Ext.onDocumentReady(function() {
             this.registerTest({
                 ProperHBoxStretching: function() {
@@ -11367,7 +11385,14 @@ Ext.define('Ext.env.Feature', {
         },
 
         CssTransformNoPrefix: function() {
-            return this.isStyleSupportedWithoutPrefix('transform');
+            // This extra check is needed to get around a browser bug where both 'transform' and '-webkit-transform' are present
+            // but the device really only uses '-webkit-transform'. This is seen on the HTC One for example.
+            // https://sencha.jira.com/browse/TOUCH-5029
+            if(!Ext.browser.is.AndroidStock) {
+                return this.isStyleSupportedWithoutPrefix('transform')
+            } else {
+                return this.isStyleSupportedWithoutPrefix('transform') && !this.isStyleSupportedWithoutPrefix('-webkit-transform');
+            }
         },
 
         Css3dTransforms: function() {
@@ -11619,6 +11644,7 @@ Ext.define('Ext.dom.Query', {
 /**
  * @class Ext.DomHelper
  * @alternateClassName Ext.dom.Helper
+ * @singleton
  *
  * The DomHelper class provides a layer of abstraction from DOM and transparently supports creating elements via DOM or
  * using HTML fragments. It also has the ability to create HTML fragment templates from your DOM building code.
@@ -12446,6 +12472,35 @@ Ext.define('Ext.dom.Element', {
                 }
             }
             return data.substr(0, data.length - 1);
+        },
+
+        /**
+         * Serializes a DOM element and its children recursively into a string.
+         * @param {Object} node DOM element to serialize.
+         * @returns {String}
+         */
+        serializeNode: function (node) {
+            var result = '',
+                i, n, attr, child;
+            if (node.nodeType === document.TEXT_NODE) {
+                return node.nodeValue;
+            }
+            result += '<' + node.nodeName;
+            if (node.attributes.length) {
+                for (i = 0, n = node.attributes.length; i < n; i++) {
+                    attr = node.attributes[i];
+                    result += ' ' + attr.name + '="' + attr.value + '"';
+                }
+            }
+            result += '>';
+            if (node.childNodes && node.childNodes.length) {
+                for (i = 0, n = node.childNodes.length; i < n; i++) {
+                    child = node.childNodes[i];
+                    result += this.serializeNode(child);
+                }
+            }
+            result += '</' + node.nodeName + '>';
+            return result;
         }
     },
 
@@ -13512,18 +13567,19 @@ Ext.dom.Element.override({
      */
     getPageBox: function(getRegion) {
         var me = this,
-            el = me.dom,
-            w = el.offsetWidth,
+            el = me.dom;
+
+        if (!el) {
+            return new Ext.util.Region();
+        }
+
+        var w = el.offsetWidth,
             h = el.offsetHeight,
             xy = me.getXY(),
             t = xy[1],
             r = xy[0] + w,
             b = xy[1] + h,
             l = xy[0];
-
-        if (!el) {
-            return new Ext.util.Region();
-        }
 
         if (getRegion) {
             return new Ext.util.Region(t, r, b, l);
@@ -16409,7 +16465,7 @@ Ext.define('Ext.mixin.Observable', {
      *
      * @param {String/String[]/Object} eventName The name of the event to listen for. May also be an object who's property names are
      * event names.
-     * @param {Function/String} fn The method the event invokes.  Will be called with arguments given to
+     * @param {Function/String} [fn] The method the event invokes.  Will be called with arguments given to
      * {@link #fireEvent} plus the `options` parameter described below.
      * @param {Object} [scope] The scope (`this` reference) in which the handler function is executed. **If
      * omitted, defaults to the object which fired the event.**
@@ -21595,6 +21651,8 @@ Ext.define('Ext.util.Draggable', {
             drag     : 'onDrag',
             dragend  : 'onDragEnd',
             resize   : 'onElementResize',
+            touchstart : 'onPress',
+            touchend   : 'onRelease',
             scope: this
         };
 
@@ -21751,6 +21809,14 @@ Ext.define('Ext.util.Draggable', {
         }
 
         return (direction === this.DIRECTION_BOTH || direction === this.DIRECTION_VERTICAL);
+    },
+
+    onPress: function(e) {
+        this.fireAction('touchstart', [this, e]);
+    },
+
+    onRelease: function(e) {
+        this.fireAction('touchend', [this, e]);
     },
 
     onDragStart: function(e) {
@@ -23294,11 +23360,22 @@ Ext.define('Ext.Component', {
     },
 
     /**
-     * @private
+     * Add or removes a class based on if the class is already added to the Component.
+     *
+     * @param {String} className The class to toggle.
      * @chainable
      */
-    toggleCls: function(className, force) {
-        this.element.toggleCls(className, force);
+    toggleCls: function(className, /* private */ force) {
+        var oldCls = this.getCls(),
+            newCls = (oldCls) ? oldCls.slice() : [];
+
+        if (force || newCls.indexOf(className) == -1) {
+            newCls.push(className);
+        } else {
+            Ext.Array.remove(newCls, className);
+        }
+
+        this.setCls(newCls);
 
         return this;
     },
@@ -29774,14 +29851,36 @@ Ext.define('Ext.fx.easing.EaseOut', {
  * Here is a simple example of how to adjust the scroller settings when using a {@link Ext.Container} (or anything
  * that extends it).
  *
- *     @example
- *     var container = Ext.create('Ext.Container', {
- *         fullscreen: true,
- *         html: 'This container is scrollable!',
- *         scrollable: {
- *             direction: 'vertical'
- *         }
- *     });
+ *      @example
+ *      Ext.create('Ext.Container', {
+ *           fullscreen: true,
+ *           html: "Macaroni cheese roquefort<br>" +
+ *                "port-salut. The big cheese<br>" + 
+ *                "fondue camembert de normandie<br>" + 
+ *                "cow boursin cheese swiss stinking<br>" +  
+ *                "bishop. Fromage feta edam fromage<br>" + 
+ *                "frais bavarian bergkase paneer<br>" + 
+ *                "paneer cheese and wine. Cow danish<br>" +  
+ *                "fontina roquefort bocconcini<br>" + 
+ *                "jarlsberg parmesan cheesecake<br>" + 
+ *                "danish fontina. Mascarpone<br>" +
+ *                "bishop. Fromage feta edam fromage<br>" + 
+ *                "frais bavarian bergkase paneer<br>" + 
+ *                "paneer cheese and wine. Cow danish<br>" +  
+ *                "fontina roquefort bocconcini<br>" + 
+ *                "jarlsberg parmesan cheesecake<br>" + 
+ *                "emmental fromage frais cheesy<br>" + 
+ *                "grin say cheese squirty cheese<br>" + 
+ *                "parmesan queso. Cheese triangles<br>" + 
+ *                "st. agur blue cheese chalk and cheese<br>" + 
+ *                "cream cheese lancashire manchego<br>" + 
+ *                "taleggio blue castello. Port-salut<br>" + 
+ *                "paneer monterey jack<br>" + 
+ *                "say cheese fondue.",
+ *           scrollable: {
+ *              direction: 'vertical'
+ *           }
+ *       });
  *
  * As you can see, we are passing the {@link #direction} configuration into the scroller instance in our container.
  *
@@ -30194,11 +30293,30 @@ Ext.define('Ext.scroll.Scroller', {
     /**
      * @private
      */
-    updateDirection: function(direction) {
-        var isAxisEnabledFlags = this.isAxisEnabledFlags;
+    updateDirection: function(direction, oldDirection) {
+        var isAxisEnabledFlags = this.isAxisEnabledFlags,
+            verticalCls = this.cls + '-vertical',
+            horizontalCls = this.cls + '-horizontal',
+            element = this.getElement();
 
-        isAxisEnabledFlags.x = (direction === 'both' || direction === 'horizontal');
-        isAxisEnabledFlags.y = (direction === 'both' || direction === 'vertical');
+        if (oldDirection === 'both' || oldDirection === 'horizontal') {
+            element.removeCls(horizontalCls);
+        }
+
+        if (oldDirection === 'both' || oldDirection === 'vertical') {
+            element.removeCls(verticalCls);
+        }
+
+        isAxisEnabledFlags.x = isAxisEnabledFlags.y = false;
+        if (direction === 'both' || direction === 'horizontal') {
+            isAxisEnabledFlags.x = true;
+            element.addCls(horizontalCls);
+        }
+
+        if (direction === 'both' || direction === 'vertical') {
+            isAxisEnabledFlags.y = true;
+            element.addCls(verticalCls);
+        }
     },
 
     /**
@@ -32351,7 +32469,6 @@ Ext.define('Ext.behavior.Scrollable', {
  */
 Ext.define('Ext.util.InputBlocker', {
     singleton: true,
-    alternateClassName: "InputBlocker",
     blockInputs: function () {
         if (Ext.browser.is.ie) {
             Ext.select('.x-field-text .x-field-input:not(.x-item-disabled) .x-input-el, .x-field-textarea .x-field-input:not(.x-item-disabled) .x-input-el, .x-field-search .x-field-input:not(.x-item-disabled) .x-input-el').each(function (item) {
@@ -33762,6 +33879,8 @@ Ext.define('Ext.Container', {
         if (modal) {
             modal.setHidden(false);
         }
+
+        return this;
     },
 
     hide:function(){
@@ -33772,6 +33891,8 @@ Ext.define('Ext.Container', {
         if (modal) {
             modal.setHidden(true);
         }
+
+        return this;
     },
 
     doSetHidden: function(hidden) {
@@ -35907,29 +36028,41 @@ Ext.define('Ext.data.Connection', {
         });
     },
 
-    onUploadComplete: function(frame, options, id) {
+    onUploadComplete : function(frame, options, id) {
         // bogus response object
         var response = {
                 responseText: '',
-                responseXML: null
-            }, doc, firstChild;
+                responseXML: null,
+                request: {
+                    options: options
+                }
+            },
+            doc, body, firstChild;
 
         try {
-            doc = frame.contentWindow || frame.contentWindow.document || frame.contentDocument || window.frames[id].document;
+            doc = (frame.contentWindow && frame.contentWindow.document) || frame.contentDocument || window.frames[id].document;
+
             if (doc) {
-                if (doc.hasOwnProperty("body") && doc.body) {
-                    if (this.textAreaRe.test((firstChild = doc.body.firstChild || {}).tagName)) { // json response wrapped in textarea
+                if (doc.hasOwnProperty('body') && doc.body) {
+                    body = doc.body;
+                }
+
+                if (body) {
+                    firstChild = body.firstChild || {};
+
+                    if (this.textAreaRe.test(firstChild.tagName)) { // json response wrapped in textarea
                         response.responseText = firstChild.value;
                     } else {
-                        response.responseText = doc.body.innerHTML;
+                        response.responseText = firstChild.innerHTML;
                     }
+
+                    //in IE the document may still have a body even if returns XML.
+                    response.responseXML = body.XMLDocument;
                 }
-                //in IE the document may still have a body even if returns XML.
-                response.responseXML = doc.XMLDocument || doc;
             }
         } catch (e) {
             response.success = false;
-            response.message = "Cross-Domain access is not permitted between frames. XHR2 is recommended for this type of request.";
+            response.message = 'Cross-Domain access is not permitted between frames. XHR2 is recommended for this type of request.';
             response.error = e;
         }
 
@@ -35941,7 +36074,6 @@ Ext.define('Ext.data.Connection', {
 
         me.fireEvent('requestcomplete', me, response, options);
 
-        Ext.callback(options.success, options.scope, [response, options]);
         Ext.callback(options.callback, options.scope, [options, true, response]);
 
         setTimeout(function() {
@@ -38581,6 +38713,30 @@ Ext.define('Ext.BingMap', {
  * - `component[autoScroll]`
  * - `panel[title="Test"]`
  *
+ * Attributes can use the '=' or '~=' operators to do the pattern matching.
+ *
+ * The <strong>'='</strong> operator will return the results that <strong>exactly</strong> match:
+ *
+ *     Ext.Component.query('panel[cls=my-cls]')
+ *
+ * Will match the following Component:
+ *
+ *     Ext.create('Ext.Panel', {
+ *         cls : 'my-cls'
+ *     });
+ *
+ * The <strong>'~='</strong> operator will return results that <strong>exactly</strong> matches one of the whitespace-separated values:
+ *
+ *     Ext.Component.query('panel[cls~=my-cls]')
+ *
+ * Will match the follow Component:
+ *
+ *     Ext.create('My.Panel', {
+ *         cls : 'foo-cls my-cls bar-cls'
+ *     });
+ *
+ * This is because it <strong>exactly</strong> matched the 'my-cls' within the cls config.
+ *
  * Member expressions from candidate Components may be tested. If the expression returns a *truthy* value,
  * the candidate Component will be included in the query:
  *
@@ -38736,7 +38892,44 @@ Ext.define('Ext.ComponentQuery', {
             for (; i < length; i++) {
                 candidate = items[i];
                 getter = Ext.Class.getConfigNameMap(property).get;
-                if (candidate[getter]) {
+                if (operator === '~=') {
+                    getValue = null;
+
+                    if (candidate[getter]) {
+                        getValue = candidate[getter]();
+                    } else if (candidate.config && candidate.config[property]) {
+                        getValue = String(candidate.config[property]);
+                    } else if (candidate[property]) {
+                        getValue = String(candidate[property]);
+                    }
+
+                    if (getValue) {
+                        //normalize to an array
+                        if (!Ext.isArray(getValue)) {
+                            getValue = getValue.split(' ');
+                        }
+
+                        var v = 0,
+                            vLen = getValue.length,
+                            val;
+
+                        for (; v < vLen; v++) {
+                            /**
+                             * getValue[v] could still be whitespaced-separated, this normalizes it. This is an example:
+                             *
+                             * {
+                             *     html : 'Imprint',
+                             *     cls  : 'overlay-footer-item overlay-footer-imprint'
+                             * }
+                             */
+                            val = String(getValue[v]).split(' ');
+
+                            if (Ext.Array.indexOf(val, value) !== -1) {
+                                result.push(candidate);
+                            }
+                        }
+                    }
+                } else if (candidate[getter]) {
                     getValue = candidate[getter]();
                     if (!value ? !!getValue : (String(getValue) === value)) {
                         result.push(candidate);
@@ -39650,6 +39843,39 @@ Ext.define('Ext.LoadMask', {
 }, function() {
 });
 
+/**
+ * {@link Ext.Menu}'s are used with {@link Ext.Viewport#setMenu}. A menu can be linked with any side of the screen (top, left, bottom or right)
+ *  and will simply describe the contents of your menu. To use this menu you will call various menu related functions on the {@link Ext.Viewport}
+ * such as {@link Ext.Viewport#showMenu}, {@link Ext.Viewport#hideMenu}, {@link Ext.Viewport#toggleMenu}, {@link Ext.Viewport#hideOtherMenus},
+ * or {@link Ext.Viewport#hideAllMenus}.
+ *
+ *      @example preview
+ *      var menu = Ext.create('Ext.Menu', {
+ *          items: [
+ *              {
+ *                  text: 'Settings',
+ *                  iconCls: 'settings'
+ *              },
+ *              {
+ *                  text: 'New Item',
+ *                  iconCls: 'compose'
+ *              },
+ *              {
+ *                  text: 'Star',
+ *                  iconCls: 'star'
+ *              }
+ *          ]
+ *      });
+ *
+ *      Ext.Viewport.setMenu(menu, {
+ *          side: 'left',
+ *          reveal: true
+ *      });
+ *
+ *      Ext.Viewport.showMenu('left');
+ *
+ * The {@link #defaultType} of a Menu item is a {@link Ext.Button button}.
+ */
 Ext.define('Ext.Menu', {
     extend:  Ext.Sheet ,
     xtype: 'menu',
@@ -39754,7 +39980,7 @@ Ext.define('Ext.Menu', {
     updateUi: function(newUi, oldUi) {
         this.callParent(arguments);
 
-        if (newUi != oldUi && Ext.theme.name == 'Blackberry') {
+        if (newUi != oldUi && Ext.theme.is.Blackberry) {
             if (newUi == 'context') {
                 this.innerElement.swapCls('x-vertical', 'x-horizontal');
             }
@@ -40152,7 +40378,7 @@ Ext.define('Ext.Toolbar', {
         if (typeof title == 'string') {
             title = {
                 title: title,
-                centered: true
+                centered : Ext.theme.is.Tizen ? false : true
             };
         }
 
@@ -40508,6 +40734,19 @@ Ext.define('Ext.field.Input', {
             tap: 'onInputTap'
         });
 
+
+        // Stock android has a delayed mousedown event that is dispatched
+        // this prevents the mousedown from focus's an input when not intended (click a message box button or picker button that lays over an input)
+        // we then force focus on touchend.
+        if(Ext.browser.is.AndroidStock) {
+            me.input.dom.addEventListener("mousedown", function(e) {
+                if(document.activeElement != e.target) {
+                    e.preventDefault();
+                }
+            } );
+            me.input.dom.addEventListener("touchend", function() { me.focus(); });
+        }
+
         me.mask.on({
             scope: me,
             tap: 'onMaskTap'
@@ -40820,7 +41059,7 @@ Ext.define('Ext.field.Input', {
      * @private
      */
     updateReadOnly: function(readOnly) {
-        this.updateFieldAttribute('readonly', readOnly);
+        this.updateFieldAttribute('readonly', readOnly ? true : null);
     },
 
     //<debug>
@@ -41241,7 +41480,7 @@ Ext.define('Ext.field.Field', {
     },
 
     platformConfig: [{
-        theme: ['Windows', 'MountainView', 'Blackberry'],
+        theme: ['Windows', 'MountainView', 'Blackberry', 'Tizen'],
         labelAlign: 'top'
     }],
 
@@ -42284,12 +42523,25 @@ Ext.define('Ext.MessageBox', {
             };
         }
 
+        var minHeight = '1.3em';
+        if (Ext.theme.is.Cupertino) {
+            minHeight = '1.5em'
+        } else if (Ext.filterPlatform('blackberry') || Ext.filterPlatform('ie10')) {
+            minHeight = '2.6em';
+        }
+
         Ext.applyIf(config, {
             docked: 'top',
-            minHeight: (Ext.filterPlatform('blackberry') || Ext.filterPlatform('ie10')) ? '2.6em' : '1.3em',
+            minHeight: minHeight,
             ui: Ext.filterPlatform('blackberry') ? 'light' : 'dark',
             cls   : this.getBaseCls() + '-title'
         });
+
+        if (Ext.theme.is.Tizen) {
+            Ext.applyIf(config, {
+                centered: false
+            });
+        }
 
         return Ext.factory(config, Ext.Toolbar, this.getTitle());
     },
@@ -42326,14 +42578,14 @@ Ext.define('Ext.MessageBox', {
                     pack: 'center'
                 };
 
-                var isFlexed = Ext.theme.name == "CupertinoClassic"  || Ext.theme.name == "MountainView"  || Ext.theme.name == "Blackberry";
+                var isFlexed = Ext.theme.is.CupertinoClassic  || Ext.theme.is.MountainView  || Ext.theme.is.Blackberry;
 
                 me.buttonsToolbar = Ext.create('Ext.Toolbar', {
                     docked: 'bottom',
                     defaultType: 'button',
                     defaults: {
                         flex: (isFlexed) ? 1 : undefined,
-                        ui: (Ext.theme.name == "Blackberry") ? 'action' : undefined
+                        ui: (Ext.theme.is.Blackberry) ? 'action' : undefined
                     },
                     layout: layout,
                     ui: me.getUi(),
@@ -44242,7 +44494,7 @@ Ext.define('Ext.TitleBar', {
     },
 
     platformConfig: [{
-        theme: ['Blackberry'],
+        theme: ['Blackberry', 'Tizen'],
         titleAlign: 'left'
     }, {
         theme: ['Cupertino'],
@@ -44410,18 +44662,24 @@ Ext.define('Ext.TitleBar', {
             }
         }
 
-        var spacerBox = this.spacer.renderElement.getPageBox(),
-            titleBox = titleElement.getPageBox(),
+        var spacerBox = this.spacer.renderElement.getPageBox();
+
+        if (Ext.browser.is.IE) {
+            titleElement.setWidth(spacerBox.width);
+        }
+
+        var titleBox = titleElement.getPageBox(),
             widthDiff = titleBox.width - spacerBox.width,
             titleLeft = titleBox.left,
             titleRight = titleBox.right,
             halfWidthDiff, leftDiff, rightDiff;
 
+
         if (widthDiff > 0) {
-            titleElement.setWidth(spacerBox.width);
             halfWidthDiff = widthDiff / 2;
             titleLeft += halfWidthDiff;
             titleRight -= halfWidthDiff;
+            titleElement.setWidth(spacerBox.width);
         }
 
         leftDiff = spacerBox.left - titleLeft;
@@ -44446,6 +44704,271 @@ Ext.define('Ext.TitleBar', {
         }
     }
 });
+
+/**
+ * A 'Toast' is a simple modal message that is displayed on the screen and then automatically closed by a timeout or by a user tapping
+ * outside of the toast itself. Think about it like a text only alert box that will self destruct. **A Toast should not be instantiated manually**
+ * but creating by calling 'Ext.toast(message, timeout)'. This will create one reusable toast container and content will be swapped out as
+ * toast messages are queued or displayed.
+ *
+ *  # Simple Toast
+ *
+ *      @example miniphone
+ *      Ext.toast('Hello Sencha!'); // Toast will close in 1000 milliseconds (default)
+ *
+ *  # Toast with Timeout
+ *
+ *      @example miniphone
+ *      Ext.toast('Hello Sencha!', 5000); // Toast will close in 5000 milliseconds
+ *
+ *  # Toast with config
+ *
+ *      @example miniphone
+ *      Ext.toast({message: 'Hello Sencha!', timeout: 2000}); // Toast will close in 2000 milliseconds
+ *
+ * # Multiple Toasts queued
+ *
+ *      @example miniphone
+ *      Ext.toast('Hello Sencha!');
+ *      Ext.toast('Hello Sencha Again!');
+ *      Ext.toast('Hello Sencha One More Time!');
+ */
+Ext.define('Ext.Toast', {
+    extend:  Ext.Sheet ,
+               
+                               
+      
+
+    config: {
+        /**
+         * @cfg
+         * @inheritdoc
+         */
+        ui: 'dark',
+
+        /**
+         * @cfg
+         * @inheritdoc
+         */
+        baseCls: Ext.baseCSSPrefix + 'toast',
+
+        /**
+         * @cfg
+         * @inheritdoc
+         */
+        showAnimation: {
+            type: 'popIn',
+            duration: 250,
+            easing: 'ease-out'
+        },
+
+        /**
+         * @cfg
+         * @inheritdoc
+         */
+        hideAnimation: {
+            type: 'popOut',
+            duration: 250,
+            easing: 'ease-out'
+        },
+
+        /**
+         * Override the default `zIndex` so it is normally always above floating components.
+         */
+        zIndex: 999,
+
+        /**
+         * @cfg {String} message
+         * The message to be displayed in the {@link Ext.Toast}.
+         * @accessor
+         */
+        message: null,
+
+        /**
+         * @cfg {Number} timeout
+         * The amount of time in milliseconds to wait before destroying the toast automatically
+         */
+        timeout: 1000,
+
+        /**
+         * @cfg{Boolean/Object} animation
+         * The animation that should be used between toast messages when they are queued up
+         */
+        messageAnimation: true,
+
+        /**
+         * @cfg
+         * @inheritdoc
+         */
+        hideOnMaskTap: true,
+
+        /**
+         * @private
+         */
+        modal: true,
+
+        /**
+         * @cfg
+         * @inheritdoc
+         */
+        layout: {
+            type: 'vbox',
+            pack: 'center'
+        }
+    },
+
+    /**
+     * @private
+     */
+    applyMessage: function(config) {
+        config = {
+            html: config,
+            cls: this.getBaseCls() + '-text'
+        };
+
+        return Ext.factory(config, Ext.Component, this._message);
+    },
+
+    /**
+     * @private
+     */
+    updateMessage: function(newMessage) {
+        if (newMessage) {
+            this.add(newMessage);
+        }
+    },
+
+    /**
+     * @private
+     */
+    applyTimeout: function(timeout) {
+        if (this._timeoutID) {
+            clearTimeout(this._timeoutID);
+            if (!Ext.isEmpty(timeout)) {
+                this._timeoutID = setTimeout(Ext.bind(this.onTimeout, this), timeout);
+            }
+        }
+        return timeout;
+    },
+
+    /**
+     * @internal
+     */
+    next: Ext.emptyFn,
+
+    /**
+     * @private
+     */
+    show: function(config) {
+        var me = this,
+            timeout = config.timeout,
+            msgAnimation = me.getMessageAnimation(),
+            message = me.getMessage();
+
+        if (me.isRendered() && me.isHidden() === false) {
+            config.timeout = null;
+            message.onAfter({
+                hiddenchange: function() {
+                    me.setMessage(config.message);
+                    message = me.getMessage();
+                    message.onAfter({
+                        hiddenchange: function() {
+
+                            // Forces applyTimeout to create a timer
+                            this._timeoutID = true;
+                            me.setTimeout(timeout);
+                        },
+                        scope: me,
+                        single: true
+                    });
+                    message.show(msgAnimation);
+                },
+                scope: me,
+                single: true
+            });
+
+            message.hide(msgAnimation);
+        } else {
+            Ext.util.InputBlocker.blockInputs();
+            me.setConfig(config);
+
+            //if it has not been added to a container, add it to the Viewport.
+            if (!me.getParent() && Ext.Viewport) {
+                Ext.Viewport.add(me);
+            }
+
+            if (!Ext.isEmpty(timeout)) {
+                me._timeoutID = setTimeout(Ext.bind(me.onTimeout, me), timeout);
+            }
+
+            me.callParent(arguments);
+        }
+    },
+
+    /**
+     * @private
+     */
+    hide: function(animation) {
+        clearTimeout(this._timeoutID);
+        if (!this.next()) {
+            this.callParent(arguments);
+        }
+    },
+
+    /**
+     * @private
+     */
+    onTimeout: function() {
+        this.hide();
+    }
+}, function(Toast) {
+    var _queue = [], _isToasting = false;
+
+    function next() {
+        var config = _queue.shift();
+
+        if (config) {
+            _isToasting = true;
+            this.show(config);
+        } else {
+            _isToasting = false;
+        }
+
+        return _isToasting;
+    }
+
+    function getInstance() {
+        if (!Ext.Toast._instance) {
+            Ext.Toast._instance = Ext.create('Ext.Toast');
+            Ext.Toast._instance.next = next;
+        }
+        return Ext.Toast._instance;
+    }
+
+    Ext.toast = function(message, timeout) {
+        var toast = getInstance(),
+            config = message;
+
+        if (Ext.isString(message)) {
+            config = {
+                message: message,
+                timeout: timeout
+            };
+        }
+
+        if (config.timeout === undefined) {
+            config.timeout = Ext.Toast.prototype.config.timeout;
+        }
+
+        _queue.push(config);
+        if (!_isToasting) {
+            toast.next();
+        }
+
+        return toast;
+    }
+});
+
 
 /**
  * @aside example video
@@ -44507,7 +45030,13 @@ Ext.define('Ext.Video', {
          * @cfg
          * @inheritdoc
          */
-        cls: Ext.baseCSSPrefix + 'video'
+        baseCls: Ext.baseCSSPrefix + 'video',
+
+        /**
+         * @cfg {Boolean} controls
+         * Determines if native controls should be shown for this video player.
+         */
+        controls: true
     },
 
     template: [{
@@ -44577,6 +45106,10 @@ Ext.define('Ext.Video', {
         if (me.isPlaying()) {
             me.play();
         }
+    },
+
+    updateControls: function(value) {
+        this.media.set({controls:value ? true : undefined});
     },
 
     onErased: function() {
@@ -46515,7 +47048,34 @@ Ext.define('Ext.app.Application', {
          * has been processed properly, but before anything else to ensure overrides get executed first.
          * @accessor
          */
-        requires: []
+        requires: [],
+
+        /**
+         * @cfg {String} themeVariationPrefix Used only with {@link themeVariation} this prefix will be added before the variation as a class on the HTML
+         * tag of your application.
+         */
+        themeVariationPrefix: Ext.baseCSSPrefix + 'theme-variation-',
+
+        /**
+         * @cfg {String} themeVariationTransitionCls This is only used with {@link themeVariation}. The Class provided will be added to the HTML tag
+         * then removed once the transition is complete. The duration of this delayed removal is parsed from the class itself, for example if the class
+         * has the property 'transition: color 4s, background 6s, background-color 1s' the delay will be 6s (the largest time used in that class.
+         *
+         * @accessor
+        */
+        themeVariationTransitionCls: null,
+
+        /**
+         * @cfg {String/Function} themeVariation A string to determine the variation on the current theme being used. This string will be prefixed by
+         * {@link themeVariationPrefix} and the resulting string will be added to the HTML tag of your application. If a function is provided that function
+         * must return a string.
+         *
+         *  //This will result in 'x-theme-variation-dark' being added as a class to the html tag of your application
+         *  MyApp.app.setThemeVariation("dark");
+         *
+         * @accessor
+         */
+        themeVariation: null
     },
 
     /**
@@ -46924,6 +47484,54 @@ Ext.define('Ext.app.Application', {
      */
     onHistoryChange: function(url) {
         this.dispatch(this.getRouter().recognize(url), false);
+    },
+
+    updateThemeVariation: function(newVariation, oldVariation) {
+        var html = Ext.getBody().getParent(),
+            themeVariationPrefix = this.getThemeVariationPrefix() || "",
+            transitionCls = this.getThemeVariationTransitionCls();
+
+        if (Ext.isFunction(newVariation)) {
+            newVariation = newVariation.call(this);
+        }
+
+        if(!Ext.isString(newVariation)) {
+            Ext.Error.raise("Theme variation must be a String.'");
+        }
+
+        if(transitionCls) {
+            var css = "", duration = 0,
+                rules = document.styleSheets[0].cssRules,
+                i, rule, times, time;
+
+            html.addCls(transitionCls);
+            for(i in rules) {
+                rule = rules[i];
+                if(rule.selectorText && rule.selectorText.indexOf("." + transitionCls) >=1) {
+                    css += rule.cssText;
+                }
+            }
+
+            times = css.match(/[0-9]+s/g);
+            for(i in times) {
+                time = parseInt(times[i]);
+                if(time > duration) {
+                    duration = time;
+                }
+            }
+
+            if(this.$themeVariationChangeTimeout) {
+                clearTimeout(this.$themeVariationChangeTimeout);
+                this.$themeVariationChangeTimeout = null;
+            }
+
+            this.$themeVariationChangeTimeout = Ext.defer(function() {
+                html.removeCls(transitionCls);
+            }, time * 1000);
+        }
+
+        html.removeCls(themeVariationPrefix + oldVariation);
+        html.addCls(themeVariationPrefix + newVariation);
     }
 }, function() {
 });
@@ -49556,7 +50164,7 @@ Ext.define('Ext.util.Collection', {
             this.updateIndices();
         }
 
-        var index = this.indices[this.getKey(item)];
+        var index = item ? this.indices[this.getKey(item)] : -1;
         return (index === undefined) ? -1 : index;
     },
 
@@ -49979,7 +50587,7 @@ Ext.define('Ext.data.ResultSet', {
  *                 // iterate over the OrderItems for each Order
  *                 order.orderItems().each(function(orderItem) {
  *                     // We know that the Product data is already loaded, so we can use the
- *                     // synchronous getProduct() method. Usually, we would use the 
+ *                     // synchronous getProduct() method. Usually, we would use the
  *                     // asynchronous version (see Ext.data.association.BelongsTo).
  *                     var product = orderItem.getProduct();
  *                     output.push(orderItem.get("quantity") + " orders of " + product.get("name"));
@@ -58016,12 +58624,13 @@ Ext.define('Ext.data.association.HasMany', {
                     filters      : [filter],
                     remoteFilter : true,
                     autoSync     : autoSync,
-                    modelDefaults: modelDefaults,
-                    listeners    : listeners
+                    modelDefaults: modelDefaults
                 });
 
                 store = record[storeName] = Ext.create('Ext.data.Store', config);
                 store.boundTo = record;
+
+                store.onAfter(listeners);
 
                 if (autoLoad) {
                     record[storeName].load();
@@ -58121,7 +58730,9 @@ Ext.define('Ext.data.association.HasMany', {
  *                 { name: 'name',        type: 'string' }
  *             ],
  *             // we can use the belongsTo shortcut on the model to create a belongsTo association
- *             associations: { type: 'belongsTo', model: 'Category' }
+ *             belongsTo: {
+ *                 model: 'Category'
+ *             }
  *         }
  *     });
  *
@@ -58208,9 +58819,11 @@ Ext.define('Ext.data.association.HasMany', {
  *                 // ...
  *             ],
  *
- *             associations: [
- *                 { type: 'belongsTo', model: 'Category', primaryKey: 'unique_id', foreignKey: 'cat_id' }
- *             ]
+ *             belongsTo: {
+ *                 model     : 'Category',
+ *                 primaryKey: 'unique_key',
+ *                 foreignKey: 'cat_id'
+ *             }
  *         }
  *     });
  *
@@ -58513,7 +59126,10 @@ Ext.define('Ext.data.association.BelongsTo', {
  *             ],
  *
  *             // we can use the hasOne shortcut on the model to create a hasOne association
- *             associations: { type: 'hasOne', model: 'Address' }
+ *             hasOne: {
+ *                 model: 'Address',
+ *                 name : 'address'
+ *             }
  *         }
  *     });
  *
@@ -58613,9 +59229,11 @@ Ext.define('Ext.data.association.BelongsTo', {
  *                 // ...
  *             ],
  *
- *             associations: [
- *                 { type: 'hasOne', model: 'Address', primaryKey: 'unique_id', foreignKey: 'addr_id' }
- *             ]
+ *             hasOne: {
+ *                 model     : 'Address', 
+ *                 primaryKey: 'unique_id',
+ *                 foreignKey: 'addr_id'
+ *             }
  *         }
  *     });
  *
@@ -59138,7 +59756,8 @@ Ext.define('Ext.data.Validations', {
     },
 
     /**
-     * Validates that the given value is present in the configured `list`.
+     * Validates that the given value is not present in the configured `list`.
+     * 
      * For example:
      *
      *     validations: [{type: 'exclusion', field: 'username', list: ['Admin', 'Operator']}]
@@ -59748,6 +60367,7 @@ Ext.define('Ext.data.Model', {
             fields = me.getFields().items,
             ln = fields.length,
             modified = me.modified,
+            modifiedFieldNames = [],
             data = me.data,
             i, field, fieldName, value, id;
 
@@ -59761,6 +60381,14 @@ Ext.define('Ext.data.Model', {
                     value = field._convert(value, me);
                 }
 
+                if(data[fieldName] !== value) {
+                    if(modifiedFieldNames.length === 0 && !me.editing) {
+                        this.beginEdit()
+                    }
+
+                    modifiedFieldNames.push(fieldName);
+                }
+
                 data[fieldName] = value;
             } else if (Ext.isFunction(field._convert)) {
 				value = field._convert(value, me);
@@ -59770,6 +60398,10 @@ Ext.define('Ext.data.Model', {
 
         if (me.associations.length) {
             me.handleInlineAssociationData(rawData);
+        }
+
+        if(modifiedFieldNames.length > 0 && me.editing) {
+            this.endEdit(false, modifiedFieldNames);
         }
 
         return this;
@@ -61484,7 +62116,7 @@ Ext.define('Ext.data.Store', {
         proxy: undefined,
 
         /**
-         * @cfg {Object[]} fields
+         * @cfg {Object[]/Ext.util.Collection} fields
          * Returns Ext.util.Collection not just an Object.
          * Use in place of specifying a {@link #model} configuration. The fields should be a
          * set of {@link Ext.data.Field} configuration objects. The store will automatically create a {@link Ext.data.Model}
@@ -66424,6 +67056,10 @@ Ext.define('Ext.data.TreeStore', {
         return this.data.getByKey(id);
     },
 
+    getById: function(id) {
+        return this.data.getByKey(id);
+    },
+
     onNodeBeforeExpand: function(node, options, e) {
         if (node.isLoading()) {
             e.pause();
@@ -67267,7 +67903,7 @@ Ext.define('Ext.data.proxy.WebStorage', {
         if (!this.getId()) {
             this.setId(model.modelName);
         }
-        
+
         this.callParent(arguments);
     },
 
@@ -67554,6 +68190,7 @@ Ext.define('Ext.data.proxy.WebStorage', {
             me.setIds(ids);
         }
 
+        delete this.cache[id];
         me.getStorageObject().removeItem(me.getRecordKey(id));
     },
 
@@ -67985,14 +68622,14 @@ Ext.define('Ext.data.proxy.SessionStorage', {
  *
  * You can create a Store for the proxy, for example:
  *
- *    Ext.require(["Ext.data.proxy.SQL"]);
+ *     Ext.require(["Ext.data.proxy.SQL"]);
  *
- *    Ext.define("User", {
- *       extend: "Ext.data.Model",
- *       config: {
- *          fields: [ "firstName", "lastName" ]
- *       }
- *     });
+ *     Ext.define("User", {
+ *        extend: "Ext.data.Model",
+ *        config: {
+ *           fields: [ "firstName", "lastName" ]
+ *        }
+ *      });
  *
  *     Ext.create("Ext.data.Store", {
  *        model: "User",
@@ -68011,7 +68648,7 @@ Ext.define('Ext.data.proxy.SessionStorage', {
  *
  * To destroy a table use:
  *
- *    Ext.getStore("Users").getModel().getProxy().dropTable();
+ *     Ext.getStore("Users").getProxy().dropTable();
  *
  * To recreate a table use:
  *
@@ -69183,6 +69820,13 @@ Ext.define('Ext.dataview.IndexBar', {
          */
         listPrefix: null
     },
+    platformConfig: [
+        {
+            theme: ['Blackberry'],
+            direction: 'vertical',
+            letters: ['*', '#', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+        }
+    ],
     // @private
     itemCls: Ext.baseCSSPrefix + '',
 
@@ -69193,11 +69837,31 @@ Ext.define('Ext.dataview.IndexBar', {
     },
 
     getElementConfig: function() {
-        return {
-            reference: 'wrapper',
-            classList: ['x-centered', 'x-indexbar-wrapper'],
-            children: [this.callParent()]
-        };
+        // Blackberry Specific code for Index Bar Indicator
+        if(Ext.theme.is.Blackberry) {
+            return {
+                reference: 'wrapper',
+                classList: ['x-centered', 'x-indexbar-wrapper'],
+                children: [
+                    {
+                        reference: 'indicator',
+                        classList: ['x-indexbar-indicator'],
+                        hidden: true,
+                        children: [{
+                            reference: 'indicatorInner',
+                            classList: ['x-indexbar-indicator-inner']
+                        }]
+                    },
+                    this.callParent()
+                ]
+            };
+        } else {
+            return {
+                reference: 'wrapper',
+                classList: ['x-centered', 'x-indexbar-wrapper'],
+                children: [this.callParent()]
+            };
+        }
     },
 
     updateLetters: function(letters) {
@@ -69229,6 +69893,7 @@ Ext.define('Ext.dataview.IndexBar', {
 
         this.innerElement.on({
             touchstart: this.onTouchStart,
+            touchend: this.onTouchEnd,
             dragend: this.onDragEnd,
             drag: this.onDrag,
             scope: this
@@ -69242,35 +69907,62 @@ Ext.define('Ext.dataview.IndexBar', {
         this.onDrag(e);
     },
 
+    onTouchEnd: function(e) {
+        this.onDragEnd();
+    },
+
     // @private
     onDragEnd: function() {
         this.innerElement.removeCls(this.getBaseCls() + '-pressed');
+
+        // Blackberry Specific code for Index Bar Indicator
+        if(this.indicator) {
+            this.indicator.hide();
+        }
     },
 
     // @private
     onDrag: function(e) {
         var point = Ext.util.Point.fromEvent(e),
-            target,
+            target, isValidTarget,
             pageBox = this.pageBox;
 
         if (!pageBox) {
             pageBox = this.pageBox = this.el.getPageBox();
         }
 
+
         if (this.getDirection() === 'vertical') {
             if (point.y > pageBox.bottom || point.y < pageBox.top) {
                 return;
             }
             target = Ext.Element.fromPoint(pageBox.left + (pageBox.width / 2), point.y);
+            isValidTarget = target.getParent() == this.element;
+
+            // Blackberry Specific code for Index Bar Indicator
+            if(this.indicator) {
+                this.indicator.show();
+
+                var halfIndicatorHeight = this.indicator.getHeight() / 2,
+                    y = point.y - this.element.getY();
+
+                y = Math.min(Math.max(y, halfIndicatorHeight), this.element.getHeight() - halfIndicatorHeight);
+
+                if (this.indicatorInner && isValidTarget) {
+                    this.indicatorInner.setHtml(target.getHtml().toUpperCase());
+                }
+                this.indicator.setTop(y - (halfIndicatorHeight));
+            }
         }
         else {
             if (point.x > pageBox.right || point.x < pageBox.left) {
                 return;
             }
             target = Ext.Element.fromPoint(point.x, pageBox.top + (pageBox.height / 2));
+            isValidTarget = target.getParent() == this.element;
         }
 
-        if (target) {
+        if (target && isValidTarget) {
             this.fireEvent('index', this, target.dom.innerHTML, target);
         }
     },
@@ -69591,14 +70283,6 @@ Ext.define('Ext.dataview.component.SimpleListItem', {
             var disclosureProperty = dataview.getDisclosureProperty();
             disclosure[(data.hasOwnProperty(disclosureProperty) && data[disclosureProperty] === false) ? 'hide' : 'show']();
         }
-
-        /**
-         * @event updatedata
-         * Fires whenever the data of the DataItem is updated.
-         * @param {Ext.dataview.component.DataItem} this The DataItem instance.
-         * @param {Object} newData The new data.
-         */
-        me.fireEvent('updatedata', me, data);
     },
 
     destroy: function() {
@@ -69920,7 +70604,7 @@ Ext.define('Ext.dataview.List', {
          * Whether or not to group items in the provided Store with a header for each item.
          * @accessor
          */
-        grouped: false,
+        grouped: null,
 
         /**
          * @cfg {Boolean/Function/Object} onItemDisclosure
@@ -70628,8 +71312,8 @@ Ext.define('Ext.dataview.List', {
             header = useHeaders && item.getHeader(),
             scrollDockItems = me.scrollDockItems,
             updatedItems = me.updatedItems,
-            currentItemCls = item.renderElement.classList,
-            currentHeaderCls = useHeaders && header.renderElement.classList,
+            currentItemCls = item.renderElement.classList.slice(),
+            currentHeaderCls = useHeaders && header.renderElement.classList.slice(),
             infinite = me.getInfinite(),
             storeCount = info.store.getCount(),
             itemCls = [],
@@ -70723,8 +71407,8 @@ Ext.define('Ext.dataview.List', {
 
                 if (!infinite) {
                     header.renderElement.insertBefore(item.renderElement);
-                    header.show();
                 }
+                header.show();
             } else {
                 if (infinite) {
                     header.translate(0, -10000);
@@ -70736,6 +71420,10 @@ Ext.define('Ext.dataview.List', {
                 itemCls.push(info.footerCls);
                 headerCls.push(info.footerCls);
             }
+        }
+
+        if (!info.grouped && useHeaders) {
+            header.hide();
         }
 
         if (index === 0) {
@@ -70800,9 +71488,8 @@ Ext.define('Ext.dataview.List', {
 
         if (item.classCache !== classCache) {
             item.renderElement.setCls(itemCls);
+            item.classCache = classCache;
         }
-
-        item.classCache = classCache;
 
         if (useHeaders) {
             header.renderElement.setCls(headerCls);
@@ -71023,11 +71710,16 @@ Ext.define('Ext.dataview.List', {
         if (grouped) {
             me.addCls(cls);
             me.removeCls(unCls);
-        } else {
+        }
+        else {
             me.addCls(unCls);
             me.removeCls(cls);
         }
 
+        if (me.getInfinite()) {
+            me.refreshHeaderIndices();
+            me.handleItemHeights();
+        }
         me.updateAllListItems();
     },
 
@@ -71209,11 +71901,15 @@ Ext.define('Ext.dataview.List', {
             store = me.getStore(),
             storeLn = store && store.getCount(),
             groups = store.getGroups(),
+            grouped = me.getGrouped(),
             groupLn = groups.length,
             headerIndices = me.headerIndices = {},
             footerIndices = me.footerIndices = {},
             i, previousIndex, firstGroupedRecord, storeIndex;
 
+        if (!grouped) {
+            return footerIndices;
+        }
         me.groups = groups;
 
         for (i = 0; i < groupLn; i++) {
@@ -71257,6 +71953,14 @@ Ext.define('Ext.dataview.List', {
         }
     },
 
+    /**
+     *
+     * Scrolls the list so that the specified record is at the top.
+     *
+     * @param record {Ext.data.Model} Record in the lists store to scroll to
+     * @param animate {Boolean} Determines if scrolling is animated to a cut
+     * @param overscroll {Boolean} Determines if list can be overscrolled
+     */
     scrollToRecord: function(record, animate, overscroll) {
         var me = this,
             scroller = me.container.getScrollable().getScroller(),
@@ -71405,7 +72109,7 @@ Ext.define('Ext.dataview.List', {
 
         var item = me.getItemAt(me.getStore().indexOf(record));
         if (me.container && !me.isDestroyed && item && item.isComponent) {
-            item.classCache = item.renderElement.classList;
+            item.classCache = item.renderElement.classList.slice();
         }
     },
 
@@ -71414,7 +72118,7 @@ Ext.define('Ext.dataview.List', {
 
         var item = me.getItemAt(me.getStore().indexOf(record));
         if (item && item.isComponent) {
-            item.classCache = item.renderElement.classList;
+            item.classCache = item.renderElement.classList.slice();
         }
     },
 
@@ -71794,6 +72498,10 @@ Ext.define('Ext.dataview.NestedList', {
             toolbar: {
                 splitNavigation: true
             }
+        },
+        {
+            theme: ['Tizen'],
+            backText: ''
         }
     ],
 
@@ -72079,8 +72787,8 @@ Ext.define('Ext.dataview.NestedList', {
         }
 
         if (newStore) {
-            me.goToNode(newStore.getRoot());
             newStore.on(listeners);
+            me.goToNode(newStore.getRoot());
         }
     },
 
@@ -74873,7 +75581,9 @@ Ext.define('Ext.event.publisher.Dom', {
 
         var defaultView = doc.defaultView;
 
-        if (Ext.os.is.iOS && Ext.os.version.getMajor() < 5) {
+        // Some AndroidStock browsers (HP Slate for example) will not process any touch events unless a listener is added to document or body
+        // this listener must be to a touch event (touchstart, touchmove, touchend)
+        if ((Ext.os.is.iOS && Ext.os.version.getMajor() < 5) || Ext.browser.is.AndroidStock) {
             document.addEventListener(eventName, this.onEvent, !this.doesEventBubble(eventName));
         }
         else if (defaultView && defaultView.addEventListener) {
@@ -74892,7 +75602,7 @@ Ext.define('Ext.event.publisher.Dom', {
 
         var defaultView = doc.defaultView;
 
-        if (Ext.os.is.iOS && Ext.os.version.getMajor() < 5) {
+        if ((Ext.os.is.iOS && Ext.os.version.getMajor() < 5) && Ext.browser.is.AndroidStock) {
             document.removeEventListener(eventName, this.onEvent, !this.doesEventBubble(eventName));
         }
         else if (defaultView && defaultView.addEventListener) {
@@ -75853,6 +76563,9 @@ Ext.define('Ext.util.SizeMonitor', {
                 return new namespace.Scroll(config);
             }
         }
+        else if (Ext.browser.is.IE11) {
+            return new namespace.Scroll(config);
+        }
         else {
             return new namespace.Default(config);
         }
@@ -75976,6 +76689,8 @@ Ext.define('Ext.event.publisher.TouchGesture', {
     },
 
     constructor: function(config) {
+        var me = this;
+
         this.eventProcessors = {
             touchstart: this.onTouchStart,
             touchmove: this.onTouchMove,
@@ -76007,6 +76722,12 @@ Ext.define('Ext.event.publisher.TouchGesture', {
             this.screenPositionRatio = window.innerWidth / window.screen.width;
         }
         this.initConfig(config);
+
+        if (Ext.feature.has.Touch) {
+            // bind handlers that are only invoked when the browser has touchevents
+            me.onTargetTouchMove = me.onTargetTouchMove.bind(me);
+            me.onTargetTouchEnd = me.onTargetTouchEnd.bind(me);
+        }
 
         return this.callSuper();
     },
@@ -76053,10 +76774,10 @@ Ext.define('Ext.event.publisher.TouchGesture', {
             // when the element is being animated with webkit-transition (2 mousedowns without any mouseup)
             if (type === 'mousedown' && lastEventType && lastEventType !== 'mouseup') {
                 var fixedEvent = document.createEvent("MouseEvent");
-                    fixedEvent.initMouseEvent('mouseup', e.bubbles, e.cancelable,
-                        document.defaultView, e.detail, e.screenX, e.screenY, e.clientX,
-                        e.clientY, e.ctrlKey, e.altKey, e.shiftKey, e.metaKey, e.metaKey,
-                        e.button, e.relatedTarget);
+                fixedEvent.initMouseEvent('mouseup', e.bubbles, e.cancelable,
+                    document.defaultView, e.detail, e.screenX, e.screenY, e.clientX,
+                    e.clientY, e.ctrlKey, e.altKey, e.shiftKey, e.metaKey, e.metaKey,
+                    e.button, e.relatedTarget);
 
                 this.onEvent(fixedEvent);
             }
@@ -76221,6 +76942,28 @@ Ext.define('Ext.event.publisher.TouchGesture', {
         return changedTouches;
     },
 
+    syncTouches: function (touches) {
+        var touchIDs = [], len = touches.length,
+            i, id, touch, ghostTouches;
+
+        // Collect the actual touch IDs that exist
+        for (i = 0; i < len; i++) {
+            touch = touches[i];
+            touchIDs.push(touch.identifier);
+        }
+
+        // Compare actual IDs to cached IDs
+        // Remove any that are not real anymore
+        ghostTouches = Ext.Array.difference(this.currentIdentifiers, touchIDs);
+        len = ghostTouches.length;
+
+        for (i = 0; i < len; i++) {
+            id = ghostTouches[i];
+            Ext.Array.remove(this.currentIdentifiers, id);
+            delete this.touchesMap[id];
+        }
+    },
+
     factoryEvent: function(e) {
         return new Ext.event.Touch(e, null, this.touchesMap, this.currentIdentifiers);
     },
@@ -76228,14 +76971,38 @@ Ext.define('Ext.event.publisher.TouchGesture', {
     onTouchStart: function(e) {
         var changedTouches = e.changedTouches,
             target = e.target,
+            touches = e.touches,
             ln = changedTouches.length,
             isNotPreventable = this.isNotPreventable,
+            isTouch = (e.type === 'touchstart'),
+            me = this,
             i, touch, parent;
+
+        // Potentially sync issue from various reasons.
+        // example: ios8 does not dispatch touchend on audio element play/pause tap.
+        if (touches && touches.length < this.currentIdentifiers.length + 1) {
+            this.syncTouches(touches);
+        }
 
         this.updateTouches(changedTouches);
 
         e = this.factoryEvent(e);
         changedTouches = e.changedTouches;
+
+        // TOUCH-3934
+        // Android event system will not dispatch touchend for any multitouch
+        // event that has not been preventDefaulted.
+        if(Ext.browser.is.AndroidStock && this.currentIdentifiers.length >= 2) {
+            e.preventDefault();
+        }
+
+        // If targets are destroyed while touches are active on them
+        // we need these listeners to sync up our internal TouchesMap
+        if (isTouch) {
+            target.addEventListener('touchmove', me.onTargetTouchMove);
+            target.addEventListener('touchend', me.onTargetTouchEnd);
+            target.addEventListener('touchcancel', me.onTargetTouchEnd);
+        }
 
         for (i = 0; i < ln; i++) {
             touch = changedTouches[i];
@@ -76327,9 +77094,10 @@ Ext.define('Ext.event.publisher.TouchGesture', {
 
         this.invokeRecognizers('onTouchEnd', e);
 
-        // Only one touch currently active, and we're ending that one. So currentTouches should be 0 and clear the touchMap.
-        // This resolves an issue in iOS where it can sometimes not report a touchend/touchcancel
-        if (e.touches.length === 1 && currentIdentifiers.length) {
+        // This previously was set to e.touches.length === 1 to catch errors in syncing
+        // this has since been addressed to keep proper sync and now this is a catch for
+        // a sync error in touches to reset our internal maps
+        if (e.touches && e.touches.length === 0 && currentIdentifiers.length) {
             currentIdentifiers.length = 0;
             this.touchesMap = {};
         }
@@ -76341,6 +77109,38 @@ Ext.define('Ext.event.publisher.TouchGesture', {
                 this.animationQueued = false;
                 Ext.AnimationQueue.stop('onAnimationFrame', this);
             }
+        }
+    },
+
+    onTargetTouchMove: function(e) {
+        if (!Ext.getBody().contains(e.target)) {
+            this.onTouchMove(e);
+        }
+    },
+
+    onTargetTouchEnd: function(e) {
+        var me = this,
+            target = e.target,
+            touchCount=0,
+            touchTarget;
+
+        // Determine how many active touches there are on this target
+        for (identifier in this.touchesMap) {
+            touchTarget = this.touchesMap[identifier].target;
+            if (touchTarget === target ) {
+                touchCount++;
+            }
+        }
+
+        // If this is the last active touch on the target remove the target listeners
+        if (touchCount <= 1) {
+            target.removeEventListener('touchmove', me.onTargetTouchMove);
+            target.removeEventListener('touchend', me.onTargetTouchEnd);
+            target.removeEventListener('touchcancel', me.onTargetTouchEnd);
+        }
+
+        if (!Ext.getBody().contains(target)) {
+            me.onTouchEnd(e);
         }
     }
 
@@ -76376,12 +77176,22 @@ Ext.define('Ext.event.publisher.TouchGesture', {
             },
 
             onEvent: function(e) {
+                var type = e.type;
+                if (
+                        this.currentIdentifiers.length === 0 &&
+                        // This is for IE 10 and IE 11
+                        (e.pointerType === e.MSPOINTER_TYPE_TOUCH || e.pointerType === "touch") &&
+                        // This is for IE 10 and IE 11
+                        (type === "MSPointerMove" || type === "pointermove")
+                    ) {
+                    type = "MSPointerDown";
+                }
+
                 if ('button' in e && e.button > 0) {
                     return;
                 }
 
-                var type = this.pointerToTouchMap[e.type];
-
+                type = this.pointerToTouchMap[type];
                 e.identifier = e.pointerId;
                 e.changedTouches = [e];
 
@@ -77826,7 +78636,7 @@ Ext.define('Ext.field.Checkbox', {
     },
 
     platformConfig: [{
-        theme: ['Windows', 'Blackberry'],
+        theme: ['Windows', 'Blackberry', 'Tizen'],
         labelAlign: 'left'
     }],
 
@@ -79305,6 +80115,10 @@ Ext.define('Ext.field.Select', {
         {
             theme: ['Windows'],
             pickerSlotAlign: 'left'
+        },
+        {
+            theme: ['Tizen'],
+            usePicker: false
         }
     ],
 
@@ -79326,7 +80140,7 @@ Ext.define('Ext.field.Select', {
             component.input.dom.disabled = true;
         }
 
-        if (Ext.theme.name === "Blackberry") {
+        if (Ext.theme.is.Blackberry) {
             this.label.on({
                 scope: me,
                 tap: "onFocus"
@@ -79335,7 +80149,7 @@ Ext.define('Ext.field.Select', {
     },
 
     getElementConfig: function() {
-        if (Ext.theme.name === "Blackberry") {
+        if (Ext.theme.is.Blackberry) {
                 var prefix = Ext.baseCSSPrefix;
 
                 return {
@@ -79714,7 +80528,7 @@ Ext.define('Ext.field.Select', {
 
     // @private
     updateLabelWidth: function() {
-        if (Ext.theme.name === "Blackberry") {
+        if (Ext.theme.is.Blackberry) {
             return;
         } else {
             this.callParent(arguments);
@@ -79723,7 +80537,7 @@ Ext.define('Ext.field.Select', {
 
     // @private
     updateLabelAlign: function() {
-        if (Ext.theme.name === "Blackberry") {
+        if (Ext.theme.is.Blackberry) {
             return;
         } else {
             this.callParent(arguments);
@@ -79736,14 +80550,29 @@ Ext.define('Ext.field.Select', {
      * @chainable
      */
     reset: function() {
-        var store = this.getStore(),
-            record = (this.originalValue) ? this.originalValue : store.getAt(0);
+        var me = this,
+            record;
 
-        if (store && record) {
-            this.setValue(record);
+        if (me.getAutoSelect()) {
+            var store = me.getStore();
+
+            record = (me.originalValue) ? me.originalValue : store.getAt(0);
+        } else {
+            var usePicker = me.getUsePicker(),
+                picker = usePicker ? me.picker : me.listPanel;
+
+            if (picker) {
+                picker = picker.child(usePicker ? 'pickerslot' : 'dataview');
+
+                picker.deselectAll();
+            }
+
+            record = null;
         }
 
-        return this;
+        me.setValue(record);
+
+        return me;
     },
 
     onFocus: function(e) {
@@ -80737,6 +81566,14 @@ Ext.define('Ext.field.FileInput', {
     extend:  Ext.field.Input ,
     xtype: 'fileinput',
 
+    /**
+     * @event change
+     * Fires just before the field blurs if the field value has changed
+     * @param {Ext.field.Text} this This field
+     * @param {Mixed} newValue The new value
+     * @param {Mixed} oldValue The original value
+     */
+
     config: {
         type: "file",
         accept: null,
@@ -80917,9 +81754,18 @@ Ext.define('Ext.field.File', {
     xtype : 'filefield',
                                       
 
+    /**
+     * @event change
+     * Fires when a file has been selected
+     * @param {Ext.field.File} this This field
+     * @param {Mixed} newValue The new value
+     * @param {Mixed} oldValue The original value
+     */
+
     config : {
         component: {
-            xtype : 'fileinput'
+            xtype : 'fileinput',
+            fastFocus: false
         }
     },
 
@@ -81267,18 +82113,148 @@ Ext.define('Ext.field.Password', {
 
     config: {
         /**
-         * @cfg
+         * @cfg autoCapitalize
          * @inheritdoc
          */
         autoCapitalize: false,
 
         /**
-         * @cfg
+         * @cfg revealable {Boolean}
+         * Enables the reveal toggle button that will show the password in clear text. This is currently only implemented in the Blackberry theme
+         */
+        revealable: false,
+
+        /**
+         * @cfg revealed {Boolean}
+         * A value of 'true' for this config will show the password from clear text
+         */
+        revealed: false,
+
+        /**
+         * @cfg component
          * @inheritdoc
          */
         component: {
 	        type: 'password'
 	    }
+    },
+
+    platformConfig: [{
+        theme: ['Blackberry'],
+        revealable: true
+    }],
+
+    isPassword: true,
+
+    initialize: function() {
+        this.callParent(arguments);
+        this.addCls(Ext.baseCSSPrefix + 'field-password');
+    },
+
+    updateRevealable: function(newValue, oldValue) {
+        if(newValue === oldValue) return;
+
+        if(this.$revealIcon) {
+            this.getComponent().element.removeChild(this.$revealIcon);
+            this.$revealIcon = null;
+        }
+
+        if(newValue === true) {
+            this.$revealIcon = new Ext.Element(Ext.Element.create({cls:'x-reveal-icon'}, true));
+            this.$revealIcon.on({
+                tap: 'onRevealIconTap',
+                touchstart: 'onRevealIconPress',
+                touchend: 'onRevealIconRelease',
+                scope: this
+            });
+            this.getComponent().element.appendChild(this.$revealIcon);
+        }
+    },
+
+    updateRevealed: function(newValue, oldValue) {
+        var component = this.getComponent();
+
+        if(newValue) {
+            this.element.addCls(Ext.baseCSSPrefix + 'revealed');
+            component.setType("text");
+        } else {
+            this.element.removeCls(Ext.baseCSSPrefix + 'revealed');
+            component.setType("password");
+        }
+    },
+
+    // @private
+    updateValue: function(newValue) {
+        var component  = this.getComponent(),
+        // allows newValue to be zero but not undefined or null (other falsey values)
+            valueValid = newValue !== undefined && newValue !== null && newValue !== "";
+
+        if (component) {
+            component.setValue(newValue);
+        }
+
+        this[valueValid && this.isDirty() ? 'showClearIcon' : 'hideClearIcon']();
+
+        this.syncEmptyCls();
+
+        this[valueValid ? 'showRevealIcon' : 'hideRevealIcon']();
+    },
+
+    doKeyUp: function(me, e) {
+        // getValue to ensure that we are in sync with the dom
+        var value      = me.getValue(),
+        // allows value to be zero but not undefined or null (other falsey values)
+            valueValid = value !== undefined && value !== null && value !== "";
+
+        this[valueValid ? 'showClearIcon' : 'hideClearIcon']();
+
+        if (e.browserEvent.keyCode === 13) {
+            me.fireAction('action', [me, e], 'doAction');
+        }
+
+        this[valueValid ? 'showRevealIcon' : 'hideRevealIcon']();
+    },
+
+    // @private
+    showRevealIcon: function() {
+        var me         = this,
+            value      = me.getValue(),
+        // allows value to be zero but not undefined or null (other falsey values)
+            valueValid = value !== undefined && value !== null && value !== "";
+
+        if (me.getRevealable() && !me.getDisabled() && valueValid) {
+            me.element.addCls(Ext.baseCSSPrefix + 'field-revealable');
+        }
+
+        return me;
+    },
+
+    // @private
+    hideRevealIcon: function() {
+        if (this.getRevealable()) {
+            this.element.removeCls(Ext.baseCSSPrefix + 'field-revealable');
+        }
+    },
+
+    onRevealIconTap: function(e) {
+        this.fireAction('revealicontap', [this, e], 'doRevealIconTap');
+    },
+
+    // @private
+    doRevealIconTap: function(me, e) {
+        if(this.getRevealed()) {
+            this.setRevealed(false)
+        } else {
+            this.setRevealed(true)
+        }
+    },
+
+    onRevealIconPress: function() {
+        this.$revealIcon.addCls(Ext.baseCSSPrefix + 'pressing');
+    },
+
+    onRevealIconRelease: function() {
+        this.$revealIcon.removeCls(Ext.baseCSSPrefix + 'pressing');
     }
 });
 
@@ -81534,6 +82510,13 @@ Ext.define('Ext.slider.Thumb', {
         baseCls: Ext.baseCSSPrefix + 'thumb',
 
         /**
+         * @cfg {String} pressedCls
+         * The CSS class to add to the Slider when it is pressed.
+         * @accessor
+         */
+        pressedCls: Ext.baseCSSPrefix + 'thumb-pressing',
+
+        /**
          * @cfg
          * @inheritdoc
          */
@@ -81544,14 +82527,16 @@ Ext.define('Ext.slider.Thumb', {
 
     // Strange issue where the thumbs translation value is not being set when it is not visible. Happens when the thumb 
     // is contained within a modal panel.
-    platformConfig: [{
-        platform: ['ie10'],
-        draggable: {
-            translatable: {
-                translationMethod: 'csstransform'
+    platformConfig: [
+        {
+            platform: ['ie10'],
+            draggable: {
+                translatable: {
+                    translationMethod: 'csstransform'
+                }
             }
         }
-    }],
+    ],
 
     elementWidth: 0,
 
@@ -81565,7 +82550,62 @@ Ext.define('Ext.slider.Thumb', {
             scope: this
         });
 
+        this.getDraggable().on({
+            touchstart: 'onPress',
+            touchend: 'onRelease',
+            scope: this
+        });
+
         this.element.on('resize', 'onElementResize', this);
+    },
+
+    getTemplate: function() {
+        if(Ext.theme.is.Blackberry) {
+            return [
+                {
+                    tag: 'div',
+                    className: Ext.baseCSSPrefix + 'thumb-inner',
+                    reference: 'innerElement'
+                }
+            ]
+        } else {
+            return this.template;
+        }
+    },
+
+
+    /**
+     * @private
+     */
+    updatePressedCls: function(pressedCls, oldPressedCls) {
+        var element = this.element;
+
+        if (element.hasCls(oldPressedCls)) {
+            element.replaceCls(oldPressedCls, pressedCls);
+        }
+    },
+
+    // @private
+    onPress: function() {
+        var me = this,
+            element = me.element,
+            pressedCls = me.getPressedCls();
+
+        if (!me.getDisabled()) {
+            element.addCls(pressedCls);
+        }
+    },
+
+    // @private
+    onRelease: function(e) {
+        this.fireAction('release', [this, e], 'doRelease');
+    },
+
+    // @private
+    doRelease: function(me, e) {
+        if (!me.getDisabled()) {
+            me.element.removeCls(me.getPressedCls());
+        }
     },
 
     onDragStart: function() {
@@ -81920,7 +82960,7 @@ Ext.define('Ext.slider.Slider', {
 
     // @private
     onTap: function(e) {
-        if (this.isDisabled()) {
+        if (this.isDisabled() || this.getReadOnly()) {
             return;
         }
 
@@ -83771,7 +84811,17 @@ Ext.define('Ext.form.Panel', {
          * @cfg {Boolean} multipartDetection
          * If this is enabled the form will automatically detect the need to use 'multipart/form-data' during submission.
          */
-        multipartDetection: true
+        multipartDetection: true,
+
+        /**
+         * @cfg {Boolean} enableSubmissionForm
+         * The submission form is generated but never added to the dom. It is a submittable version of your form panel, allowing for fields
+         * that are not simple textfields to be properly submitted to servers. It will also send values that are easier to parse
+         * with server side code.
+         *
+         * If this is false we will attempt to subject the raw form inside the form panel.
+         */
+        enableSubmissionForm: true
     },
 
     getElementConfig: function() {
@@ -83939,8 +84989,9 @@ Ext.define('Ext.form.Panel', {
      * @param {Ext.form.Panel} options.success.form
      * The {@link Ext.form.Panel} that requested the action.
      *
-     * @param {Ext.form.Panel} options.success.result
-     * The result object returned by the server as a result of the submit request.
+     * @param {Object/Ext.direct.Event} options.success.result
+     * The result object returned by the server as a result of the submit request. If the submit is sent using Ext.Direct,
+     * this will return the {@link Ext.direct.Event} instance, otherwise will return an Object.
      *
      * @param {Object} options.success.data
      * The parsed data returned by the server.
@@ -83966,9 +85017,15 @@ Ext.define('Ext.form.Panel', {
      * If the standardSubmit config is true, then the return value is undefined.
      */
     submit: function(options, e) {
+        options = options || {};
+
         var me = this,
-            form = me.element.dom || {},
-            formValues;
+            formValues = me.getValues(me.getStandardSubmit() || !options.submitDisabled),
+            form = me.element.dom || {};
+
+        if(this.getEnableSubmissionForm()) {
+            form = this.createSubmissionForm(form, formValues);
+        }
 
         options = Ext.apply({
             url : me.getUrl() || form.action,
@@ -83983,15 +85040,52 @@ Ext.define('Ext.form.Panel', {
             failure : null
         }, options || {});
 
-        formValues = me.getValues(me.getStandardSubmit() || !options.submitDisabled);
-
         return me.fireAction('beforesubmit', [me, formValues, options, e], 'doBeforeSubmit');
     },
 
-    doBeforeSubmit: function(me, formValues, options) {
-        var form = me.element.dom || {};
+    createSubmissionForm: function(form, values) {
+        var fields = this.getFields(),
+            name, input, field, fileinputElement, inputComponent;
 
-        var multipartDetected = false;
+        if(form.nodeType === 1) {
+            form = form.cloneNode(false);
+
+            for (name in values) {
+                input = document.createElement("input");
+                input.setAttribute("type", "text");
+                input.setAttribute("name", name);
+                input.setAttribute("value", values[name]);
+                form.appendChild(input);
+            }
+        }
+
+        for (name in fields) {
+            if (fields.hasOwnProperty(name)) {
+                field = fields[name];
+                if(field.isFile) {
+                    if(!form.$fileswap) form.$fileswap = [];
+
+                    inputComponent = field.getComponent().input;
+                    fileinputElement = inputComponent.dom;
+                    input = fileinputElement.cloneNode(true);
+                    fileinputElement.parentNode.insertBefore(input, fileinputElement.nextSibling);
+                    form.appendChild(fileinputElement);
+                    form.$fileswap.push({original: fileinputElement, placeholder: input});
+                } else if(field.isPassword) {
+                    if(field.getComponent().getType !== "password") {
+                        field.setRevealed(false);
+                    }
+                }
+            }
+        }
+
+        return form;
+    },
+
+    doBeforeSubmit: function(me, formValues, options) {
+        var form = options.form || {},
+            multipartDetected = false;
+
         if(this.getMultipartDetection() === true) {
             this.getFieldsAsArray().forEach(function(field) {
                 if(field.isFile === true) {
@@ -84108,10 +85202,22 @@ Ext.define('Ext.form.Panel', {
                     options.headers || {}
                 );
                 request.callback = function(callbackOptions, success, response) {
-                    var me = this,
-                        responseText = response.responseText,
+                    var responseText = response.responseText,
                         responseXML = response.responseXML,
                         statusResult = Ext.Ajax.parseStatus(response.status, response);
+
+                    if(form.$fileswap) {
+                        var original, placeholder;
+                        Ext.each(form.$fileswap, function(item) {
+                            original = item.original;
+                            placeholder = item.placeholder;
+
+                            placeholder.parentNode.insertBefore(original, placeholder.nextSibling);
+                            placeholder.parentNode.removeChild(placeholder);
+                        });
+                        form.$fileswap = null;
+                        delete form.$fileswap;
+                    }
 
                     me.setMasked(false);
 
@@ -84221,8 +85327,9 @@ Ext.define('Ext.form.Panel', {
      * @param {Ext.form.Panel} options.success.form
      * The {@link Ext.form.Panel} that requested the load.
      *
-     * @param {Ext.form.Panel} options.success.result
-     * The result object returned by the server as a result of the load request.
+     * @param {Object/Ext.direct.Event} options.success.result
+     * The result object returned by the server as a result of the load request. If the loading was done via Ext.Direct,
+     * will return the {@link Ext.direct.Event} instance, otherwise will return an Object.
      *
      * @param {Object} options.success.data
      * The parsed data returned by the server.
@@ -84253,7 +85360,7 @@ Ext.define('Ext.form.Panel', {
             api = me.getApi(),
             url = me.getUrl() || options.url,
             waitMsg = options.waitMsg,
-            successFn = function(data, response) {
+            successFn = function(response, data) {
                 me.setValues(data.data);
 
                 if (Ext.isFunction(options.success)) {
@@ -84262,7 +85369,7 @@ Ext.define('Ext.form.Panel', {
 
                 me.fireEvent('load', me, response);
             },
-            failureFn = function(data, response) {
+            failureFn = function(response, data) {
                 if (Ext.isFunction(options.failure)) {
                     options.failure.call(scope, me, response, data);
                 }
@@ -84312,7 +85419,6 @@ Ext.define('Ext.form.Panel', {
         } else if (url) {
             return Ext.Ajax.request({
                 url: url,
-                scope: me,
                 timeout: (options.timeout || this.getTimeout()) * 1000,
                 method: options.method || 'GET',
                 autoAbort: options.autoAbort,
@@ -84323,8 +85429,7 @@ Ext.define('Ext.form.Panel', {
                     options.headers || {}
                 ),
                 callback: function(callbackOptions, success, response) {
-                    var me = this,
-                        responseText = response.responseText,
+                    var responseText = response.responseText,
                         statusResult = Ext.Ajax.parseStatus(response.status, response);
 
                     me.setMasked(false);
@@ -84465,7 +85570,7 @@ Ext.define('Ext.form.Panel', {
         // Function which you give a field and a name, and it will add it into the values
         // object accordingly
         addValue = function(field, name) {
-            if (!all && (!name || name === 'null')) {
+            if (!all && (!name || name === 'null') || field.isFile) {
                 return;
             }
 
@@ -84572,7 +85677,6 @@ Ext.define('Ext.form.Panel', {
     },
 
     /**
-     * @private
      * Returns all {@link Ext.field.Field field} instances inside this form.
      * @param {Boolean} byName return only fields that match the given name, otherwise return all fields.
      * @return {Object/Array} All field instances, mapped by field name; or an array if `byName` is passed.
@@ -84994,7 +86098,7 @@ Ext.define('Ext.fx.runner.Css', {
             formattedName = cache[name];
 
         if (!formattedName) {
-            if (!Ext.feature.has.CssTransformNoPrefix && this.prefixedProperties[name]) {
+            if ((Ext.os.is.Tizen || !Ext.feature.has.CssTransformNoPrefix) && this.prefixedProperties[name]) {
                 formattedName = this.vendorPrefix + name;
             }
             else {
@@ -87616,8 +88720,66 @@ Ext.define('Ext.navigation.View', {
         }
     },
 
+    /**
+     * This is called when an Item is added to the BackButtonContainer of a SplitNavigation View
+     * @private
+     *
+     * @param toolbar
+     * @param item
+     */
+    onBackButtonContainerAdd: function(toolbar, item) {
+        item.on({
+            scope: this,
+            show: this.refreshBackButtonContainer,
+            hide: this.refreshBackButtonContainer
+        });
+        this.refreshBackButtonContainer();
+    },
+
+    /**
+     * This is called when an Item is removed from the BackButtonContainer of a SplitNavigation View
+     * @private
+     *
+     * @param toolbar
+     * @param item
+     */
+    onBackButtonContainerRemove: function(toolbar, item) {
+        item.un({
+            scope: this,
+            show: this.refreshBackButtonContainer,
+            hide: this.refreshBackButtonContainer
+        });
+        this.refreshBackButtonContainer();
+    },
+
+    /**
+     * This is used for Blackberry SplitNavigation to monitor the state of child items in the bottom toolbar.
+     * if no visible children exist the toolbar will be hidden
+     * @private
+     */
+    refreshBackButtonContainer: function() {
+        if (!this.$backButtonContainer) {
+            return;
+        }
+        var i = 0,
+            backButtonContainer = this.$backButtonContainer,
+            items = backButtonContainer.items,
+            item;
+
+        for(;i < items.length; i++) {
+            item = items.get(i);
+            if(!item.isHidden()) {
+                this.$backButtonContainer.show();
+                return;
+            }
+        }
+
+        this.$backButtonContainer.hide();
+    },
+
     // @private
     applyNavigationBar: function(config) {
+        var me = this;
         if (!config) {
             config = {
                 hidden: true,
@@ -87629,13 +88791,13 @@ Ext.define('Ext.navigation.View', {
             delete config.title;
             //<debug>
             Ext.Logger.warn("Ext.navigation.View: The 'navigationBar' configuration does not accept a 'title' property. You " +
-                            "set the title of the navigationBar by giving this navigation view's children a 'title' property.");
+                "set the title of the navigationBar by giving this navigation view's children a 'title' property.");
             //</debug>
         }
 
         config.view = this;
         config.useTitleForBackButtonText = this.getUseTitleForBackButtonText();
-
+        // Blackberry specific nav setup where title is on the top title bar and the bottom toolbar is used for buttons and BACK
         if (config.splitNavigation) {
             this.$titleContainer = this.add({
                 docked: 'top',
@@ -87646,10 +88808,19 @@ Ext.define('Ext.navigation.View', {
 
             var containerConfig = (config.splitNavigation === true) ? {} : config.splitNavigation;
 
-            this.$backButtonContainer = this.add(Ext.apply({
+            this.$backButtonContainer = this.add({
                 xtype: 'toolbar',
-                docked: 'bottom'
-            }, containerConfig));
+                docked: 'bottom',
+                hidden: true
+            });
+
+            // Any item that is added to the BackButtonContainer should be monitored for visibility
+            // this will allow the toolbar to be hidden when no items exist in it.
+            this.$backButtonContainer.on ({
+                scope: me,
+                add: me.onBackButtonContainerAdd,
+                remove: me.onBackButtonContainerRemove
+            });
 
             this.$backButton = this.$backButtonContainer.add({
                 xtype: 'button',
@@ -87657,6 +88828,16 @@ Ext.define('Ext.navigation.View', {
                 hidden: true,
                 ui: 'back'
             });
+
+            // Default config items go into the bottom bar
+            if(config.items) {
+                this.$backButtonContainer.add(config.items);
+            }
+
+            // If the user provided items and splitNav items, default items go into the bottom bar, split nav items go into the top
+            if(containerConfig.items) {
+                this.$titleContainer.add(containerConfig.items);
+            }
 
             this.$backButton.on({
                 scope: this,
@@ -88170,6 +89351,7 @@ Ext.define('Ext.plugin.PullRefresh', {
                                  
 
     config: {
+        width: '100%',
         /**
          * @cfg {Ext.dataview.List} list
          * The list to which this PullRefresh plugin is connected.
@@ -88534,7 +89716,39 @@ Ext.define('Ext.plugin.PullRefresh', {
 /**
  * @class Ext.plugin.SortableList
  * @extends Ext.Component
- * Description
+ * The SortableList plugin gives your list items the ability to be reordered by tapping and 
+ * dragging elements within the item.   
+ *
+ * The list-sortablehandle is not added to your tpl by default, so it's important that you 
+ * manually include it. It's also important to recognize that list-items are not draggable 
+ * themselves.  You must add an element to the itemTpl for it to be dragged.
+ *
+ *     Ext.Viewport.add({
+ *          xtype: 'list',
+ *          infinite: true,
+ *          plugins: 'sortablelist',
+ *          itemTpl: '<span class="myStyle ' + Ext.baseCSSPrefix + 'list-sortablehandle"></span>{text}',
+ *          data: [{
+ *              text: 'Item 1'
+ *          }, {
+ *              text: 'Item 2'
+ *          }, {
+ *              text: 'Item 3'
+ *          }]
+ *     });
+ *
+ * The CSS for MyStyle can be anything that creates an element to tap and drag.  For this 
+ * example we made a simple rectangle like so:
+ *
+ *      .myStyle{
+ *          width:30px;
+ *          height:20px;
+ *          background:gray;
+ *          float:left;
+ *      }
+ * 
+ * Note: You must have infinite set to 'true' when using the SortableList plugin.
+ * 
  */
 Ext.define('Ext.plugin.SortableList', {
     extend:  Ext.Component ,
@@ -89603,528 +90817,6 @@ Ext.define('Ext.util.Droppable', {
     }
 });
 
-/*
-    http://www.JSON.org/json2.js
-    2010-03-20
-
-    Public Domain.
-
-    NO WARRANTY EXPRESSED OR IMPLIED. USE AT YOUR OWN RISK.
-
-    See http://www.JSON.org/js.html
-
-
-    This code should be minified before deployment.
-    See http://javascript.crockford.com/jsmin.html
-
-    USE YOUR OWN COPY. IT IS EXTREMELY UNWISE TO LOAD CODE FROM SERVERS YOU DO
-    NOT CONTROL.
-
-
-    This file creates a global JSON object containing two methods: stringify
-    and parse.
-
-        JSON.stringify(value, replacer, space)
-            value       any JavaScript value, usually an object or array.
-
-            replacer    an optional parameter that determines how object
-                        values are stringified for objects. It can be a
-                        function or an array of strings.
-
-            space       an optional parameter that specifies the indentation
-                        of nested structures. If it is omitted, the text will
-                        be packed without extra whitespace. If it is a number,
-                        it will specify the number of spaces to indent at each
-                        level. If it is a string (such as '\t' or '&nbsp;'),
-                        it contains the characters used to indent at each level.
-
-            This method produces a JSON text from a JavaScript value.
-
-            When an object value is found, if the object contains a toJSON
-            method, its toJSON method will be called and the result will be
-            stringified. A toJSON method does not serialize: it returns the
-            value represented by the name/value pair that should be serialized,
-            or undefined if nothing should be serialized. The toJSON method
-            will be passed the key associated with the value, and this will be
-            bound to the value
-
-            For example, this would serialize Dates as ISO strings.
-
-                Date.prototype.toJSON = function (key) {
-                    function f(n) {
-                        // Format integers to have at least two digits.
-                        return n < 10 ? '0' + n : n;
-                    }
-
-                    return this.getUTCFullYear()   + '-' +
-                         f(this.getUTCMonth() + 1) + '-' +
-                         f(this.getUTCDate())      + 'T' +
-                         f(this.getUTCHours())     + ':' +
-                         f(this.getUTCMinutes())   + ':' +
-                         f(this.getUTCSeconds())   + 'Z';
-                };
-
-            You can provide an optional replacer method. It will be passed the
-            key and value of each member, with this bound to the containing
-            object. The value that is returned from your method will be
-            serialized. If your method returns undefined, then the member will
-            be excluded from the serialization.
-
-            If the replacer parameter is an array of strings, then it will be
-            used to select the members to be serialized. It filters the results
-            such that only members with keys listed in the replacer array are
-            stringified.
-
-            Values that do not have JSON representations, such as undefined or
-            functions, will not be serialized. Such values in objects will be
-            dropped; in arrays they will be replaced with null. You can use
-            a replacer function to replace those with JSON values.
-            JSON.stringify(undefined) returns undefined.
-
-            The optional space parameter produces a stringification of the
-            value that is filled with line breaks and indentation to make it
-            easier to read.
-
-            If the space parameter is a non-empty string, then that string will
-            be used for indentation. If the space parameter is a number, then
-            the indentation will be that many spaces.
-
-            Example:
-
-            text = JSON.stringify(['e', {pluribus: 'unum'}]);
-            // text is '["e",{"pluribus":"unum"}]'
-
-
-            text = JSON.stringify(['e', {pluribus: 'unum'}], null, '\t');
-            // text is '[\n\t"e",\n\t{\n\t\t"pluribus": "unum"\n\t}\n]'
-
-            text = JSON.stringify([new Date()], function (key, value) {
-                return this[key] instanceof Date ?
-                    'Date(' + this[key] + ')' : value;
-            });
-            // text is '["Date(---current time---)"]'
-
-
-        JSON.parse(text, reviver)
-            This method parses a JSON text to produce an object or array.
-            It can throw a SyntaxError exception.
-
-            The optional reviver parameter is a function that can filter and
-            transform the results. It receives each of the keys and values,
-            and its return value is used instead of the original value.
-            If it returns what it received, then the structure is not modified.
-            If it returns undefined then the member is deleted.
-
-            Example:
-
-            // Parse the text. Values that look like ISO date strings will
-            // be converted to Date objects.
-
-            myData = JSON.parse(text, function (key, value) {
-                var a;
-                if (typeof value === 'string') {
-                    a =
-/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/.exec(value);
-                    if (a) {
-                        return new Date(Date.UTC(+a[1], +a[2] - 1, +a[3], +a[4],
-                            +a[5], +a[6]));
-                    }
-                }
-                return value;
-            });
-
-            myData = JSON.parse('["Date(09/09/2001)"]', function (key, value) {
-                var d;
-                if (typeof value === 'string' &&
-                        value.slice(0, 5) === 'Date(' &&
-                        value.slice(-1) === ')') {
-                    d = new Date(value.slice(5, -1));
-                    if (d) {
-                        return d;
-                    }
-                }
-                return value;
-            });
-
-
-    This is a reference implementation. You are free to copy, modify, or
-    redistribute.
-*/
-
-/*jslint evil: true, strict: false */
-
-/*members "", "\b", "\t", "\n", "\f", "\r", "\"", JSON, "\\", apply,
-    call, charCodeAt, getUTCDate, getUTCFullYear, getUTCHours,
-    getUTCMinutes, getUTCMonth, getUTCSeconds, hasOwnProperty, join,
-    lastIndex, length, parse, prototype, push, replace, slice, stringify,
-    test, toJSON, toString, valueOf
-*/
-
-
-// Create a JSON object only if one does not already exist. We create the
-// methods in a closure to avoid creating global variables.
-
-if (!this.JSON) {
-    this.JSON = {};
-}
-
-(function () {
-
-    function f(n) {
-        // Format integers to have at least two digits.
-        return n < 10 ? '0' + n : n;
-    }
-
-    if (typeof Date.prototype.toJSON !== 'function') {
-
-        Date.prototype.toJSON = function (key) {
-
-            return isFinite(this.valueOf()) ?
-                   this.getUTCFullYear()   + '-' +
-                 f(this.getUTCMonth() + 1) + '-' +
-                 f(this.getUTCDate())      + 'T' +
-                 f(this.getUTCHours())     + ':' +
-                 f(this.getUTCMinutes())   + ':' +
-                 f(this.getUTCSeconds())   + 'Z' : null;
-        };
-
-        String.prototype.toJSON =
-        Number.prototype.toJSON =
-        Boolean.prototype.toJSON = function (key) {
-            return this.valueOf();
-        };
-    }
-
-    var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
-        escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
-        gap,
-        indent,
-        meta = {    // table of character substitutions
-            '\b': '\\b',
-            '\t': '\\t',
-            '\n': '\\n',
-            '\f': '\\f',
-            '\r': '\\r',
-            '"' : '\\"',
-            '\\': '\\\\'
-        },
-        rep;
-
-
-    function quote(string) {
-
-// If the string contains no control characters, no quote characters, and no
-// backslash characters, then we can safely slap some quotes around it.
-// Otherwise we must also replace the offending characters with safe escape
-// sequences.
-
-        escapable.lastIndex = 0;
-        return escapable.test(string) ?
-            '"' + string.replace(escapable, function (a) {
-                var c = meta[a];
-                return typeof c === 'string' ? c :
-                    '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
-            }) + '"' :
-            '"' + string + '"';
-    }
-
-
-    function str(key, holder) {
-
-// Produce a string from holder[key].
-
-        var i,          // The loop counter.
-            k,          // The member key.
-            v,          // The member value.
-            length,
-            mind = gap,
-            partial,
-            value = holder[key];
-
-// If the value has a toJSON method, call it to obtain a replacement value.
-
-        if (value && typeof value === 'object' &&
-                typeof value.toJSON === 'function') {
-            value = value.toJSON(key);
-        }
-
-// If we were called with a replacer function, then call the replacer to
-// obtain a replacement value.
-
-        if (typeof rep === 'function') {
-            value = rep.call(holder, key, value);
-        }
-
-// What happens next depends on the value's type.
-
-        switch (typeof value) {
-        case 'string':
-            return quote(value);
-
-        case 'number':
-
-// JSON numbers must be finite. Encode non-finite numbers as null.
-
-            return isFinite(value) ? String(value) : 'null';
-
-        case 'boolean':
-        case 'null':
-
-// If the value is a boolean or null, convert it to a string. Note:
-// typeof null does not produce 'null'. The case is included here in
-// the remote chance that this gets fixed someday.
-
-            return String(value);
-
-// If the type is 'object', we might be dealing with an object or an array or
-// null.
-
-        case 'object':
-
-// Due to a specification blunder in ECMAScript, typeof null is 'object',
-// so watch out for that case.
-
-            if (!value) {
-                return 'null';
-            }
-
-// Make an array to hold the partial results of stringifying this object value.
-
-            gap += indent;
-            partial = [];
-
-// Is the value an array?
-
-            if (Object.prototype.toString.apply(value) === '[object Array]') {
-
-// The value is an array. Stringify every element. Use null as a placeholder
-// for non-JSON values.
-
-                length = value.length;
-                for (i = 0; i < length; i += 1) {
-                    partial[i] = str(i, value) || 'null';
-                }
-
-// Join all of the elements together, separated with commas, and wrap them in
-// brackets.
-
-                v = partial.length === 0 ? '[]' :
-                    gap ? '[\n' + gap +
-                            partial.join(',\n' + gap) + '\n' +
-                                mind + ']' :
-                          '[' + partial.join(',') + ']';
-                gap = mind;
-                return v;
-            }
-
-// If the replacer is an array, use it to select the members to be stringified.
-
-            if (rep && typeof rep === 'object') {
-                length = rep.length;
-                for (i = 0; i < length; i += 1) {
-                    k = rep[i];
-                    if (typeof k === 'string') {
-                        v = str(k, value);
-                        if (v) {
-                            partial.push(quote(k) + (gap ? ': ' : ':') + v);
-                        }
-                    }
-                }
-            } else {
-
-// Otherwise, iterate through all of the keys in the object.
-
-                for (k in value) {
-                    if (Object.hasOwnProperty.call(value, k)) {
-                        v = str(k, value);
-                        if (v) {
-                            partial.push(quote(k) + (gap ? ': ' : ':') + v);
-                        }
-                    }
-                }
-            }
-
-// Join all of the member texts together, separated with commas,
-// and wrap them in braces.
-
-            v = partial.length === 0 ? '{}' :
-                gap ? '{\n' + gap + partial.join(',\n' + gap) + '\n' +
-                        mind + '}' : '{' + partial.join(',') + '}';
-            gap = mind;
-            return v;
-        }
-        return v;
-    }
-
-// If the JSON object does not yet have a stringify method, give it one.
-
-    if (typeof JSON.stringify !== 'function') {
-        JSON.stringify = function (value, replacer, space) {
-
-// The stringify method takes a value and an optional replacer, and an optional
-// space parameter, and returns a JSON text. The replacer can be a function
-// that can replace values, or an array of strings that will select the keys.
-// A default replacer method can be provided. Use of the space parameter can
-// produce text that is more easily readable.
-
-            var i;
-            gap = '';
-            indent = '';
-
-// If the space parameter is a number, make an indent string containing that
-// many spaces.
-
-            if (typeof space === 'number') {
-                for (i = 0; i < space; i += 1) {
-                    indent += ' ';
-                }
-
-// If the space parameter is a string, it will be used as the indent string.
-
-            } else if (typeof space === 'string') {
-                indent = space;
-            }
-
-// If there is a replacer, it must be a function or an array.
-// Otherwise, throw an error.
-
-            rep = replacer;
-            if (replacer && typeof replacer !== 'function' &&
-                    (typeof replacer !== 'object' ||
-                     typeof replacer.length !== 'number')) {
-                throw new Error('JSON.stringify');
-            }
-
-// Make a fake root object containing our value under the key of ''.
-// Return the result of stringifying the value.
-
-            return str('', {'': value});
-        };
-    }
-
-
-// If the JSON object does not yet have a parse method, give it one.
-
-    if (typeof JSON.parse !== 'function') {
-        JSON.parse = function (text, reviver) {
-
-// The parse method takes a text and an optional reviver function, and returns
-// a JavaScript value if the text is a valid JSON text.
-
-            var j;
-
-            function walk(holder, key) {
-
-// The walk method is used to recursively walk the resulting structure so
-// that modifications can be made.
-
-                var k, v, value = holder[key];
-                if (value && typeof value === 'object') {
-                    for (k in value) {
-                        if (Object.hasOwnProperty.call(value, k)) {
-                            v = walk(value, k);
-                            if (v !== undefined) {
-                                value[k] = v;
-                            } else {
-                                delete value[k];
-                            }
-                        }
-                    }
-                }
-                return reviver.call(holder, key, value);
-            }
-
-
-// Parsing happens in four stages. In the first stage, we replace certain
-// Unicode characters with escape sequences. JavaScript handles many characters
-// incorrectly, either silently deleting them, or treating them as line endings.
-
-            text = String(text);
-            cx.lastIndex = 0;
-            if (cx.test(text)) {
-                text = text.replace(cx, function (a) {
-                    return '\\u' +
-                        ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
-                });
-            }
-
-// In the second stage, we run the text against regular expressions that look
-// for non-JSON patterns. We are especially concerned with '()' and 'new'
-// because they can cause invocation, and '=' because it can cause mutation.
-// But just to be safe, we want to reject all unexpected forms.
-
-// We split the second stage into 4 regexp operations in order to work around
-// crippling inefficiencies in IE's and Safari's regexp engines. First we
-// replace the JSON backslash pairs with '@' (a non-JSON character). Second, we
-// replace all simple value tokens with ']' characters. Third, we delete all
-// open brackets that follow a colon or comma or that begin the text. Finally,
-// we look to see that the remaining characters are only whitespace or ']' or
-// ',' or ':' or '{' or '}'. If that is so, then the text is safe for eval.
-
-            if (/^[\],:{}\s]*$/.
-test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, '@').
-replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').
-replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
-
-// In the third stage we use the eval function to compile the text into a
-// JavaScript structure. The '{' operator is subject to a syntactic ambiguity
-// in JavaScript: it can begin a block or an object literal. We wrap the text
-// in parens to eliminate the ambiguity.
-
-                j = eval('(' + text + ')');
-
-// In the optional fourth stage, we recursively walk the new structure, passing
-// each name/value pair to a reviver function for possible transformation.
-
-                return typeof reviver === 'function' ?
-                    walk({'': j}, '') : j;
-            }
-
-// If the text is not JSON parseable, then a SyntaxError is thrown.
-
-            throw new SyntaxError('JSON.parse');
-        };
-    }
-}());
-
-/**
- * @class Ext.util.JSON
- * Modified version of Douglas Crockford"s json.js that doesn"t
- * mess with the Object prototype
- * http://www.json.org/js.html
- * @singleton
- * @ignore
- */
-Ext.util.JSON = {
-    encode: function(o) {
-        return JSON.stringify(o);
-    },
-
-    decode: function(s) {
-        return JSON.parse(s);
-    }
-};
-
-/**
- * Shorthand for {@link Ext.util.JSON#encode}
- * @param {Mixed} o The variable to encode
- * @return {String} The JSON string
- * @member Ext
- * @method encode
- * @ignore
- */
-Ext.encode = Ext.util.JSON.encode;
-/**
- * Shorthand for {@link Ext.util.JSON#decode}
- * @param {String} json The JSON string
- * @param {Boolean} safe (optional) Whether to return null or throw an exception if the JSON is invalid.
- * @return {Object} The resulting object
- * @member Ext
- * @method decode
- * @ignore
- */
-Ext.decode = Ext.util.JSON.decode;
-
 /**
  * @private
  */
@@ -90198,17 +90890,7 @@ Ext.define('Ext.viewport.Default', {
 
     config: {
         /**
-         * @cfg {Boolean} autoMaximize
-         * Whether or not to always automatically maximize the viewport on first load and all subsequent orientation changes.
-         *
-         * This is set to `false` by default for a number of reasons:
-         *
-         * - Orientation change performance is drastically reduced when this is enabled, on all devices.
-         * - On some devices (mostly Android) this can sometimes cause issues when the default browser zoom setting is changed.
-         * - When wrapping your phone in a native shell, you may get a blank screen.
-         * - When bookmarked to the homescreen (iOS), you may get a blank screen.
-         *
-         * @accessor
+         * @private
          */
         autoMaximize: false,
 
@@ -90301,6 +90983,8 @@ Ext.define('Ext.viewport.Default', {
     id: 'ext-viewport',
 
     isInputRegex: /^(input|textarea|select|a)$/i,
+
+    isInteractiveWebComponentRegEx: /^(audio|video)$/i,
 
     focusedElement: null,
 
@@ -90408,6 +91092,9 @@ Ext.define('Ext.viewport.Default', {
 
             if (osEnv.is.BlackBerry) {
                 classList.push(clsPrefix + 'bb');
+                if (Ext.browser.userAgent.match(/Kbd/gi)) {
+                    classList.push(clsPrefix + 'bb-keyboard');
+                }
             }
 
             if (Ext.browser.is.WebKit) {
@@ -90420,6 +91107,10 @@ Ext.define('Ext.viewport.Default', {
 
             if (Ext.browser.is.AndroidStock) {
                 classList.push(clsPrefix + 'android-stock');
+            }
+
+            if (Ext.browser.is.GoogleGlass) {
+                classList.push(clsPrefix + 'google-glass');
             }
 
             classList.push(clsPrefix + orientation);
@@ -90534,7 +91225,22 @@ Ext.define('Ext.viewport.Default', {
     },
 
     doPreventPanning: function(e) {
-        e.preventDefault();
+        var target = e.target, touch;
+
+        // If we have an interaction on a WebComponent we need to check the actual shadow dom element selected
+        // to determine if it is an input before preventing default behavior
+        // Side effect to this is if the shadow input does not do anything with 'touchmove' the user could pan
+        // the screen.
+        if (this.isInteractiveWebComponentRegEx.test(target.tagName) && e.touches && e.touches.length > 0) {
+            touch = e.touches[0];
+            if (touch && touch.target && this.isInputRegex.test(touch.target.tagName)) {
+                return;
+            }
+        }
+
+        if (target && target.nodeType === 1 && !this.isInputRegex.test(target.tagName)) {
+            e.preventDefault();
+        }
     },
 
     doPreventZooming: function(e) {
@@ -90543,7 +91249,13 @@ Ext.define('Ext.viewport.Default', {
             return;
         }
 
-        var target = e.target;
+        var target = e.target, touch;
+        if (this.isInteractiveWebComponentRegEx.test(target.tagName) && e.touches && e.touches.length > 0) {
+            touch = e.touches[0];
+            if (touch && touch.target && this.isInputRegex.test(touch.target.tagName)) {
+                return;
+            }
+        }
 
         if (target && target.nodeType === 1 && !this.isInputRegex.test(target.tagName)) {
             e.preventDefault();
@@ -91419,9 +92131,10 @@ Ext.define('Ext.viewport.Android', {
 
         this.callSuper(arguments);
 
-        this.bodyElement.on('resize', this.onResize, this, {
-            buffer: 1
-        });
+        // Viewport is initialized before event system, we need to wait until the application is ready before
+        // we add the resize listener. Otherwise it will only fire if another resize listener is added later.
+        var me = this;
+        Ext.onReady(function() { Ext.getBody().on('resize', me.onResize, me);});
     },
 
     getWindowWidth: function () {
@@ -91903,8 +92616,15 @@ Ext.define('Ext.viewport.Ios', {
                     window.scrollTo(0, 0);
 
                     this.callOverridden(arguments);
+                },
+
+                onElementBlur: function() {
+                    this.callOverridden(arguments);
+                    if (window.scrollY !== 0) {
+                        window.scrollTo(0, 0);
+                    }
                 }
-            })
+            });
         }
     }
 });
