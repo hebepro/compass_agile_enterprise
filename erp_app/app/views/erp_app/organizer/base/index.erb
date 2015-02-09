@@ -22,7 +22,7 @@
   <%= setup_js_authentication(@user) %>
 
   <!-- application resources -->
-  <% @user.get_application_resource_paths('organizer').each do |resource| %>
+  <% @user.get_application_resource_paths(:organizer).each do |resource| %>
     <%= javascript_include_tag(resource) %>
   <% end %>
   <!-- end application resources -->
@@ -51,12 +51,9 @@
 
     var organizerLayout = Ext.create("Compass.ErpApp.Organizer.Layout", {logout_url: '/session/sign_out'});
 
-    <%@organizer.applications.each do |application|%>
+    <% @user.apps.each do |application| %>
 
-    var <%=application.internal_identifier.camelize%> =
-    Ext.create("Compass.ErpApp.Organizer.Applications.<%= raw application.internal_identifier.camelize%>.Base", {organizerLayout: organizerLayout});
-    <%=application.internal_identifier.camelize%>.
-    setup();
+    var <%=application.internal_identifier.camelize%> =Ext.create("Compass.ErpApp.Organizer.Applications.<%= raw application.internal_identifier.camelize%>.Base", {organizerLayout: organizerLayout});<%=application.internal_identifier.camelize%>.setup();
 
     <%end%>
     organizerLayout.setupLogoutButton();

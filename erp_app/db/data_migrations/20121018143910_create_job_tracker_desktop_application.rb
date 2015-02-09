@@ -3,17 +3,12 @@ class CreateJobTrackerDesktopApplication
     app = DesktopApplication.create(
       :description => 'Job Tracker',
       :icon => 'icon-calendar',
-      :javascript_class_name => 'Compass.ErpApp.Desktop.Applications.JobTracker',
-      :internal_identifier => 'job_tracker',
-      :shortcut_id => 'job_tracker-win'
+      :internal_identifier => 'job_tracker'
     )
-    pt1 = PreferenceType.iid('desktop_shortcut')
-    pt1.preferenced_records << app
-    pt1.save
 
-    pt2 = PreferenceType.iid('autoload_application')
-    pt2.preferenced_records << app
-    pt2.save
+    admin_user = User.find_by_username('admin')
+    admin_user.desktop_applications << app
+    admin_user.save
   end
 
   def self.down

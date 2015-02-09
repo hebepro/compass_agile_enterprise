@@ -6,7 +6,6 @@ module ErpApp
 
 		  def index
         @user     = current_user
-        @desktop  = @user.desktop
 			
         render :layout => false
 		  end

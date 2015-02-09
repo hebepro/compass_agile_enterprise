@@ -15,15 +15,6 @@ Compass.ErpApp.Organizer.Layout = function (config) {
 
         items: [
             {
-                text: 'Preferences',
-                iconCls: 'icon-gear',
-                handler: function () {
-                    var win = Ext.create("Compass.ErpApp.Organizer.PreferencesWindow", {iconCls: 'icon-gear'});
-                    win.show();
-                    win.setup();
-                }
-            },
-            {
                 text: 'Profile',
                 iconCls: 'icon-user',
                 handler: function () {

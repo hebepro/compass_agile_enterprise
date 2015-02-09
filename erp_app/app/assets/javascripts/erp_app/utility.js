@@ -684,3 +684,40 @@ Function.prototype.bindToEventHandler = function bindToEventHandler() {
     }
 };
 
+var stringToObject = function (str) {
+    var arr = str.split(".");
+
+    var fn = (window || this);
+    for (var i = 0, len = arr.length; i < len; i++) {
+        if (fn === undefined)
+            return undefined;
+
+        fn = fn[arr[i]];
+    }
+
+    if (typeof fn !== "object") {
+        return undefined;
+    }
+
+    return fn;
+};
+
+var stringToFunction = function (str) {
+    var arr = str.split(".");
+
+    var fn = (window || this);
+    for (var i = 0, len = arr.length; i < len; i++) {
+        if (fn === undefined)
+            return undefined;
+
+        fn = fn[arr[i]];
+    }
+
+    if (typeof fn !== "function") {
+        return undefined;
+    }
+
+    return fn;
+};
+
+
