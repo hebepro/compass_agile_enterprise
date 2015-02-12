@@ -30,7 +30,7 @@ module ErpBaseErpSvcs
               .where(model_table[:id].eq(status_applications_tbl[:status_application_record_id])
                      .and(status_applications_tbl[:status_application_record_type].eq(status_application_record_type)))
 
-              joins(:status_applications).where(status_applications_tbl[:id].in(current_status_select))
+              joins(:status_applications => :tracked_status_type).where(status_applications_tbl[:id].in(current_status_select))
             }
           end
         end
@@ -112,7 +112,7 @@ module ErpBaseErpSvcs
             raise "TrackedStatusType does not exist #{status.to_s}" unless tracked_status_type
 
             # if passed status is current status then do nothing
-            unless current_status == tracked_status_type.internal_identifier
+            unless self.current_status_type && (self.current_status_type.id == tracked_status_type.id)
               #set current StatusApplication thru_date to now
               cta = self.current_status_application
               unless cta.nil?
