@@ -118,6 +118,7 @@ class Invoice < ActiveRecord::Base
 
   def has_payments?(status=:all)
     selected_payment_applications = self.get_payment_applications(status)
+
     !(selected_payment_applications.nil? or selected_payment_applications.empty?)
   end
 
@@ -132,7 +133,9 @@ class Invoice < ActiveRecord::Base
                                     end
 
     unless self.items.empty?
-      selected_payment_applications = (selected_payment_applications | self.items.collect { |item| item.get_payment_applications(status) }).flatten! unless (self.items.collect { |item| item.get_payment_applications(status) }.empty?)
+      unless self.items.collect { |item| item.get_payment_applications(status) }.empty?
+        selected_payment_applications = (selected_payment_applications | self.items.collect { |item| item.get_payment_applications(status) }).flatten!
+      end
     end
 
     selected_payment_applications
