@@ -42,20 +42,15 @@ class ProductFeature < ActiveRecord::Base
       valid_feature_value_ids -= [value_id] unless test_product_feature
       next unless test_product_feature
 
-      # check that it's valid with each product feature yet filtered
-      # product_features.each do |product_feature|
-      #   # valid_feature_value_ids -= [value_id] unless self.valid_together?(product_feature,test_product_feature)
-      # end
-
       # Are all of the dependencies of this product feature in the given product_features?
       deps = {}
       test_product_feature.dependent_interactions.each do |dependency|
-        deps[dependency.interacted_product_feature.product_feature_type_id] ||= []
+        deps[dependency.interacted_product_feature.product_feature_type_id] ||= ['all']
         deps[dependency.interacted_product_feature.product_feature_type_id] << dependency.interacted_product_feature.product_feature_value_id
       end
       deps.each do |depends_on_feature_type_id_n, acceptable_value_ids_for_n|
         has_dependency = product_features.detect do |pf|
-          pf.product_feature_type_id == depends_on_feature_type_id_n && acceptable_value_ids_for_n.include?(pf.product_feature_value_id)
+          pf[:product_feature_type_id].to_i == depends_on_feature_type_id_n && acceptable_value_ids_for_n.include?(pf[:product_feature_value_id].to_i)
         end
         valid_feature_value_ids -= [value_id] unless has_dependency
       end
@@ -63,69 +58,13 @@ class ProductFeature < ActiveRecord::Base
       # Are none of the invalidators of this product feature in the given product_features?
       test_product_feature.invalid_interactions.each do |interaction|
         has_invalidator = product_features.detect do |pf|
-          pf.product_feature_type_id == interaction.interacted_product_feature.product_feature_type_id && pf.product_feature_value_id == interaction.interacted_product_feature.product_feature_value_id
+          pf[:product_feature_type_id] == interaction.interacted_product_feature.product_feature_type_id && pf[:product_feature_value_id] == interaction.interacted_product_feature.product_feature_value_id
         end
         valid_feature_value_ids -= [value_id] if has_invalidator
       end
 
     end
     valid_feature_value_ids.uniq
-  end
-
-  def self.valid_together?(product_feature, second_product_feature)
-    product_feature_dependency_chain = []
-    product_feature_invalidity_chain = []
-    second_product_feature_dependency_chain = []
-    second_product_feature_invalidity_chain = []
-    used_products_features = []
-
-    add_to_product_feature_interaction_chain = lambda do |product_feature, interaction_type, arr|
-      used_products_features[product_feature.id] = if used_products_features[product_feature.id]
-                                                     used_products_features[product_feature.id] + 1
-                                                   else
-                                                     1
-                                                   end
-      # prevent circular dependency-related infinite recursion
-      unless used_products_features[product_feature.id] > 4
-        # if this product feature has interactions of the specified type...
-        if product_feature.send("#{interaction_type}_interactions".to_sym)
-          # add it to the array ...
-          arr << product_feature.id
-          # If there exists a product feature with the interaction's feature type and feature value,
-          # see if it has interactions of the specified type. If so, recurse.
-          product_feature.send("#{interaction_type}_interactions".to_sym).each do |interaction|
-            new_feature_type_id = interaction.product_feature_type_id
-            new_feature_value_id = interaction.interacted_product_feature_value_id
-            new_product_feature = ProductFeature.joins(:product_feature_applicability).
-                where(product_feature_applicabilities:{product_feature_type_id:new_feature_type_id},
-                      product_features:{product_feature_value_id:new_feature_value_id}).first
-            add_to_product_feature_interaction_chain.call(new_product_feature, interaction_type, arr)
-          end
-        end
-      end
-    end
-
-    add_to_product_feature_interaction_chain.call(product_feature, 'dependent', product_feature_dependency_chain)
-    used_products_features = []
-    add_to_product_feature_interaction_chain.call(product_feature, 'invalid', product_feature_invalidity_chain)
-    used_products_features = []
-    add_to_product_feature_interaction_chain.call(second_product_feature, 'dependent', second_product_feature_dependency_chain)
-    used_products_features = []
-    add_to_product_feature_interaction_chain.call(second_product_feature, 'invalid', second_product_feature_invalidity_chain)
-    used_products_features = []
-
-    # return false if one invalidates the other
-    return false if product_feature_invalidity_chain.include? second_product_feature.id
-    return false if second_product_feature_invalidity_chain.include? product_feature.id
-
-    # return false if there is any overlap between their indirect dependencies & invalidators (A => B => C, A ≠> B ≠> C)
-    product_feature_dependency_chain.each {|el| return false if second_product_feature_invalidity_chain.include? el}
-    second_product_feature_dependency_chain.each {|el| return false if product_feature_invalidity_chain.include? el}
-
-    # return false if there is circular dependency between themselves or in their chains
-    product_feature_dependency_chain.each {|el| return false if second_product_feature_dependency_chain.include? el}
-
-    return true
   end
 
   def method_missing(name, *args)

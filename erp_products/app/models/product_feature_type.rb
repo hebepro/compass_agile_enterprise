@@ -11,6 +11,10 @@ class ProductFeatureType < ActiveRecord::Base
   include ErpTechSvcs::Utils::DefaultNestedSetMethods  # acts_as_nested_set
 
 
+  def self.iid(description)
+    self.where("lower(description) = ?", description.downcase).first
+  end
+
   def to_record_representation(root = ProductFeatureType.root)
     # returns a string of category descriptions like
     # 'main_category > sub_category n > ... > this category instance'
