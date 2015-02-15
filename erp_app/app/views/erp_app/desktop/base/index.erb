@@ -139,8 +139,11 @@
   <%= setup_js_authentication(@user) %>
 
   <!-- application resources -->
-  <% @user.get_application_resource_paths(:desktop).each do |path| %>
+  <% @user.get_application_resource_paths(:desktop, :js).each do |path| %>
     <%= javascript_include_tag(path) %>
+  <% end %>
+
+  <% @user.get_application_resource_paths(:desktop, :css).each do |path| %>
     <%= stylesheet_link_tag(path) %>
   <% end %>
 

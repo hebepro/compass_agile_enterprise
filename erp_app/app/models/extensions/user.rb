@@ -9,7 +9,7 @@ User.class_eval do
     preference_type = PreferenceType.iid(preference_type) if preference_type.is_a? String
     raise 'Preference type does not exist' if preference_type.nil?
     user_preference = self.user_preferences.joins('join preferences on preferences.id = user_preferences.preference_id')
-                                           .where('preference_type_id = ?', preference_type.id).first
+                          .where('preference_type_id = ?', preference_type.id).first
     unless user_preference.nil?
       user_preference.preference.preference_option.value
     else
@@ -27,7 +27,7 @@ User.class_eval do
     raise 'Preference option does not exist' if preference_option.nil?
 
     user_preference = self.user_preferences.joins('join preferences on preferences.id = user_preferences.preference_id')
-                                            .where('preference_type_id = ?', preference_type.id).first
+                          .where('preference_type_id = ?', preference_type.id).first
     if user_preference.nil?
       preference = Preference.create(:preference_type => preference_type, :preference_option => preference_option)
       UserPreference.create(:user => self, :preference => preference)
@@ -39,17 +39,21 @@ User.class_eval do
     end
   end
 
-  def get_application_resource_paths(application_type)
+  def get_application_resource_paths(application_type, type)
     config = Rails.application.config
 
     if application_type == :desktop
       desktop_applications.collect do |app|
-        File.join(config.assets.prefix, 'erp_app', 'desktop', 'applications', app.internal_identifier, "app")
-      end.flatten
+        if Rails.application.assets.find_asset File.join('erp_app', 'desktop', 'applications', app.internal_identifier, "app.#{type.to_s}")
+          File.join(config.assets.prefix, 'erp_app', 'desktop', 'applications', app.internal_identifier, "app")
+        end
+      end.flatten.compact
     else
       apps.collect do |app|
-        File.join(config.assets.prefix, 'erp_app', 'organizer', 'applications', app.internal_identifier, "app")
-      end.flatten
+        if Rails.application.assets.find_asset File.join('erp_app', 'organizer', 'applications', app.internal_identifier, "app.#{type.to_s}")
+          File.join(config.assets.prefix, 'erp_app', 'organizer', 'applications', app.internal_identifier, "app")
+        end
+      end.flatten.compact
     end
   end
 

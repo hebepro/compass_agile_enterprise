@@ -410,7 +410,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
         });
         toolBarItems.push({
             text: 'Search',
-            iconCls: 'icon-search-light',
+            iconCls: 'icon-search-dark',
             handler: function (button) {
                 var username = Ext.getCmp('user_search_field').getValue();
                 usersStore.setProxy({
@@ -433,7 +433,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
         config = Ext.apply({
             width: 430,
             region: 'west',
-            split:true,
+            split: true,
             collapsible: true,
             header: false,
             store: usersStore,
@@ -450,8 +450,8 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
                 displayMsg: 'Displaying {0} - {1} of {2}',
                 emptyMsg: "No Users"
             }),
-            listeners:{
-                itemdblclick: function(grid, record, item, index){
+            listeners: {
+                itemdblclick: function (grid, record, item, index) {
                     me.viewUser(record);
                 }
             }

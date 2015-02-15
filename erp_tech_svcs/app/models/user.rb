@@ -194,11 +194,18 @@ class User < ActiveRecord::Base
 
   def to_data_hash
     {
-        :authToken => self.auth_token,
-        :firstName => self.party.business_party.current_first_name,
-        :lastName => self.party.business_party.current_last_name,
-        :displayName => self.party.description,
-        :internalId => self.id
+        :auth_token => self.auth_token,
+        :first_name => self.party.business_party.try('current_first_name'),
+        :last_name => self.party.business_party.try('current_last_name'),
+        :display_name => self.party.description,
+        :server_id => self.id,
+        :username => self.username,
+        :email => self.email,
+        :last_login_at => self.last_login_at,
+        :last_activity_at => self.last_activity_at,
+        :failed_logins_count => self.failed_logins_count,
+        :created_at => self.created_at,
+        :updated_at => self.updated_at
     }
   end
 

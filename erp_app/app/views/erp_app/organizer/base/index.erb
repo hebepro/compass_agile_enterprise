@@ -22,8 +22,12 @@
   <%= setup_js_authentication(@user) %>
 
   <!-- application resources -->
-  <% @user.get_application_resource_paths(:organizer).each do |resource| %>
-    <%= javascript_include_tag(resource) %>
+  <% @user.get_application_resource_paths(:organizer, :js).each do |path| %>
+    <%= javascript_include_tag(path) %>
+  <% end %>
+
+  <% @user.get_application_resource_paths(:organizer, :css).each do |path| %>
+    <%= stylesheet_link_tag(path) %>
   <% end %>
   <!-- end application resources -->
 
