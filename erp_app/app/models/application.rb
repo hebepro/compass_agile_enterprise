@@ -16,6 +16,10 @@ class Application < ActiveRecord::Base
       where('type is null')
     end
 
+    def allows_business_modules
+      where('allow_business_modules = ?', true)
+    end
+
     def desktop_applications
       where('type == ?', 'DesktopApplication')
     end
