@@ -1,51 +1,53 @@
-<div id="<%= widget_result_id %>">
-  <% if @message %>
+<div class="manage-profile-widget">
+  <div id="<%= widget_result_id %>">
+    <% if @message %>
       <div class="alert alert-success">
         <%= @message %>
       </div>
-  <% end %>
-</div>
+    <% end %>
+  </div>
 
-<div class="panel-group" id="accordion">
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" data-parent="#accordion" href="#userInformation">
-          <img style="padding-right:10px;" src="/assets/widgets/manage_profile/user_information.png"><span>User Information</span>
-        </a>
-      </h4>
-    </div>
-    <div id="userInformation" class="panel-collapse collapse in">
-      <div class="panel-body">
-        <%= render :partial => '/user_information_form' %>
+  <div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          <a data-toggle="collapse" data-parent="#accordion" href="#userInformation">
+            <img style="padding-right:10px;" src="/assets/widgets/manage_profile/user_information.png"><span>User Information</span>
+          </a>
+        </h4>
+      </div>
+      <div id="userInformation" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <%= render :partial => '/user_information_form' %>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" data-parent="#accordion" href="#password">
-          <img style="padding-right:10px;" src="/assets/widgets/manage_profile/password.png"><span>Password</span>
-        </a>
-      </h4>
-    </div>
-    <div id="password" class="panel-collapse collapse">
-      <div class="panel-body">
-        <%= render :partial => '/password_form' %>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          <a data-toggle="collapse" data-parent="#accordion" href="#password">
+            <img style="padding-right:10px;" src="/assets/widgets/manage_profile/password.png"><span>Password</span>
+          </a>
+        </h4>
+      </div>
+      <div id="password" class="panel-collapse collapse">
+        <div class="panel-body">
+          <%= render :partial => '/password_form' %>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" data-parent="#accordion" href="#contactInformation">
-          <img style="padding-right:10px;" src="/assets/widgets/manage_profile/contact_information.png"><span>Contact Information</span>
-        </a>
-      </h4>
-    </div>
-    <div id="contactInformation" class="panel-collapse collapse">
-      <div class="panel-body">
-        <%= render :partial => '/contact_information_form' %>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          <a data-toggle="collapse" data-parent="#accordion" href="#contactInformation">
+            <img style="padding-right:10px;" src="/assets/widgets/manage_profile/contact_information.png"><span>Contact Information</span>
+          </a>
+        </h4>
+      </div>
+      <div id="contactInformation" class="panel-collapse collapse">
+        <div class="panel-body">
+          <%= render :partial => '/contact_information_form' %>
+        </div>
       </div>
     </div>
   </div>

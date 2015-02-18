@@ -11,8 +11,8 @@ module ErpApp
             :@widgets => [],
             :@shared_js_assets => [],
             :@shared_css_assets => [],
-            :@session_warn_after => 18, #in minutes
-            :@session_redirect_after => 20,#in minutes
+            :@session_warn_after => 60, #in minutes
+            :@session_redirect_after => 90,#in minutes
             :@max_js_loader_order_index => 9999 # max loader order index for a js file
         }
       end
