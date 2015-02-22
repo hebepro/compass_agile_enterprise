@@ -10,7 +10,7 @@ module Widgets
         @content_type = params[:content_type]
         @results_permalink = params[:results_permalink]
         @per_page = params[:per_page] || 10
-        @redirect_results = params[:redirect_results] || false
+        @redirect_results = params[:redirect_results]
         @inline = !@results_permalink.blank?
         @results = nil
 
@@ -25,7 +25,7 @@ module Widgets
       end
 
       def search
-        @query = params[:query].strip
+        @query = params[:search_query].strip
         @content_type = params[:content_type]
         @section_unique_name = params[:section_unique_name]
         @per_page = params[:per_page]

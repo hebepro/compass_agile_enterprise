@@ -14,24 +14,84 @@ module ErpBaseErpSvcs
             has_many :status_applications, :as => :status_application_record, :dependent => :destroy
 
             scope :with_status, lambda { |status_type_iids|
-              joins(:status_applications => :tracked_status_type).
-                  where("status_applications.thru_date IS NULL AND tracked_status_types.internal_identifier IN (?)",
-                        status_type_iids)
-            }
+                                joins(:status_applications => :tracked_status_type).
+                                    where("status_applications.thru_date IS NULL AND tracked_status_types.internal_identifier IN (?)",
+                                          status_type_iids)
+                              }
 
-            scope :with_current_status, lambda {
-              model_table = self.arel_table
-              status_applications_tbl = StatusApplication.arel_table
+            # scope record by its current status application
+            # status_type_iids can either be an Array of status to scope by or a Hash with the parent status
+            # as the key and the children statues to scope by as the value
+            scope :with_current_status, lambda { |status_type_iids=[]|
+                                        model_table = self.arel_table
+                                        status_applications_tbl = StatusApplication.arel_table
 
-              #determine status_application_record_type
-              status_application_record_type = (self.superclass == ::ActiveRecord::Base) ? self.name.to_s : self.superclass.to_s
+                                        #determine status_application_record_type
+                                        status_application_record_type = (self.superclass == ::ActiveRecord::Base) ? self.name.to_s : self.superclass.to_s
 
-              current_status_select = status_applications_tbl.project(status_applications_tbl[:id].maximum)
-              .where(model_table[:id].eq(status_applications_tbl[:status_application_record_id])
-                     .and(status_applications_tbl[:status_application_record_type].eq(status_application_record_type)))
+                                        current_status_select = status_applications_tbl.project(status_applications_tbl[:id].maximum)
+                                                                    .where(model_table[:id].eq(status_applications_tbl[:status_application_record_id])
+                                                                               .and(status_applications_tbl[:status_application_record_type].eq(status_application_record_type)))
 
-              joins(:status_applications => :tracked_status_type).where(status_applications_tbl[:id].in(current_status_select))
-            }
+                                        statement = joins(:status_applications => :tracked_status_type).where(status_applications_tbl[:id].in(current_status_select))
+
+                                        if status_type_iids
+                                          status_ids = []
+
+                                          if status_type_iids.is_a?(Hash)
+                                            parent_status = TrackedStatusType.iid(status_type_iids.keys.first)
+                                            status_ids = parent_status.children.where(:internal_identifier => status_type_iids.values.first).pluck(:id)
+
+                                          elsif status_type_iids.is_a?(Array)
+                                            unless status_type_iids.empty?
+                                              status_ids = order_statuses.children.where(:internal_identifier => status_type_iids).pluck(:id)
+                                            end
+                                          end
+
+                                          unless status_ids.empty?
+                                            statement = statement.where(TrackedStatusType.arel_table[:id].in status_ids)
+                                          end
+                                        end
+
+                                        statement
+                                      }
+
+            # scope record by its current status application and exclude records with the passed statuses
+            # status_type_iids can either be an Array of status to scope by or a Hash with the parent status
+            # as the key and the children statues to scope by as the value
+            scope :without_current_status, lambda { |status_type_iids=[]|
+                                           model_table = self.arel_table
+                                           status_applications_tbl = StatusApplication.arel_table
+
+                                           #determine status_application_record_type
+                                           status_application_record_type = (self.superclass == ::ActiveRecord::Base) ? self.name.to_s : self.superclass.to_s
+
+                                           current_status_select = status_applications_tbl.project(status_applications_tbl[:id].maximum)
+                                                                       .where(model_table[:id].eq(status_applications_tbl[:status_application_record_id])
+                                                                                  .and(status_applications_tbl[:status_application_record_type].eq(status_application_record_type)))
+
+                                           statement = joins(:status_applications => :tracked_status_type).where(status_applications_tbl[:id].in(current_status_select))
+
+                                           if status_type_iids
+                                             status_ids = []
+
+                                             if status_type_iids.is_a?(Hash)
+                                               parent_status = TrackedStatusType.iid(status_type_iids.keys.first)
+                                               status_ids = parent_status.children.where(:internal_identifier => status_type_iids.values.first).pluck(:id)
+
+                                             elsif status_type_iids.is_a?(Array)
+                                               unless status_type_iids.empty?
+                                                 status_ids = order_statuses.children.where(:internal_identifier => status_type_iids).pluck(:id)
+                                               end
+                                             end
+
+                                             unless status_ids.empty?
+                                               statement = statement.where(TrackedStatusType.arel_table[:id].in status_ids)
+                                             end
+                                           end
+
+                                           statement
+                                         }
           end
         end
 

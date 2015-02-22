@@ -23,6 +23,11 @@ module Knitkit
             # - use defined layout
             def render_menu(contents, options={})
               locals = {:contents => contents}
+
+              if options[:locals]
+                locals = locals.merge(options[:locals])
+              end
+
               if options[:menu]
                 menu = WebsiteNav.find_by_name_and_website_id(options[:menu], @website.id)
                 raise "Menu with name #{options[:menu]} does not exist" if menu.nil?
@@ -49,7 +54,7 @@ module Knitkit
               if options[:menu]
                 menu = WebsiteNav.find_by_name_and_website_id(options[:menu], @website.id)
                 raise "Menu with name #{options[:menu]} does not exist" if menu.nil?
-                locals[:menu_items] = (options[:menu_item].nil? ? menu.all_menu_items.find{|item| menu_item_selected(item)}.positioned_children : menu.all_menu_items.find{|item| item.title = options[:menu_item]}.positioned_children)
+                locals[:menu_items] = (options[:menu_item].nil? ? menu.all_menu_items.find { |item| menu_item_selected(item) }.positioned_children : menu.all_menu_items.find { |item| item.title = options[:menu_item] }.positioned_children)
                 raise "No menu items exist" if locals[:menu_items].nil?
                 layout = options[:layout] ? "menus/#{options[:layout]}" : "menus/knitkit/default_sub_menu"
               else

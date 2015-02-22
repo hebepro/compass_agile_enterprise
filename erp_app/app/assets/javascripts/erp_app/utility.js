@@ -466,7 +466,7 @@ function OnDemandLoadByAjax() {
                 return;
             scriptToLoad.status = 'success';
             self.scriptDone();
-        }
+        };
         s.onerror = function () {
             head.removeChild(s);
             scriptToLoad.status = 'failure';
