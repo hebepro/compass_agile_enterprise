@@ -106,7 +106,7 @@ Ext.define("Compass.ErpApp.Shared.CodeMirror", {
     /**
      * @cfg {Boolean} enableLineWrapping Whether CodeMirror should scroll or wrap for long lines.
      */
-    enableLineWrapping: false,
+    enableLineWrapping: true,
 
     /**
      * @cfg {Boolean} enableLineNumbers Whether to show line numbers to the left of the editor.
@@ -174,7 +174,6 @@ Ext.define("Compass.ErpApp.Shared.CodeMirror", {
      * @cfg {Array} additional toolbar items to add.
      */
     tbarItems: [],
-
 
     /**
      * @cfg {Array} disable toolbar.
@@ -268,10 +267,7 @@ Ext.define("Compass.ErpApp.Shared.CodeMirror", {
                         var mode = newValue;
 
                         if (newValue == 'rhtml') {
-                            mode = {
-                                name: 'htmlembedded',
-                                scriptingModeSpec: "ruby"
-                            }
+                            mode = 'application/x-erb'
                         }
 
                         me.codeMirrorInstance.setOption('mode', mode);
@@ -359,16 +355,14 @@ Ext.define("Compass.ErpApp.Shared.CodeMirror", {
             modeCombo = me.down('combo');
 
         if (mode == 'rhtml') {
-            codeMirrorMode = {
-                name: 'htmlembedded',
-                scriptingModeSpec: "ruby"
-            }
+            codeMirrorMode = 'application/x-erb'
         }
         else{
             codeMirrorMode = mode;
         }
 
         this.initialConfig.codeMirrorConfig = Ext.apply({
+            foldGutter: me.enableCodeFolding,
             matchBrackets: me.enableMatchBrackets,
             electricChars: me.enableElectricChars,
             indentUnit: me.indentUnit,
@@ -378,13 +372,12 @@ Ext.define("Compass.ErpApp.Shared.CodeMirror", {
             lineNumbers: me.enableLineNumbers,
             lineWrapping: me.enableLineWrapping,
             firstLineNumber: me.firstLineNumber,
-            enableCodeFolding: me.enableCodeFolding,
             tabSize: me.tabSize,
-            gutter: me.enableGutter,
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
             fixedGutter: me.enableFixedGutter,
             theme: me.theme,
             mode: codeMirrorMode,
-            undoDepth: 3,
+            undoDepth: 5,
             extraKeys: {
                 "Ctrl-S": function (instance) {
                     me.fireEvent('save', me, me.getValue());

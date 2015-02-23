@@ -39,13 +39,6 @@ module ErpApp
               end
             end
 
-            def include_code_mirror_library(theme='vibrant-ink')
-              resources = static_javascript_include_tag("codemirror/lib/codemirror.js")
-              resources << (raw "<link rel=\"stylesheet\" type=\"text/css\" href=\"/javascripts/codemirror/lib/codemirror.css\" />")
-              resources << (raw "<link rel=\"stylesheet\" type=\"text/css\" href=\"/javascripts/codemirror/theme/"+theme+".css\" />")
-              resources
-            end
-
             def include_compass_ae_instance
               compass_ae_instance = CompassAeInstance.find_by_internal_identifier('base')
               json_hash = {
