@@ -127,7 +127,7 @@
   <%= load_shared_application_resources(:javascripts) %>
   <!-- end shared application resources -->
 
-  <%= javascript_include_tag("erp_app/desktop/applications/control_panel/app.js", "erp_app/desktop/applications/web_navigator/app.js") %>
+  <%= javascript_include_tag("erp_app/desktop/applications/control_panel/app", "erp_app/desktop/applications/web_navigator/app") %>
 
   <%= static_javascript_include_tag("ckeditor/ckeditor.js") %>
 
@@ -138,15 +138,13 @@
   <%= set_email_regex %>
 
   <!--stylesheets-->
-  <%= stylesheet_link_tag('erp_app/desktop/base.css') %>
+  <%= stylesheet_link_tag('erp_app/desktop/base') %>
 
   <!-- shared application resources -->
   <%= load_shared_application_resources(:stylesheets) %>
   <!-- end shared application resources -->
 
-  <%= stylesheet_link_tag('extjs/resources/css/callout-default.css') %>
-
-  <%= include_code_mirror_library %>
+  <%= stylesheet_link_tag('extjs/resources/css/callout-default') %>
 
   <%= setup_js_authentication(@user) %>
 
@@ -155,6 +153,10 @@
     <%= javascript_include_tag(path) %>
     <%= stylesheet_link_tag(path) %>
   <% end %>
+
+  <!-- code mirror -->
+  <%= javascript_include_tag("codemirror_compassae") %>
+  <%= stylesheet_link_tag("codemirror_compassae") %>
 
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
   <title>Compass Desktop</title>
