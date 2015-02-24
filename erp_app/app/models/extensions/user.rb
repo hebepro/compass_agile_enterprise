@@ -1,24 +1,16 @@
 User.class_eval do
-  has_many :app_containers, :dependent => :destroy
+
+  has_and_belongs_to_many :applications
+  has_and_belongs_to_many :desktop_applications, :conditions => {:type => 'DesktopApplication'}, :class_name => 'Application'
+  has_and_belongs_to_many :apps, :conditions => {:type => nil}, :class_name => 'Application'
+
   has_many :user_preferences, :dependent => :destroy
-
-  def desktop
-    Desktop.where('user_id = ?', self.id).first
-  end
-
-  def organizer
-    Organizer.where('user_id = ?', self.id).first
-  end
-
-  def mobile
-    Mobile.where('user_id = ?', self.id).first
-  end
 
   def get_preference(preference_type)
     preference_type = PreferenceType.iid(preference_type) if preference_type.is_a? String
     raise 'Preference type does not exist' if preference_type.nil?
     user_preference = self.user_preferences.joins('join preferences on preferences.id = user_preferences.preference_id')
-                                           .where('preference_type_id = ?', preference_type.id).first
+                          .where('preference_type_id = ?', preference_type.id).first
     unless user_preference.nil?
       user_preference.preference.preference_option.value
     else
@@ -35,8 +27,8 @@ User.class_eval do
     preference_option = PreferenceOption.find_by_value(preference_option) if (preference_option.is_a? String and preference_option.nil?)
     raise 'Preference option does not exist' if preference_option.nil?
 
-    user_preference = user_preference = self.user_preferences.joins('join preferences on preferences.id = user_preferences.preference_id')
-                                            .where('preference_type_id = ?', preference_type.id).first
+    user_preference = self.user_preferences.joins('join preferences on preferences.id = user_preferences.preference_id')
+                          .where('preference_type_id = ?', preference_type.id).first
     if user_preference.nil?
       preference = Preference.create(:preference_type => preference_type, :preference_option => preference_option)
       UserPreference.create(:user => self, :preference => preference)
@@ -48,11 +40,22 @@ User.class_eval do
     end
   end
 
-  def get_application_resource_paths(application_type)
+  def get_application_resource_paths(application_type, type)
     config = Rails.application.config
-    send(application_type).applications.collect do |app|
-      File.join(config.assets.prefix, 'erp_app', application_type, 'applications', app.internal_identifier, "app")
-    end.flatten
+
+    if application_type == :desktop
+      desktop_applications.collect do |app|
+        if Rails.application.assets.find_asset File.join('erp_app', 'desktop', 'applications', app.internal_identifier, "app.#{type.to_s}")
+          File.join(config.assets.prefix, 'erp_app', 'desktop', 'applications', app.internal_identifier, "app")
+        end
+      end.flatten.compact
+    else
+      apps.collect do |app|
+        if Rails.application.assets.find_asset File.join('erp_app', 'organizer', 'applications', app.internal_identifier, "app.#{type.to_s}")
+          File.join(config.assets.prefix, 'erp_app', 'organizer', 'applications', app.internal_identifier, "app")
+        end
+      end.flatten.compact
+    end
   end
 
 end

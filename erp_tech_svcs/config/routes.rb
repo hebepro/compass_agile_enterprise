@@ -9,4 +9,15 @@ Rails.application.routes.draw do
   get "/users/activate/:activation_token" => 'erp_tech_svcs/user#activate'
   post "/users/reset_password" => 'erp_tech_svcs/user#reset_password'
   post "/users/update_password" => 'erp_tech_svcs/user#update_password'
+
+  namespace :api do
+    namespace :v1 do
+      resources :users do
+        member do
+          put :reset_password
+        end
+      end
+    end
+  end
+
 end

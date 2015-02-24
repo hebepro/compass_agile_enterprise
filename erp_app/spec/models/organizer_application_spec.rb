@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe OrganizerApplication do
+describe Application do
   it "can be instantiated" do
-    OrganizerApplication.new.should be_an_instance_of(OrganizerApplication)
+    Application.new.should be_an_instance_of(Application)
   end
 
   it "can be saved successfully" do
-    OrganizerApplication.create(:javascript_class_name => 'test', :internal_identifier => 'test').should be_persisted
+    Application.create(:javascript_class_name => 'test', :internal_identifier => 'test').should be_persisted
   end
 end

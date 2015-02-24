@@ -193,13 +193,26 @@ class User < ActiveRecord::Base
   end
 
   def to_data_hash
-    {
-        :authToken => self.auth_token,
-        :firstName => self.party.business_party.current_first_name,
-        :lastName => self.party.business_party.current_last_name,
-        :displayName => self.party.description,
-        :internalId => self.id
+    data = {
+        :auth_token => self.auth_token,
+        :display_name => self.party.description,
+        :server_id => self.id,
+        :username => self.username,
+        :email => self.email,
+        :last_login_at => self.last_login_at,
+        :last_activity_at => self.last_activity_at,
+        :failed_logins_count => self.failed_logins_count,
+        :created_at => self.created_at,
+        :updated_at => self.updated_at
     }
+
+    # add first name and last name if this party is an Individual
+    if self.party.business_party.is_a?(Individual)
+      data[:first_name] = self.party.business_party.current_first_name
+      data[:last_name] = self.party.business_party.current_last_name
+    end
+
+    data
   end
 
 end

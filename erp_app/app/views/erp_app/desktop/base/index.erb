@@ -10,18 +10,6 @@
         margin-top: 275px;
     }
 
-    <%@desktop.applications.each do |application|%>
-    .<%=application.shortcut_id%>-shortcut {
-      background-image: url("/assets/icons/<%=application.icon.split('-')[1]%>/<%=application.icon.split('-')[1]%>_105x105.png");
-      height: 105px;
-      width: 105px;
-    }
-    .<%=application.shortcut_id%>-shortcut:hover {
-      background-image: url("/assets/icons/<%=application.icon.split('-')[1]%>/<%=application.icon.split('-')[1]%>_105x105_active.png");
-    }
-
-    <%end%>
-
     .user-mgt-win-shortcut {
         background-image: url("/assets/icons/user/user_105x105.png");
         height: 105px;
@@ -149,14 +137,16 @@
   <%= setup_js_authentication(@user) %>
 
   <!-- application resources -->
-  <% @user.get_application_resource_paths('desktop').each do |path| %>
+  <% @user.get_application_resource_paths(:desktop, :js).each do |path| %>
     <%= javascript_include_tag(path) %>
+  <% end %>
+
+  <% @user.get_application_resource_paths(:desktop, :css).each do |path| %>
     <%= stylesheet_link_tag(path) %>
   <% end %>
 
   <!-- code mirror -->
-  <%= javascript_include_tag("codemirror_compassae") %>
-  <%= stylesheet_link_tag("codemirror_compassae") %>
+  <%= include_code_mirror_library %>
 
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
   <title>Compass Desktop</title>
@@ -174,7 +164,7 @@
       return [
         new Compass.ErpApp.Desktop.Applications.ControlPanel(),
         new Compass.ErpApp.Desktop.Applications.WebNavigator(),
-        <%=raw @desktop.applications.collect{|app| "new #{app.javascript_class_name}()"}.join(",").to_s%>
+        <%=raw @user.desktop_applications.collect{|app| "new Compass.ErpApp.Desktop.Applications.#{app.internal_identifier.classify}()"}.join(",").to_s%>
       ]
     },
     getDesktopConfig: function () {
@@ -195,19 +185,8 @@
             { name: "User Management", iconCls: "user-mgt-win-shortcut", module: "user-management-win"},
             { name: "Website Builder", iconCls: "website-builder-win-shortcut", module: "knitkit-win"},
             { name: "DB Navigator", iconCls: "db-admin-win-shortcut", module: "rails_db_admin-win"}
-
-//##################################Support Dynamic Addition of desktop icons - maybe later#####################################################
-//            {
-//              name: "Web Navigator",
-//              iconCls: "web-navigator-win-shortcut",
-//              module: "web-navigator-win"
-//            }<%=(@desktop.shortcuts.count > 0) ? ',' : '' %>
-//            <!--<%=raw @desktop.shortcuts.collect{|app| "{name:'#{app.description}',iconCls:'#{app.shortcut_id}-shortcut',module:'#{app.shortcut_id}'}"}.join(",")%>-->
-//######################################################################################################################
-
           ]
         }),
-        //wallpaper: "/assets/images/wallpaper/<%=@desktop.get_preference(:desktop_background) %>",
         wallpaperStretch: true
       })
     },
@@ -304,10 +283,6 @@
     setTimeout(function () {
       Ext.get('loading').remove();
       Ext.get('loading-mask').fadeOut({remove: true});
-      <% @desktop.autoloads.each do |application| %>
-      compassDesktop.getModule('<%=application.shortcut_id%>').createWindow();
-      <% end %>
-
     }, 1000);
 
     Compass.ErpApp.Utility.preventBrowserBack();

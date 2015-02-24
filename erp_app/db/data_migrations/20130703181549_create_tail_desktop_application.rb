@@ -3,14 +3,14 @@ class CreateTailDesktopApplication
     app = DesktopApplication.create(
       :description => 'Tail',
       :icon => 'icon-document_pulse',
-      :javascript_class_name => 'Compass.ErpApp.Desktop.Applications.Tail',
       :internal_identifier => 'tail',
-      :shortcut_id => 'tail-win'
     )
-    
-    app.preference_types << PreferenceType.iid('desktop_shortcut')
-    app.preference_types << PreferenceType.iid('autoload_application')
-    app.save
+
+    admin_user = User.find_by_username('admin')
+    if admin_user
+      admin_user.desktop_applications << app
+      admin_user.save
+    end
   end
 
   def self.down

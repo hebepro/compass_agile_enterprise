@@ -3,14 +3,12 @@ class CreateDesktopAppConsole
     app = DesktopApplication.create(
       :description => 'Compass Console',
       :icon => 'icon-console',
-      :javascript_class_name => 'Compass.ErpApp.Desktop.Applications.CompassAeConsole',
       :internal_identifier => 'compass_ae_console',
-      :shortcut_id => 'compass_console-win'
     )
-    
-    app.preference_types << PreferenceType.iid('desktop_shortcut')
-    app.preference_types << PreferenceType.iid('autoload_application')
-    app.save
+
+    admin_user = User.find_by_username('admin')
+    admin_user.desktop_applications << app
+    admin_user.save
   end
 
   def self.down

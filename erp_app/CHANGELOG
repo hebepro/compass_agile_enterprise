@@ -1,3 +1,8 @@
+Version 4.0.1
+- Removed Scaffold App
+- Removed Organizer and Mobile Applications
+- Removed Widgets
+- Removed App Containers
 Version 4.0.0 - 11-19-2014
 - Updated major version of CompassAE Platform release
 - Updated CRM to restful routes

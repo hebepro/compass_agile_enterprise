@@ -21,7 +21,6 @@ module ErpApp
       Rails.application.config.assets.precompile += %w{ erp_app/shared/erp_app_shared.css erp_app/shared/compass-ext-all.css jquery_plugins/jquery.loadmask.css }
       Rails.application.config.assets.precompile += %w{ erp_app/login/main.css erp_app/desktop/base.css erp_app/organizer/base.css }
       Rails.application.config.assets.precompile += %w{ erp_app/desktop/applications/security_management/app.css }
-      Rails.application.config.assets.precompile += %w{ erp_app/mobile/app.css }
 
       # include js files
       Rails.application.config.assets.precompile += %w{ jquery_plugins/jquery.address.min.js jquery_plugins/jquery.loadmask.min.js }
@@ -32,7 +31,6 @@ module ErpApp
       Rails.application.config.assets.precompile += %w{ erp_app/login/mobile.js erp_app/login/window.js }
       Rails.application.config.assets.precompile += %w{ erp_app/organizer/app.js }
       Rails.application.config.assets.precompile += %w{ erp_app/desktop/app.js }
-      Rails.application.config.assets.precompile += %w{ erp_app/mobile/app.js }
 
       # add root shared directory
       Rails.application.config.assets.precompile += %w{ erp_app/shared/app.js }
@@ -100,46 +98,12 @@ module ErpApp
         next if dir == '.' or dir == '..'
         Rails.application.config.assets.precompile << File.join("erp_app", "organizer", "applications", dir, 'app.css')
       end if File.exists?(Rails.root.join(organizer_css_path))
-
-      #
-      # include mobile applications
-      #
-      mobile_js_path = File.join("app", "assets", "javascripts", "erp_app", "mobile", "applications")
-      mobile_css_path = File.join("app", "assets", "stylesheets", "erp_app", "mobile", "applications")
-
-      # add app.js files for organizer apps to precompile
-      Dir.foreach(root.join(mobile_js_path)) do |dir|
-        next if dir == '.' or dir == '..'
-        Rails.application.config.assets.precompile << File.join("erp_app", "mobile", "applications", dir, 'app.js')
-      end
-
-      # add app.css files for organizer apps to precompile
-      Dir.foreach(root.join(mobile_css_path)) do |dir|
-        next if dir == '.' or dir == '..'
-        Rails.application.config.assets.precompile << File.join("erp_app", "mobile", "applications", dir, 'app.css')
-      end
-
-      # add Rails root app.js files for organizer apps to precompile
-      Dir.foreach(Rails.root.join(mobile_js_path)) do |dir|
-        next if dir == '.' or dir == '..'
-        Rails.application.config.assets.precompile << File.join("erp_app", "mobile", "applications", dir, 'app.js')
-      end if File.exists?(Rails.root.join(mobile_js_path))
-
-      # add Rails root app.css files for organizer apps to precompile
-      Dir.foreach(Rails.root.join(mobile_css_path)) do |dir|
-        next if dir == '.' or dir == '..'
-        Rails.application.config.assets.precompile << File.join("erp_app", "mobile", "applications", dir, 'app.css')
-      end if File.exists?(Rails.root.join(mobile_css_path))
     end
 
     ActiveSupport.on_load(:active_record) do
       include ErpApp::Extensions::ActiveRecord::HasUserPreferences
     end
 
-    #add observers
-    #this is ugly need a better way
-    (config.active_record.observers.nil?) ? config.active_record.observers = [:user_app_container_observer] : config.active_record.observers << :user_app_container_observer
-    
     ErpBaseErpSvcs.register_as_compass_ae_engine(config, self)
     ::ErpApp::Widgets::Loader.load_root_widgets(config)
 
