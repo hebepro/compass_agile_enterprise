@@ -1,5 +1,6 @@
 User.class_eval do
 
+  has_and_belongs_to_many :applications
   has_and_belongs_to_many :desktop_applications, :conditions => {:type => 'DesktopApplication'}, :class_name => 'Application'
   has_and_belongs_to_many :apps, :conditions => {:type => nil}, :class_name => 'Application'
 

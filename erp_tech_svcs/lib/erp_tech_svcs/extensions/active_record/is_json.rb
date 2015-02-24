@@ -13,20 +13,8 @@ module ErpTechSvcs
 
         module ClassMethods
 
-          def is_json(attr_name, class_name=nil)
-            class_name = if class_name
-                           class_name
-                         else
-                           case ::ActiveRecord::Base.connection.instance_values["config"][:adapter]
-                             when 'postgresql'
-                               ::ActiveRecord::Coders::NestedHstore
-                             else
-                               JSON
-                           end
-                         end
-
-
-            serialize attr_name, class_name
+          def is_json(attr_name)
+            serialize attr_name, JSON
 
             extend SingletonMethods
             include InstanceMethods
@@ -51,14 +39,7 @@ module ErpTechSvcs
 
         module SingletonMethods
           def matches_is_json(attr_name, keyword)
-            if ::ActiveRecord::Base.connection.instance_values["config"][:adapter] == 'postgresql'
-              avals = Arel::Nodes::NamedFunction.new "AVALS", [ arel_table[attr_name.to_sym] ]
-              cast = Arel::Nodes::NamedFunction.new "CAST", [ avals.as("text") ]
-
-              cast.matches("%#{keyword}%")
-            else
-              arel_table[attr_name.to_sym].matches("%#{keyword}%")
-            end
+            arel_table[attr_name.to_sym].matches("%#{keyword}%")
           end
         end
 
