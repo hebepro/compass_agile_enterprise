@@ -9,6 +9,7 @@ class BaseErpServices < ActiveRecord::Migration
         t.string :type
         t.string :schema, :default => 'public'
         t.integer :parent_id
+        t.string :guid
         
         t.timestamps
       end
@@ -17,6 +18,7 @@ class BaseErpServices < ActiveRecord::Migration
       add_index :compass_ae_instances, :schema, :name => "schema_idx"
       add_index :compass_ae_instances, :type, :name => "type_idx"
       add_index :compass_ae_instances, :parent_id, :name => "parent_id_idx"
+      add_index :compass_ae_instances, :guid, :name => "guid_idx"
     end
 
     unless table_exists?(:compass_ae_instance_party_roles)
@@ -250,6 +252,8 @@ class BaseErpServices < ActiveRecord::Migration
         t.column :description, :string
         t.column :geo_country_id, :integer
         t.column :geo_zone_id, :integer
+        t.column :latitude, :decimal, :precision => 12, :scale => 8
+        t.column :longitude, :decimal, :precision => 12, :scale => 8
         t.timestamps
       end
       add_index :postal_addresses, :geo_country_id
@@ -434,6 +438,34 @@ class BaseErpServices < ActiveRecord::Migration
 
       add_index :valid_note_types, [:valid_note_type_record_id, :valid_note_type_record_type], :name => "valid_note_type_record_idx"
       add_index :valid_note_types, :note_type_id
+    end
+
+    unless table_exists?(:status_applications)
+      create_table :status_applications do |t|
+        t.references :tracked_status_type
+        t.references :status_application_record, :polymorphic => true
+        t.datetime  :from_date
+        t.datetime  :thru_date
+
+        t.timestamps
+      end
+
+      add_index :status_applications, [:status_application_record_id, :status_application_record_type], :name => 'status_applications_record_idx'
+      add_index :status_applications, :tracked_status_type_id, :name => 'tracked_status_type_id_idx'
+      add_index :status_applications, :from_date, :name => 'from_date_idx'
+      add_index :status_applications, :thru_date, :name => 'thru_date_idx'
+    end
+
+    unless table_exists?(:tracked_status_types)
+      create_table :tracked_status_types do |t|
+        t.string :description
+        t.string :internal_identifier
+        t.string :external_identifier
+
+        t.timestamps
+      end
+
+      add_index :tracked_status_types, :internal_identifier, :name => 'tracked_status_types_iid_idx'
     end
 
   end

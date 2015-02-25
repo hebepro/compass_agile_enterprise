@@ -66,62 +66,25 @@ class BaseAppFramework < ActiveRecord::Migration
       add_index :user_preferences, :preferenced_record_type
     end
 
-    unless table_exists?(:app_containers)
-      create_table :app_containers do |t|
-        t.references :user
-        t.string :description
-        t.string :internal_identifier
-        t.string :type
-
-        t.timestamps
-      end
-      add_index :app_containers, :user_id
-      add_index :app_containers, :type
-    end
-
     unless table_exists?(:applications)
       create_table :applications do |t|
         t.column :description, :string
         t.column :icon, :string
         t.column :internal_identifier, :string
-        t.column :javascript_class_name, :string
-        t.column :shortcut_id, :string
-        t.column :base_url, :string
         t.column :type, :string
+        t.column :can_delete, :boolean, :default => true
 
         t.timestamps
       end
     end
 
-    unless table_exists?(:app_containers_applications)
-      create_table :app_containers_applications, {:id => false} do |t|
-        t.column :app_container_id, :integer
-        t.column :application_id, :integer
-      end
-
-      add_index :app_containers_applications, :application_id
-      add_index :app_containers_applications, :app_container_id
+    create_table :applications_users, :id => false do |t|
+      t.references :application
+      t.references :user
     end
 
-    unless table_exists?(:widgets)
-      create_table :widgets do |t|
-        t.column :description, :string
-        t.column :internal_identifier, :string
-        t.column :icon, :string
-        t.column :xtype, :string
-
-        t.timestamps
-      end
-    end
-
-    unless table_exists?(:applications_widgets)
-      create_table :applications_widgets, {:id => false} do |t|
-        t.column :application_id, :integer
-        t.column :widget_id, :integer
-      end
-      add_index :applications_widgets, :application_id
-      add_index :applications_widgets, :widget_id
-    end
+    add_index :applications_users, :application_id, :name => 'app_users_app_idx'
+    add_index :applications_users, :user_id, :name => 'app_users_user_idx'
 
     unless table_exists?(:tree_menu_node_defs)
       create_table :tree_menu_node_defs do |t|
@@ -150,7 +113,7 @@ class BaseAppFramework < ActiveRecord::Migration
 
         t.timestamps
       end
-      
+
       add_index :configurations, :is_template
     end
 
@@ -190,6 +153,7 @@ class BaseAppFramework < ActiveRecord::Migration
         t.integer :rgt
 
         #custom columns go here
+        t.integer :precedence, :default => 0
         t.string :description
         t.string :internal_identifier
         t.boolean :allow_user_defined_options, :default => false
@@ -250,6 +214,29 @@ class BaseAppFramework < ActiveRecord::Migration
       add_index :configuration_items_configuration_options, :configuration_option_id, :name => 'conf_item_conf_opt_id_opt_idx'
     end
 
+    unless table_exists?(:job_trackers)
+      create_table :job_trackers do |t|
+        t.string :job_name
+        t.string :job_klass
+        t.string :run_time
+        t.datetime :last_run_at
+        t.datetime :next_run_at
+      end
+    end
+
+    # add indexes
+    add_index :preference_types, :internal_identifier, :name => 'preference_types_internal_identifier_idx'
+    add_index :preference_options, :internal_identifier, :name => 'preference_options_internal_identifier_idx'
+    add_index :valid_preference_types, :preference_type_id, :name => 'valid_preference_types_preference_type_id_idx'
+    add_index :valid_preference_types, :preferenced_record_id, :name => 'valid_preference_types_preferenced_record_id_idx'
+    add_index :app_containers, :internal_identifier, :name => 'app_containers_internal_identifier_idx'
+    add_index :widgets, :internal_identifier, :name => 'widgets_internal_identifier_idx'
+    add_index :configurations, :internal_identifier, :name => 'configurations_internal_identifier_idx'
+    add_index :configuration_item_types, :parent_id, :name => 'configuration_item_types_parent_id_idx'
+    add_index :configuration_item_types, :internal_identifier, :name => 'configuration_item_types_internal_identifier_idx'
+    add_index :applications, :internal_identifier, :name => 'applications_internal_identifier_idx'
+    add_index :configuration_item_types, :precedence, :name => 'config_item_type_precedence_idx'
+
   end
 
   def self.down
@@ -258,13 +245,14 @@ class BaseAppFramework < ActiveRecord::Migration
         :preference_options, :preference_options_preference_types,
         :valid_preference_types, :user_preferences,
         :app_containers, :app_containers_applications,
-        :applications_widgets,  :widgets, :tree_menu_node_defs,
+        :applications_widgets, :widgets, :tree_menu_node_defs,
         :applications, :applications_desktops,
         :configurations, :configuration_items,
         :configuration_item_types, :configuration_options,
         :configuration_item_types_configuration_options,
         :configuration_items_configuration_options, :configured_items,
-        :configuration_item_types_configurations
+        :configuration_item_types_configurations,
+        :job_trackers
     ].each do |tbl|
       if table_exists?(tbl)
         drop_table(tbl)
