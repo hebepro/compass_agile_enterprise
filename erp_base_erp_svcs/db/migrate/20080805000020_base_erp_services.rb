@@ -178,6 +178,7 @@ class BaseErpServices < ActiveRecord::Migration
         t.column :party_id, :integer
         t.column :contact_mechanism_id, :integer
         t.column :contact_mechanism_type, :string
+        t.column :is_primary, :boolean
 
         t.column :external_identifier, :string
         t.column :external_id_source, :string
@@ -185,6 +186,7 @@ class BaseErpServices < ActiveRecord::Migration
         t.timestamps
       end
       add_index :contacts, :party_id
+      add_index :contacts, :is_primary
       add_index :contacts, [:contact_mechanism_id, :contact_mechanism_type], :name => "besi_2"
     end
 
@@ -366,8 +368,16 @@ class BaseErpServices < ActiveRecord::Migration
         t.string :internal_identifier
         t.string :description
 
+        t.integer :lft
+        t.integer :rgt
+        t.integer :parent_id
+
         t.timestamps
       end
+
+      add_index :view_types, :lft
+      add_index :view_types, :rgt
+      add_index :view_types, :parent_id
     end
 
     unless table_exists?(:geo_countries)
@@ -462,12 +472,157 @@ class BaseErpServices < ActiveRecord::Migration
         t.string :internal_identifier
         t.string :external_identifier
 
+        t.integer :lft
+        t.integer :rgt
+        t.integer :parent_id
+
         t.timestamps
       end
 
       add_index :tracked_status_types, :internal_identifier, :name => 'tracked_status_types_iid_idx'
+      add_index :tracked_status_types, :lft
+      add_index :tracked_status_types, :rgt
+      add_index :tracked_status_types, :parent_id
     end
 
+    create_table :facilities do |t|
+
+      t.string  :description
+      t.string  :internal_identifier
+      t.integer :facility_type_id
+      t.references :postal_address
+
+      #polymorphic columns
+      t.integer :facility_record_id
+      t.integer :facility_record_type
+
+      t.timestamps
+    end
+
+    add_index :facilities,  [:facility_record_id, :facility_record_type], :name => "facility_record_idx"
+    add_index :facilities,  :postal_address_id, :name => "facility_postal_address_idx"
+
+    create_table :facility_types do |t|
+
+      t.string  :description
+      t.string  :internal_identifier
+      t.string  :external_identifier
+      t.string  :external_identifer_source
+
+      #these columns are required to support the behavior of the plugin 'awesome_nested_set'
+      t.integer :parent_id
+      t.integer :lft
+      t.integer :rgt
+
+      t.timestamps
+    end
+
+    add_index :facility_types,  [:parent_id, :lft, :rgt], :name => "facility_types_nested_set_idx"
+
+    create_table :fixed_assets do |t|
+
+      #foreign key references
+      t.references :fixed_asset_type
+
+      #custom columns go here
+      t.string :description
+      t.string :comments
+      t.string :internal_identifier
+      t.string :external_identifier
+      t.string :external_id_source
+
+      #polymorphic columns
+      t.string  :fixed_asset_record_type
+      t.integer :fixed_asset_record_id
+
+      t.timestamps
+    end
+
+    add_index :fixed_assets,  [:fixed_asset_record_type, :fixed_asset_record_id], :name => "fixed_assets_record_idx"
+    add_index :fixed_assets,  :fixed_asset_type_id, :name => "fixed_assets_fixed_asset_type_idx"
+
+    create_table :fixed_asset_types do |t|
+      #these columns are required to support the behavior of the plugin 'awesome_nested_set'
+      t.integer :parent_id
+      t.integer :lft
+      t.integer :rgt
+
+      #custom columns go here
+      t.string :description
+      t.string :comments
+      t.string :internal_identifier
+      t.string :external_identifier
+      t.string :external_id_source
+
+      t.timestamps
+    end
+
+    add_index :fixed_asset_types,  [:parent_id, :lft, :rgt], :name => "fixed_asset_types_nested_set_idx"
+
+    create_table :party_fixed_asset_assignments do |t|
+      #foreign key references
+      t.references  :party
+      t.references  :fixed_asset
+
+      t.datetime    :assigned_from
+      t.datetime    :assigned_thru
+      t.integer     :allocated_cost_money_id
+
+      t.timestamps
+    end
+
+    add_index :party_fixed_asset_assignments,  [:party_id, :fixed_asset_id], :name => "party_fixed_asset_assign_idx"
+
+    create_table :fixed_asset_party_roles do |t|
+
+      t.references :party
+      t.references :fixed_asset
+      t.references :role_type
+
+      t.timestamps
+    end
+
+    create_table :unit_of_measurements do |t|
+      t.string :description
+      t.string :domain
+      t.string :internal_identifier
+      t.string :comments
+      t.string :external_identifier
+      t.string :external_id_source
+
+      t.integer :lft
+      t.integer :rgt
+      t.integer :parent_id
+
+      t.timestamps
+    end
+
+    add_index :unit_of_measurements, :lft
+    add_index :unit_of_measurements, :rgt
+    add_index :unit_of_measurements, :parent_id
+
+    create_table :generated_items do |t|
+      t.references :generated_by, :polymorphic => true
+      t.references :generated_record, :polymorphic => true
+
+      t.timestamps
+    end
+
+    add_index :generated_items, [:generated_by_type, :generated_by_id], :name => 'generated_by_idx'
+    add_index :generated_items, [:generated_record_type, :generated_record_id], :name => 'generated_record_idx'
+
+    # add indexes
+    add_index :relationship_types, :parent_id, :name => 'relationship_types_parent_id_idx'
+    add_index :relationship_types, :internal_identifier, :name => 'relationship_types_internal_identifier_idx'
+    add_index :contact_types, :internal_identifier, :name => 'contact_types_internal_identifier_idx'
+    add_index :contact_purposes, :internal_identifier, :name => 'contact_purposes_internal_identifier_idx'
+    add_index :categories, :internal_identifier, :name => 'categories_internal_identifier_idx'
+    add_index :categories, :parent_id, :name => 'categories_parent_id_idx'
+    add_index :category_classifications, :category_id, :name => 'category_classifications_category_id_idx'
+    add_index :descriptive_assets, :internal_identifier, :name => 'descriptive_assets_internal_identifier_idx'
+    add_index :view_types, :internal_identifier, :name => 'view_types_internal_identifier_idx'
+    add_index :note_types, :parent_id, :name => 'note_types_parent_id_idx'
+    add_index :note_types, :internal_identifier, :name => 'note_types_internal_identifier_idx'
   end
 
   def self.down
@@ -478,7 +633,11 @@ class BaseErpServices < ActiveRecord::Migration
         :contacts, :individuals, :organizations,
         :party_relationships, :relationship_types, :role_types,
         :party_roles, :parties, :categories, :category_classifications,
-        :descriptive_assets, :view_types, :notes, :note_types, :valid_note_types, :compass_ae_instances
+        :descriptive_assets, :view_types, :notes, :note_types,
+        :valid_note_types, :compass_ae_instances,
+        :facilities, :facility_types, :fixed_assets,
+        :fixed_asset_types, :party_fixed_asset_assignments,
+        :unit_of_measurements
     ].each do |tbl|
       if table_exists?(tbl)
         drop_table tbl
