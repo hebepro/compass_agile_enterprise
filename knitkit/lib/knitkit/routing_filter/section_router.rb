@@ -5,20 +5,22 @@ module RoutingFilter
   require 'logger'
   class SectionRouter < Filter
     def around_recognize(path, env, &block)
-      website = Website.find_by_host(env["HTTP_HOST"])
-      if website
-        paths = paths_for_website(website)
+      unless path.include?('assets')
+        website = Website.find_by_host(env["HTTP_HOST"])
+        if website
+          paths = paths_for_website(website)
 
-        if path.to_sym == :/
-          home_page_url = website.configurations.first.get_configuration_item(ConfigurationItemType.find_by_internal_identifier('homepage_url')).options.first.value
-          valid_section = website.website_sections.detect { |website_section| website_section.path == home_page_url }
-          type = valid_section.type.pluralize.downcase
-          path.sub!('/', "/#{$1}#{type}/#{valid_section.id}#{$3}")
-        else
-          if !Rails.application.config.knitkit.ignored_prefix_paths.include?(path) and path !~ %r(^/([\w]{2,4}/)?admin) and !paths.empty? and path =~ recognize_pattern(paths)
-            if section = website_section_by_path(website, $2)
-              type = section.type.pluralize.downcase
-              path.sub! %r(^/([\w]{2,4}/)?(#{paths})(?=/|\.|$)), "/#{$1}#{type}/#{section.id}#{$3}"
+          if path.to_sym == :/
+            home_page_url = website.configurations.first.get_configuration_item(ConfigurationItemType.find_by_internal_identifier('homepage_url')).options.first.value
+            valid_section = website.website_sections.detect { |website_section| website_section.path == home_page_url }
+            type = valid_section.type.pluralize.downcase
+            path.sub!('/', "/#{$1}#{type}/#{valid_section.id}#{$3}")
+          else
+            if !Rails.application.config.knitkit.ignored_prefix_paths.include?(path) and path !~ %r(^/([\w]{2,4}/)?admin) and !paths.empty? and path =~ recognize_pattern(paths)
+              if section = website_section_by_path(website, $2)
+                type = section.type.pluralize.downcase
+                path.sub! %r(^/([\w]{2,4}/)?(#{paths})(?=/|\.|$)), "/#{$1}#{type}/#{section.id}#{$3}"
+              end
             end
           end
         end
