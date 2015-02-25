@@ -9,6 +9,8 @@ class AddReports < ActiveRecord::Migration
 
         t.timestamps
       end
+
+      add_index :reports, :internal_identifier, :name => 'reports_internal_identifier_idx'
     end
   end
 

@@ -1,5 +1,6 @@
 class ProductFeatureInteractionType < ActiveRecord::Base
-  attr_accessible :description, :internal_identifer
+  attr_protected :created_at, :updated_at
+
   has_many :product_feature_interactions, dependent: :destroy
 
   def self.iid(string)

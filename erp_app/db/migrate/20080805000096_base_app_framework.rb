@@ -22,6 +22,7 @@ class BaseAppFramework < ActiveRecord::Migration
       end
 
       add_index :preference_types, :default_pref_option_id
+      add_index :preference_types, :internal_identifier, :name => 'preference_types_internal_identifier_idx'
     end
 
     unless table_exists?(:preference_options)
@@ -32,6 +33,8 @@ class BaseAppFramework < ActiveRecord::Migration
 
         t.timestamps
       end
+
+      add_index :preference_options, :internal_identifier, :name => 'preference_options_internal_identifier_idx'
     end
 
     unless table_exists?(:preference_options_preference_types)
@@ -49,6 +52,9 @@ class BaseAppFramework < ActiveRecord::Migration
         t.references :preference_type
         t.references :preferenced_record, :polymorphic => true
       end
+
+      add_index :valid_preference_types, :preference_type_id, :name => 'valid_preference_types_preference_type_id_idx'
+      add_index :valid_preference_types, :preferenced_record_id, :name => 'valid_preference_types_preferenced_record_id_idx'
     end
 
     unless table_exists?(:user_preferences)
@@ -76,15 +82,19 @@ class BaseAppFramework < ActiveRecord::Migration
 
         t.timestamps
       end
+
+      add_index :applications, :internal_identifier, :name => 'applications_internal_identifier_idx'
     end
 
-    create_table :applications_users, :id => false do |t|
-      t.references :application
-      t.references :user
-    end
+    unless table_exists?(:applications_users)
+      create_table :applications_users, :id => false do |t|
+        t.references :application
+        t.references :user
+      end
 
-    add_index :applications_users, :application_id, :name => 'app_users_app_idx'
-    add_index :applications_users, :user_id, :name => 'app_users_user_idx'
+      add_index :applications_users, :application_id, :name => 'app_users_app_idx'
+      add_index :applications_users, :user_id, :name => 'app_users_user_idx'
+    end
 
     unless table_exists?(:tree_menu_node_defs)
       create_table :tree_menu_node_defs do |t|
@@ -115,6 +125,7 @@ class BaseAppFramework < ActiveRecord::Migration
       end
 
       add_index :configurations, :is_template
+      add_index :configurations, :internal_identifier, :name => 'configurations_internal_identifier_idx'
     end
 
     unless table_exists? :valid_configurations
@@ -161,6 +172,12 @@ class BaseAppFramework < ActiveRecord::Migration
 
         t.timestamps
       end
+
+      add_index :configuration_item_types, :parent_id, :name => 'configuration_item_types_parent_id_idx'
+      add_index :configuration_item_types, :lft, :name => 'configuration_item_types_lft_idx'
+      add_index :configuration_item_types, :rgt, :name => 'configuration_item_types_rgtidx'
+      add_index :configuration_item_types, :internal_identifier, :name => 'configuration_item_types_internal_identifier_idx'
+      add_index :configuration_item_types, :precedence, :name => 'config_item_type_precedence_idx'
     end
 
     unless table_exists?(:configuration_item_types_configurations)
@@ -223,19 +240,6 @@ class BaseAppFramework < ActiveRecord::Migration
         t.datetime :next_run_at
       end
     end
-
-    # add indexes
-    add_index :preference_types, :internal_identifier, :name => 'preference_types_internal_identifier_idx'
-    add_index :preference_options, :internal_identifier, :name => 'preference_options_internal_identifier_idx'
-    add_index :valid_preference_types, :preference_type_id, :name => 'valid_preference_types_preference_type_id_idx'
-    add_index :valid_preference_types, :preferenced_record_id, :name => 'valid_preference_types_preferenced_record_id_idx'
-    add_index :app_containers, :internal_identifier, :name => 'app_containers_internal_identifier_idx'
-    add_index :widgets, :internal_identifier, :name => 'widgets_internal_identifier_idx'
-    add_index :configurations, :internal_identifier, :name => 'configurations_internal_identifier_idx'
-    add_index :configuration_item_types, :parent_id, :name => 'configuration_item_types_parent_id_idx'
-    add_index :configuration_item_types, :internal_identifier, :name => 'configuration_item_types_internal_identifier_idx'
-    add_index :applications, :internal_identifier, :name => 'applications_internal_identifier_idx'
-    add_index :configuration_item_types, :precedence, :name => 'config_item_type_precedence_idx'
 
   end
 

@@ -154,10 +154,12 @@ class BaseTxnsAndAccts < ActiveRecord::Migration
 		    t.column 	:external_identifier, :string
 		    t.column 	:external_id_source, 	:string
         t.column  :type,                :string
+        t.references :biz_txn_acct_type
         t.timestamps
       end
 
       add_index :biz_txn_acct_roots, [:biz_txn_acct_id, :biz_txn_acct_type], :name => "btai_2"
+      add_index :biz_txn_acct_roots, :biz_txn_acct_type_id, :name => "btai_3"
     end
     
     unless table_exists?(:biz_txn_acct_status_types)

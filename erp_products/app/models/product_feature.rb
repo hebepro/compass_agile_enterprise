@@ -1,5 +1,6 @@
 class ProductFeature < ActiveRecord::Base
-  attr_accessible :custom_fields, :product_feature_type_id, :product_feature_value_id
+  attr_protected :created_at, :updated_at
+
   belongs_to :product_feature_type
   belongs_to :product_feature_value
   # start self reference
@@ -12,8 +13,6 @@ class ProductFeature < ActiveRecord::Base
   def feature_of_records
     product_feature_applicabilities.map { |o| o.feature_of_record_type.constantize.find(o.feature_of_record_id) }
   end
-
-  is_json :custom_fields
 
   def self.get_feature_types(product_features)
     array = []

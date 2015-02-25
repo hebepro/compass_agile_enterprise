@@ -1,20 +1,22 @@
 class SetupKnitkit < ActiveRecord::Migration
   def self.up
 
+    # websites
     unless table_exists?(:websites)
       create_table :websites do |t|
         t.string :name
         t.string :title
         t.string :subtitle
         t.string :internal_identifier
-        t.string :email
-        t.boolean :auto_activate_publication
-        t.boolean :email_inquiries
+        t.boolean :publishing, :default => false
 
         t.timestamps
       end
+
+      add_index :websites, :internal_identifier, :name => 'websites_internal_identifier_idx'
     end
 
+    # website_hosts
     unless table_exists?(:website_hosts)
       create_table :website_hosts do |t|
         t.references :website
@@ -26,16 +28,24 @@ class SetupKnitkit < ActiveRecord::Migration
       add_index :website_hosts, :website_id
     end
 
+    # website_inquiries
     unless table_exists?(:website_inquiries)
       create_table :website_inquiries do |t|
         t.integer :website_id
+        t.string :first_name
+        t.string :last_name
+        t.string :email
+        t.test :message
+        t.references :created_by
 
         t.timestamps
       end
 
       add_index :website_inquiries, :website_id
+      add_index :website_inquiries, :created_by_id, :name => 'inquiry_created_by_idx'
     end
 
+    # website_sections
     unless table_exists?(:website_sections)
       create_table :website_sections do |t|
         t.string :title
@@ -50,6 +60,7 @@ class SetupKnitkit < ActiveRecord::Migration
         t.string :internal_identifier
         t.integer :version
         t.boolean :render_base_layout, :default => true
+        t.boolean :use_markdown
 
         #better nested set columns
         t.integer :parent_id
@@ -69,8 +80,12 @@ class SetupKnitkit < ActiveRecord::Migration
       add_index :website_sections, :internal_identifier, :name => 'section_iid_idx'
 
       WebsiteSection.create_versioned_table
+
+      add_index :website_section_versions, :website_id, :name => 'website_section_versions_website_id_idx'
+      add_index :website_section_versions, :internal_identifier, :name => 'website_section_versions_internal_identifier_idx'
     end
 
+    # contents
     unless table_exists?(:contents)
       create_table :contents do |t|
         t.string :type
@@ -95,13 +110,18 @@ class SetupKnitkit < ActiveRecord::Migration
       add_index :contents, :internal_identifier, :name => 'contents_iid_idx'
 
       Content.create_versioned_table
+
+      add_index :content_versions, :created_by_id, :name => 'content_versions_created_by_id_idx'
+      add_index :content_versions, :updated_by_id, :name => 'content_versions_updated_by_id_idx'
+      add_index :content_versions, :internal_identifier, :name => 'content_versions_internal_identifier_idx'
     end
 
+    # website_section_contents
     unless table_exists?(:website_section_contents)
       create_table :website_section_contents do |t|
         t.integer :website_section_id
         t.integer :content_id
-        t.string  :content_area
+        t.string :content_area
         t.integer :position, :default => 0
 
         t.timestamps
@@ -113,6 +133,7 @@ class SetupKnitkit < ActiveRecord::Migration
       add_index :website_section_contents, :content_area
     end
 
+    # themes
     unless table_exists?(:themes)
       create_table :themes do |t|
         t.references :website
@@ -131,6 +152,7 @@ class SetupKnitkit < ActiveRecord::Migration
       add_index :themes, :active
     end
 
+    # published_websites
     unless table_exists?(:published_websites)
       create_table :published_websites do |t|
         t.references :website
@@ -149,6 +171,7 @@ class SetupKnitkit < ActiveRecord::Migration
       add_index :published_websites, :published_by_id
     end
 
+    # published_elements
     unless table_exists?(:published_elements)
       create_table :published_elements do |t|
         t.references :published_website
@@ -166,12 +189,13 @@ class SetupKnitkit < ActiveRecord::Migration
       add_index :published_elements, :published_by_id
     end
 
+    # comments
     unless table_exists?(:comments)
       create_table :comments do |t|
-        t.string   :commentor_name
-        t.string   :email
-        t.text     :comment
-        t.integer  :approved
+        t.string :commentor_name
+        t.string :email
+        t.text :comment
+        t.integer :approved
         t.datetime :approved_at
         t.references :user
         t.references :commented_record, :polymorphic => true
@@ -184,6 +208,7 @@ class SetupKnitkit < ActiveRecord::Migration
       add_index :comments, [:user_id]
     end
 
+    # website_nav_items
     unless table_exists?(:website_nav_items)
       create_table :website_nav_items do |t|
         t.references :website_nav
@@ -208,6 +233,7 @@ class SetupKnitkit < ActiveRecord::Migration
       add_index :website_nav_items, :rgt
     end
 
+    # website_navs
     unless table_exists?(:website_navs)
       create_table :website_navs do |t|
         t.references :website
@@ -219,12 +245,14 @@ class SetupKnitkit < ActiveRecord::Migration
       add_index :website_navs, :website_id
     end
 
+    # tags
     unless table_exists?(:tags)
       create_table :tags do |t|
         t.column :name, :string
       end
     end
 
+    # tags
     unless table_exists?(:taggings)
       create_table :taggings do |t|
         t.column :tag_id, :integer
@@ -244,6 +272,7 @@ class SetupKnitkit < ActiveRecord::Migration
       add_index :taggings, [:taggable_id, :taggable_type, :context], :name => 'taggable_poly_idx'
     end
 
+    # website_party_roles
     unless table_exists? :website_party_roles
       create_table :website_party_roles do |t|
         #foreign keys
@@ -258,45 +287,63 @@ class SetupKnitkit < ActiveRecord::Migration
       add_index :website_party_roles, :role_type_id
       add_index :website_party_roles, :party_id
     end
-    
-    create_table :documented_items, :force => true do |t|
-      t.string :documented_klass, :null => true
-      t.integer :documented_content_id, :null => true
-      t.integer :online_document_section_id
-      t.timestamps
-    end
-    
-    create_table :documents do |t|
-      t.string    :external_identifier
-      t.string    :internal_identifier
-      t.string    :description
-      t.datetime  :document_date
 
-      t.references :document_record, :polymorphic => true
-      t.references :document_type
+    # documented_items
+    unless table_exists? :documented_items
+      create_table :documented_items, :force => true do |t|
+        t.string :documented_klass, :null => true
+        t.integer :documented_content_id, :null => true
+        t.integer :online_document_section_id
+        t.timestamps
 
-      t.timestamps
+        add_index :documented_items, :documented_content_id, :name => 'documented_items_documented_content_id_idx'
+        add_index :documented_items, :online_document_section_id, :name => 'documented_items_online_document_section_id_idx'
+      end
     end
 
-    add_index :documents, [:document_record_type, :document_record_id], :name => 'document_record_poly_idx'
-    add_index :documents, :document_type_id, :name => 'document_type_idx'
+    # documents
+    unless table_exists? :documents
+      create_table :documents do |t|
+        t.string :external_identifier
+        t.string :internal_identifier
+        t.string :description
+        t.datetime :document_date
 
-    create_table :document_types do |t|
-      t.string    :external_identifier
-      t.string    :internal_identifier
-      t.string    :description
+        t.references :document_record, :polymorphic => true
+        t.references :document_type
+        t.text :custom_fields
 
-      t.timestamps
+        t.timestamps
+      end
+
+      add_index :documents, [:document_record_type, :document_record_id], :name => 'document_record_poly_idx'
+      add_index :documents, :document_type_id, :name => 'document_type_idx'
+      add_index :documents, :internal_identifier, :name => 'documents_internal_identifier_idx'
     end
-    
-    create_table :valid_documents do |t|
-      t.references :document
-      t.references :documented_model, :polymorphic => true
+
+    # document_types
+    unless table_exists? :document_types
+      create_table :document_types do |t|
+        t.string :external_identifier
+        t.string :internal_identifier
+        t.string :description
+
+        t.timestamps
+      end
+
+      add_index :document_types, :internal_identifier, :name => 'document_types_internal_identifier_idx'
     end
 
-    add_index :valid_documents, :document_id
-    add_index :valid_documents, [:documented_model_id, :documented_model_type], :name => 'valid_documents_model_idx'
+    # valid_documents
+    unless table_exists? :valid_documents
+      create_table :valid_documents do |t|
+        t.references :document
+        t.references :documented_model, :polymorphic => true
+      end
 
+      add_index :valid_documents, :document_id
+      add_index :valid_documents, [:documented_model_id, :documented_model_type], :name => 'valid_documents_model_idx'
+    end
   end
 
   def self.down
@@ -305,8 +352,8 @@ class SetupKnitkit < ActiveRecord::Migration
 
     # check that each table exists before trying to delete it.
     [:websites, :website_sections, :contents, :website_section_contents, :documents, :document_types, :valid_documents,
-      :themes, :theme_files, :published_websites, :published_elements, :website_party_roles,
-      :comments,:website_hosts,:website_nav_items, :website_navs, :tags, :taggings, :documented_items].each do |tbl|
+     :themes, :theme_files, :published_websites, :published_elements, :website_party_roles,
+     :comments, :website_hosts, :website_nav_items, :website_navs, :tags, :taggings, :documented_items].each do |tbl|
       if table_exists?(tbl)
         drop_table tbl
       end

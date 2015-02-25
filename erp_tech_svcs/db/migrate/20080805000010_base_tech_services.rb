@@ -1,5 +1,7 @@
 class BaseTechServices < ActiveRecord::Migration
   def self.up
+
+    # users
     unless table_exists?(:users)
       # Create the users table
       create_table :users do |t|
@@ -27,7 +29,7 @@ class BaseTechServices < ActiveRecord::Migration
         t.string :reset_password_token, :default => nil
         t.datetime :reset_password_token_expires_at, :default => nil
         t.datetime :reset_password_email_sent_at, :default => nil
-      
+
         #user activation
         t.string :activation_state, :default => nil
         t.string :activation_token, :default => nil
@@ -37,6 +39,9 @@ class BaseTechServices < ActiveRecord::Migration
         t.string :security_answer_1
         t.string :security_question_2
         t.string :security_answer_2
+
+        t.string :auth_token
+        t.datetime :auth_token_expires_at
 
         t.timestamps
       end
@@ -49,6 +54,7 @@ class BaseTechServices < ActiveRecord::Migration
       add_index :users, :party_id, :name => 'users_party_id_idx'
     end
 
+    # groups
     unless table_exists?(:groups)
       create_table :groups do |t|
         t.column :description, :string
@@ -63,9 +69,11 @@ class BaseTechServices < ActiveRecord::Migration
         t.column :internal_identifier, :string
         t.column :external_identifier, :string
         t.column :external_id_source, :string
-        
+
         t.timestamps
       end
+
+      add_index :security_roles, :internal_identifier, :name => 'security_roles_internal_identifier_idx'
     end
 
     unless table_exists?(:sessions)
@@ -75,17 +83,17 @@ class BaseTechServices < ActiveRecord::Migration
         t.text :data
         t.timestamps
       end
-      add_index :sessions,      :session_id
-      add_index :sessions,      :updated_at
+      add_index :sessions, :session_id
+      add_index :sessions, :updated_at
     end
 
     unless table_exists?(:audit_logs)
       # Create audit_logs
-      create_table   :audit_logs do |t|
-        t.string     :application
-        t.string     :description
-        t.integer    :party_id
-        t.text       :additional_info
+      create_table :audit_logs do |t|
+        t.string :application
+        t.string :description
+        t.integer :party_id
+        t.text :additional_info
         t.references :audit_log_type
 
         #polymorphic columns
@@ -95,6 +103,7 @@ class BaseTechServices < ActiveRecord::Migration
       end
       add_index :audit_logs, :party_id
       add_index :audit_logs, [:event_record_id, :event_record_type], :name => 'event_record_index'
+      add_index :audit_logs, :audit_log_type_id, :name => 'audit_logs_audit_log_type_id_idx'
     end
 
     unless table_exists?(:audit_log_types)
@@ -114,23 +123,30 @@ class BaseTechServices < ActiveRecord::Migration
 
         t.timestamps
       end
+
+      add_index :audit_log_types, :internal_identifier, :name => 'audit_log_types_internal_identifier_idx'
+      add_index :audit_log_types, :parent_id, :name => 'audit_log_types_parent_id_idx'
     end
 
     unless table_exists?(:audit_log_items)
       # Create audit_log_items
-      create_table   :audit_log_items do |t|
+      create_table :audit_log_items do |t|
         t.references :audit_log
         t.references :audit_log_item_type
-        t.string     :audit_log_item_value
-        t.string     :description
+        t.string :audit_log_item_value
+        t.string :audit_log_item_old_value
+        t.string :description
 
         t.timestamps
       end
+
+      add_index :audit_log_items, :audit_log_id, :name => 'audit_log_items_audit_log_id_idx'
+      add_index :audit_log_items, :audit_log_item_type_id, :name => 'audit_log_items_audit_log_item_type_id_idx'
     end
 
     unless table_exists?(:audit_log_item_types)
       # Create audit_log_item_types
-      create_table   :audit_log_item_types do |t|
+      create_table :audit_log_item_types do |t|
         t.string :internal_identifier
         t.string :external_identifier
         t.string :external_id_source
@@ -144,11 +160,16 @@ class BaseTechServices < ActiveRecord::Migration
 
         t.timestamps
       end
+
+      add_index :audit_log_item_types, :internal_identifier, :name => 'audit_log_item_types_internal_identifier_idx'
+      add_index :audit_log_item_types, :parent_id, :name => 'audit_log_item_types_parent_id_idx'
+      add_index :audit_log_item_types, :lft, :name => 'audit_log_item_types_lft_idx'
+      add_index :audit_log_item_types, :rgt, :name => 'audit_log_item_types_rgt_idx'
     end
-    
+
+    # file_assets
     unless table_exists?(:file_assets)
       create_table :file_assets do |t|
-        t.references :file_asset_holder, :polymorphic => true
         t.string :type
         t.string :name
         t.string :directory
@@ -158,26 +179,41 @@ class BaseTechServices < ActiveRecord::Migration
         t.datetime :data_updated_at
         t.string :width
         t.string :height
+        t.text :scoped_by
 
         t.timestamps
       end
       add_index :file_assets, :type
-      add_index :file_assets, [:file_asset_holder_id, :file_asset_holder_type], :name => 'file_asset_holder_idx'
       add_index :file_assets, :name
       add_index :file_assets, :directory
     end
-	
+
+    # file_asset_holders
+    unless table_exists?(:file_asset_holders)
+      ccreate_table :file_asset_holders do |t|
+        t.references :file_asset
+        t.references :file_asset_holder, :polymorphic => true
+        t.text :scoped_by
+
+        t.timestamps
+      end
+
+      add_index :file_asset_holders, :file_asset_id, :name => 'file_asset_holder_file_id_idx'
+      add_index :file_asset_holders, [:file_asset_holder_id, :file_asset_holder_type], :name => 'file_asset_holder_idx'
+    end
+
+    # delayed_jobs
     unless table_exists?(:delayed_jobs)
       create_table :delayed_jobs, :force => true do |table|
-        table.integer  :priority, :default => 0      # Allows some jobs to jump to the front of the queue
-        table.integer  :attempts, :default => 0      # Provides for retries, but still fail eventually.
-        table.text     :handler                      # YAML-encoded string of the object that will do work
-        table.text     :last_error                   # reason for last failure (See Note below)
-        table.datetime :run_at                       # When to run. Could be Time.zone.now for immediately, or sometime in the future.
-        table.datetime :locked_at                    # Set when a client is working on this object
-        table.datetime :failed_at                    # Set when all retries have failed (actually, by default, the record is deleted instead)
-        table.string   :locked_by                    # Who is working on this object (if locked)
-        table.string   :queue
+        table.integer :priority, :default => 0 # Allows some jobs to jump to the front of the queue
+        table.integer :attempts, :default => 0 # Provides for retries, but still fail eventually.
+        table.text :handler # YAML-encoded string of the object that will do work
+        table.text :last_error # reason for last failure (See Note below)
+        table.datetime :run_at # When to run. Could be Time.zone.now for immediately, or sometime in the future.
+        table.datetime :locked_at # Set when a client is working on this object
+        table.datetime :failed_at # Set when all retries have failed (actually, by default, the record is deleted instead)
+        table.string :locked_by # Who is working on this object (if locked)
+        table.string :queue
         table.timestamps
       end
       add_index :delayed_jobs, [:priority, :run_at], :name => 'delayed_jobs_priority'
@@ -201,6 +237,8 @@ class BaseTechServices < ActiveRecord::Migration
         t.string :description
         t.timestamps
       end
+
+      add_index :capability_types, :internal_identifier, :name => 'capability_types_internal_identifier_idx'
     end
 
     unless table_exists?(:capabilities)
@@ -208,10 +246,9 @@ class BaseTechServices < ActiveRecord::Migration
       create_table :capabilities do |t|
         t.string :description
         t.references :capability_type
-        t.string :capability_resource_type
-        t.integer :capability_resource_id
+        t.references :capability_resource
         t.integer :scope_type_id
-        t.text :scope_query  
+        t.text :scope_query
         t.timestamps
       end
 
@@ -222,8 +259,7 @@ class BaseTechServices < ActiveRecord::Migration
 
     unless table_exists?(:capability_accessors)
       create_table :capability_accessors do |t|
-        t.string :capability_accessor_record_type
-        t.integer :capability_accessor_record_id
+        t.references :capability_accessor_record
         t.integer :capability_id
         t.timestamps
       end
@@ -252,15 +288,42 @@ class BaseTechServices < ActiveRecord::Migration
       add_index :parties_security_roles, :security_role_id
     end
 
+    unless table_exists? :notifications
+      create_table :notifications do |t|
+        t.string :type
+        t.references :created_by
+        t.text :message
+        t.references :notification_type
+        t.string :current_state
+
+        t.timestamps
+      end
+
+      add_index :notifications, :notification_type_id
+      add_index :notifications, :created_by_id
+      add_index :notifications, :type
+    end
+
+    unless table_exists? :notification_types
+      create_table :notification_types do |t|
+        t.string :internal_identifier
+        t.string :description
+
+        t.timestamps
+      end
+
+      add_index :notification_types, :internal_identifier
+    end
+
   end
 
   def self.down
     # check that each table exists before trying to delete it.
-    [ :groups,
-      :audit_logs, :sessions, :simple_captcha_data,
-      :capability_accessors, :capability_types, :capabilities,:scope_types,
-      :parties_security_roles, :roles, :audit_log_items, :audit_log_item_types,
-      :users, :file_assets, :delayed_jobs
+    [:groups, :notifications, :notification_types,
+     :audit_logs, :sessions, :simple_captcha_data,
+     :capability_accessors, :capability_types, :capabilities, :scope_types,
+     :parties_security_roles, :roles, :audit_log_items, :audit_log_item_types,
+     :users, :file_assets, :delayed_jobs
     ].each do |tbl|
       if table_exists?(tbl)
         drop_table tbl

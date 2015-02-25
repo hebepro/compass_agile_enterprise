@@ -70,24 +70,31 @@ class InvoicingServices < ActiveRecord::Migration
         #foreign keys      
         t.references :invoice
         t.references :invoice_item_type
-        
-        #these columns support the polymporphic relationship to invoice-able items
-        t.references :invoiceable_item, :polymorphic => true
 
         #non-key columns
         t.integer    :item_seq_id
         t.string     :item_description
-        t.decimal    :sales_tax, :precision => 8, :scale => 2
         t.decimal    :quantity, :precision => 8, :scale => 2
         t.decimal    :amount, :precision => 8, :scale => 2
+        t.boolean    :taxable,
+        t.decimal    :tax_rate, :precision => 8, :scale => 2
+        t.decimal    :unit_price, :precision => 8, :scale => 2
         
         t.timestamps
       end
 
-      add_index :invoice_items, [:invoiceable_item_id, :invoiceable_item_type], :name => 'invoiceable_item_idx'
       add_index :invoice_items, :invoice_id, :name => 'invoice_id_idx'
       add_index :invoice_items, :invoice_item_type_id, :name => 'invoice_item_type_id_idx'
     end
+
+    create_table :invoiced_records do |t|
+      t.references :invoice_item
+      t.references :invoiceable_item, :polymorphic => true
+
+      t.timestamps
+    end
+
+    add_index :invoiced_records, [:invoiceable_item_id, :invoiceable_item_type], :name => 'invoiced_records_invoiceable_item_idx'
     
     # Create invoice item types
     unless table_exists?(:invoice_item_types)
@@ -265,7 +272,8 @@ class InvoicingServices < ActiveRecord::Migration
       :invoice_items, :invoice_item_types, :invoice_party_roles,
       :billing_accounts, :billing_contact_mechanisms,
       :payment_applications, :payment_party_roles, :recurring_payments,
-      :invoice_payment_term_sets,:invoice_payment_terms,:invoice_payment_term_types, :calculate_balance_strategy_types
+      :invoice_payment_term_sets,:invoice_payment_terms,:invoice_payment_term_types,
+      :calculate_balance_strategy_types, :invoiced_records
     ].each do |tbl|
       if table_exists?(tbl)
         drop_table tbl

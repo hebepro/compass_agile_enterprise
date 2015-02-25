@@ -1,15 +1,13 @@
 class ProductFeatureType < ActiveRecord::Base
-  attr_accessible :custom_fields, :description, :external_id, :external_identifer, :internal_identifer, :lft, :parent_id, :rgt
+  attr_protected :created_at, :updated_at
+
   has_many :product_feature_type_product_feature_values, dependent: :destroy
   has_many :product_feature_values, through: :product_feature_type_product_feature_values
 
   has_many :product_features, dependent: :destroy
 
-  is_json :custom_fields
-
   acts_as_nested_set
   include ErpTechSvcs::Utils::DefaultNestedSetMethods  # acts_as_nested_set
-
 
   def self.iid(description)
     self.where("lower(description) = ?", description.downcase).first

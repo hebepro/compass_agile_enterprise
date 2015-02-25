@@ -1,5 +1,6 @@
 class ProductFeatureTypeProductFeatureValue < ActiveRecord::Base
-  attr_accessible :product_feature_type_id, :product_feature_value_id
+  attr_protected :created_at, :updated_at
+
   belongs_to :product_feature_type
   belongs_to :product_feature_value
 end

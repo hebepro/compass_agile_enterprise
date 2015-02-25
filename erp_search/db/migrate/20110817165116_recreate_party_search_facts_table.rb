@@ -30,6 +30,8 @@ class RecreatePartySearchFactsTable < ActiveRecord::Migration
             
         t.timestamps
       end
+
+      add_index :party_search_facts, :party_id, :name => 'party_search_facts_party_id_idx'
     end
   end
 

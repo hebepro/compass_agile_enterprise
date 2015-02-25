@@ -12,9 +12,13 @@ class BaseInventory < ActiveRecord::Migration
         t.column   :number_available,            :integer
         t.string   :sku
         t.integer  :number_sold
+        t.references :unit_of_measurement
+        t.integer :number_in_stock
         
         t.timestamps
       end
+
+      add_index :inventory_entries, :unit_of_measurement_id, :name => 'inv_entry_uom_idx'
     end
     
     unless table_exists?(:inv_entry_reln_types)
@@ -74,12 +78,73 @@ class BaseInventory < ActiveRecord::Migration
       end
     end
 
+    create_table :inventory_entry_locations do |t|
+
+      t.references  :inventory_entry
+      t.references  :facility
+      t.datetime    :valid_from
+      t.datetime    :valid_thru
+
+      t.timestamps
+    end
+
+    add_index :inventory_entry_locations, :facility_id
+
+    create_table :inventory_pickup_txns do |t|
+
+      t.references  :fixed_asset
+      t.string      :description
+      t.integer     :quantity
+      t.integer     :unit_of_measurement_id
+      t.text        :comment
+      t.references  :inventory_entry
+
+      t.timestamps
+    end
+
+    add_index :inventory_pickup_txns, :fixed_asset_id
+    add_index :inventory_pickup_txns, :inventory_entry_id
+
+    create_table :inventory_dropoff_txns do |t|
+
+      t.references  :fixed_asset
+      t.string      :description
+      t.integer     :quantity
+      t.integer     :unit_of_measurement_id
+      t.text        :comment
+      t.references  :inventory_entry
+
+      t.timestamps
+
+    end
+
+    add_index :inventory_dropoff_txns, :fixed_asset_id
+    add_index :inventory_dropoff_txns, :inventory_entry_id
+
+    add_index :inventory_entry_locations, :inventory_entry_id, :name => "inv_entry_loc_inv_entry_idx"
+    add_index :inventory_entry_locations, :fixed_asset_id, :name => "inv_entry_loc_fixed_asset_idx"
+
+    add_index :inventory_entries, [:inventory_entry_record_id, :inventory_entry_record_type], :name => "bii_1"
+
+    add_index :inv_entry_reln_types, :parent_id
+
+    add_index :inv_entry_role_types, :parent_id
+
+    add_index :inv_entry_relns, :inv_entry_reln_type_id
+    add_index :inv_entry_relns, :status_type_id
+
+    add_index :prod_instance_inv_entries, :product_instance_id
+    add_index :prod_instance_inv_entries, :inventory_entry_id
+
+    add_index :inventory_entries, :product_type_id
+
   end
 
   def self.down
     [
       :prod_instance_inv_entries,:inv_entry_relns, 
-      :inv_entry_role_types, :inv_entry_reln_types, :inventory_entries
+      :inv_entry_role_types, :inv_entry_reln_types,
+      :inventory_entries, :inventory_entry_locations
     ].each do |tbl|
       if table_exists?(tbl)
         drop_table tbl

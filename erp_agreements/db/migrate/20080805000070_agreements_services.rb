@@ -15,7 +15,10 @@ class AgreementsServices < ActiveRecord::Migration
 	      t.column 	:external_id_source, 	:string
 	      
         t.timestamps
-      end  
+      end
+
+      add_index :agreements, :agreement_type_id
+      add_index :agreements, :product_id
     end
     
     # Create agreement types
@@ -34,6 +37,10 @@ class AgreementsServices < ActiveRecord::Migration
 		    
       	t.timestamps
       end
+
+      add_index :agreement_types, :parent_id
+      add_index :agreement_types, :lft
+      add_index :agreement_types, :rgt
     end
     
     # Create agreement items
@@ -47,6 +54,9 @@ class AgreementsServices < ActiveRecord::Migration
         
         t.timestamps
       end
+
+      add_index :agreement_items, :agreement_id
+      add_index :agreement_items, :agreement_item_type_id
     end
     
     # Create agreement item types
@@ -65,6 +75,10 @@ class AgreementsServices < ActiveRecord::Migration
 		    
       	t.timestamps
       end
+
+      add_index :agreement_item_types, :parent_id
+      add_index :agreement_item_types, :lft
+      add_index :agreement_item_types, :rgt
     end
     
     # Create agreement_party_roles
@@ -79,8 +93,13 @@ class AgreementsServices < ActiveRecord::Migration
         
         t.timestamps
       end
+
+      add_index :agreement_party_roles, :agreement_id
+      add_index :agreement_party_roles, :party_id
+      add_index :agreement_party_roles, :role_type_id
     end
-    
+
+    # agreement_relationships
     unless table_exists?(:agreement_relationships)
       create_table :agreement_relationships do |t|
         t.column  :agreement_reln_type_id,  :integer
@@ -95,8 +114,12 @@ class AgreementsServices < ActiveRecord::Migration
         
         t.timestamps
       end
+
+      add_index :agreement_relationships, :agreement_reln_type_id
+      add_index :agreement_relationships, :status_type_id
     end
-    
+
+    # agreement_reln_types
     unless table_exists?(:agreement_reln_types)
       create_table :agreement_reln_types do |t|
       	t.column  	:parent_id,    :integer
@@ -113,8 +136,13 @@ class AgreementsServices < ActiveRecord::Migration
 		    
       	t.timestamps
       end
+
+      add_index :agreement_reln_types, :parent_id
+      add_index :agreement_reln_types, :valid_from_role_type_id
+      add_index :agreement_reln_types, :valid_to_role_type_id
     end
-    
+
+    # agreement_role_types
     unless table_exists?(:agreement_role_types)
       create_table :agreement_role_types do |t|
 
@@ -129,9 +157,14 @@ class AgreementsServices < ActiveRecord::Migration
 		    t.column 	:external_id_source, 	:string
 		    
         t.timestamps
-      end  
+      end
+
+      add_index :agreement_role_types, :parent_id
+      add_index :agreement_role_types, :lft
+      add_index :agreement_role_types, :rgt
     end
-    
+
+    # loyalty_program_codes
     unless table_exists?(:loyalty_program_codes)
       create_table :loyalty_program_codes do |t|
         t.string :identifier
@@ -142,30 +175,6 @@ class AgreementsServices < ActiveRecord::Migration
       end  
     end
 
-    # add indexes
-    add_index :agreements, :agreement_type_id
-    add_index :agreements, :product_id
-
-    add_index :agreement_types, :parent_id
-
-    add_index :agreement_items, :agreement_id
-    add_index :agreement_items, :agreement_item_type_id
-
-    add_index :agreement_item_types, :parent_id
-
-    add_index :agreement_party_roles, :agreement_id
-    add_index :agreement_party_roles, :party_id
-    add_index :agreement_party_roles, :role_type_id
-
-    add_index :agreement_relationships, :agreement_reln_type_id
-    add_index :agreement_relationships, :status_type_id
-
-    add_index :agreement_reln_types, :parent_id
-    add_index :agreement_reln_types, :valid_from_role_type_id
-    add_index :agreement_reln_types, :valid_to_role_type_id
-
-    add_index :agreement_role_types, :parent_id
-    
   end
 
   def self.down

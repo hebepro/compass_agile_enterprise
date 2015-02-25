@@ -2,49 +2,49 @@ class ErpCommerceBase < ActiveRecord::Migration
   def self.up
     #fees
     unless table_exists?(:fees)
-        create_table :fees do |t|
-          t.references :fee_record, :polymorphic => true     
-          t.references :money
-          t.references :fee_type
-          t.string     :description
-          t.datetime   :start_date
-          t.datetime   :end_date
-          t.string     :external_identifier
-          t.string     :external_id_source
+      create_table :fees do |t|
+        t.references :fee_record, :polymorphic => true
+        t.references :money
+        t.references :fee_type
+        t.string :description
+        t.datetime :start_date
+        t.datetime :end_date
+        t.string :external_identifier
+        t.string :external_id_source
 
-          t.timestamps
-        end
+        t.timestamps
+      end
 
-        add_index :fees, [:fee_record_id, :fee_record_type], :name => 'fee_record_idx'
-        add_index :fees, :fee_type_id
-        add_index :fees, :money_id
+      add_index :fees, [:fee_record_id, :fee_record_type], :name => 'fee_record_idx'
+      add_index :fees, :fee_type_id
+      add_index :fees, :money_id
     end
-    
+
     unless table_exists?(:fee_types)
-        create_table :fee_types do |t|
-          t.string :internal_identifier    
-          t.string :description
-          t.string :comments
-          t.string :external_identifier
-          t.string :external_id_source
-          
-          #these columns are required to support the behavior of the plugin 'awesome_nested_set'
-          t.integer  	:parent_id
-          t.integer  	:lft
-          t.integer  	:rgt
-          
-          t.timestamps
-        end
+      create_table :fee_types do |t|
+        t.string :internal_identifier
+        t.string :description
+        t.string :comments
+        t.string :external_identifier
+        t.string :external_id_source
+
+        #these columns are required to support the behavior of the plugin 'awesome_nested_set'
+        t.integer :parent_id
+        t.integer :lft
+        t.integer :rgt
+
+        t.timestamps
+      end
     end
-    
+
     #pricing tables
     unless table_exists?(:price_component_types)
       create_table :price_component_types do |t|
 
-        t.string      :description
-        t.string      :internal_identifier
-        t.string      :external_identifier
-        t.string      :external_id_source
+        t.string :description
+        t.string :internal_identifier
+        t.string :external_identifier
+        t.string :external_id_source
 
         t.timestamps
       end
@@ -53,21 +53,21 @@ class ErpCommerceBase < ActiveRecord::Migration
     unless table_exists?(:pricing_plans)
       create_table :pricing_plans do |t|
 
-        t.string  :description
-        t.string  :comments
+        t.string :description
+        t.string :comments
 
-        t.string 	:internal_identifier
+        t.string :internal_identifier
 
-        t.string 	:external_identifier
-        t.string 	:external_id_source
+        t.string :external_identifier
+        t.string :external_id_source
 
-        t.date    :from_date
-        t.date    :thru_date
+        t.date :from_date
+        t.date :thru_date
 
         #this is here as a placeholder for an 'interpreter' or 'rule' pattern
-        t.string  :matching_rules
+        t.string :matching_rules
         #this is here as a placeholder for an 'interpreter' or 'rule' pattern
-        t.string  :pricing_calculation
+        t.string :pricing_calculation
 
         #support for simple assignment of a single money amount
         t.boolean :is_simple_amount
@@ -82,18 +82,18 @@ class ErpCommerceBase < ActiveRecord::Migration
       create_table :pricing_plan_components do |t|
 
         t.integer :price_component_type_id
-        t.string  :description
-        t.string  :comments
+        t.string :description
+        t.string :comments
 
-        t.string 	:internal_identifier
-        t.string 	:external_identifier
-        t.string 	:external_id_source
+        t.string :internal_identifier
+        t.string :external_identifier
+        t.string :external_id_source
 
 
         #this is here as a placeholder for an 'interpreter' or 'rule' pattern
-        t.string  :matching_rules
+        t.string :matching_rules
         #this is here as a placeholder for an 'interpreter' or 'rule' pattern
-        t.string  :pricing_calculation
+        t.string :pricing_calculation
 
         #support for simple assignment of a single money amount
         t.boolean :is_simple_amount
@@ -109,8 +109,8 @@ class ErpCommerceBase < ActiveRecord::Migration
     unless table_exists?(:valid_price_plan_components)
       create_table :valid_price_plan_components do |t|
 
-        t.references  :pricing_plan
-        t.references  :pricing_plan_component
+        t.references :pricing_plan
+        t.references :pricing_plan_component
 
         t.timestamps
 
@@ -122,54 +122,54 @@ class ErpCommerceBase < ActiveRecord::Migration
     unless table_exists?(:pricing_plan_assignments)
       create_table :pricing_plan_assignments do |t|
 
-        t.references  :pricing_plan
+        t.references :pricing_plan
 
         #support a polymorhic interface to the thing we want to price
-        t.integer     :priceable_item_id
-        t.string      :priceable_item_type
+        t.integer :priceable_item_id
+        t.string :priceable_item_type
 
-        t.integer     :priority
+        t.integer :priority
 
         t.timestamps
 
       end
       add_index :pricing_plan_assignments, :pricing_plan_id
-      add_index :pricing_plan_assignments, [:priceable_item_id,:priceable_item_type], :name => 'priceable_item_idx'
+      add_index :pricing_plan_assignments, [:priceable_item_id, :priceable_item_type], :name => 'priceable_item_idx'
     end
-   
+
     unless table_exists?(:prices)
       create_table :prices do |t|
-  
-        t.string      :description
-  
+
+        t.string :description
+
         #support a polymorhic interface to the thing that HAS BEEN priced
-        t.integer     :priced_item_id
-        t.string      :priced_item_type
-  
+        t.integer :priced_item_id
+        t.string :priced_item_type
+
         #refer to the pricing plan by which this price was calculated
-        t.references  :pricing_plan
-  
-        t.references  :money
-  
+        t.references :pricing_plan
+
+        t.references :money
+
         t.timestamps
 
       end
       add_index :prices, :money_id
       add_index :prices, :pricing_plan_id
-      add_index :prices, [:priced_item_id,:priced_item_type], :name => 'priced_item_idx'
+      add_index :prices, [:priced_item_id, :priced_item_type], :name => 'priced_item_idx'
     end
 
     unless table_exists?(:price_components)
       create_table :price_components do |t|
 
-        t.string      :description
-        t.references  :pricing_plan_component
-        t.references  :price
-        t.references  :money
+        t.string :description
+        t.references :pricing_plan_component
+        t.references :price
+        t.references :money
 
         #polymorphic relationship
         t.integer :priced_component_id
-        t.string  :priced_component_type
+        t.string :priced_component_type
 
         t.timestamps
 
@@ -177,33 +177,33 @@ class ErpCommerceBase < ActiveRecord::Migration
       add_index :price_components, :money_id
       add_index :price_components, :pricing_plan_component_id
       add_index :price_components, :price_id
-      add_index :price_components, [:priced_component_id,:priced_component_type], :name => 'priced_component_idx'
+      add_index :price_components, [:priced_component_id, :priced_component_type], :name => 'priced_component_idx'
     end
-    
+
     #payment tables
     unless table_exists?(:payments)
       create_table :payments do |t|
 
-        t.column :success,             :boolean
-        t.column :reference_number,    :string
-        t.column :financial_txn_id,    :integer
-        t.column :current_state,       :string
-        t.column :authorization_code,  :string
+        t.column :success, :boolean
+        t.column :reference_number, :string
+        t.column :financial_txn_id, :integer
+        t.column :current_state, :string
+        t.column :authorization_code, :string
         t.string :external_identifier
-              
+
         t.timestamps
       end
-        
+
       add_index :payments, :financial_txn_id
     end
 
     unless table_exists?(:payment_gateways)
       create_table :payment_gateways do |t|
 
-        t.column :params,                      :string
-        t.column :payment_gateway_action_id,   :integer
-        t.column :payment_id,   :integer
-        t.column :response,                    :string
+        t.column :params, :string
+        t.column :payment_gateway_action_id, :integer
+        t.column :payment_id, :integer
+        t.column :response, :string
 
         t.timestamps
       end
@@ -213,7 +213,7 @@ class ErpCommerceBase < ActiveRecord::Migration
       create_table :payment_gateway_actions do |t|
 
         t.column :internal_identifier, :string
-        t.column :description,         :string
+        t.column :description, :string
 
         t.timestamps
       end
@@ -225,36 +225,38 @@ class ErpCommerceBase < ActiveRecord::Migration
     unless table_exists?(:credit_cards)
       create_table :credit_cards do |t|
 
-        t.column :crypted_private_card_number,       :string
-        t.column :expiration_month,                  :integer     
-        t.column :expiration_year,                   :integer
+        t.column :crypted_private_card_number, :string
+        t.column :crypted_private_cvc, :string
+        t.column :expiration_month, :integer
+        t.column :expiration_year, :integer
 
-        t.column :description,                       :string
-        t.column :first_name_on_card,                :string
-        t.column :last_name_on_card,                 :string
-        t.column :card_type,                         :string
+        t.column :description, :string
+        t.column :name_on_card, :string
+        t.column :card_type, :string
 
-        t.column :postal_address_id,                 :integer
-        t.column :credit_card_account_purpose_id,    :integer
-        t.column :credit_card_token,                 :string
+        t.column :postal_address_id, :integer
+        t.column :credit_card_token, :string
 
         t.timestamps
       end
     end
-    
+
     unless table_exists?(:credit_card_accounts)
       create_table :credit_card_accounts do |t|
+        t.references :credit_card_account_purpose
 
         t.timestamps
       end
+
+      add_index :credit_card_accounts, :credit_card_account_purpose_id, :name => 'credit_card_acct_purpose_idx'
     end
-    
+
     unless table_exists?(:credit_card_account_party_roles)
       create_table :credit_card_account_party_roles do |t|
         t.column :credit_card_account_id, :integer
-        t.column :role_type_id,           :integer
-        t.column :party_id,               :integer
-        t.column :credit_card_id,         :integer
+        t.column :role_type_id, :integer
+        t.column :party_id, :integer
+        t.column :credit_card_id, :integer
 
         t.timestamps
       end
@@ -264,33 +266,33 @@ class ErpCommerceBase < ActiveRecord::Migration
       add_index :credit_card_account_party_roles, :party_id
       add_index :credit_card_account_party_roles, :credit_card_id
     end
-      
+
     unless table_exists?(:credit_card_account_purposes)
       create_table :credit_card_account_purposes do |t|
 
-        t.column  :parent_id,    :integer
-        t.column  :lft,          :integer
-        t.column  :rgt,          :integer
+        t.column :parent_id, :integer
+        t.column :lft, :integer
+        t.column :rgt, :integer
 
         #custom columns go here
 
-        t.column  :description,         :string
-        t.column  :comments,            :string
+        t.column :description, :string
+        t.column :comments, :string
 
-        t.column 	:internal_identifier, :string
-        t.column 	:external_identifier, :string
-        t.column 	:external_id_source, 	:string
+        t.column :internal_identifier, :string
+        t.column :external_identifier, :string
+        t.column :external_id_source, :string
 
         t.timestamps
       end
     end
-    
+
     unless table_exists?(:accepted_credit_cards)
       create_table :accepted_credit_cards do |t|
-      
+
         t.references :organization
         t.string :card_type
-      
+
         t.timestamps
       end
     end
@@ -317,125 +319,127 @@ class ErpCommerceBase < ActiveRecord::Migration
       add_index :bank_accounts, :bank_account_type_id, :name => 'bank_accounts_account_type_idx'
     end
     #end tables
-      
+
     #columns
-    unless columns(:order_txns).collect {|c| c.name}.include?('payment_gateway_txn_id')
+    unless columns(:order_txns).collect { |c| c.name }.include?('payment_gateway_txn_id')
       add_column :order_txns, :payment_gateway_txn_id, :string
     end
-      
-    unless columns(:order_txns).collect {|c| c.name}.include?('credit_card_id')
+
+    unless columns(:order_txns).collect { |c| c.name }.include?('credit_card_id')
       add_column :order_txns, :credit_card_id, :integer
     end
-    
-    unless columns(:order_txns).collect {|c| c.name}.include?('bill_to_first_name')
+
+    unless columns(:order_txns).collect { |c| c.name }.include?('bill_to_first_name')
       add_column :order_txns, :bill_to_first_name, :string
     end
-    
-    unless columns(:order_txns).collect {|c| c.name}.include?('bill_to_last_name')
+
+    unless columns(:order_txns).collect { |c| c.name }.include?('bill_to_last_name')
       add_column :order_txns, :bill_to_last_name, :string
-    end  
-    
-    unless columns(:order_txns).collect {|c| c.name}.include?('bill_to_address_line_1')
+    end
+
+    unless columns(:order_txns).collect { |c| c.name }.include?('bill_to_address_line_1')
       add_column :order_txns, :bill_to_address_line_1, :string
     end
 
-    unless columns(:order_txns).collect {|c| c.name}.include?('bill_to_address_line_2')
+    unless columns(:order_txns).collect { |c| c.name }.include?('bill_to_address_line_2')
       add_column :order_txns, :bill_to_address_line_2, :string
     end
-    
-    unless columns(:order_txns).collect {|c| c.name}.include?('bill_to_city')
+
+    unless columns(:order_txns).collect { |c| c.name }.include?('bill_to_city')
       add_column :order_txns, :bill_to_city, :string
-    end   
-     
-    unless columns(:order_txns).collect {|c| c.name}.include?('bill_to_state')
+    end
+
+    unless columns(:order_txns).collect { |c| c.name }.include?('bill_to_state')
       add_column :order_txns, :bill_to_state, :string
     end
-    
-    unless columns(:order_txns).collect {|c| c.name}.include?('bill_to_postal_code')
+
+    unless columns(:order_txns).collect { |c| c.name }.include?('bill_to_postal_code')
       add_column :order_txns, :bill_to_postal_code, :string
-    end  
-    
-    unless columns(:order_txns).collect {|c| c.name}.include?('bill_to_country')
+    end
+
+    unless columns(:order_txns).collect { |c| c.name }.include?('bill_to_country')
       add_column :order_txns, :bill_to_country, :string
     end
-    
-    unless columns(:order_txns).collect {|c| c.name}.include?('bill_to_country_name')
-  	  rename_column :order_txns, :bill_to_country, :bill_to_country_name
-  	  rename_column :order_txns, :ship_to_country, :ship_to_country_name
+
+    unless columns(:order_txns).collect { |c| c.name }.include?('bill_to_country_name')
+      rename_column :order_txns, :bill_to_country, :bill_to_country_name
+      rename_column :order_txns, :ship_to_country, :ship_to_country_name
       add_column :order_txns, :bill_to_country, :string
       add_column :order_txns, :ship_to_country, :string
     end
-    #end
+
+    add_column :product_types, :available_on_web, :boolean
+    add_index :product_types, :available_on_web
   end
 
   def self.down
-    
-    if columns(:order_txns).collect {|c| c.name}.include?('payment_gateway_txn_id')
+
+    if columns(:order_txns).collect { |c| c.name }.include?('payment_gateway_txn_id')
       remove_column :order_txns, :payment_gateway_txn_id
     end
-    
-    if columns(:order_txns).collect {|c| c.name}.include?('credit_card_id')
+
+    if columns(:order_txns).collect { |c| c.name }.include?('credit_card_id')
       remove_column :order_txns, :credit_card_id, :integer
     end
-    
-    if columns(:order_txns).collect {|c| c.name}.include?('bill_to_first_name')
+
+    if columns(:order_txns).collect { |c| c.name }.include?('bill_to_first_name')
       remove_column :order_txns, :bill_to_first_name, :string
     end
-    
-    if columns(:order_txns).collect {|c| c.name}.include?('bill_to_last_name')
+
+    if columns(:order_txns).collect { |c| c.name }.include?('bill_to_last_name')
       remove_column :order_txns, :bill_to_last_name, :string
-    end  
-    
-    if columns(:order_txns).collect {|c| c.name}.include?('bill_to_address')
+    end
+
+    if columns(:order_txns).collect { |c| c.name }.include?('bill_to_address')
       remove_column :order_txns, :bill_to_address, :string
     end
-    
-    if columns(:order_txns).collect {|c| c.name}.include?('bill_to_city')
+
+    if columns(:order_txns).collect { |c| c.name }.include?('bill_to_city')
       remove_column :order_txns, :bill_to_city, :string
-    end   
-     
-    if columns(:order_txns).collect {|c| c.name}.include?('bill_to_state')
+    end
+
+    if columns(:order_txns).collect { |c| c.name }.include?('bill_to_state')
       remove_column :order_txns, :bill_to_state, :string
     end
-    
-    if columns(:order_txns).collect {|c| c.name}.include?('bill_to_postal_code')
+
+    if columns(:order_txns).collect { |c| c.name }.include?('bill_to_postal_code')
       remove_column :order_txns, :bill_to_postal_code, :string
-    end  
-    
-    if columns(:order_txns).collect {|c| c.name}.include?('bill_to_country')
+    end
+
+    if columns(:order_txns).collect { |c| c.name }.include?('bill_to_country')
       remove_column :order_txns, :bill_to_country, :string
     end
-    
-    if columns(:order_txns).collect {|c| c.name}.include?('bill_to_country_name')
-  	  remove_column :order_txns, :bill_to_country, :bill_to_country_name
-  	  remove_column :order_txns, :ship_to_country, :ship_to_country_name
+
+    if columns(:order_txns).collect { |c| c.name }.include?('bill_to_country_name')
+      remove_column :order_txns, :bill_to_country, :bill_to_country_name
+      remove_column :order_txns, :ship_to_country, :ship_to_country_name
     end
-    
+
     #tables
     drop_tables = [
-      :bank_account_types,
-      :bank_accounts,
-      :credit_cards, 
-      :credit_card_accounts,  
-      :credit_card_account_party_roles,
-      :credit_card_account_purposes,
-      :payments,
-      :payment_gateways,
-      :payment_gateway_actions,
-      :pricing_plans,
-      :pricing_plan_components,
-      :valid_price_plan_components,  
-      :pricing_plan_assignments,
-      :prices,
-      :price_components,
-      :price_component_types,
-      :fees,:fee_types
+        :bank_account_types,
+        :bank_accounts,
+        :credit_cards,
+        :credit_card_accounts,
+        :credit_card_account_party_roles,
+        :credit_card_account_purposes,
+        :payments,
+        :payment_gateways,
+        :payment_gateway_actions,
+        :pricing_plans,
+        :pricing_plan_components,
+        :valid_price_plan_components,
+        :pricing_plan_assignments,
+        :prices,
+        :price_components,
+        :price_component_types,
+        :fees, :fee_types
     ]
     drop_tables.each do |table|
       if table_exists?(table)
         drop_table table
       end
     end
-    
+
   end
 end

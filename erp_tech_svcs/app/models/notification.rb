@@ -1,8 +1,5 @@
 class Notification < ActiveRecord::Base
   attr_protected :created_at, :updated_at
-  
-  # serialize custom attributes
-  is_json :custom_fields
 
   belongs_to :notification_type
   belongs_to :created_by, :foreign_key => 'created_by_id', :class_name => 'Party'

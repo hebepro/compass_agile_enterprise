@@ -1,22 +1,22 @@
 class BaseWorkEfforts < ActiveRecord::Migration
- 
-def self.up
+
+  def self.up
 
     ##********************************************************************************************
     ## Human resource (Party) skill types
     ##********************************************************************************************
     unless table_exists?(:skill_types)
       create_table :skill_types do |t|
-        t.integer  :parent_id
-        t.integer  :lft
-        t.integer  :rgt
+        t.integer :parent_id
+        t.integer :lft
+        t.integer :rgt
 
         #custom columns go here
-        t.string  :description
-        t.string  :comments
-        t.string  :internal_identifier
-        t.string  :external_identifier
-        t.string  :external_id_source
+        t.string :description
+        t.string :comments
+        t.string :internal_identifier
+        t.string :external_identifier
+        t.string :external_id_source
 
         t.timestamps
       end
@@ -25,12 +25,12 @@ def self.up
     ## party skills
     unless table_exists?(:party_skills)
       create_table :party_skills do |t|
-        t.integer  :party_id
-        t.integer  :skill_type_id
+        t.integer :party_id
+        t.integer :skill_type_id
 
         t.timestamps
       end
-      add_index :party_skills,  [:party_id, :skill_type_id], :name => "party_skills_idx"
+      add_index :party_skills, [:party_id, :skill_type_id], :name => "party_skills_idx"
     end
 
     ##********************************************************************************************
@@ -69,7 +69,7 @@ def self.up
         t.string :external_id_source
 
         #polymorphic columns
-        t.string  :deliverable_record_type
+        t.string :deliverable_record_type
         t.integer :deliverable_record_id
 
         t.timestamps
@@ -115,15 +115,15 @@ def self.up
         t.integer :requirement_type_id
         #polymorphic columns
         t.integer :requirement_record_id
-        t.string  :requirement_record_type
+        t.string :requirement_record_type
 
         #These columns represent optional relationships to the items used by and
         #produced via fulfillment of the requirement
         #TODO if we do separate requirement from work requirement, some of these relationships
         #would get moved to work_requirement or another subtype. See DMRB V1 p187
-        t.integer   :fixed_asset_id
-        t.integer   :product_id
-        t.integer   :deliverable_id
+        t.integer :fixed_asset_id
+        t.integer :product_id
+        t.integer :deliverable_id
 
         t.timestamps
       end
@@ -151,21 +151,21 @@ def self.up
     # Create requirement_party_roles
     unless table_exists?(:requirement_party_roles)
       create_table :requirement_party_roles do |t|
-        t.string  :description
+        t.string :description
 
-        t.integer  :requirement_id
-        t.integer  :party_id
-        t.integer  :role_type_id
+        t.integer :requirement_id
+        t.integer :party_id
+        t.integer :role_type_id
 
-        t.string  :external_identifier
-        t.string  :external_id_source
+        t.string :external_identifier
+        t.string :external_id_source
 
         t.datetime :valid_from
         t.datetime :valid_to
 
         t.timestamps
       end
-      add_index :requirement_party_roles,  [:requirement_id, :party_id, :role_type_id], :name => "requirement_party_roles_idx"
+      add_index :requirement_party_roles, [:requirement_id, :party_id, :role_type_id], :name => "requirement_party_roles_idx"
     end
 
     ##********************************************************************************************
@@ -179,27 +179,30 @@ def self.up
         t.integer :rgt
 
         #foreign keys
-        t.integer     :facility_id
-        t.integer     :projected_cost_money_id
-        t.integer     :actual_cost_money_id
-        t.references  :fixed_asset
-        t.references  :work_effort_purpose_type
-        t.references  :work_effort_type
+        t.integer :facility_id
+        t.integer :projected_cost_money_id
+        t.integer :actual_cost_money_id
+        t.references :fixed_asset
+        t.references :work_effort_purpose_type
+        t.references :work_effort_type
 
-        t.string   :description
-        t.string   :type
+        t.string :description
+        t.string :type
         t.datetime :started_at
         t.datetime :finished_at
-        t.integer  :projected_completion_time
-        t.integer  :actual_completion_time
+        t.integer :projected_completion_time
+        t.integer :actual_completion_time
 
         #polymorphic columns
-        t.integer  :work_effort_record_id
-        t.string   :work_effort_record_type
+        t.integer :work_effort_record_id
+        t.string :work_effort_record_type
+
+        t.references :work_effort_item
 
         t.timestamps
       end
       add_index :work_efforts, [:work_effort_record_id, :work_effort_record_type], :name => "work_effort_record_id_type_idx"
+      add_index :work_efforts, [:work_effort_item_type, :work_effort_item_id], :name => 'work_item_idx'
       add_index :work_efforts, :fixed_asset_id
       add_index :work_efforts, :finished_at
     end
@@ -207,11 +210,11 @@ def self.up
     unless table_exists?(:associated_work_efforts)
       create_table :associated_work_efforts do |t|
         #foreign keys
-        t.integer     :work_effort_id
+        t.integer :work_effort_id
 
         #polymorphic columns
-        t.integer  :associated_record_id
-        t.string   :associated_record_type
+        t.integer :associated_record_id
+        t.string :associated_record_type
       end
       add_index :associated_work_efforts, [:associated_record_id, :associated_record_type], :name => "associated_record_id_type_idx"
       add_index :associated_work_efforts, :work_effort_id
@@ -290,14 +293,14 @@ def self.up
         #foreign key references
         t.references :work_effort_association_type
 
-        t.string    :description
-        t.integer   :work_effort_id_from
-        t.integer   :work_effort_id_to
-        t.integer   :role_type_id_from
-        t.integer   :role_type_id_to
-        t.integer   :relationship_type_id
-        t.datetime  :effective_from
-        t.datetime  :effective_thru
+        t.string :description
+        t.integer :work_effort_id_from
+        t.integer :work_effort_id_to
+        t.integer :role_type_id_from
+        t.integer :role_type_id_to
+        t.integer :relationship_type_id
+        t.datetime :effective_from
+        t.datetime :effective_thru
 
         t.timestamps
       end
@@ -315,14 +318,14 @@ def self.up
     unless table_exists?(:work_order_item_fulfillments)
       create_table :work_order_item_fulfillments do |t|
         #foreign key references
-        t.references  :work_effort
-        t.references  :order_line_item
+        t.references :work_effort
+        t.references :order_line_item
 
-        t.string      :description
+        t.string :description
 
         t.timestamps
       end
-      add_index :work_order_item_fulfillments,  [:work_effort_id, :order_line_item_id], :name => "work_order_item_fulfillments_idx"
+      add_index :work_order_item_fulfillments, [:work_effort_id, :order_line_item_id], :name => "work_order_item_fulfillments_idx"
     end
 
     unless table_exists?(:work_order_items)
@@ -336,28 +339,28 @@ def self.up
     unless table_exists?(:order_requirement_commitments)
       create_table :order_requirement_commitments do |t|
         #foreign key references
-        t.references  :order_line_item
-        t.references  :requirement
+        t.references :order_line_item
+        t.references :requirement
 
-        t.string      :description
-        t.integer     :quantity
+        t.string :description
+        t.integer :quantity
 
         t.timestamps
       end
-      add_index :order_requirement_commitments,  [:order_line_item_id, :requirement_id], :name => "order_item_req_fulfillment_idx"
+      add_index :order_requirement_commitments, [:order_line_item_id, :requirement_id], :name => "order_item_req_fulfillment_idx"
     end
 
     ## relationship to track the relationship between requirements and the work_efforts to fulfill them
     unless table_exists?(:work_requirement_fulfillment)
       create_table :work_requirement_fulfillment do |t|
-        t.string    :description
+        t.string :description
 
-        t.integer   :work_effort_id
-        t.integer   :requirement_id
+        t.integer :work_effort_id
+        t.integer :requirement_id
 
         t.timestamps
       end
-      add_index :work_requirement_fulfillment,  [:work_effort_id, :requirement_id], :name => "work_order_req_fulfillment_idx"
+      add_index :work_requirement_fulfillment, [:work_effort_id, :requirement_id], :name => "work_order_req_fulfillment_idx"
     end
 
     ##********************************************************************************************
@@ -376,7 +379,7 @@ def self.up
         t.datetime :assigned_from
         t.datetime :assigned_thru
 
-        t.text    :comments
+        t.text :comments
 
         t.timestamps
       end
@@ -394,7 +397,7 @@ def self.up
 
         t.timestamps
       end
-      add_index :work_effort_inventory_assignments,  [:work_effort_id, :inventory_entry_id], :name => "work_effort_inv_assignment_idx"
+      add_index :work_effort_inventory_assignments, [:work_effort_id, :inventory_entry_id], :name => "work_effort_inv_assignment_idx"
     end
 
     unless table_exists?(:work_effort_fixed_asset_assignments)
@@ -405,7 +408,7 @@ def self.up
 
         t.timestamps
       end
-      add_index :work_effort_fixed_asset_assignments,  [:work_effort_id, :fixed_asset_id], :name => "work_effort_fixed_asset_assign_idx"
+      add_index :work_effort_fixed_asset_assignments, [:work_effort_id, :fixed_asset_id], :name => "work_effort_fixed_asset_assign_idx"
     end
 
     ##********************************************************************************************
@@ -418,11 +421,11 @@ def self.up
 
         #this type field is NOT REDUNDANT. It is here to distinguish between work breakdown type associations and
         #dependency type associations
-        t.integer   :work_effort_type_assoc_type
+        t.integer :work_effort_type_assoc_type
 
         #the two work effort types involved in the association
-        t.integer   :work_effort_type_id_from
-        t.integer   :work_effort_type_id_to
+        t.integer :work_effort_type_id_from
+        t.integer :work_effort_type_id_to
 
         #custom columns go here
         t.string :description
@@ -438,12 +441,12 @@ def self.up
     unless table_exists?(:work_effort_fixed_asset_standards)
       create_table :work_effort_fixed_asset_standards do |t|
         #foreign key references
-        t.references  :work_effort
-        t.references  :fixed_asset_type
+        t.references :work_effort
+        t.references :fixed_asset_type
 
-        t.decimal     :estimated_quantity
-        t.decimal     :estimated_duration
-        t.integer     :estimated_cost_money_id
+        t.decimal :estimated_quantity
+        t.decimal :estimated_duration
+        t.integer :estimated_cost_money_id
 
         t.timestamps
       end
@@ -454,12 +457,12 @@ def self.up
     unless table_exists?(:work_effort_skill_standards)
       create_table :work_effort_skill_standards do |t|
         #foreign key references
-        t.references  :work_effort
-        t.references  :skill_type
+        t.references :work_effort
+        t.references :skill_type
 
-        t.decimal     :estimated_num_people
-        t.decimal     :estimated_duration
-        t.integer     :estimated_cost_money_id
+        t.decimal :estimated_num_people
+        t.decimal :estimated_duration
+        t.integer :estimated_cost_money_id
 
         t.timestamps
       end
@@ -470,11 +473,11 @@ def self.up
     unless table_exists?(:work_effort_good_standards)
       create_table :work_effort_good_standards do |t|
         #foreign key references
-        t.references  :work_effort
-        t.references  :good_type
+        t.references :work_effort
+        t.references :good_type
 
-        t.decimal     :estimated_quantity
-        t.integer     :estimated_cost_money_id
+        t.decimal :estimated_quantity
+        t.integer :estimated_cost_money_id
 
         t.timestamps
       end
@@ -487,8 +490,8 @@ def self.up
     unless table_exists?(:work_effort_inventory_produced)
       create_table :work_effort_inventory_produced do |t|
         #foreign key references
-        t.references  :work_effort
-        t.references  :inventory_entry
+        t.references :work_effort
+        t.references :inventory_entry
 
         t.timestamps
       end
@@ -499,8 +502,8 @@ def self.up
     unless table_exists?(:work_effort_deliverable_produced)
       create_table :work_effort_deliverable_produced do |t|
         #foreign key references
-        t.references  :work_effort
-        t.references  :deliverable
+        t.references :work_effort
+        t.references :deliverable
 
         t.timestamps
       end
@@ -511,8 +514,8 @@ def self.up
     unless table_exists?(:work_effort_fixed_asset_serviced)
       create_table :work_effort_fixed_asset_serviced do |t|
         #foreign key references
-        t.references  :work_effort
-        t.references  :fixed_asset
+        t.references :work_effort
+        t.references :fixed_asset
 
         t.timestamps
       end
@@ -548,6 +551,97 @@ def self.up
       end
       add_index :party_resource_availability_types, :internal_identifier
       add_index :party_resource_availability_types, :description
+    end
+
+    # transportation_routes
+    unless table_exists?(:transportation_routes)
+      create_table :transportation_routes do |t|
+
+        t.string :internal_identifier
+        t.string :description
+        t.string :comments
+
+        #connection to external system
+        t.string :external_identifier
+        t.string :external_id_source
+
+        t.timestamps
+      end
+    end
+
+    # transportation_route_segments
+    unless table_exists?(:transportation_route_segments)
+      create_table :transportation_route_segments do |t|
+
+        t.string :internal_identifier
+        t.string :description
+        t.string :comments
+
+        #connection to external system
+        t.string :external_identifier
+        t.string :external_id_source
+
+        t.integer :sequence
+        t.datetime :estimated_start
+        t.datetime :estmated_arrival
+        t.datetime :actual_start
+        t.datetime :actual_arrival
+        t.integer :start_mileage
+        t.integer :end_milage
+        t.integer :fuel_used
+
+        #foreign keys
+        t.integer :transportation_route_id
+        t.integer :from_transportation_route_stop_id
+        t.integer :to_transportation_route_stop_id
+
+        t.timestamps
+      end
+    end
+
+    # transportation_route_stops
+    unless table_exists?(:transportation_route_stops)
+      create_table :transportation_route_stops do |t|
+
+        t.string :internal_identifier
+        t.string :description
+
+        t.integer :postal_address_id
+        t.string :geoloc
+        t.integer :sequence
+
+        #connection to external system
+        t.string :external_identifier
+        t.string :external_id_source
+
+        #foreign keys
+        t.integer :transportation_route_id
+
+        t.timestamps
+      end
+    end
+
+    # associated_transportation_routes
+    unless table_exists?(:associated_transportation_routes)
+      create_table :associated_transportation_routes do |t|
+        #foreign keys
+        t.integer :transportation_route_id
+
+        #polymorphic columns
+        t.integer :associated_record_id
+        t.string :associated_record_type
+      end
+      add_index :associated_transportation_routes, [:associated_record_id, :associated_record_type], :name => "associated_route_record_id_type_idx"
+      add_index :associated_transportation_routes, :transportation_route_id, :name => "associated_route_transportation_route_id_idx"
+    end
+
+    unless table_exists?(:role_types_work_efforts)
+      create_table :role_types_work_efforts do |t|
+        t.references :role_type
+        t.references :work_effort
+      end
+
+      add_index :role_types_work_efforts, [:role_type_id, :work_effort_id], :name => 'role_type_work_effort_idx'
     end
 
   end
@@ -601,7 +695,15 @@ def self.up
 
         ##obsolete??
         :party_resource_availabilities,
-        :party_resource_availability_types
+        :party_resource_availability_types,
+
+        ## routing
+        :transportation_routes,
+        :transportation_route_segments,
+        :transportation_route_stops,
+        :associated_transportation_routes,
+
+        :role_types_work_efforts
 
     ].each do |tbl|
       if table_exists?(tbl)
