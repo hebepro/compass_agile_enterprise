@@ -8,7 +8,7 @@ class ChangeHstoreToText < ActiveRecord::Migration
 
         if Object.class_exists?(table.classify)
 
-          if _columns.collect(&:type).include?(:hstore) or _columns.collect(&:type).include?(:text)
+          if _columns.collect(&:type).include?(:hstore)
             model = table.classify.constantize
 
             attributes = model.serialized_attributes.keys
@@ -57,8 +57,10 @@ class ChangeHstoreToText < ActiveRecord::Migration
 
         # drop and add column as json
         table_column[:columns].each do |column|
-          remove_column table_column[:table], column
-          add_column table_column[:table], column, :text
+          if column_exists?(table_column[:table], column)
+            remove_column table_column[:table], column
+            add_column table_column[:table], column, :text
+          end
         end
 
         # update serialize attribute to JSON

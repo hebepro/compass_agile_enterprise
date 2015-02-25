@@ -33,7 +33,6 @@ inner join applications on applications.id = app_containers_applications.applica
     drop_table :applications_widgets
     remove_column :applications, :javascript_class_name
     remove_column :applications, :shortcut_id
-    remove_column :applications, :xtype
 
     # remove all old preference types
     %w{desktop_background extjs_theme desktop_shortcut autoload_application}.each do |iid|
