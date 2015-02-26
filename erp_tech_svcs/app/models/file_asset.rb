@@ -330,6 +330,18 @@ class XmlFile < TextFile
   self.valid_extensions = %w(.xml .XML)
 end
 
+class DocFile < TextFile
+  self.file_type = :doc
+  self.content_type = 'application/msword'
+  self.valid_extensions = %w(.doc .DOC)
+end
+
+class DocxFile < TextFile
+  self.file_type = :docx
+  self.content_type = 'vnd.openxmlformats-officedocument.wordprocessingml.document'
+  self.valid_extensions = %w(.docx .DOCX)
+end
+
 class Pdf < TextFile
   self.file_type = :pdf
   self.content_type = 'application/pdf'
