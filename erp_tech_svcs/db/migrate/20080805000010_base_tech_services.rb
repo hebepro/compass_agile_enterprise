@@ -190,7 +190,7 @@ class BaseTechServices < ActiveRecord::Migration
 
     # file_asset_holders
     unless table_exists?(:file_asset_holders)
-      ccreate_table :file_asset_holders do |t|
+      create_table :file_asset_holders do |t|
         t.references :file_asset
         t.references :file_asset_holder, :polymorphic => true
         t.text :scoped_by
@@ -246,7 +246,7 @@ class BaseTechServices < ActiveRecord::Migration
       create_table :capabilities do |t|
         t.string :description
         t.references :capability_type
-        t.references :capability_resource
+        t.references :capability_resource, :polymorphic => true
         t.integer :scope_type_id
         t.text :scope_query
         t.timestamps
@@ -259,7 +259,7 @@ class BaseTechServices < ActiveRecord::Migration
 
     unless table_exists?(:capability_accessors)
       create_table :capability_accessors do |t|
-        t.references :capability_accessor_record
+        t.references :capability_accessor_record, :polymorphic => true
         t.integer :capability_id
         t.timestamps
       end

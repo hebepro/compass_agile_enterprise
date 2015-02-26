@@ -76,7 +76,7 @@ class InvoicingServices < ActiveRecord::Migration
         t.string     :item_description
         t.decimal    :quantity, :precision => 8, :scale => 2
         t.decimal    :amount, :precision => 8, :scale => 2
-        t.boolean    :taxable,
+        t.boolean    :taxable
         t.decimal    :tax_rate, :precision => 8, :scale => 2
         t.decimal    :unit_price, :precision => 8, :scale => 2
         

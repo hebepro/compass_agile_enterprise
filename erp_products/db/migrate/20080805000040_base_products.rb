@@ -184,9 +184,9 @@ class BaseProducts < ActiveRecord::Migration
         t.timestamps
       end
 
-      add_index :prod_instance_role_types, :parent_id, :name => "prod_ins_role_type_parent_id_idx"
-      add_index :prod_instance_role_types, :lft, :name => "prod_ins_role_type_lft_idx"
-      add_index :prod_instance_role_types, :rgt, :name => "prod_ins_role_type_rgt_idx"
+      add_index :prod_instance_role_types, :parent_id, :name => "prod_type_reln_type_parent_id_idx"
+      add_index :prod_instance_role_types, :lft, :name => "prod_type_reln_type_lft_idx"
+      add_index :prod_instance_role_types, :rgt, :name => "prod_type_reln_type_rgt_idx"
     end
 
     # prod_type_role_types
@@ -297,7 +297,7 @@ class BaseProducts < ActiveRecord::Migration
         t.timestamps
       end
 
-      add_index :product_feature_types, [:feature_of_record_type, :feature_of_record_id], :name => 'prod_feature_record_idx'
+      add_index :product_feature_applicabilities, [:feature_of_record_type, :feature_of_record_id], :name => 'prod_feature_record_idx'
     end
 
     # product_feature_type_product_feature_values
@@ -309,21 +309,21 @@ class BaseProducts < ActiveRecord::Migration
         t.timestamps
       end
 
-      add_index :product_feature_type_product_feature_values, :product_feature_type, :name => 'prod_feature_type_feature_value_type_idx'
-      add_index :product_feature_type_product_feature_values, :product_feature_value, :name => 'prod_feature_type_feature_value_value_idx'
+      add_index :product_feature_type_product_feature_values, :product_feature_type_id, :name => 'prod_feature_type_feature_value_type_idx'
+      add_index :product_feature_type_product_feature_values, :product_feature_value_id, :name => 'prod_feature_type_feature_value_value_idx'
     end
 
     # product_features
     unless table_exists?(:product_features)
       create_table :product_features do |t|
-        t.integer :product_feature_type_id
-        t.integer :product_feature_value_id
+        t.references :product_feature_type
+        t.references :product_feature_value
 
         t.timestamps
       end
 
-      add_index :product_features, :product_feature_type, :name => 'prod_feature_type_idx'
-      add_index :product_features, :product_feature_value, :name => 'prod_feature_value_idx'
+      add_index :product_features, :product_feature_type_id, :name => 'prod_feature_type_idx'
+      add_index :product_features, :product_feature_value_id, :name => 'prod_feature_value_idx'
     end
 
     # product_feature_values

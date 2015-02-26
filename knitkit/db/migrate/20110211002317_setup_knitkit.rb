@@ -35,7 +35,7 @@ class SetupKnitkit < ActiveRecord::Migration
         t.string :first_name
         t.string :last_name
         t.string :email
-        t.test :message
+        t.text :message
         t.references :created_by
 
         t.timestamps
@@ -290,15 +290,15 @@ class SetupKnitkit < ActiveRecord::Migration
 
     # documented_items
     unless table_exists? :documented_items
-      create_table :documented_items, :force => true do |t|
+      create_table :documented_items do |t|
         t.string :documented_klass, :null => true
         t.integer :documented_content_id, :null => true
         t.integer :online_document_section_id
         t.timestamps
-
-        add_index :documented_items, :documented_content_id, :name => 'documented_items_documented_content_id_idx'
-        add_index :documented_items, :online_document_section_id, :name => 'documented_items_online_document_section_id_idx'
       end
+
+      add_index :documented_items, :documented_content_id, :name => 'documented_items_documented_content_id_idx'
+      add_index :documented_items, :online_document_section_id, :name => 'documented_items_online_document_section_id_idx'
     end
 
     # documents
