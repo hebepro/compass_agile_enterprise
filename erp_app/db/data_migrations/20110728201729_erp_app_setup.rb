@@ -127,14 +127,14 @@ class ErpAppSetup
     admin_user.desktop_applications << app
     admin_user.save
 
-    app = DesktopApplication.create(
-        :description => 'Configuration Management',
-        :icon => 'icon-grid',
-        :internal_identifier => 'configuration_management'
-    )
-
-    admin_user.desktop_applications << app
-    admin_user.save
+    # app = DesktopApplication.create(
+    #     :description => 'Configuration Management',
+    #     :icon => 'icon-grid',
+    #     :internal_identifier => 'configuration_management'
+    # )
+    #
+    # admin_user.desktop_applications << app
+    # admin_user.save
 
     app = DesktopApplication.create(
         :description => 'Job Tracker',
@@ -154,14 +154,14 @@ class ErpAppSetup
     admin_user.desktop_applications << app
     admin_user.save
 
-    app = DesktopApplication.create(
-        :description => 'Tail',
-        :icon => 'icon-document_pulse',
-        :internal_identifier => 'tail',
-    )
-
-    admin_user.desktop_applications << app
-    admin_user.save
+    # app = DesktopApplication.create(
+    #     :description => 'Tail',
+    #     :icon => 'icon-document_pulse',
+    #     :internal_identifier => 'tail',
+    # )
+    #
+    # admin_user.desktop_applications << app
+    # admin_user.save
 
     ########################################
     # Create Job Trackers
