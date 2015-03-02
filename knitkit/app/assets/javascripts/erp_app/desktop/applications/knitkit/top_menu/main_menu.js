@@ -545,8 +545,8 @@ Compass.ErpApp.Desktop.Applications.Knitkit.newSectionMenuItem = {
                                 forceSelection: true,
                                 store: [
                                     ['Page', 'Page'],
-                                    ['Blog', 'Blog'],
-                                    ['OnlineDocumentSection', 'Online Document Section']
+                                    ['Blog', 'Blog'] //,
+                                    //['OnlineDocumentSection', 'Online Document Section']
                                 ],
                                 value: 'Page',
                                 fieldLabel: 'Type',
