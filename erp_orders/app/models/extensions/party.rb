@@ -8,8 +8,8 @@ Party.class_eval do
       statement = statement.with_current_status({'order_statuses' => statuses})
     end
 
-    statement.joins(:biz_txn_event => :biz_txn_event_party_roles)
-            .where(:biz_txn_event_party_roles => {:party_id => self.id})
+    statement = statement.joins(:biz_txn_event => :biz_txn_party_roles)
+            .where(:biz_txn_party_roles => {:party_id => self.id})
 
     statement
   end
