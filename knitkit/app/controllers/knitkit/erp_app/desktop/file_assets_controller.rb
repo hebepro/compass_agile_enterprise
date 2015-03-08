@@ -202,12 +202,12 @@ module Knitkit
           @root_node = nil
 
           if @context == :website
-            @root_node = File.join(current_user.party.dba_organization.id.to_s,
-                                   ErpTechSvcs::Config.file_assets_location,
+            @root_node = File.join(ErpTechSvcs::Config.file_assets_location,
+                                   "dba_organization_#{current_user.party.dba_organization.id.to_s}",
                                    "sites", @assets_model.iid) unless @assets_model.nil?
           else
-            @root_node = File.join(current_user.party.dba_organization.id.to_s,
-                                   ErpTechSvcs::Config.file_assets_location,
+            @root_node = File.join(ErpTechSvcs::Config.file_assets_location,
+                                   "dba_organization_#{current_user.party.dba_organization.id.to_s}",
                                    "shared_site_files")
           end
 
