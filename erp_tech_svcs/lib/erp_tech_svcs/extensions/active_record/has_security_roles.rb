@@ -32,7 +32,7 @@ module ErpTechSvcs
 
 				  def roles
 					  self.security_roles
-				  end
+          end
 
 				  def add_role(role)
 					  role = role.is_a?(SecurityRole) ? role : SecurityRole.find_by_internal_identifier(role.to_s)
@@ -40,7 +40,8 @@ module ErpTechSvcs
   					  self.security_roles << role
   					  self.save
   					end
-				  end
+          end
+          alias :add_security_role :add_role
 
           def add_roles(*passed_roles)
             passed_roles.flatten!
@@ -49,23 +50,28 @@ module ErpTechSvcs
               self.add_role(role)
             end
           end
+          alias :add_security_roles :add_roles
 
           def remove_role(role)
             role = role.is_a?(SecurityRole) ? role : SecurityRole.find_by_internal_identifier(role.to_s)
             self.security_roles.delete(role) if has_role?(role)
-				  end
+          end
+          alias :remove_security_role :remove_role
+
 
           def remove_roles(*passed_roles)
             passed_roles.flatten!
             passed_roles.each do |role|
               self.remove_role(role)
             end
-				  end
+          end
+          alias :remove_security_roles :remove_roles
 
           def remove_all_roles
             self.security_roles = []
             self.save
           end
+          alias :remove_all_security_roles :remove_all_roles
 
           def has_role?(*passed_roles)
             result = false
@@ -80,6 +86,8 @@ module ErpTechSvcs
             end
             result
           end
+          alias :has_security_role? :has_role?
+
 				end  
       end #HasSecurityRoles
     end #ActiveRecord

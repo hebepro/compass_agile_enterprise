@@ -22,6 +22,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.ThemesTreePanel", {
 
         Ext.create("Ext.window.Window", {
             layout: 'fit',
+            modal: true,
             width: 375,
             title: 'Theme Widget',
             plain: true,

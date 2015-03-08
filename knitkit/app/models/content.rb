@@ -3,6 +3,8 @@ require 'will_paginate/array'
 class Content < ActiveRecord::Base
   attr_protected :created_at, :updated_at
 
+  has_party_roles
+
   extend FriendlyId
   friendly_id :title, :use => [:slugged], :slug_column => :permalink
 
@@ -103,8 +105,7 @@ class Content < ActiveRecord::Base
   end
 
   def position(website_section_id)
-    position = self.website_section_contents.find_by_website_section_id(website_section_id).position
-    position
+    self.website_section_contents.find_by_website_section_id(website_section_id).position
   end
 
   def get_comments(limit)

@@ -44,7 +44,8 @@ module ErpBaseErpSvcs
             end
 				  end
 				end
-			end
-		end
-	end
-end
+			end # ActsAsCategory
+    end # ActiveRecord
+  end # Extensions
+end # ErpBaseErpSvcs
+

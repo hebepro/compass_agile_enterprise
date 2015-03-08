@@ -6,7 +6,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SecurityManagement.UsersPanel", 
     setUser: function (record) {
         var me = this;
 
-        var assign_to_id = record.get('id');
+        var assign_to_id = record.get('server_id');
         var assign_to_username = record.get('username');
 
         var southPanel = Ext.getCmp('security_management_south_region');
@@ -14,22 +14,20 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SecurityManagement.UsersPanel", 
         var security_management_groupswidget = southPanel.down('security_management_groupswidget');
         security_management_groupswidget.assign_to_id = assign_to_id;
         security_management_groupswidget.assign_to_description = assign_to_username;
-        security_management_groupswidget.refreshWidget();
 
         var security_management_roleswidget = southPanel.down('security_management_roleswidget');
         security_management_roleswidget.assign_to_id = assign_to_id;
         security_management_roleswidget.assign_to_description = assign_to_username;
-        security_management_roleswidget.refreshWidget();
 
         var security_management_capabilitieswidget = southPanel.down('security_management_capabilitieswidget');
         security_management_capabilitieswidget.assign_to_id = assign_to_id;
         security_management_capabilitieswidget.assign_to_description = assign_to_username;
-        security_management_capabilitieswidget.refreshWidget();
 
         var security_management_userseffectivesecurity = southPanel.down('security_management_userseffectivesecurity');
         security_management_userseffectivesecurity.assign_to_id = assign_to_id;
         security_management_userseffectivesecurity.assign_to_description = assign_to_username;
-        security_management_userseffectivesecurity.refreshWidget();
+
+        southPanel.down('tabpanel').getActiveTab().refreshWidget();
     },
 
     constructor: function (config) {
@@ -41,11 +39,12 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SecurityManagement.UsersPanel", 
             items: [
                 {
                     xtype: 'security_management_user_grid',
-                    setupUrl: '/erp_app/desktop/security_management/users/available_setup',
-                    dataUrl: '/erp_app/desktop/security_management/users/available',
-                    grid_listeners: {
+                    listeners: {
                         itemclick: function (grid, record, item, index) {
                             self.setUser(record);
+                        },
+                        render: function(grid){
+                            grid.store.load();
                         }
                     }
                 }

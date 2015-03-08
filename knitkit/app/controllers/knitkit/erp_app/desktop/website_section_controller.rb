@@ -228,7 +228,9 @@ module Knitkit
 
         def available_articles_filter
           menu = []
-          websites = Website.all
+          websites = Website.joins(:website_party_roles)
+                                  .where('website_party_roles.party_id = ?', current_user.party.dba_organization.id)
+                                  .where('website_party_roles.role_type_id = ?', RoleType.iid('dba_org')).all
           all_articles = [{:name => 'All Articles', :id => 0}]
           orphaned_articles = [{:name => 'Orphaned Articles Only', :id => -1}]
 
@@ -247,7 +249,8 @@ module Knitkit
           current_articles = Article.joins(:website_section_contents).where("website_section_id = #{params[:section_id]}").all
 
           # Defaults to retrieving all articles
-          available_articles = Article.order('LOWER(contents.internal_identifier) ASC')
+          available_articles = Article.with_party_role(current_user.party.dba_organization,
+                                                       RoleType.iid('dba_org')).order('LOWER(contents.internal_identifier) ASC')
 
           # Orphaned Articles
           if !website_id.blank? and website_id.to_i == -1

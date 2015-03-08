@@ -7,11 +7,11 @@ module Knitkit
         before_filter :set_asset_model
         before_filter :set_root_node
 
-        def base_path          
+        def base_path
           if @root_node.nil?
             @base_path = nil
           else
-            @base_path = File.join(@file_support.root, @root_node) 
+            @base_path = File.join(@file_support.root, @root_node)
           end
 
           @base_path
@@ -39,7 +39,7 @@ module Knitkit
           path = (params[:path] == 'root_node') ? base_path : params[:path]
           name = params[:name]
 
-          path = File.join(@file_support.root,path) if path.index(@file_support.root).nil?
+          path = File.join(@file_support.root, path) if path.index(@file_support.root).nil?
 
           @file_support.create_folder(path, name)
           render :json => {:success => true}
@@ -64,7 +64,7 @@ module Knitkit
               data = request.raw_post
 
               begin
-                upload_path == 'root_node' ? @assets_model.add_file(data, File.join(base_path,name)) : @assets_model.add_file(data, File.join(@file_support.root,upload_path,name))
+                upload_path == 'root_node' ? @assets_model.add_file(data, File.join(base_path, name)) : @assets_model.add_file(data, File.join(@file_support.root, upload_path, name))
                 result = {:success => true}
               rescue => ex
                 logger.error ex.message
@@ -75,7 +75,7 @@ module Knitkit
               #the awesome uploader widget whats this to mime type text, leave it render :inline
               render :inline => result.to_json
             end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability=>ex
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
           end
         end
@@ -86,7 +86,7 @@ module Knitkit
           path = params[:node]
           new_parent_path = params[:parent_node]
           new_parent_path = @root_node if new_parent_path == ROOT_NODE
-          
+
           nodes_to_move = (params[:selected_nodes] ? JSON(params[:selected_nodes]) : [params[:node]])
           begin
             nodes_to_move.each do |path|
@@ -100,7 +100,7 @@ module Knitkit
             end
             render :json => {:success => true, :msg => messages.join(',')}
           rescue Exception => e
-           render :json => {:success => false, :msg => e.message}
+            render :json => {:success => false, :msg => e.message}
           end
         end
 
@@ -121,16 +121,16 @@ module Knitkit
             result = false
             nodes_to_delete.each do |path|
               current_user.with_capability(capability_type, capability_resource) do
-                path = "#{path}/" if params[:leaf] == 'false' and path.match(/\/$/).nil?                
+                path = "#{path}/" if params[:leaf] == 'false' and path.match(/\/$/).nil?
                 begin
                   name = File.basename(path)
-                  result, message, is_folder = @file_support.delete_file(File.join(@file_support.root,path))
+                  result, message, is_folder = @file_support.delete_file(File.join(@file_support.root, path))
                   if result and !is_folder
                     file = @assets_model.files.find(:first, :conditions => ['name = ? and directory = ?', ::File.basename(path), ::File.dirname(path)])
                     file.destroy
                   end
                   messages << message
-                rescue Exception=>ex
+                rescue Exception => ex
                   Rails.logger.error ex.message
                   Rails.logger.error ex.backtrace.join("\n")
                   render :json => {:success => false, :error => "Error deleting #{name}"} and return
@@ -142,7 +142,7 @@ module Knitkit
             else
               render :json => {:success => false, :error => messages.join(',')}
             end
-          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability=>ex
+          rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
             render :json => {:success => false, :message => ex.message}
           end
         end
@@ -151,18 +151,18 @@ module Knitkit
           path = params[:node]
           name = params[:file_name]
 
-          result, message = @file_support.rename_file(File.join(@file_support.root,path), name)
+          result, message = @file_support.rename_file(File.join(@file_support.root, path), name)
           if result
             file = @assets_model.files.find(:first, :conditions => ['name = ? and directory = ?', ::File.basename(path), ::File.dirname(path)])
             file.name = name
             file.save
           end
 
-          render :json =>  {:success => true, :message => message}
+          render :json => {:success => true, :message => message}
         end
 
         def update_security
-          path   = params[:path]
+          path = params[:path]
           secure = params[:secure]
           roles = []
 
@@ -185,11 +185,11 @@ module Knitkit
               role.add_capability(capability)
             end
           end
-          
+
           # if we're using S3, set file permissions to private or public_read   
           @file_support.set_permissions(path, (file.is_secured? ? :private : :public_read)) if ErpTechSvcs::Config.file_storage == :s3
-          
-          render :json => {:success => true, :secured => file.is_secured?, :roles => file.roles.uniq.collect{|item| item.internal_identifier}}
+
+          render :json => {:success => true, :secured => file.is_secured?, :roles => file.roles.uniq.collect { |item| item.internal_identifier }}
         end
 
         protected
@@ -202,9 +202,13 @@ module Knitkit
           @root_node = nil
 
           if @context == :website
-            @root_node = File.join(ErpTechSvcs::Config.file_assets_location,"sites",@assets_model.iid) unless @assets_model.nil?
+            @root_node = File.join(current_user.party.dba_organization.id.to_s,
+                                   ErpTechSvcs::Config.file_assets_location,
+                                   "sites", @assets_model.iid) unless @assets_model.nil?
           else
-            @root_node = File.join(ErpTechSvcs::Config.file_assets_location,"shared_site_files")
+            @root_node = File.join(current_user.party.dba_organization.id.to_s,
+                                   ErpTechSvcs::Config.file_assets_location,
+                                   "shared_site_files")
           end
 
           @root_node
@@ -222,8 +226,8 @@ module Knitkit
             @assets_model = CompassAeInstance.find_by_internal_identifier('base')
           end
         end
-  
-      end#FileAssetsController
-    end#Desktop
-  end#ErpApp
-end#Knitkit
+
+      end #FileAssetsController
+    end #Desktop
+  end #ErpApp
+end #Knitkit

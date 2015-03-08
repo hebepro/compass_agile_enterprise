@@ -96,7 +96,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SecurityManagement.RoleGrid", {
 
     constructor: function (config) {
         config = Ext.apply({
-            id: config.id,
+            itemId: config.id,
             title: config.title,
             editable: false,
             page: true,

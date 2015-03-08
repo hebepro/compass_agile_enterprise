@@ -19,6 +19,7 @@ module ErpBaseErpSvcs
       include ErpBaseErpSvcs::Extensions::ActiveRecord::ActsAsFixedAsset
       include ErpBaseErpSvcs::Extensions::ActiveRecord::ActsAsFacility
       include ErpBaseErpSvcs::Extensions::ActiveRecord::CanBeGenerated
+      include ErpBaseErpSvcs::Extensions::ActiveRecord::HasPartyRoles
       extend ErpBaseErpSvcs::Extensions::ActiveRecord::StiInstantiation::ActMacro
     end
 

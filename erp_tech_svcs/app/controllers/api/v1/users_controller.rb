@@ -10,15 +10,80 @@ module Api
         limit = params[:limit] || 25
         start = params[:start] || 0
 
+        # scope users by dba_organization
+        users = User.joins(:party).joins("inner join party_relationships as dba_reln on
+                          (dba_reln.party_id_from = parties.id
+                          and
+                          dba_reln.party_id_to = #{current_user.party.dba_organization.id}
+                          and
+                          dba_reln.role_type_id_to = #{RoleType.iid('dba_org').id}
+                          )")
+
         if username.blank?
-          users = User.order("#{sort} #{dir}").offset(start).limit(limit)
-          total_count = User.count
-        else
-          users = User.where('username like ? or email like ?', "%#{username}%", "%#{username}%").order("#{sort} #{dir}").offset(start).limit(limit)
           total_count = users.count
+          users = users.order("#{sort} #{dir}").offset(start).limit(limit)
+        else
+          users = users.where('username like ? or email like ?', "%#{username}%", "%#{username}%")
+          total_count = users.count
+          users = users.order("#{sort} #{dir}").offset(start).limit(limit)
         end
 
         render :json => {total_count: total_count, users: users.collect(&:to_data_hash)}
+      end
+
+      def create
+        response = {}
+        begin
+          ActiveRecord::Base.connection.transaction do
+            current_user.with_capability(:create, 'User') do
+
+              user = User.new(
+                  :email => params[:email],
+                  :username => params[:username],
+                  :password => params[:password],
+                  :password_confirmation => params[:password_confirmation]
+              )
+
+              # set this to tell activation where to redirect_to for login and temp password
+              login_url = params[:login_url] || '/erp_app/login'
+
+              #set this to tell activation where to redirect_to for login and temp password
+              user.add_instance_attribute(:login_url, login_url)
+              user.add_instance_attribute(:temp_password, params[:password])
+
+              if user.save
+                individual = Individual.create(:gender => params[:gender],
+                                               :current_first_name => params[:first_name],
+                                               :current_last_name => params[:last_name])
+                user.party = individual.party
+                user.save
+
+                # add employee role to party
+                party = individual.party
+                party.add_role_type('employee')
+
+                # associate the new party to the dba_organization of the user creating this user
+                relationship_type = RelationshipType.find_or_create(RoleType.iid('dba_org'), RoleType.iid('employee'))
+                party.create_relationship(relationship_type.description,
+                                          current_user.party.dba_organization.id,
+                                          relationship_type)
+
+                response = {:success => true}
+              else
+                message = "<ul>"
+                user.errors.collect do |e, m|
+                  message << "<li>#{e} #{m}</li>"
+                end
+                message << "</ul>"
+                response = {:success => false, :message => message, :user => user.to_data_hash}
+              end
+
+              render :json => response
+            end
+          end
+        rescue ErpTechSvcs::Utils::CompassAccessNegotiator::Errors::UserDoesNotHaveCapability => ex
+          render :json => {:success => false, :message => ex.message, :user => null}
+        end
       end
 
       def reset_password
@@ -29,7 +94,7 @@ module Api
 
             # generate new password with only letters
             charset = %w{ A C D E F G H J K M N P Q R T V W X Y Z }
-            new_password = (0...8).map{ charset.to_a[rand(charset.size)] }.join
+            new_password = (0...8).map { charset.to_a[rand(charset.size)] }.join
 
             user.password_confirmation = new_password
             if user.change_password!(new_password)

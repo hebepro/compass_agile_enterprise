@@ -3,10 +3,10 @@ module ErpTechSvcs
     def create
       login = params[:login].strip
       if login(login, params[:password])
-        #log when someone logs in
+        # log when someone logs in
         ErpTechSvcs::ErpTechSvcsAuditLog.successful_login(current_user)
 
-        #set logout
+        # set logout
         session[:logout_to] = params[:logout_to]
 
         login_to = session[:return_to_url].blank? ? params[:login_to] : session[:return_to_url]

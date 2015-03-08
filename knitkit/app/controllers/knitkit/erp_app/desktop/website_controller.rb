@@ -8,9 +8,13 @@ module Knitkit
                                               :build_host_hash, :activate_publication, :publish, :update, :delete]
 
         def index
-          render :json => {:sites => Website.all.collect { |item| item.to_hash(:only => [:id, :name, :title, :subtitle],
-                                                                               :configuration_id => item.configurations.first.id,
-                                                                               :url => "http://#{item.config_value('primary_host')}") }}
+          websites = Website.joins(:website_party_roles)
+                         .where('website_party_roles.party_id = ?', current_user.party.dba_organization.id)
+                         .where('website_party_roles.role_type_id = ?', RoleType.iid('dba_org'))
+
+          render :json => {:sites => websites.all.collect { |item| item.to_hash(:only => [:id, :name, :title, :subtitle],
+                                                                                :configuration_id => item.configurations.first.id,
+                                                                                :url => "#{ErpTechSvcs::Config.file_protocol}://#{item.config_value('primary_host')}") }}
         end
 
         def build_content_tree
@@ -71,8 +75,8 @@ module Knitkit
           render :inline => "{\"success\":true, \"results\":#{published_websites.count},
                             \"totalCount\":#{@website.published_websites.count},
                             \"data\":#{published_websites.to_json(
-              :only => [:comment, :id, :version, :created_at, :active],
-              :methods => [:viewing, :published_by_username])} }"
+                     :only => [:comment, :id, :version, :created_at, :active],
+                     :methods => [:viewing, :published_by_username])} }"
         end
 
         def activate_publication
@@ -142,6 +146,11 @@ module Knitkit
 
                 PublishedWebsite.activate(website, 1, current_user)
 
+                # set the currents users dba_org as the dba_org for this website
+                WebsitePartyRole.create(website: website,
+                                        party: current_user.party.dba_organization,
+                                        role_type: RoleType.iid('dba_org'))
+
                 render :json => {:success => true, :website => website.to_hash(:only => [:id, :name],
                                                                                :configuration_id => website.configurations.first.id,
                                                                                :url => "http://#{website.config_value('primary_host')}")}
@@ -151,7 +160,6 @@ module Knitkit
             Rails.logger.error("#{ex.message} + #{ex.backtrace.join("\n")}")
             render :json => {:success => false, :message => ex.message}
           end
-
         end
 
         def update

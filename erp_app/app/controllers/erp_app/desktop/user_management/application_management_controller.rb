@@ -26,7 +26,9 @@ module ErpApp
                                      end
           end
 
-          render :json => available_applications.map { |application| {:text => application.description, :app_id => application.id, :iconCls => application.icon, :leaf => true} }
+          render :json => available_applications.map { |application| {:text => application.description,
+                                                                      :app_id => application.id,
+                                                                      :iconCls => application.icon, :leaf => true} }
         end
 
         def current_applications
@@ -41,7 +43,10 @@ module ErpApp
                                    user.apps
                                  end
 
-          render :json => current_applications.map { |application| {:text => application.description, :app_id => application.id, :iconCls => application.icon, :leaf => true} }
+          render :json => current_applications.map { |application| {:text => application.description,
+                                                                    :app_id => application.id,
+                                                                    :iconCls => application.icon,
+                                                                    :leaf => true} }
         end
 
         def save_applications

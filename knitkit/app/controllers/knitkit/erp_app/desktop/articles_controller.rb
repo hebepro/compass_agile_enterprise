@@ -19,6 +19,10 @@ module Knitkit
                 article.created_by = current_user
 
                 if article.save
+                  # set the currents users dba_org as the dba_org for this content
+                  article.add_party_with_role(current_user.party.dba_organization,
+                                              RoleType.iid('dba_org'))
+
                   result[:node] = if website_section_id.blank?
                                     {:text => params[:title],
                                      :id => article.id,
@@ -107,7 +111,8 @@ module Knitkit
         end
 
         def existing_articles
-          render :inline => Article.all.to_json(:only => [:internal_identifier, :id])
+          render :inline => Article.with_party_role(current_user.party.dba_organization,
+                                                    RoleType.iid('dba_org')).all.to_json(:only => [:internal_identifier, :id])
         end
 
         def show
@@ -133,7 +138,8 @@ module Knitkit
           limit = params[:limit] || 10
           start = params[:start] || 0
 
-          articles = Article.joins("INNER JOIN website_section_contents ON website_section_contents.content_id = contents.id").where("website_section_id = #{website_section_id}")
+          articles = Article.joins("INNER JOIN website_section_contents ON website_section_contents.content_id = contents.id")
+                         .where("website_section_id = #{website_section_id}")
           total_count = articles.count
           articles = articles.order("#{sort} #{dir}").limit(limit).offset(start)
 
@@ -171,7 +177,9 @@ module Knitkit
           limit = params[:limit] || 20
           start = params[:start] || 0
 
-          articles = Article.includes(:website_section_contents)
+          articles = Article.with_party_role(current_user.party.dba_organization,
+                                             RoleType.iid('dba_org')).includes(:website_section_contents)
+
           articles = articles.where(:website_section_contents => {:content_id => nil}) if params[:show_orphaned] == 'true'
           articles = articles.where("UPPER(contents.internal_identifier) LIKE UPPER('%#{params[:iid]}%')") unless params[:iid].blank?
           articles = articles.where("UPPER(contents.title) LIKE UPPER('%#{params[:title]}%')") unless params[:title].blank?
@@ -201,7 +209,7 @@ module Knitkit
             articles_array << articles_hash
           end
 
-          render :inline => "{total:#{total_count},data:#{articles_array.to_json}}"
+          render :json => {total: total_count, data: articles_array}
         end
 
         def article_attributes

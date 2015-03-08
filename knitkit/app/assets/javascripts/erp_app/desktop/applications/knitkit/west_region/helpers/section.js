@@ -122,7 +122,8 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
         iconCls: 'icon-copy',
         listeners: {
             'click': function () {
-                Ext.widget('window', {
+                var window = Ext.widget('window', {
+                    modal: true,
                     layout: 'fit',
                     width: 375,
                     title: 'Attach Existing Article',
@@ -172,7 +173,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
                                     ],
                                     listeners: {
                                         'load': function (store) {
-                                            available_articles_filter_combobox = Ext.ComponentQuery.query('#available_articles_filter_combobox')[0];
+                                            available_articles_filter_combobox = window.down('#available_articles_filter_combobox');
                                             available_articles_filter_combobox.select(0);
                                             available_articles_filter_combobox.fireEvent('select');
                                         }
@@ -189,12 +190,11 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
                                 allowBlank: false,
                                 listeners: {
                                     'select': function (combo, records) {
-                                        available_articles_combobox = Ext.ComponentQuery.query('#available_articles_combobox')[0];
-                                        available_articles_combobox.getPicker().setLoading(false);
+                                        available_articles_combobox = window.down('#available_articles_combobox');
                                         available_articles_combobox.getStore().load({
                                             params: {
                                                 section_id: sectionId,
-                                                website_id: Ext.ComponentQuery.query('#available_articles_filter_combobox')[0].getValue()
+                                                website_id: window.down('#available_articles_filter_combobox').getValue()
                                             }
                                         });
                                     }
@@ -237,12 +237,14 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
                                     listeners: {
                                         'beforeload': function (store) {
                                             Ext.apply(store.getProxy().extraParams, {
-                                                website_id: Ext.ComponentQuery.query('#available_articles_filter_combobox')[0].getValue()
+                                                website_id: window.down('#available_articles_filter_combobox').getValue()
                                             });
                                         },
                                         'load': function (store, records) {
-                                            available_articles_combobox = Ext.ComponentQuery.query('#available_articles_combobox')[0];
-                                            available_articles_combobox.setValue(store.getAt(0).data.id);
+                                            if (records.length > 0) {
+                                                available_articles_combobox = window.down('#available_articles_combobox');
+                                                available_articles_combobox.setValue(records.first().get('id'));
+                                            }
                                         }
                                     }
                                 }),
@@ -295,7 +297,8 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
                             }
                         }
                     ]
-                }).show();
+                });
+                window.show();
             }
         }
     });
@@ -753,7 +756,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
                                                 }, this, true);
                                             }
 
-                                            if (parentNode && parentNode != record.getOwnerTree().getRootNode()){
+                                            if (parentNode && parentNode != record.getOwnerTree().getRootNode()) {
                                                 record.getOwnerTree().getStore().load({node: parentNode});
                                             }
 
@@ -786,7 +789,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
             iconCls: 'icon-delete',
             listeners: {
                 'click': function () {
-                    Ext.MessageBox.confirm('Confirm', 'Are you sure you want to delete the section?<h3>'+record.data["text"]+'</h3> NOTE: Articles belonging to this section will be orphaned.<br><br>', function (btn) {
+                    Ext.MessageBox.confirm('Confirm', 'Are you sure you want to delete the section?<h3>' + record.data["text"] + '</h3> NOTE: Articles belonging to this section will be orphaned.<br><br>', function (btn) {
                         if (btn == 'no') {
                             return false;
                         }

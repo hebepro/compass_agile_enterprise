@@ -55,8 +55,8 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
         var me = this;
         me.setWindowStatus('Deleting user...');
         Ext.Ajax.request({
-            url: '/erp_app/desktop/user_management/users/delete/' + rec.get("id"),
-            method: 'POST',
+            url: '/api/v1/users/' + rec.get("server_id"),
+            method: 'DELETE',
             success: function (response) {
                 var obj = Ext.decode(response.responseText);
                 if (obj.success) {
@@ -79,11 +79,11 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
         var me = this;
         me.setWindowStatus('Resetting password...');
         Ext.Ajax.request({
-            url: '/users/reset_password/',
+            url: '/api/v1/users/reset_password/',
             params: {
                 login: rec.get('email')
             },
-            method: 'POST',
+            method: 'PUT',
             success: function (response) {
                 var obj = Ext.decode(response.responseText);
                 if (obj.success) {
@@ -102,55 +102,41 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
         });
     },
 
-    viewUser: function (rec) {
-        this.setWindowStatus('Loading User...');
-        var userId = rec.get('id');
+    viewUser: function (user) {
+        var userId = user.get('server_id');
         var me = this;
-        Ext.Ajax.request({
-            url: '/erp_app/desktop/user_management/users/get_details/' + userId,
-            params: {},
-            success: function (responseObject) {
-                var response = Ext.decode(responseObject.responseText);
-                me.tabPanel.removeAll();
 
-                me.initialConfig.tabPanel.add(
-                    {
-                        xtype: 'usermanagement_personalinfopanel',
-                        businessParty: response.businessParty,
-                        userInfo: response.userInfo,
-                        entityType: response.entityType
-                    });
+        me.tabPanel.removeAll();
 
-                me.initialConfig.tabPanel.add(
-                    {
-                        xtype: 'controlpanel_userapplicationmgtpanel',
-                        userId: userId,
-                        title: 'Tools',
-                        desktopApplications: true
-                    });
-                me.initialConfig.tabPanel.add(
-                    {
-                        xtype: 'controlpanel_userapplicationmgtpanel',
-                        userId: userId,
-                        title: 'Applications'
-                    });
+        me.initialConfig.tabPanel.add(
+            {
+                xtype: 'usermanagement_personalinfopanel',
+                user: user
+            });
 
-                me.initialConfig.tabPanel.add(
-                    {
-                        xtype: 'shared_notesgrid',
-                        recordId: rec.get('party_id'),
-                        recordType: 'Party',
-                        title: 'Notes'
-                    });
+        me.initialConfig.tabPanel.add(
+            {
+                xtype: 'controlpanel_userapplicationmgtpanel',
+                userId: userId,
+                title: 'Tools',
+                desktopApplications: true
+            });
+        me.initialConfig.tabPanel.add(
+            {
+                xtype: 'controlpanel_userapplicationmgtpanel',
+                userId: userId,
+                title: 'Applications'
+            });
 
-                me.initialConfig.tabPanel.setActiveTab(0);
-                me.clearWindowStatus('Loading User...');
-            },
-            failure: function () {
-                me.clearWindowStatus('Loading User...');
-                Ext.Msg.alert('Status', 'Error loading User');
-            }
-        });
+        me.initialConfig.tabPanel.add(
+            {
+                xtype: 'shared_notesgrid',
+                recordId: user.get('party_id'),
+                recordType: 'Party',
+                title: 'Notes'
+            });
+
+        me.initialConfig.tabPanel.setActiveTab(0);
     },
 
     initComponent: function () {
@@ -164,22 +150,25 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
         var usersStore = Ext.create('Ext.data.Store', {
             proxy: {
                 type: 'ajax',
-                url: '/erp_app/desktop/user_management/users/',
+                url: '/api/v1/users/',
                 reader: {
-                    idProperty: 'id',
                     totalProperty: 'totalCount',
                     type: 'json',
-                    root: 'data'
+                    root: 'users'
+                },
+                extraParams: {
+                    username: null
                 }
             },
             remoteSort: true,
             fields: [
                 {
-                    name: 'id',
+                    name: 'server_id',
                     type: 'int'
                 },
                 {
                     name: 'party_id',
+                    mapping: 'party.server_id',
                     type: 'int'
                 },
                 {
@@ -189,6 +178,22 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
                 {
                     name: 'email',
                     type: 'string'
+                },
+                {
+                    name: 'activation_state',
+                    type: 'string'
+                },
+                {
+                    name: 'last_login_at',
+                    type: 'date'
+                },
+                {
+                    name: 'last_activity_at',
+                    type: 'date'
+                },
+                {
+                    name: 'failed_login_count',
+                    type: 'integer'
                 }
             ]
         });
@@ -293,7 +298,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
                             xtype: 'form',
                             frame: false,
                             bodyStyle: 'padding:5px 5px 0',
-                            url: '/erp_app/desktop/user_management/users/new',
+                            url: '/api/v1/users',
                             defaults: {
                                 width: 225,
                                 labelWidth: 100
@@ -358,16 +363,19 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
                                 text: 'Submit',
                                 listeners: {
                                     'click': function (button) {
-                                        var window = button.findParentByType('window');
-                                        var formPanel = window.query('.form')[0];
+                                        var window = button.up('window');
+                                        var formPanel = window.down('form');
                                         me.setWindowStatus('Creating user...');
+
                                         formPanel.getForm().submit({
+                                            method: 'POST',
                                             reset: true,
                                             success: function (form, action) {
                                                 me.clearWindowStatus();
                                                 var obj = Ext.decode(action.response.responseText);
                                                 if (obj.success) {
                                                     me.getStore().load();
+                                                    window.close();
                                                 }
                                                 else {
                                                     Ext.Msg.alert("Error", obj.message);
@@ -413,19 +421,8 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
             iconCls: 'icon-search-dark',
             handler: function (button) {
                 var username = Ext.getCmp('user_search_field').getValue();
-                usersStore.setProxy({
-                    type: 'ajax',
-                    url: '/erp_app/desktop/user_management/users/',
-                    reader: {
-                        type: 'json',
-                        root: 'data',
-                        idProperty: 'id',
-                        totalProperty: 'totalCount'
-                    },
-                    extraParams: {
-                        username: username
-                    }
-                });
+
+                usersStore.getProxy.setExtraParam('username', username);
                 usersStore.loadPage(1);
             }
         });

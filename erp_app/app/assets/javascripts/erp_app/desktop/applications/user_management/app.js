@@ -12,5 +12,4 @@
 //
 //= require ./module
 //= require ./personal_info_panel
-//= require ./role_management_panel
 //= require ./user_application_mgt_panel

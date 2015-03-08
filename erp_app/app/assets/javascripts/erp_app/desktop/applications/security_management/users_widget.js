@@ -91,56 +91,117 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SecurityManagement.UsersWidget",
 });
 
 Ext.define("Compass.ErpApp.Desktop.Applications.SecurityManagement.UserGrid", {
-    extend: "Compass.ErpApp.Shared.DynamicEditableGridLoaderPanel",
+    extend: "Ext.grid.Panel",
     alias: 'widget.security_management_user_grid',
 
-    constructor: function (config) {
-        config = Ext.apply({
-            id: config.id,
-            title: config.title,
-            editable: false,
-            page: true,
+    initComponent: function () {
+        this.store = Ext.create('Ext.data.Store', {
+            proxy: {
+                type: 'ajax',
+                url: '/api/v1/users/',
+                reader: {
+                    totalProperty: 'totalCount',
+                    type: 'json',
+                    root: 'users'
+                },
+                extraParams: {
+                    username: null
+                }
+            },
             pageSize: 10,
-            multiSelect: true,
-            displayMsg: 'Displaying {0} - {1} of {2}',
-            emptyMsg: 'Empty',
-            tbar: [
+            remoteSort: true,
+            fields: [
                 {
-                    fieldLabel: '<span data-qtitle="Search" data-qwidth="200" data-qtip="">Search</span>',
-                    itemId: 'searchValue',
-                    xtype: 'textfield',
-                    width: 400,
-                    value: '',
-                    listeners: {
-                        specialkey: function (field, e) {
-                            if (e.getKey() == e.ENTER) {
-                                var grid = field.findParentByType('security_management_user_grid');
-                                var button = grid.query('#searchButton').first();
-                                button.fireEvent('click', button);
+                    name: 'server_id',
+                    type: 'int'
+                },
+                {
+                    name: 'party_id',
+                    mapping: 'party.server_id',
+                    type: 'int'
+                },
+                {
+                    name: 'party_description',
+                    mapping: 'party.description',
+                    type: 'string'
+                },
+                {
+                    name: 'username',
+                    type: 'string'
+                },
+                {
+                    name: 'email',
+                    type: 'string'
+                }
+            ]
+        });
+
+        this.columns = [
+            {
+                header: 'Party Description',
+                dataIndex: 'party_description',
+                flex: 1
+            },
+            {
+                header: 'Username',
+                dataIndex: 'username',
+                flex: 1
+            },
+            {
+                header: 'Email',
+                dataIndex: 'email',
+                flex: 1
+            }
+        ];
+
+        this.dockedItems = [
+            {
+                xtype: 'toolbar',
+                dock: 'top',
+                items: [
+                    {
+                        fieldLabel: '<span data-qtitle="Search" data-qwidth="200" data-qtip="">Search</span>',
+                        itemId: 'searchValue',
+                        xtype: 'textfield',
+                        width: 400,
+                        value: '',
+                        listeners: {
+                            specialkey: function (field, e) {
+                                if (e.getKey() == e.ENTER) {
+                                    var grid = field.findParentByType('security_management_user_grid');
+                                    var button = grid.query('#searchButton').first();
+                                    button.fireEvent('click', button);
+                                }
+                            }
+                        }
+                    },
+                    {xtype: 'tbspacer', width: 1},
+                    {
+                        xtype: 'button',
+                        itemId: 'searchButton',
+                        iconCls: 'x-btn-icon icon-search',
+                        listeners: {
+                            click: function (button) {
+                                if (button.findParentByType('security_management_userswidget') && !button.findParentByType('security_management_userswidget').assign_to_id) return;
+                                var grid = button.findParentByType('security_management_user_grid');
+                                var value = grid.query('#searchValue').first().getValue();
+                                grid.query('shared_dynamiceditablegrid').first().getStore().load({
+                                    params: {query_filter: value}
+                                });
                             }
                         }
                     }
-                },
-                {xtype: 'tbspacer', width: 1},
-                {
-                    xtype: 'button',
-                    itemId: 'searchButton',
-                    iconCls: 'x-btn-icon icon-search',
-                    listeners: {
-                        click: function (button) {
-                            if (button.findParentByType('security_management_userswidget') && !button.findParentByType('security_management_userswidget').assign_to_id) return;
-                            var grid = button.findParentByType('security_management_user_grid');
-                            var value = grid.query('#searchValue').first().getValue();
-                            grid.query('shared_dynamiceditablegrid').first().getStore().load({
-                                params: {query_filter: value}
-                            });
-                        }
-                    }
-                }
-            ]
-        }, config);
+                ]
+            },
+            {
+                dock: 'bottom',
+                store: this.store,
+                xtype: 'pagingtoolbar',
+                displayInfo: true
+            }
+        ];
 
-        this.callParent([config]);
+        this.callParent(arguments);
     }
 });
 

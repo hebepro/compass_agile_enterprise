@@ -20,4 +20,5 @@ require 'erp_base_erp_svcs/extensions/active_record/migration'
 require 'erp_base_erp_svcs/extensions/active_record/acts_as_fixed_asset'
 require 'erp_base_erp_svcs/extensions/active_record/acts_as_facility'
 require 'erp_base_erp_svcs/extensions/active_record/can_be_generated'
+require 'erp_base_erp_svcs/extensions/active_record/has_party_roles'
 

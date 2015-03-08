@@ -77,22 +77,27 @@ class User < ActiveRecord::Base
   def add_role(role)
     party.add_role(role)
   end
+  alias :add_security_role :add_role
 
   def add_roles(*passed_roles)
     party.add_roles(*passed_roles)
   end
+  alias :add_security_roles :add_roles
 
   def remove_roles(*passed_roles)
     party.remove_roles(*passed_roles)
   end
+  alias :remove_security_roles :remove_roles
 
   def remove_role(role)
     party.remove_role(role)
   end
+  alias :remove_security_role :remove_role
 
   def remove_all_roles
     party.remove_all_roles
   end
+  alias :remove_all_security_roles :remove_all_roles
 
   # user lives on FROM side of relationship
   def group_relationships
@@ -199,11 +204,18 @@ class User < ActiveRecord::Base
         :server_id => self.id,
         :username => self.username,
         :email => self.email,
+        :activation_state => self.activation_state,
         :last_login_at => self.last_login_at,
         :last_activity_at => self.last_activity_at,
         :failed_logins_count => self.failed_logins_count,
         :created_at => self.created_at,
-        :updated_at => self.updated_at
+        :updated_at => self.updated_at,
+        :is_admin => self.party.has_security_role?('admin'),
+        # related resources
+        :party => {
+            server_id: self.party.id,
+            description: self.party.description
+        }
     }
 
     # add first name and last name if this party is an Individual

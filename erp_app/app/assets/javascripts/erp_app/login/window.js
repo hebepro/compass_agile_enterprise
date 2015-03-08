@@ -29,6 +29,9 @@ Ext.define("Compass.ErpApp.Login.Window", {
         if (basicForm.isValid()) {
             basicForm.submit({
                 waitMsg: 'Authenticating User...',
+                params:{
+                    login_to: loginTo
+                },
                 success: function (form, action) {
                     var result = Ext.decode(action.response.responseText);
                     if (result.success) {

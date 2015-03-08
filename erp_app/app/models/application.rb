@@ -21,7 +21,7 @@ class Application < ActiveRecord::Base
     end
 
     def desktop_applications
-      where('type == ?', 'DesktopApplication')
+      where('type = ?', 'DesktopApplication')
     end
   end
 

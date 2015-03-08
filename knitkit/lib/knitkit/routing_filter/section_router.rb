@@ -4,8 +4,16 @@
 module RoutingFilter
   require 'logger'
   class SectionRouter < Filter
+    def excluded_paths
+      paths = %w{ erp_app session }
+
+      paths.push(Rails.configuration.assets.prefix.split('/').second)
+
+      paths
+    end
+
     def around_recognize(path, env, &block)
-      unless path.include?('assets')
+      unless excluded_paths.include?(path.split('/').second)
         website = Website.find_by_host(env["HTTP_HOST"])
         if website
           paths = paths_for_website(website)

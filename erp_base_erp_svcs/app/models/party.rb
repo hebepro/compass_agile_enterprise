@@ -18,6 +18,11 @@ class Party < ActiveRecord::Base
   # serialize ExtJs attributes
   is_json :custom_fields
 
+  # helper method to get dba_organization related to this party
+  def dba_organization
+    find_related_parties_with_role('dba_org').first
+  end
+
   # Gathers all party relationships that contain this particular party id
   # in either the from or to side of the relationship.
   def relationships
@@ -30,6 +35,12 @@ class Party < ActiveRecord::Base
 
   def from_relationships
     @relationships ||= PartyRelationship.where('party_id_from = ?', id)
+  end
+
+  def find_related_parties_with_role(role_type_iid)
+    Party.joins(:party_roles).joins("inner join party_relationships on (party_id_from = #{id} and parties.id = party_relationships.party_id_to)")
+        .where(PartyRole.arel_table[:role_type_id].eq(RoleType.iid(role_type_iid).id))
+        .where(Party.arel_table[:id].not_eq(id))
   end
 
   def find_relationships_by_type(relationship_type_iid)
@@ -116,11 +127,30 @@ class Party < ActiveRecord::Base
 
   # method to convert party data to hash
   def to_data_hash
-    {
+    hash = {
         description: description,
         created_at: created_at,
-        updated_at: updated_at
+        updated_at: updated_at,
+        business_party_type: business_party.class.name
     }
+
+    # get business party data
+    if business_party
+      if business_party.is_a?(Individual)
+        hash.merge!({
+                        first_name: business_party.current_first_name,
+                        last_name: business_party.current_last_name,
+                        middle_name: business_party.current_middle_name,
+                        gender: business_party.gender
+                    })
+      else
+        hash.merge!({
+                        tax_id_number: business_party.tax_id_number
+                    })
+      end
+    end
+
+    hash
   end
 
   #************************************************************************************************

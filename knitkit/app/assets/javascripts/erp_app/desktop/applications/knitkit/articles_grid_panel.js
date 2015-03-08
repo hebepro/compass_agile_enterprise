@@ -255,7 +255,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.ArticlesGridPanel", {
                 flex: 1,
                 items: [
                     {
-                        icon: '/assets/icons/document_text/document_text_16x16.png',
+                        icon: '/assets/icons/document/document_16x16.png',
                         iconCls: 'actioncolumn_hover',
                         tooltip: 'Comments',
                         handler: function (grid, rowIndex, colIndex) {
@@ -353,10 +353,12 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.ArticlesGridPanel", {
                     text: 'New Article',
                     iconCls: 'icon-add',
                     handler: function () {
-                        Ext.create('widget.window', {
+                        var addArticleWindow = Ext.create('widget.window', {
+                            modal: true,
                             title: 'New Article',
                             buttonAlign: 'center',
-                            items: new Ext.FormPanel({
+                            items: {
+                                xtype: 'form',
                                 labelWidth: 110,
                                 frame: false,
                                 bodyStyle: 'padding:5px 5px 0',
@@ -404,7 +406,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.ArticlesGridPanel", {
                                         // id: 'tag_list'
                                     }
                                 ]
-                            }),
+                            },
                             buttons: [
                                 {
                                     text: 'Submit',
@@ -707,4 +709,5 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.ArticlesGridPanel", {
 
         this.callParent([config]);
     }
-});
+})
+;
