@@ -89,6 +89,14 @@ class OrderTxn < ActiveRecord::Base
       charges[charge_money.currency.internal_identifier] = total_by_currency
     end
 
+    order_line_items.all.each do |order_line_item|
+      if order_line_item.sold_price
+        charges["USD"] ||= {amount:0}
+        order_line_item_price = order_line_item.sold_price
+        charges["USD"] += (order_line_item.sold_price * quantity)
+      end
+    end
+
     if charges.empty?
       0
     else
@@ -177,14 +185,12 @@ class OrderTxn < ActiveRecord::Base
 
     if line_item
       line_item.quantity += 1
-      line_item.sold_amount += simple_product_offer.get_current_simple_plan.money_amount
       line_item.save
     else
       line_item = OrderLineItem.new
-      line_item.sold_price = simple_product_offer.get_current_simple_plan.money_amount
-      line_item.sold_amount = simple_product_offer.get_current_simple_plan.money_amount
       line_item.product_offer = simple_product_offer.product_offer
       line_item.product_type = simple_product_offer.product_type
+      line_item.sold_price = simple_product_offer.get_current_simple_plan.money_amount
       line_item.quantity = 1
       line_item.save
       line_items << line_item
@@ -227,13 +233,11 @@ class OrderTxn < ActiveRecord::Base
 
     if line_item
       line_item.quantity += 1
-      line_item.sold_amount += product_type_for_line_item.get_current_simple_plan.money_amount
       line_item.save
     else
       line_item = OrderLineItem.new
-      line_item.sold_price = product_type_for_line_item.get_current_simple_plan.money_amount
-      line_item.sold_amount = product_type_for_line_item.get_current_simple_plan.money_amount
       line_item.product_type = product_type_for_line_item
+      line_item.sold_price = product_type_for_line_item.get_current_simple_plan.money_amount
       line_item.quantity = 1
       line_item.save
       line_items << line_item

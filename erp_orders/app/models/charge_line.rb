@@ -18,5 +18,6 @@ class ChargeLine < ActiveRecord::Base
 
   belongs_to :charged_item, :polymorphic => true
   belongs_to :money, :dependent => :destroy
+  belongs_to :charge_type
 
 end
