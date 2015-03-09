@@ -203,8 +203,8 @@ module Knitkit
 
           if @context == :website
             @root_node = File.join(ErpTechSvcs::Config.file_assets_location,
-                                   "dba_organization_#{current_user.party.dba_organization.id.to_s}",
-                                   "sites", @assets_model.iid) unless @assets_model.nil?
+                                   'sites',
+                                   @assets_model.iid)
           else
             @root_node = File.join(ErpTechSvcs::Config.file_assets_location,
                                    "dba_organization_#{current_user.party.dba_organization.id.to_s}",

@@ -57,7 +57,7 @@ class OrderTxn < ActiveRecord::Base
     end
 
     def next_order_number
-      "Order-#{(maximum('id').nil? ? 1 : maximum('id'))}"
+      "Order-#{(maximum('id').nil? ? 1 : (maximum('id') + 1))}"
     end
   end
 
