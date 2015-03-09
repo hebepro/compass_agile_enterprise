@@ -106,13 +106,12 @@ module Knitkit
           @root_node = nil
 
           if @context == :website
-            @root_node = File.join(Rails.application.config.knitkit.images_base_path,
-                                   "dba_organization_#{current_user.party.dba_organization.id.to_s}",
-                                   "sites",
+            @root_node = File.join('public',
+                                   'sites',
                                    @assets_model.iid,
-                                   "images") unless @assets_model.nil?
+                                   'images') unless @assets_model.nil?
           else
-            @root_node = File.join(Rails.application.config.knitkit.images_base_path,
+            @root_node = File.join('public',
                                    "dba_organization_#{current_user.party.dba_organization.id.to_s}",
                                    'images')
           end

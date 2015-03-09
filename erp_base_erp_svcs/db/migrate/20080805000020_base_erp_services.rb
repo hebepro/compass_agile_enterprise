@@ -649,6 +649,18 @@ class BaseErpServices < ActiveRecord::Migration
       add_index :generated_items, [:generated_record_type, :generated_record_id], :name => 'generated_record_idx'
     end
 
+    unless table_exists?(:entity_party_roles)
+      create_table :entity_party_roles do |t|
+        t.references :party
+        t.references :role_type
+        t.references :entity_record, :polymorphic => true
+      end
+
+      add_index :entity_party_roles, :party_id
+      add_index :entity_party_roles, :role_type_id
+      add_index :entity_party_roles, [:entity_record_id, :entity_record_type], name: 'entity_party_roles_entity_record_idx'
+    end
+
   end
 
   def self.down
@@ -663,7 +675,7 @@ class BaseErpServices < ActiveRecord::Migration
         :valid_note_types, :compass_ae_instances,
         :facilities, :facility_types, :fixed_assets,
         :fixed_asset_types, :party_fixed_asset_assignments,
-        :unit_of_measurements
+        :unit_of_measurements, :entity_party_roles
     ].each do |tbl|
       if table_exists?(tbl)
         drop_table tbl
