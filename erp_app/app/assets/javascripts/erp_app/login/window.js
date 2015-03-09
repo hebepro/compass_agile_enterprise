@@ -25,13 +25,10 @@ Ext.define("Compass.ErpApp.Login.Window", {
     submitForm: function () {
         var form = this.query('form')[0];
         var basicForm = form.getForm();
-        var loginTo = form.getValues().loginTo;
+        var loginTo = form.getValues().login_to;
         if (basicForm.isValid()) {
             basicForm.submit({
                 waitMsg: 'Authenticating User...',
-                params:{
-                    login_to: loginTo
-                },
                 success: function (form, action) {
                     var result = Ext.decode(action.response.responseText);
                     if (result.success) {
@@ -89,7 +86,7 @@ Ext.define("Compass.ErpApp.Login.Window", {
             forceSelection: true,
             editable: false,
             id: 'loginTo',
-            name: 'loginTo',
+            name: 'login_to',
             store: config.appContainers
         });
 
