@@ -650,7 +650,7 @@ class BaseErpServices < ActiveRecord::Migration
     end
 
     unless table_exists?(:entity_party_roles)
-      reate_table :entity_party_roles do |t|
+      create_table :entity_party_roles do |t|
         t.references :party
         t.references :role_type
         t.references :entity_record, :polymorphic => true
