@@ -9,7 +9,7 @@
   <!-- include google maps -->
 
   <!--javascript-->
-  <%= include_extjs(:debug => (Rails.env != 'production')) %>
+  <%= include_extjs(:debug => (Rails.env == 'development')) %>
 
   <%= javascript_include_tag("erp_app/utility.js") %>
 
