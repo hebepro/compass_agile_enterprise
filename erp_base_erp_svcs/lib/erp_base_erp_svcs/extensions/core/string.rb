@@ -5,11 +5,27 @@ module StringToBoolean
     raise ArgumentError.new("invalid value for Boolean: \"#{self}\"")
   end
 end
-class String; include StringToBoolean; end
 
-module BooleanToBoolean
-  def to_bool;return self; end
+module StringToInternalIdentifier
+  def to_iid
+    self.gsub(' ', '_').tr('^A-Za-z0-9_', '').downcase
+  end
 end
 
-class TrueClass; include BooleanToBoolean; end
-class FalseClass; include BooleanToBoolean; end
+class String;
+  include StringToBoolean;
+  include StringToInternalIdentifier;
+end
+
+module BooleanToBoolean
+  def to_bool;
+    return self;
+  end
+end
+
+class TrueClass;
+  include BooleanToBoolean;
+end
+class FalseClass;
+  include BooleanToBoolean;
+end
