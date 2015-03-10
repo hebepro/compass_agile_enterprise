@@ -104,7 +104,7 @@
   </style>
 
   <!--javascript-->
-  <%= include_extjs(:debug => (Rails.env == 'development')) %>
+  <%= include_extjs(:debug => (Rails.env == 'development' or Rails.env == 'shared_dev')) %>
 
   <%= javascript_include_tag('extjs/Callout') %>
   <%= javascript_include_tag("erp_app/utility") %>
