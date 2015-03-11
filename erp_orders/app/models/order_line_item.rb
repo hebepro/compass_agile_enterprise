@@ -103,4 +103,11 @@ class OrderLineItem < ActiveRecord::Base
     end
   end
 
+  def clone
+    order_line_item_dup = dup
+    order_line_item_dup.order_txn_id = nil
+
+    order_line_item_dup
+  end
+
 end

@@ -10,9 +10,9 @@ module Api
           # the parent is nested from left to right
           params[:parent].split(',').each do |parent_iid|
             if parent
-              parent = RoleType.find_or_create(parent_iid, params[:parent].humanize, parent)
+              parent = RoleType.find_or_create(parent_iid, parent_iid.humanize, parent)
             else
-              parent = RoleType.find_or_create(parent_iid, params[:parent].humanize)
+              parent = RoleType.find_or_create(parent_iid, parent_iid.humanize)
             end
           end
           role_types = parent.children.all.collect { |role| role.to_hash(:only => [:description, :internal_identifier]) }
