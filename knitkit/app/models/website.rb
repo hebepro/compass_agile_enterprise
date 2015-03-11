@@ -511,6 +511,11 @@ class Website < ActiveRecord::Base
         end
 
         website.save
+
+        # set the currents users dba_org as the dba_org for this website
+        WebsitePartyRole.create(website: website,
+                                party: current_user.party.dba_organization,
+                                role_type: RoleType.iid('dba_org'))
       else
         message = 'Website already exists with that internal_identifier'
       end
@@ -670,6 +675,11 @@ class Website < ActiveRecord::Base
           end
 
           website.publish("Website Imported", current_user)
+
+          # set the currents users dba_org as the dba_org for this website
+          WebsitePartyRole.create(website: website,
+                                  party: current_user.party.dba_organization,
+                                  role_type: RoleType.iid('dba_org'))
 
         rescue Exception => ex
           Rails.logger.error "#{ex.inspect} #{ex.backtrace}"
