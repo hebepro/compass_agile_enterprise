@@ -1089,7 +1089,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.TemplateMenu = function () {
                                 timeout: 300,
                                 bodyStyle: 'padding:5px 5px 0',
                                 fileUpload: true,
-                                url: '/knitkit/erp_app/desktop/site/importtemplate',
+                                url: '/knitkit/erp_app/desktop/site/import_template',
                                 items: [
 
                                     {

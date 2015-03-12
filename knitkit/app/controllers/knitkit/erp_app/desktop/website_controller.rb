@@ -224,13 +224,13 @@ module Knitkit
           FileUtils.rm_r File.dirname(zip_path) rescue nil
         end
 
-        def importtemplate
-          website, message = Website.import_template_director(params[:website_data], User.first)
+        def import_template
+          result = Website.import_template(params[:website_data], current_user)
 
-          if website
-            render :inline => {:success => true, :website => website.to_hash(:only => [:id, :name])}.to_json
+          if result[:success]
+            render :inline => {:success => true, :website => result[:website].to_hash(:only => [:id, :name])}.to_json
           else
-            render :inline => {:success => false, :message => message}.to_json
+            render :inline => {:success => false, :message => result[:message]}.to_json
           end
         end
 
