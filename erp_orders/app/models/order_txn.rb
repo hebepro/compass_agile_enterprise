@@ -519,4 +519,27 @@ class OrderTxn < ActiveRecord::Base
     return result, message, authorized_txns
   end
 
+  def clone
+    ActiveRecord::Base.transaction do
+      order_txn_dup = dup
+      order_txn_dup.order_txn_record_id = nil
+      order_txn_dup.order_txn_record_type = nil
+      order_txn_dup.order_number = OrderTxn.next_order_number
+      order_txn_dup.error_message = nil
+      order_txn_dup.payment_gateway_txn_id = nil
+      order_txn_dup.credit_card_id = nil
+      order_txn_dup.initialize_biz_txn_event
+      order_txn_dup.biz_txn_event.description = self.biz_txn_event.description
+
+      self.order_line_items.each do |order_line_item|
+        order_txn_dup.order_line_items << order_line_item.clone
+      end
+      order_txn_dup.save!
+      order_txn_dup.current_status = self.current_status
+
+      order_txn_dup
+    end
+
+  end
+
 end

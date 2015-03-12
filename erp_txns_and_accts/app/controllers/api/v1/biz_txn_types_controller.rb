@@ -10,9 +10,9 @@ module Api
           # the parent is nested from left to right
           params[:parent].split(',').each do |parent_iid|
             if parent
-              parent = BizTxnType.find_or_create(parent_iid, params[:parent].humanize, parent)
+              parent = BizTxnType.find_or_create(parent_iid, parent_iid.humanize, parent)
             else
-              parent = BizTxnType.find_or_create(parent_iid, params[:parent].humanize)
+              parent = BizTxnType.find_or_create(parent_iid, parent_iid.humanize)
             end
           end
           biz_txn_types = parent.children.all.collect { |txn_type| txn_type.to_hash(:only => [:description, :internal_identifier]) }
