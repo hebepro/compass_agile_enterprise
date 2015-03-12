@@ -89,11 +89,11 @@ class OrderTxn < ActiveRecord::Base
       charges[charge_money.currency.internal_identifier] = total_by_currency
     end
 
-    order_line_items.all.each do |order_line_item|
+    line_items.each do |order_line_item|
       if order_line_item.sold_price
         charges["USD"] ||= {amount:0}
         order_line_item_price = order_line_item.sold_price
-        charges["USD"] += (order_line_item.sold_price * quantity)
+        charges["USD"][:amount] += (order_line_item.sold_price * order_line_item.quantity)
       end
     end
 
@@ -183,17 +183,40 @@ class OrderTxn < ActiveRecord::Base
 
     line_item = get_line_item_for_simple_product_offer(simple_product_offer)
 
+    product_type = simple_product_offer.product_type
+
     if line_item
-      line_item.quantity += 1
-      line_item.save
+      ActiveRecord::Base.transaction do
+        if product_type.shipping_cost && product_type.shipping_cost.to_f > 0
+          shipping_charge = line_item.charge_lines.new(charge_type_id: ChargeType.find_by_description('shipping').id)
+          money = Money.new(amount: product_type.shipping_cost)
+          money.currency = Currency.find_by_internal_identifier('USD')
+          shipping_charge.money = money
+        end
+
+        line_item.quantity += 1
+        line_item.save
+      end
     else
-      line_item = OrderLineItem.new
-      line_item.product_offer = simple_product_offer.product_offer
-      line_item.product_type = simple_product_offer.product_type
-      line_item.sold_price = simple_product_offer.get_current_simple_plan.money_amount
-      line_item.quantity = 1
-      line_item.save
-      line_items << line_item
+      ActiveRecord::Base.transaction do
+        line_item = OrderLineItem.new
+        line_item.product_type = product_type
+        line_item.product_offer = simple_product_offer.product_offer
+        line_item.sold_price = simple_product_offer.get_current_simple_plan.money_amount
+        line_item.quantity = 1
+
+        if product_type.shipping_cost && product_type.shipping_cost > 0
+          shipping_charge = line_item.charge_lines.new(charge_type_id: ChargeType.find_by_description('shipping').id)
+          money = Money.new(amount: product_type.shipping_cost)
+          money.currency = Currency.find_by_internal_identifier('USD')
+          shipping_charge.money = money
+        end
+
+        line_item.save
+        money.save if money
+        shipping_charge.save if shipping_charge
+        line_items << line_item
+      end
     end
 
     line_item
@@ -232,15 +255,36 @@ class OrderTxn < ActiveRecord::Base
     line_item = get_line_item_for_product_type(product_type_for_line_item)
 
     if line_item
-      line_item.quantity += 1
-      line_item.save
+      ActiveRecord::Base.transaction do
+        if product_type.shipping_cost && product_type.shipping_cost.to_f > 0
+          shipping_charge = line_item.charge_lines.new(charge_type_id: ChargeType.find_by_description('shipping').id)
+          money = Money.new(amount: product_type.shipping_cost)
+          money.currency = Currency.find_by_internal_identifier('USD')
+          shipping_charge.money = money
+        end
+
+        line_item.quantity += 1
+        line_item.save
+      end
     else
-      line_item = OrderLineItem.new
-      line_item.product_type = product_type_for_line_item
-      line_item.sold_price = product_type_for_line_item.get_current_simple_plan.money_amount
-      line_item.quantity = 1
-      line_item.save
-      line_items << line_item
+      ActiveRecord::Base.transaction do
+        line_item = OrderLineItem.new
+        line_item.product_type = product_type_for_line_item
+        line_item.sold_price = product_type_for_line_item.get_current_simple_plan.money_amount
+        line_item.quantity = 1
+
+        if product_type.shipping_cost && product_type.shipping_cost > 0
+          shipping_charge = line_item.charge_lines.new(charge_type_id: ChargeType.find_by_description('shipping').id)
+          money = Money.new(amount: product_type.shipping_cost)
+          money.currency = Currency.find_by_internal_identifier('USD')
+          shipping_charge.money = money
+        end
+
+        line_item.save
+        money.save if money
+        shipping_charge.save if shipping_charge
+        line_items << line_item
+      end
     end
 
     line_item

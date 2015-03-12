@@ -80,29 +80,52 @@ class Invoice < ActiveRecord::Base
         party = order_txn.find_party_by_role('customer')
         invoice.add_party_with_role_type(party, RoleType.customer)
 
-        # create invoice items from charge lines
-        order_txn.all_charge_lines.each do |charge_line|
-          invoice_item = InvoiceItem.new
+        order_txn.order_line_items.each do |line_item|
+            invoice_item = InvoiceItem.new
 
-          invoice_item.invoice = invoice
-          charged_item = charge_line.charged_item
-          invoice_item.item_description = charge_line.description
+            invoice_item.item_description = line_item.product_type.description
+            invoice_item.invoice = invoice
+            charged_item = line_item.product_instance || line_item.product_offer ||line_item.product_type
+            invoice_item.quantity = line_item.quantity
+            invoice_item.unit_price = line_item.sold_price
+            invoice_item.add_invoiced_record(line_item)
 
-          # set data based on charged item either a OrderTxn or OrderLineItem
-          if charged_item.is_a?(OrderLineItem)
-            invoice_item.quantity = charged_item.quantity
-            invoice_item.unit_price = charged_item.sold_price
-            invoice_item.amount = charged_item.sold_amount
-            invoice_item.add_invoiced_record(charged_item.line_item_record)
-          elsif charged_item.is_a?(OrderTxn)
-            invoice_item.quantity = 1
-            invoice_item.unit_price = charge_line.money.amount
-            invoice_item.amount = charge_line.money.amount
-            invoice_item.add_invoiced_record(charge_line)
-          end
-
-          invoice_item.save
+            invoice_item.save
         end
+
+        shipping_invoice_item = nil
+        order_txn.all_charge_lines.each do |charge_line|
+          if charge_line.charge_type && charge_line.charge_type.description != 'shipping'
+            invoice_item = InvoiceItem.new
+
+            invoice_item.invoice = invoice
+            charged_item = charge_line.charged_item
+            invoice_item.item_description = charge_line.description
+
+            # set data based on charged item either a OrderTxn or OrderLineItem
+            if charged_item.is_a?(OrderLineItem)
+              invoice_item.quantity = charged_item.quantity
+              invoice_item.unit_price = charged_item.sold_price
+              invoice_item.amount = charged_item.sold_amount
+              invoice_item.add_invoiced_record(charged_item.line_item_record)
+            elsif charged_item.is_a?(OrderTxn)
+              invoice_item.quantity = 1
+              invoice_item.unit_price = charge_line.money.amount
+              invoice_item.amount = charge_line.money.amount
+              invoice_item.add_invoiced_record(charge_line)
+            end
+            invoice_item.save
+          elsif charge_line.charge_type.description == 'shipping'
+            shipping_invoice_item = InvoiceItem.new
+            shipping_invoice_item.item_description = 'Shipping'
+            shipping_invoice_item.invoice = invoice
+            charged_item = charge_line.charged_item.product_type
+            shipping_invoice_item.quantity = 1
+            shipping_invoice_item.unit_price ||= 0 + charge_line.money.amount
+            shipping_invoice_item.add_invoiced_record(charge_line)
+          end
+        end
+        shipping_invoice_item.save if shipping_invoice_item
 
         invoice.generated_by = order_txn
 

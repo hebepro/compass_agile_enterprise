@@ -217,6 +217,9 @@ module Knitkit
           else
             render :inline => {:success => false, :message => message}.to_json
           end
+          WebsitePartyRole.create(website: website,
+                                  party: current_user.party.dba_organization,
+                                  role_type: RoleType.iid('dba_org'))
         ensure
           FileUtils.rm_r File.dirname(zip_path) rescue nil
         end

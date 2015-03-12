@@ -55,6 +55,13 @@ module Widgets
               party.save
             end
 
+            # associate the new party to the dba_organization of the user creating this user
+            relationship_type = RelationshipType.find_or_create(RoleType.iid('dba_org'), RoleType.iid('customer'))
+            party.create_relationship(relationship_type.description,
+                                      Party.joins(:role_types).where(role_types:{internal_identifier:'dba_org'}).first.id,
+                                      relationship_type)
+            party.save
+
             render :update => {:id => "#{@uuid}_result", :view => :success}
           else
             render :update => {:id => "#{@uuid}_result", :view => :error}
