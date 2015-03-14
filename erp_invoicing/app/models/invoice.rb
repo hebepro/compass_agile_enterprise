@@ -88,14 +88,13 @@ class Invoice < ActiveRecord::Base
             charged_item = line_item.product_instance || line_item.product_offer ||line_item.product_type
             invoice_item.quantity = line_item.quantity
             invoice_item.unit_price = line_item.sold_price
-            invoice_item.add_invoiced_record(line_item)
+            invoice_item.add_invoiced_record(charged_item)
 
             invoice_item.save
         end
 
-        shipping_invoice_item = nil
-        order_txn.all_charge_lines.each do |charge_line|
-          if charge_line.charge_type && charge_line.charge_type.description != 'shipping'
+        # handles everything but shipping charge lines, multiple invoice items created from all iterations
+        order_txn.all_charge_lines.select {|charge_line| charge_line.charge_type.description != 'shipping'}.each do |charge_line|
             invoice_item = InvoiceItem.new
 
             invoice_item.invoice = invoice
@@ -115,22 +114,36 @@ class Invoice < ActiveRecord::Base
               invoice_item.add_invoiced_record(charge_line)
             end
             invoice_item.save
-          elsif charge_line.charge_type.description == 'shipping'
-            shipping_invoice_item = InvoiceItem.new
+        end
+
+        # handles shipping charge lines, one invoice item created from all iterations
+        shipping_charges = order_txn.all_charge_lines.select {|charge_line| charge_line.charge_type.description == 'shipping'}
+        if shipping_charges.length > 0
+          shipping_invoice_item = InvoiceItem.new
+          shipping_charges.each do |charge_line|
             shipping_invoice_item.item_description = 'Shipping'
             shipping_invoice_item.invoice = invoice
-            charged_item = charge_line.charged_item.product_type
             shipping_invoice_item.quantity = 1
-            shipping_invoice_item.unit_price ||= 0 + charge_line.money.amount
-            shipping_invoice_item.add_invoiced_record(charge_line)
+            shipping_invoice_item.unit_price = shipping_invoice_item.unit_price.nil? ? charge_line.money.amount : shipping_invoice_item.unit_price + charge_line.money.amount
+            shipping_invoice_item.add_invoiced_record(find_or_create_shipping_product_type)
           end
+          shipping_invoice_item.save
         end
-        shipping_invoice_item.save if shipping_invoice_item
 
         invoice.generated_by = order_txn
 
         invoice
       end
+    end
+
+    def find_or_create_shipping_product_type
+      product_type = ProductType.find_by_internal_identifier('shipping')
+      unless product_type
+        product_type = ProductType.create(internal_identifier: 'shipping', description: 'Shipping', available_on_web: 'false', shipping_cost: 0)
+        product_type.pricing_plans.new(money_amount: 0, is_simple_amount:true)
+        product_type.save
+      end
+      product_type
     end
 
     def next_invoice_number

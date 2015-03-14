@@ -2,17 +2,17 @@ class AddBaseChargeTypes
   
   def self.up
     ActiveRecord::Base.transaction do
-      ChargeType.create(description: 'Shipping')
-      ChargeType.create(description: 'Tax')
-      ChargeType.create(description: 'Assembly')
+      ChargeType.create(description: 'shipping')
+      ChargeType.create(description: 'tax')
+      ChargeType.create(description: 'assembly')
     end
   end
   
   def self.down
     ActiveRecord::Base.transaction do
-      ChargeType.find_by_description('Shipping').destroy
-      ChargeType.find_by_description('Tax').destroy
-      ChargeType.find_by_description('Assembly').destroy
+      ChargeType.find_by_description('shipping').destroy
+      ChargeType.find_by_description('tax').destroy
+      ChargeType.find_by_description('assembly').destroy
     end
   end
 

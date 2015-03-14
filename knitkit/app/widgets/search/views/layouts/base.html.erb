@@ -3,12 +3,17 @@
 
   <% #Optional Parameters:
      # content_type: Leave blank to search all section types, set to Blog to only search Blog articles
-     # section_to_search: If set will only search for content within the specified section.  Set using a sections internal_identifier.
-     # results_permalink: How do you want your results to display? via ajax? or on a new page?
-     #                    Leave blank if you want results to display via ajax on the same page as the search form
-     #                    Enter the permalink of results page if you want the search results to display on a new page
+     # section_unique_name: Leave blank to search all pages if passed will confine search to a particular
+     #  pages content
+     # search_url: Main search url, only needed if results are being redirected
+     # redirect_results: If true will redirect to search page to display results.  Used for inline search
+     #   boxes
      # per_page: Number of results per page
-     # class: CSS class for the form
   %>
   <%= render_widget :search %>
 </div>
+
+
+
+
+
