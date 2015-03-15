@@ -240,12 +240,13 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
                         icon: '/assets/icons/secure/secure_16x16.png',
                         tooltip: 'Reset Password',
                         handler: function (grid, rowIndex, colIndex) {
-                            Ext.MessageBox.confirm('Confirm', "Are you sure you want to reset this users's password?", function (btn) {
+                            var rec = grid.getStore().getAt(rowIndex);
+
+                            Ext.MessageBox.confirm('Confirm', "Are you sure you want to reset "+ rec.get('username') +"'s password?", function (btn) {
                                 if (btn == 'no') {
                                     return false;
                                 }
                                 else if (btn == 'yes') {
-                                    var rec = grid.getStore().getAt(rowIndex);
                                     me.resetPassword(rec);
                                 }
                             });
@@ -267,12 +268,14 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
                         icon: '/assets/icons/delete/delete_16x16.png',
                         tooltip: 'Delete',
                         handler: function (grid, rowIndex, colIndex) {
-                            Ext.MessageBox.confirm('Confirm', 'Are you sure you want to delete this user?', function (btn) {
+                            var rec = grid.getStore().getAt(rowIndex);
+
+                            Ext.MessageBox.confirm('Confirm', 'Are you sure you want to delete '+ rec.get('username') +'?', function (btn) {
                                 if (btn == 'no') {
                                     return false;
                                 }
                                 else if (btn == 'yes') {
-                                    var rec = grid.getStore().getAt(rowIndex);
+
                                     me.deleteUser(rec);
                                 }
                             });

@@ -125,6 +125,16 @@ module Api
         end
       end
 
+      def destroy
+        user = User.find(params[:id])
+
+        # get the party as it will also destroy the user
+        party = user.party
+        party.destroy
+
+        render :json => {:success => true}
+      end
+
     end # UsersController
   end # V1
 end # Api

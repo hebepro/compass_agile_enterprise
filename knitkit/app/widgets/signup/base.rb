@@ -13,58 +13,62 @@ module Widgets
         @configuration = @website.configurations.first
         password_config_option = @configuration.get_item(ConfigurationItemType.find_by_internal_identifier('password_strength_regex')).options.first
         primary_host = @configuration.get_item(ConfigurationItemType.find_by_internal_identifier('primary_host')).options.first
-
         @email = params[:email]
-        @user = User.new(
-            :email => @email,
-            :username => params[:username],
-            :password => params[:password],
-            :password_confirmation => params[:password_confirmation]
-        )
-        @user.password_validator = {:regex => password_config_option.value, :error_message => password_config_option.comment}
-        #set this to tell activation where to redirect_to for login and temp password
-        @user.add_instance_attribute(:login_url, params[:login_url])
-        @user.add_instance_attribute(:domain, primary_host.value)
+
         begin
-          if @user.save
+          ActiveRecord::Base.transaction do
+            @user = User.new(
+                :email => @email,
+                :username => params[:username],
+                :password => params[:password],
+                :password_confirmation => params[:password_confirmation]
+            )
+            @user.password_validator = {:regex => password_config_option.value, :error_message => password_config_option.comment}
+            #set this to tell activation where to redirect_to for login and temp password
+            @user.add_instance_attribute(:login_url, params[:login_url])
+            @user.add_instance_attribute(:domain, primary_host.value)
 
-            # check if there is already a party with that email if there is tie the party to the user
-            party = Party.find_by_email_contact('billing', @email)
-            if party
-              @user.party = party
-            else
-              individual = Individual.create(:current_first_name => params[:first_name], :current_last_name => params[:last_name])
-              @user.party = individual.party
-            end
+            if @user.save
 
-            # add website security role to user
-            @user.add_role(@website.role)
-
-            # create website_party_role for this user as a member of the site
-            WebsitePartyRole.create(party: @user.party, website: @website, role_type: RoleType.find_by_ancestor_iids(['website', 'member']))
-
-            @user.save
-
-            # add party roles to party if present
-            unless params[:party_roles].blank?
-              party = @user.party
-              params[:party_roles].split(',').each do |role_type|
-                party.add_role_type(role_type)
+              # check if there is already a party with that email if there is tie the party to the user
+              party = Party.find_by_email_contact('billing', @email)
+              if party
+                @user.party = party
+              else
+                individual = Individual.create(:current_first_name => params[:first_name], :current_last_name => params[:last_name])
+                @user.party = individual.party
               end
 
+              # add website security role to user
+              @user.add_role(@website.role)
+
+              # create website_party_role for this user as a member of the site
+              WebsitePartyRole.create(party: @user.party, website: @website, role_type: RoleType.find_by_ancestor_iids(['website', 'member']))
+
+              @user.save
+              party = @user.party
+
+              # add party roles to party if present
+              unless params[:party_roles].blank?
+                params[:party_roles].split(',').each do |role_type|
+                  party.add_role_type(role_type)
+                end
+
+                party.save
+              end
+
+              # associate the new party to the dba_organization of the user creating this user
+              relationship_type = RelationshipType.find_or_create(RoleType.iid('dba_org'), RoleType.iid('customer'))
+              dba_party = @website.website_party_roles.where('role_type_id' => RoleType.iid('dba_org')).first.party
+              party.create_relationship(relationship_type.description,
+                                        dba_party.id,
+                                        relationship_type)
               party.save
+
+              render :update => {:id => "#{@uuid}_result", :view => :success}
+            else
+              render :update => {:id => "#{@uuid}_result", :view => :error}
             end
-
-            # associate the new party to the dba_organization of the user creating this user
-            relationship_type = RelationshipType.find_or_create(RoleType.iid('dba_org'), RoleType.iid('customer'))
-            party.create_relationship(relationship_type.description,
-                                      Party.joins(:role_types).where(role_types:{internal_identifier:'dba_org'}).first.id,
-                                      relationship_type)
-            party.save
-
-            render :update => {:id => "#{@uuid}_result", :view => :success}
-          else
-            render :update => {:id => "#{@uuid}_result", :view => :error}
           end
         rescue => ex
           logger.error ex.message
