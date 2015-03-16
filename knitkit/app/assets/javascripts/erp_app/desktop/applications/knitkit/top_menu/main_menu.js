@@ -422,10 +422,12 @@ Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu = function () {
                     handler: function () {
                         var knitkitModule = compassDesktop.getModule('knitkit-win'),
                             knitkitWindow = compassDesktop.desktop.getWindow('knitkit'),
+                            websiteName = knitkitModule.currentWebsite.name,
                             websiteId = knitkitModule.currentWebsite.id;
 
-                        Ext.MessageBox.confirm('Confirm', 'Are you sure you want to delete this Website?', function (btn) {
+                        Ext.MessageBox.confirm('Confirm', 'Are you sure you want to delete the website: ' + websiteName, function (btn) {
                             if (btn == 'no') {
+                                debugger;
                                 return false;
                             }
                             else if (btn == 'yes') {
