@@ -11,9 +11,11 @@ module Knitkit
 
     initializer :assets do |config|
       Rails.application.config.assets.paths << root.join("app", "assets", "images")
+      config.assets.paths << root.join('app', 'assets')
       Rails.application.config.assets.precompile += %w{ knitkit-web.css knitkit/custom.css knitkit-web.js knitkit/theme.js }
       Rails.application.config.assets.precompile += %w{ erp_app/desktop/applications/knitkit/app.js }
       Rails.application.config.assets.precompile += %w{ erp_app/desktop/applications/knitkit/app.css }
+      Rails.application.config.assets.precompile << /\.(?:svg|eot|woff|ttf)$/
     end
 
     # filter sensitive information during logging
