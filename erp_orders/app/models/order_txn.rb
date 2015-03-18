@@ -49,6 +49,7 @@ class OrderTxn < ActiveRecord::Base
 
   # validation
   validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, :on => :update, :allow_nil => true
+  validates :order_number, {uniqueness: true}
 
   class << self
     #find a order by given biz txn party role iid and party
@@ -360,8 +361,8 @@ class OrderTxn < ActiveRecord::Base
       self.ship_to_city = shipping_address.city
       self.ship_to_state = shipping_address.state
       self.ship_to_postal_code = shipping_address.zip
-      #self.ship_to_country_name = shipping_address.country_name
-      #self.ship_to_country = shipping_address.country
+      # self.ship_to_country_name = shipping_address.country_name
+      self.ship_to_country = shipping_address.country
     end
   end
 
@@ -379,8 +380,8 @@ class OrderTxn < ActiveRecord::Base
       self.bill_to_city = billing_address.city
       self.bill_to_state = billing_address.state
       self.bill_to_postal_code = billing_address.zip
-      #self.bill_to_country_name = billing_address.country_name
-      #self.bill_to_country = billing_address.country
+      # self.bill_to_country_name = billing_address.country_name
+      self.bill_to_country = billing_address.country
     end
   end
 
