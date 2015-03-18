@@ -40,6 +40,11 @@ class OrderLineItem < ActiveRecord::Base
   ## Allow for polymorphic subtypes of this class
   belongs_to :order_line_record, :polymorphic => true
 
+  # helper method to get dba_organization related to this order_line_item
+  def dba_organization
+    order_txn.find_party_by_role('dba_org')
+  end
+
   # get the total charges for a order_line_item.
   # The total will be returned as Money.
   # There may be multiple Monies assocated with an order, such as points and

@@ -61,6 +61,11 @@ class OrderTxn < ActiveRecord::Base
     end
   end
 
+  # helper method to get dba_organization related to this order_txn
+  def dba_organization
+    find_party_by_role('dba_org')
+  end
+
   # get the total charges for an order.
   # The total will be returned as Money.
   # There may be multiple Monies assocated with an order, such as points and

@@ -38,7 +38,8 @@ module ErpOrders
               :quantity, 
               :quantity=,
               :unit_of_measurement,
-              :unit_of_measurement=
+              :unit_of_measurement=,
+              :dba_organization
             ].each do |m| 
               delegate m, :to => :order_line_item 
             end        
