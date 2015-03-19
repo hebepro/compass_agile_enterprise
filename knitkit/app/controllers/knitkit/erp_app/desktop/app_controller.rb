@@ -72,7 +72,7 @@ module Knitkit
               :inMenu => website_section.in_menu,
               :renderWithBaseLayout => website_section.render_base_layout?,
               :hasLayout => !website_section.layout.blank?,
-              :url => "http://#{@website_primary_host}#{website_section.path}",
+              :url => "#{request.protocol}#{@website_primary_host}#{website_section.path}",
               :internal_identifier => website_section.internal_identifier
           }
 

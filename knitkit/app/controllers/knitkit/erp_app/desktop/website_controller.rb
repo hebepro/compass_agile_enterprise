@@ -14,7 +14,7 @@ module Knitkit
 
           render :json => {:sites => websites.all.collect { |item| item.to_hash(:only => [:id, :name, :title, :subtitle],
                                                                                 :configuration_id => item.configurations.first.id,
-                                                                                :url => "#{ErpTechSvcs::Config.file_protocol}://#{item.config_value('primary_host')}") }}
+                                                                                :url => "#{request.protocol}#{item.config_value('primary_host')}") }}
         end
 
         def build_content_tree
