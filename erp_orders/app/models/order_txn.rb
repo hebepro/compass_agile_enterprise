@@ -584,8 +584,23 @@ class OrderTxn < ActiveRecord::Base
       order_txn_dup.initialize_biz_txn_event
       order_txn_dup.biz_txn_event.description = self.biz_txn_event.description
 
+      # add a relationship describing the original and the clone
+      biz_txn_rel_type = BizTxnRelType.find_or_create('cloned_from', 'Cloned From', nil)
+      BizTxnRelationship.create(txn_event_to: self.root_txn,
+                                txn_event_from: order_txn_dup.root_txn,
+                                biz_txn_rel_type: biz_txn_rel_type)
+
+
+      order_line_item_rel_type = OrderLineItemRelType.find_or_create('cloned_from', 'Cloned From', nil)
+
       self.order_line_items.each do |order_line_item|
-        order_txn_dup.order_line_items << order_line_item.clone
+        order_line_item_clone = order_line_item.clone
+        order_txn_dup.order_line_items << order_line_item_clone
+
+        OrderLineItemRelationship.create(order_line_item_from: order_line_item_clone,
+                                         order_line_item_to: order_line_item,
+                                         order_line_item_rel_type: order_line_item_rel_type)
+
       end
       order_txn_dup.save!
       order_txn_dup.current_status = self.current_status
