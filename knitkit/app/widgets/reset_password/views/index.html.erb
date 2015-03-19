@@ -1,5 +1,5 @@
-<div style="width:500px;" id="<%= widget_result_id %>"></div>
-<%= form_tag '/users/reset_password', :remote => true, :id => 'reset_password_form', :class => "form-signin", :style => 'max-width: 500px;' do %>
+<div id="<%= widget_result_id %>"></div>
+<%= form_tag '/users/reset_password', :remote => true, :id => 'reset_password_form', :class => "form-signin" do %>
     <input name="login" type="text" class="form-control" placeholder="Username / Email Address" required autofocus>
     <br/>
 
