@@ -665,6 +665,10 @@ class Website < ActiveRecord::Base
           unless content.nil?
             article.excerpt_html = content[:data]
           end
+
+          # set the currents users dba_org as the dba_org for this content
+          article.add_party_with_role(current_user.party.dba_organization,
+                                      RoleType.iid('dba_org'))
         end
         section.contents << article
         article.update_content_area_and_position_by_section(section, article_hash[:content_area], article_hash[:position])
