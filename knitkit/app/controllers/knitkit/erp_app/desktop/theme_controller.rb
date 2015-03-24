@@ -241,6 +241,9 @@ module Knitkit
                 rescue Exception => ex
                   Rails.logger.error ex.message
                   Rails.logger.error ex.backtrace.join("\n")
+
+                  ExceptionNotifier.notify_exception(ex) if defined? ExceptionNotifier
+
                   render :json => {:success => false, :error => "Error deleting #{name}"} and return
                 end
               end # end current_user.with_capability

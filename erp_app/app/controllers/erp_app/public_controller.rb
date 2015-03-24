@@ -38,6 +38,9 @@ module ErpApp
           rescue => ex
             Rails.logger.error ex.message
             Rails.logger.error ex.backtrace.join("\n")
+
+            ExceptionNotifier.notify_exception(ex) if defined? ExceptionNotifier
+
             render :text => ex.message and return
           end
         else

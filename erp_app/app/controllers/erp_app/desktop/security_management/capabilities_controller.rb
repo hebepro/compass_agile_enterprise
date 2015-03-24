@@ -18,6 +18,8 @@ module ErpApp
             Rails.logger.error ex.message
             Rails.logger.error ex.backtrace.join("\n")
 
+            ExceptionNotifier.notify_exception(ex) if defined? ExceptionNotifier
+
             render :json => {success: false, message: ex.message}
           end
         end

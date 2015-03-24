@@ -99,7 +99,7 @@ module Widgets
             Rails.logger.error ex.message
             Rails.logger.error ex.backtrace.join("\n")
 
-            #TODO send out notification
+            ExceptionNotifier.notify_exception(ex) if defined? ExceptionNotifier
 
             @message = 'Could not update password'
 
@@ -124,7 +124,8 @@ module Widgets
           rescue => ex
             Rails.logger.error ex.message
             Rails.logger.error ex.backtrace.join("\n")
-            #TODO send out notification
+
+            ExceptionNotifier.notify_exception(ex) if defined? ExceptionNotifier
 
             {:json => {success: false, message: 'Could not add email'}}
           end
@@ -142,7 +143,8 @@ module Widgets
           rescue => ex
             Rails.logger.error ex.message
             Rails.logger.error ex.backtrace.join("\n")
-            #TODO send out notification
+
+            ExceptionNotifier.notify_exception(ex) if defined? ExceptionNotifier
 
             {:json => {success: false, message: 'Could not remove email'}}
           end
@@ -164,7 +166,8 @@ module Widgets
           rescue => ex
             Rails.logger.error ex.message
             Rails.logger.error ex.backtrace.join("\n")
-            #TODO send out notification
+
+            ExceptionNotifier.notify_exception(ex) if defined? ExceptionNotifier
 
             {:json => {success: false, message: 'Could not add phone number'}}
           end
@@ -182,7 +185,8 @@ module Widgets
           rescue => ex
             Rails.logger.error ex.message
             Rails.logger.error ex.backtrace.join("\n")
-            #TODO send out notification
+
+            ExceptionNotifier.notify_exception(ex) if defined? ExceptionNotifier
 
             {:json => {success: false, message: 'Could not remove phone number'}}
           end
@@ -218,7 +222,8 @@ module Widgets
           rescue => ex
             Rails.logger.error ex.message
             Rails.logger.error ex.backtrace.join("\n")
-            #TODO send out notification
+
+            ExceptionNotifier.notify_exception(ex) if defined? ExceptionNotifier
 
             {:json => {success: false, message: 'Could not add address'}}
           end
@@ -236,7 +241,8 @@ module Widgets
           rescue => ex
             Rails.logger.error ex.message
             Rails.logger.error ex.backtrace.join("\n")
-            #TODO send out notification
+
+            ExceptionNotifier.notify_exception(ex) if defined? ExceptionNotifier
 
             {:json => {success: false, message: 'Could not remove address'}}
           end
