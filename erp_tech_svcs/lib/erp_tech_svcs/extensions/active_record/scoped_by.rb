@@ -41,7 +41,7 @@ module ErpTechSvcs
 
         module SingletonMethods
           def scoped_by(scope_name, scope_value)
-            where(arel_table[retrieve_scoped_by_name].matches("%\"#{scope_name}\":\"#{scope_value}\"%"))
+            where(arel_table[retrieve_scoped_by_name].matches("%\"#{scope_name}\":\"#{scope_value}\"%").or(arel_table[retrieve_scoped_by_name].matches("%\"#{scope_name}\":#{scope_value}%")))
           end
         end
 

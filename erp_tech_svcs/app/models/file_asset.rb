@@ -100,6 +100,29 @@ class FileAsset < ActiveRecord::Base
   validates_format_of :name, :with => /^\w/
 
   class << self
+    def adjust_image(data, size=nil)
+      file_support = ErpTechSvcs::FileSupport::FileSystemManager.new
+      name = "#{SecureRandom.uuid}.jpg"
+      path = File.join(Rails.root, 'tmp', name)
+
+      data = StringIO.new(data) if data.is_a?(String)
+      File.open(path, 'wb+') { |f| f.write(data.read) }
+
+      # resize
+      if size
+        Paperclip.run("convert", "#{path} -resize #{size}^ #{path}", :swallow_stderr => false)
+      end
+
+      # rotate
+      Paperclip.run("convert", "#{path} -auto-orient #{path}", :swallow_stderr => false)
+
+      #remove the file after we get the data
+      data = file_support.get_contents(path)[0]
+      FileUtils.rm(path)
+
+      data
+    end
+
     def acceptable?(name)
       valid_extensions.include?(File.extname(name))
     end
@@ -156,6 +179,10 @@ class FileAsset < ActiveRecord::Base
     super attributes.merge(:directory => directory, :name => name, :data => data)
   end
 
+  def fully_qualified_url
+    "#{ErpTechSvcs::Config.file_protocol}://#{File.join(ErpTechSvcs::Config.installation_domain, data.url)}"
+  end
+
   def check_name_uniqueness
     # check if name is already taken
     unless FileAsset.where('directory = ? and name = ?', self.directory, self.name).first.nil?
@@ -200,9 +227,9 @@ class FileAsset < ActiveRecord::Base
       file_path = File.join(self.directory, self.name).sub(%r{^/}, '')
       options = {}
       options[:expires] = ErpTechSvcs::Config.s3_url_expires_in_seconds if self.is_secured?
-      return file_support.bucket.objects[file_path].url_for(:read, options).to_s
+      file_support.bucket.objects[file_path].url_for(:read, options).to_s
     else
-      return File.join(Rails.root, self.directory, self.name)
+      File.join(Rails.root, self.directory, self.name)
     end
   end
 

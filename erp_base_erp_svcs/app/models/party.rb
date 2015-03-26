@@ -140,6 +140,7 @@ class Party < ActiveRecord::Base
   # method to convert party data to hash
   def to_data_hash
     hash = {
+        server_id: id,
         description: description,
         created_at: created_at,
         updated_at: updated_at,

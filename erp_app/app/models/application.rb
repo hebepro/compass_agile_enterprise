@@ -1,7 +1,20 @@
+# create_table :applications do |t|
+#   t.column :description, :string
+#   t.column :icon, :string
+#   t.column :internal_identifier, :string
+#   t.column :type, :string
+#   t.column :can_delete, :boolean, :default => true
+#
+#   t.timestamps
+# end
+#
+# add_index :applications, :internal_identifier, :name => 'applications_internal_identifier_idx'
+
 class Application < ActiveRecord::Base
   attr_protected :created_at, :updated_at
 
   has_user_preferences
+  has_file_assets
 
   has_and_belongs_to_many :users
 
@@ -23,6 +36,10 @@ class Application < ActiveRecord::Base
     def desktop_applications
       where('type = ?', 'DesktopApplication')
     end
+  end
+
+  def to_data_hash
+    to_hash
   end
 
 end

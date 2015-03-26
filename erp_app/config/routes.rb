@@ -1,9 +1,16 @@
 Rails.application.routes.draw do
   match '/download/:filename' => 'erp_app/public#download', :filename => /[^\/]*/
+
+  namespace :api do
+    namespace :v1 do
+      resources :applications
+    end
+  end
+
 end
 
 ErpApp::Engine.routes.draw do
-  
+
   ##########################
   #ErpApp general routes
   ##########################
@@ -57,7 +64,7 @@ ErpApp::Engine.routes.draw do
 
   end
 
-  match '/admin' => "login#index", :defaults => { :application => "desktop" }
+  match '/admin' => "login#index", :defaults => {:application => "desktop"}
 
   ############################
   #Desktop Application Routes
