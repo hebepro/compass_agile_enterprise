@@ -119,6 +119,39 @@ class BaseOrders < ActiveRecord::Migration
       add_index :order_line_item_pty_roles, :biz_txn_acct_root_id , :name => 'order_line_item_pty_role_biz_txn_acct_root_idx'
     end
 
+    unless table_exists?(:order_line_item_relationships)
+      create_table :order_line_item_relationships do |t|
+        t.column  :order_line_item_rel_type_id, :integer
+        t.column  :description,         :string
+        t.column  :order_line_item_id_from,   :integer
+        t.column  :order_line_item_id_to,     :integer
+        t.column  :status_type_id,      :integer
+        t.column  :from_date,           :date
+        t.column  :thru_date,           :date
+        t.timestamps
+      end
+
+      add_index :order_line_item_relationships, :order_line_item_rel_type_id, name: 'order_line_item_rel_on_order_line_item_rel_type_id'
+      add_index :order_line_item_relationships, :status_type_id
+    end
+
+    unless table_exists?(:order_line_item_rel_types)
+      create_table :order_line_item_rel_types do |t|
+        t.column  	:parent_id,    :integer
+        t.column  	:lft,          :integer
+        t.column  	:rgt,          :integer
+        #custom columns go here
+        t.column  :description,         :string
+        t.column  :comments,            :string
+        t.column 	:internal_identifier, :string
+        t.column 	:external_identifier, :string
+        t.column 	:external_id_source, 	:string
+        t.timestamps
+      end
+
+      add_index :order_line_item_rel_types, :parent_id
+    end
+
     unless table_exists?(:charge_lines)
       create_table :charge_lines do |t|
         t.string :sti_type
@@ -142,7 +175,7 @@ class BaseOrders < ActiveRecord::Migration
     [
         :charge_lines, :line_item_role_types, :order_line_item_pty_roles,
         :order_line_item_types, :order_line_items, :order_txn_types,
-        :order_txns
+        :order_txns, :order_line_item_relationships, :order_line_item_rel_types
     ].each do |tbl|
       if table_exists?(tbl)
         drop_table tbl

@@ -49,6 +49,7 @@ class OrderTxn < ActiveRecord::Base
 
   # validation
   validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, :on => :update, :allow_nil => true
+  validates :order_number, {uniqueness: true}
 
   class << self
     #find a order by given biz txn party role iid and party
@@ -59,6 +60,11 @@ class OrderTxn < ActiveRecord::Base
     def next_order_number
       "Order-#{(maximum('id').nil? ? 1 : (maximum('id') + 1))}"
     end
+  end
+
+  # helper method to get dba_organization related to this order_txn
+  def dba_organization
+    find_party_by_role('dba_org')
   end
 
   # get the total charges for an order.
@@ -360,8 +366,8 @@ class OrderTxn < ActiveRecord::Base
       self.ship_to_city = shipping_address.city
       self.ship_to_state = shipping_address.state
       self.ship_to_postal_code = shipping_address.zip
-      #self.ship_to_country_name = shipping_address.country_name
-      #self.ship_to_country = shipping_address.country
+      # self.ship_to_country_name = shipping_address.country_name
+      self.ship_to_country = shipping_address.country
     end
   end
 
@@ -379,8 +385,8 @@ class OrderTxn < ActiveRecord::Base
       self.bill_to_city = billing_address.city
       self.bill_to_state = billing_address.state
       self.bill_to_postal_code = billing_address.zip
-      #self.bill_to_country_name = billing_address.country_name
-      #self.bill_to_country = billing_address.country
+      # self.bill_to_country_name = billing_address.country_name
+      self.bill_to_country = billing_address.country
     end
   end
 
@@ -579,8 +585,23 @@ class OrderTxn < ActiveRecord::Base
       order_txn_dup.initialize_biz_txn_event
       order_txn_dup.biz_txn_event.description = self.biz_txn_event.description
 
+      # add a relationship describing the original and the clone
+      biz_txn_rel_type = BizTxnRelType.find_or_create('cloned_from', 'Cloned From', nil)
+      BizTxnRelationship.create(txn_event_to: self.root_txn,
+                                txn_event_from: order_txn_dup.root_txn,
+                                biz_txn_rel_type: biz_txn_rel_type)
+
+
+      order_line_item_rel_type = OrderLineItemRelType.find_or_create('cloned_from', 'Cloned From', nil)
+
       self.order_line_items.each do |order_line_item|
-        order_txn_dup.order_line_items << order_line_item.clone
+        order_line_item_clone = order_line_item.clone
+        order_txn_dup.order_line_items << order_line_item_clone
+
+        OrderLineItemRelationship.create(order_line_item_from: order_line_item_clone,
+                                         order_line_item_to: order_line_item,
+                                         order_line_item_rel_type: order_line_item_rel_type)
+
       end
       order_txn_dup.save!
       order_txn_dup.current_status = self.current_status

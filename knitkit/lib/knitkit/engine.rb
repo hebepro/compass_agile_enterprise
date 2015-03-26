@@ -9,6 +9,10 @@ module Knitkit
 
     config.knitkit = Knitkit::Config
 
+    initializer "knitkit.merge_public" do |app|
+      app.middleware.insert_before Rack::Runtime, ::ActionDispatch::Static, "#{root}/public"
+    end
+
     initializer :assets do |config|
       Rails.application.config.assets.paths << root.join("app", "assets", "images")
       Rails.application.config.assets.precompile += %w{ knitkit-web.css knitkit/custom.css knitkit-web.js knitkit/theme.js }

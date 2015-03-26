@@ -308,6 +308,9 @@ module ErpApp
           rescue => ex
             Rails.logger.error ex.message
             Rails.logger.error ex.backtrace.join("\n")
+
+            ExceptionNotifier.notify_exception(ex) if defined? ExceptionNotifier
+
             result = {:success => false, :message => "Error adding #{party_type}."}
           end
 

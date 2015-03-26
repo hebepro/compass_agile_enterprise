@@ -57,7 +57,7 @@ module Widgets
                 party.save
               end
 
-              # associate the new party to the dba_organization of the user creating this user
+              # associate the new party to the dba_organization of the current website
               relationship_type = RelationshipType.find_or_create(RoleType.iid('dba_org'), RoleType.iid('customer'))
               dba_party = @website.website_party_roles.where('role_type_id' => RoleType.iid('dba_org')).first.party
               party.create_relationship(relationship_type.description,

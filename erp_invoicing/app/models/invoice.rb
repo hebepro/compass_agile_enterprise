@@ -94,7 +94,7 @@ class Invoice < ActiveRecord::Base
         end
 
         # handles everything but shipping charge lines, multiple invoice items created from all iterations
-        order_txn.all_charge_lines.select {|charge_line| charge_line.charge_type.description != 'shipping'}.each do |charge_line|
+        order_txn.all_charge_lines.select {|charge_line| charge_line.charge_type && charge_line.charge_type.description != 'shipping'}.each do |charge_line|
             invoice_item = InvoiceItem.new
 
             invoice_item.invoice = invoice
@@ -117,7 +117,7 @@ class Invoice < ActiveRecord::Base
         end
 
         # handles shipping charge lines, one invoice item created from all iterations
-        shipping_charges = order_txn.all_charge_lines.select {|charge_line| charge_line.charge_type.description == 'shipping'}
+        shipping_charges = order_txn.all_charge_lines.select {|charge_line| charge_line.charge_type && charge_line.charge_type.description == 'shipping'}
         if shipping_charges.length > 0
           shipping_invoice_item = InvoiceItem.new
           shipping_charges.each do |charge_line|

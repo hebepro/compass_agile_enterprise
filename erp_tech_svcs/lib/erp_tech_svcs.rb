@@ -7,7 +7,6 @@ require 'mail_alternatives_with_attachments'
 require 'sorcery'
 require 'pdfkit'
 require 'aws-sdk'
-require 'activerecord-postgres-hstore'
 require 'nested-hstore'
 require "erp_tech_svcs/version"
 require "erp_tech_svcs/utils/compass_logger"

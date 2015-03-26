@@ -27,7 +27,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'attr_encrypted', '1.3.3'
   s.add_dependency "chronic", "0.10.2"
   s.add_dependency "aasm", "3.0.14"
-  s.add_dependency 'activerecord-postgres-hstore', '0.7.7'
   s.add_dependency 'nested-hstore', '0.0.5'
   s.add_dependency 'httparty', '~> 0.12'
   s.add_dependency "aws-sdk", '1.63.0'
