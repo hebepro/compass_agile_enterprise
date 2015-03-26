@@ -65,6 +65,10 @@ module Widgets
                                         relationship_type)
               party.save
 
+              after_registration
+
+
+
               render :update => {:id => "#{@uuid}_result", :view => :success}
             else
               render :update => {:id => "#{@uuid}_result", :view => :error}
@@ -100,6 +104,11 @@ module Widgets
             return nil
           end
         end
+
+        def after_registration
+          #override in your code to do special registration logic
+        end
+
       end
 
     end
