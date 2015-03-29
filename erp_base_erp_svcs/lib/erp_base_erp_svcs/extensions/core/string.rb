@@ -8,13 +8,20 @@ end
 
 module StringToInternalIdentifier
   def to_iid
-    self.gsub(' ', '_').tr('^A-Za-z0-9_', '').downcase
+    iid = self.gsub(' ', '_').tr('^A-Za-z0-9_', '').downcase
+
+    #remove trailing _
+    if iid[-1] == '_'
+      iid.chop!
+    end
+
+    iid
   end
 end
 
 class String;
-  include StringToBoolean;
-  include StringToInternalIdentifier;
+  include StringToBoolean
+  include StringToInternalIdentifier
 end
 
 module BooleanToBoolean

@@ -10,6 +10,6 @@
  *
  *= require ./knitkit/bootstrap.min
  *= require ./knitkit/bootstrap-responsive.min
- *= require ./knitkit/datepicker
  *= require ./knitkit/inline_editing
+ *= require bootstrap-datetimepicker
  */
