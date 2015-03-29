@@ -1,6 +1,9 @@
 #compass libraries
 require 'erp_app'
 
+require 'momentjs-rails'
+require 'bootstrap3-datetimepicker-rails'
+
 require 'routing_filter'
 require "knitkit/version"
 require "knitkit/routing_filter/section_router.rb"

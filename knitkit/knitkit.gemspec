@@ -24,6 +24,9 @@ Gem::Specification.new do |s|
   s.add_dependency 'erp_app', "~> 4.0"
   s.add_development_dependency 'erp_dev_svcs', "~> 4.0"
 
+  s.add_dependency 'momentjs-rails', '>= 2.8.1'
+  s.add_dependency 'bootstrap3-datetimepicker-rails', '~> 4.0.0'
+
   s.add_dependency('routing-filter','0.3.1')
   s.add_dependency('nokogiri','1.6.1')
   s.add_dependency('rubyzip','0.9.9')
