@@ -1,4 +1,4 @@
-class Wcode < ActiveRecord::Base
+class WcCode < ActiveRecord::Base
   attr_protected :created_at, :updated_at
 
   is_json :custom_fields
