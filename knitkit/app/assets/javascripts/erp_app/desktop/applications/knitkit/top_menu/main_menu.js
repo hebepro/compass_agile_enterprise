@@ -427,7 +427,6 @@ Compass.ErpApp.Desktop.Applications.Knitkit.websiteMenu = function () {
 
                         Ext.MessageBox.confirm('Confirm', 'Are you sure you want to delete the website: ' + websiteName, function (btn) {
                             if (btn == 'no') {
-                                debugger;
                                 return false;
                             }
                             else if (btn == 'yes') {
