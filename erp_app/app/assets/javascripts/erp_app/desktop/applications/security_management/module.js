@@ -101,8 +101,6 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SecurityManagement", {
         var westPanel = Ext.create('Ext.Panel', {
             id: 'security_management_west_region',
             style: {
-                marginRight: '10px',
-                marginLeft: '20px',
                 borderRadius: '5px'
             },
             region: 'west',
