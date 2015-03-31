@@ -4,7 +4,7 @@ class Resumes < ActiveRecord::Migration
   	create_table :resumes do |t|
       t.references :party
   		t.column :file_content ,:text
-  		t.column :xml_response ,:text
+  		t.column :xml_resume_data ,:text
   	end
   end
 
