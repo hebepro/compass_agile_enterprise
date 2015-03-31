@@ -69,7 +69,8 @@ module Api
                 party.add_role_type('employee')
 
                 # associate the new party to the dba_organization of the user creating this user
-                relationship_type = RelationshipType.find_or_create(RoleType.iid('dba_org'), RoleType.iid('employee'))
+                relationship_type = RelationshipType.find_or_create(RoleType.find_or_create('dba_org', 'Doing Business As Organization'),
+                                                                    RoleType.find_or_create('employee', 'Employee'))
                 party.create_relationship(relationship_type.description,
                                           current_user.party.dba_organization.id,
                                           relationship_type)
