@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
   s.add_dependency('codemirror-rails', '4.8')
 
   #compass dependencies
-  s.add_dependency 'compass_ae_sencha', "~> 2.0"
-  s.add_dependency 'erp_tech_svcs', "~> 4.0"
-  s.add_development_dependency 'erp_dev_svcs', "~> 4.0"
+  s.add_dependency 'compass_ae_sencha', "~> 2.1"
+  s.add_dependency 'erp_tech_svcs', "~> 4.1"
+  s.add_development_dependency 'erp_dev_svcs', "~> 4.1"
 end

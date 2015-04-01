@@ -40,10 +40,10 @@ module ErpTechSvcs
         module SingletonMethods
           def matches_is_json(attr_name, keyword, attr=nil)
             if attr
-              arel_table[attr_name.to_sym].matches("%#{keyword}%")
-            else
               arel_table[attr_name.to_sym].matches("%\"#{attr}\":\"#{keyword}\"%").
-                  or(arel_table[attr_name.to_sym].matches("%\"#{attr}\":#{scope_value}%"))
+                  or(arel_table[attr_name.to_sym].matches("%\"#{attr}\":#{keyword}%"))
+            else
+              arel_table[attr_name.to_sym].matches("%#{keyword}%")
             end
           end
 
