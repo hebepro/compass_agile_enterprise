@@ -6,11 +6,14 @@ class Resume < ActiveRecord::Base
 
   has_file_assets
 
+  has_tracked_status
+
   def parse(cv_document)
   	file_support = ErpTechSvcs::FileSupport::Base.new(:storage => ErpTechSvcs::Config.file_storage)
     file_name = File.join(file_support.root, 'file_assets', cv_document)
   	wsdl='http://java.rchilli.com/RChilliParser/services/RChilliParser?wsdl'
-  	if(File.exists?(file_name))
+
+  	if (File.exists?(file_name))
 			resume_file_data = File.read(file_name)
 			resume_file_base_64 = Base64.encode64(resume_file_data)
 	    client = Savon.client(wsdl: wsdl)
@@ -19,6 +22,7 @@ class Resume < ActiveRecord::Base
 	    self.xml_resume_data = xml.body[:parse_resume_binary_response][:return]
 	    self.add_file(resume_file_data, name)
 	    self.save
+      self.current_status = TrackedStatusType.find_by_ancestor_iids(['resume_parser', 'pending'])
 	  else
 	  	puts("file #{File.basename(file_name)} does'nt exists under 'file_assets'")
 	  	false
@@ -39,7 +43,7 @@ class Resume < ActiveRecord::Base
   	individual.marital_status = doc_root.at_xpath("MaritalStatus").text[0].upcase if doc_root.at_xpath("MaritalStatus").text.present?
   	individual.current_passport_number = doc_root.at_xpath("PassportNo").text
   	individual.total_years_work_experience = doc_root.at_xpath("WorkedPeriod").at_xpath("TotalExperienceInYear").text.to_i
-  	individual.save
+    individual.save
 
   	party = individual.party
   	self.party = party
@@ -123,6 +127,8 @@ class Resume < ActiveRecord::Base
   		[position_type, position, position_fulfillment].each do |entity|
   			entity.save
   		end
+
+      self.current_status = TrackedStatusType.find_by_ancestor_iids(['resume_parser', 'complete'])
 
   	end
   end
