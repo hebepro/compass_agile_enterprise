@@ -1,0 +1,11 @@
+Parse Resume and populate model data
+
+There are two rake tasks -
+
+1. rake resume_parser:parse <filename>
+
+This rake task calls the Rchilli API which parses the resume and sends an xml response.This xml response is then stored in 'xml_resume_data' field of Resume Model.The Resume is given a status 'pending' indicating that this resume is yet to be populated in the model.
+
+2. rake resume_parser:populate_model_data
+
+This rake task loops through all the instances of 'pending' Resumes and populates model data with the xml response that was recieved by the API. The status of the populated resume is changed to 'complete' indicating that this resume's data has already been populated in the model.
