@@ -20,9 +20,9 @@ Compass.ErpApp.Organizer.Layout = function (config) {
                 handler: function () {
                     var win = Ext.create("Ext.window.Window", {
                         title: 'Profile',
-                        iconCls: 'icon-user',
+                        iconCls: 'icon-user-light',
                         items: [
-                            {xtype: 'shared_profilemanagementpanel', title: ''}
+                            {xtype: 'shared_profilemanagementpanel'}
                         ]
                     });
                     win.show();

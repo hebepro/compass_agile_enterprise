@@ -214,6 +214,12 @@
               scope: b
             },
             {
+              text: "Profile",
+              iconCls: "icon-user",
+              handler: b.onProfile,
+              scope: b
+            },
+            {
               text: "About",
               iconCls: "icon-info",
               handler: b.onHelp,
@@ -250,6 +256,19 @@
         }
       })
     },
+    onProfile: function () {
+      Ext.create('Ext.window.Window', {
+        title: 'Profile',
+        iconCls: "icon-user-light",
+        layout: 'fit',
+        autoScroll: true,
+        items: [
+          {
+            xtype: 'shared_profilemanagementpanel'
+          }
+        ]
+      }).show();
+    },
     onHelp: function () {
       var tpl = new Ext.XTemplate("<table>",
           "<tr><td style='width:100px;'>Version: </td><td>{version}</td></tr>",
@@ -264,7 +283,7 @@
           '</tpl>',
           "</table>");
 
-      var aboutWindow = Ext.create('Ext.window.Window', {
+      Ext.create('Ext.window.Window', {
         title: 'About Your Compass AE Instance',
         height: 400,
         width: 400,
@@ -273,8 +292,7 @@
         autoScroll: true,
         tpl: tpl,
         data: compassAeInstance
-      });
-      aboutWindow.show();
+      }).show();
     },
     onControlPanel: function () {
       var controlPanel = window.compassDesktop.getModule('control-panel-win');

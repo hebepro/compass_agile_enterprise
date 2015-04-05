@@ -26,6 +26,7 @@ Ext.define("Compass.ErpApp.Shared.ProfileManagementPanel", {
             buttons: [
                 {
                     text: 'Update',
+                    flex: 1,
                     listeners: {
                         'click': function (button) {
                             var formPanel = button.up('form');
@@ -95,6 +96,7 @@ Ext.define("Compass.ErpApp.Shared.ProfileManagementPanel", {
             buttons: [
                 {
                     text: 'Update',
+                    flex: 1,
                     listeners: {
                         'click': function (button) {
                             var formPanel = button.findParentByType('form');
@@ -124,7 +126,8 @@ Ext.define("Compass.ErpApp.Shared.ProfileManagementPanel", {
         };
 
         config = Ext.apply({
-            title: 'Profile',
+            frame: false,
+            border: false,
             layout: 'anchor',
             items: [this.emailForm, this.passwordForm]
         }, config);
