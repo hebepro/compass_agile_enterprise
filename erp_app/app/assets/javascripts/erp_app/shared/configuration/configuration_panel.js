@@ -102,16 +102,29 @@ Ext.define("Compass.ErpApp.Shared.ConfigurationPanel", {
                         handler: function (item) {
                             currentItem.tab.setClosable(item.checked);
                         }
+                    },
+                    '-',
+                    {
+                        text: 'Enabled',
+                        checked: true,
+                        hideOnClick: true,
+                        handler: function (item) {
+                            currentItem.tab.setDisabled(!item.checked);
+                        }
                     }
                 ],
                 listeners: {
-                    aftermenu: function () {
-                        currentItem = null;
-                    },
                     beforemenu: function (menu, item) {
-                        var menuitem = menu.child('*[text="Closable"]');
+                        var enabled = menu.child('[text="Enabled"]');
+                        menu.child('[text="Closable"]').setChecked(item.closable);
+                        if (item.tab.active) {
+                            enabled.disable();
+                        } else {
+                            enabled.enable();
+                            enabled.setChecked(!item.tab.isDisabled());
+                        }
+
                         currentItem = item;
-                        menuitem.setChecked(item.closable);
                     }
                 }
             })

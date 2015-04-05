@@ -95,6 +95,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.FileManager", {
             win = desktop.createWindow({
                 id: 'file_manager',
                 title: 'File Manager',
+                maximized: true,
                 width: 1000,
                 height: 550,
                 autoDestroy: true,

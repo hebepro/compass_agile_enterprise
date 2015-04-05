@@ -858,10 +858,6 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                 activeTab.query('codemirror')[0].insertContent(content);
             }
         }
-        return false;
-        this.workArea.add(item);
-
-        this.workArea.setActiveTab(item);
     },
 
     insertHtmlIntoActiveCkEditorOrCodemirror: function (html) {
@@ -913,16 +909,29 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                         handler: function (item) {
                             currentItem.tab.setClosable(item.checked);
                         }
+                    },
+                    '-',
+                    {
+                        text: 'Enabled',
+                        checked: true,
+                        hideOnClick: true,
+                        handler: function(item) {
+                            currentItem.tab.setDisabled(!item.checked);
+                        }
                     }
                 ],
                 listeners: {
-                    aftermenu: function () {
-                        currentItem = null;
-                    },
                     beforemenu: function (menu, item) {
-                        var menuitem = menu.child('*[text="Closable"]');
+                        var enabled = menu.child('[text="Enabled"]');
+                        menu.child('[text="Closable"]').setChecked(item.closable);
+                        if (item.tab.active) {
+                            enabled.disable();
+                        } else {
+                            enabled.enable();
+                            enabled.setChecked(!item.tab.isDisabled());
+                        }
+
                         currentItem = item;
-                        menuitem.setChecked(item.closable);
                     }
                 }
             }),

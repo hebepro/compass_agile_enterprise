@@ -2,9 +2,16 @@ module ErpBaseErpSvcs
 	module Extensions
 		module ActiveRecord
 			module ActsAsErpType
+
+        @@models = []
+
 				def self.included(base)
 				  base.extend(ClassMethods) 	        	      	
-				end
+        end
+
+        def self.models
+          @@models
+        end
 
 				# declare the class level helper methods which
 				# will load the relevant instance methods
@@ -20,7 +27,7 @@ module ErpBaseErpSvcs
 							
             if ::ActiveRecord::Base.connection.tables.include?(self.table_name)
               # find each valid value for the domain type (erp_type) in question
-              # we will then create a class method with the name of the internal idenfifier
+              # we will then create a class method with the name of the internal indentifier
               # for that type
               valid_values = self.all
 							
@@ -29,6 +36,9 @@ module ErpBaseErpSvcs
                 (class << self; self; end).instance_eval { define_method vv.internal_identifier, Proc.new{vv} } unless vv.internal_identifier.nil?
               end
             end
+
+            ActsAsErpType.models.push(self.name)
+            ActsAsErpType.models.uniq!
 				  end
 
 				  def belongs_to_erp_type(model_id = nil, options = {})

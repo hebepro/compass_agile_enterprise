@@ -1,4 +1,4 @@
-/** ExtJS 4.1.2a
+/**
  * Plugin for adding a close context menu to tabs. Note that the menu respects
  * the closable configuration on the tab. As such, commands like remove others
  * and remove all will not remove items that are not closable.
@@ -36,7 +36,7 @@ Ext.define('Ext.ux.TabCloseMenu', {
 
     /**
      * @cfg {String} closeAllTabsText
-     * <p>The text for closing all tabs.
+     * The text for closing all tabs.
      */
     closeAllTabsText: 'Close All Tabs',
 
@@ -76,7 +76,7 @@ Ext.define('Ext.ux.TabCloseMenu', {
         this.mon(this.tabBar.el, {
             scope: this,
             contextmenu: this.onContextMenu,
-            delegate: 'div.x-tab'
+            delegate: '.x-tab'
         });
     },
 
@@ -166,7 +166,8 @@ Ext.define('Ext.ux.TabCloseMenu', {
                 items: items,
                 listeners: {
                     hide: me.onHideMenu,
-                    scope: me
+                    scope: me,
+                    delay: 1
                 }
             });
         }

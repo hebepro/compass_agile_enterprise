@@ -104,6 +104,11 @@ ErpApp::Engine.routes.draw do
 
     #job_tracker
     match 'job_tracker(/:action)' => "job_tracker/base"
+
+    # system management
+    namespace :system_management do
+      resources :types
+    end
   end
 
   #widget proxy
