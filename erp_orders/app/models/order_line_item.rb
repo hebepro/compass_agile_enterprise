@@ -37,8 +37,6 @@ class OrderLineItem < ActiveRecord::Base
   has_many :order_line_item_pty_roles, :dependent => :destroy
   has_many :role_types, :through => :order_line_item_pty_roles
 
-  has_many :candidate_submissions, :dependent => :destroy
-
   ## Allow for polymorphic subtypes of this class
   belongs_to :order_line_record, :polymorphic => true
 
