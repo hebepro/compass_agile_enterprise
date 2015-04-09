@@ -41,9 +41,12 @@ Ext.onReady(function () {
                 {
                     indent: true
                 });
+            
+            //set focus
+            ev.editor.focus();
+
         });
-    }
-    catch (e) {
+    }catch (e) {
     }
 });
 
@@ -94,7 +97,6 @@ Ext.define("Compass.ErpApp.Shared.CKeditor", {
 
     onRender: function (ct, position) {
         this.callParent(arguments);
-
         this.setupCkEditor();
         this.on('resize', this.textAreaResized, this);
     },
@@ -194,6 +196,7 @@ Ext.define("Compass.ErpApp.Shared.CKeditor", {
         editor.extjsPanel = this;
         this.ckEditorInstance = editor;
         this.setValue(this.defaultValue);
+
     },
 
     textAreaResized: function (textarea, adjWidth, adjHeight) {
