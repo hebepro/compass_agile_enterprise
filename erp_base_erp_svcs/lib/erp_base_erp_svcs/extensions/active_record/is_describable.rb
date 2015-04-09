@@ -30,6 +30,10 @@ module ErpBaseErpSvcs
             self.descriptions.where('internal_identifier = ?', iid).first
           end
 
+          def find_description_by_view_type(view_iid)
+            self.descriptions.where('view_type_id = ?', ViewType.find_by_internal_identifier(view_iid).id).first
+          end
+
           def add_description(view_type, description)
             descriptive_asset = DescriptiveAsset.create(
                 :view_type => view_type,

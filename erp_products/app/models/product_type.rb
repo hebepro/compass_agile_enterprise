@@ -39,8 +39,7 @@ class ProductType < ActiveRecord::Base
   belongs_to :unit_of_measurement
   has_many :product_type_pty_roles, dependent: :destroy
   has_many :simple_product_offers, dependent: :destroy
-  has_many :product_feature_applicabilities, as: :feature_of_record
-
+  has_many :product_feature_applicabilities, dependent: :destroy, as: :feature_of_record
 
   def prod_type_relns_to
     ProdTypeReln.where('prod_type_id_to = ?', id)
