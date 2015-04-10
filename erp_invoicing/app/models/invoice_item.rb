@@ -64,14 +64,14 @@ class InvoiceItem < ActiveRecord::Base
   end
 
   def to_s
-     item_description
+    item_description
   end
 
   def product_descriptions
     # return an array of product descriptions for this invoice item
     descriptions = []
     invoiced_records.each do |invoiced_record|
-        descriptions << invoiced_record.invoiceable_item.description
+      descriptions << invoiced_record.invoiceable_item.description
     end
     if descriptions.count == 0
       descriptions << "No Product Description"

@@ -32,18 +32,15 @@ FinancialTxn.class_eval do
         if has_payments? && has_captured_payment?
           result = {success: true}
 
-          if txn_type.internal_identifier == 'cash_payment'
+          if txn_type.internal_identifier == 'credit_card_payment'
+            result = CreditCardAccount.new.refund(self, gateway_wrapper, gateway_options)
+
+          else
             payment = most_recent_payment
             payment.refund
             payment.save
 
             result[:message] = 'Payment Refunded'
-
-          elsif txn_type.internal_identifier == 'credit_card_payment'
-            result = CreditCardAccount.new.refund(self, gateway_wrapper, gateway_options)
-
-          else
-            raise "Do not know how to refund #{txn_type.internal_identifier}"
           end
 
           # if the refund was a success un-apply the payments
