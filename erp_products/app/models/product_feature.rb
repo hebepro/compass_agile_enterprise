@@ -4,9 +4,9 @@ class ProductFeature < ActiveRecord::Base
   belongs_to :product_feature_type
   belongs_to :product_feature_value
   # start self reference
-  has_many   :product_feature_interactions, dependent: :destroy
-  has_many   :interacted_product_features, through: :product_feature_interactions
-  has_many   :product_features, through: :product_feature_interactions
+  has_many :product_feature_interactions, dependent: :destroy
+  has_many :interacted_product_features, through: :product_feature_interactions
+  has_many :product_features, through: :product_feature_interactions
   # end self reference
   has_many :product_feature_applicabilities, dependent: :destroy
 
@@ -14,30 +14,42 @@ class ProductFeature < ActiveRecord::Base
     product_feature_applicabilities.map { |o| o.feature_of_record_type.constantize.find(o.feature_of_record_id) }
   end
 
+  def self.find_or_create(product_feature_type, product_feature_value)
+    product_feature = ProductFeature.where(product_feature_type_id: product_feature_type.id,
+                                           product_feature_value_id: product_feature_value.id).first
+
+    unless product_feature
+      product_feature = ProductFeature.create(product_feature_type: product_feature_type,
+                                              product_feature_value: product_feature_value)
+    end
+
+    product_feature
+  end
+
   def self.get_feature_types(product_features)
     array = []
     already_filtered_product_features = if product_features
-                                          product_features.map {|pf| pf.product_feature_type}
+                                          product_features.map { |pf| pf.product_feature_type }
                                         else
                                           []
                                         end
     ProductFeatureType.each_with_level(ProductFeatureType.root.self_and_descendants) do |o, level|
       if !already_filtered_product_features.include?(o) && level != 0
-        array << {feature_type:o,parent_id:o.parent_id,level:level}
+        array << {feature_type: o, parent_id: o.parent_id, level: level}
       end
     end
 
     block_given? ? yield(array) : array
   end
 
-  def self.get_values(feature_type,product_features=[])
+  def self.get_values(feature_type, product_features=[])
     feature_value_ids = feature_type.product_feature_values.pluck(:id)
     valid_feature_value_ids = feature_value_ids.uniq
     # check each possible feature type / feature value combination for the given feature_type
     feature_value_ids.each do |value_id|
 
       # Is there a product feature to support this feature type / feature value combination?
-      test_product_feature = ProductFeature.where(product_features:{product_feature_type_id:feature_type.id,product_feature_value_id:value_id}).last
+      test_product_feature = ProductFeature.where(product_features: {product_feature_type_id: feature_type.id, product_feature_value_id: value_id}).last
       valid_feature_value_ids -= [value_id] unless test_product_feature
       next unless test_product_feature
 
@@ -72,7 +84,7 @@ class ProductFeature < ActiveRecord::Base
         define_method(name) do
           self.product_feature_interactions.
               includes(:product_feature_interaction_type).
-              where(product_feature_interaction_types:{internal_identifier:"#{name.to_s.downcase.gsub('_interactions','')}"})
+              where(product_feature_interaction_types: {internal_identifier: "#{name.to_s.downcase.gsub('_interactions', '')}"})
         end
       end
       send(name)
