@@ -468,6 +468,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
         }
 
         this.workArea.setActiveTab(item);
+        
     },
 
     /* image */
@@ -941,6 +942,15 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.CenterRegion", {
                 },
                 remove: function () {
                     this.smartRenameTabs();
+                },
+                tabchange: function(tabPanel, newPanel, oldPanel, eOpts){
+                    // check if the panel has ckEditor
+                    var ckEditor = newPanel.down('ckeditor');
+                    if (ckEditor){
+                        CKEDITOR.domReady(function(){
+                            ckEditor.ckEditorInstance.focus();
+                        });
+                    }
                 }
             },
 
