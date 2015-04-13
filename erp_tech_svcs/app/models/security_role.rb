@@ -45,4 +45,8 @@ class SecurityRole < ActiveRecord::Base
     Group.joins(:party).joins("LEFT JOIN #{join_parties_security_roles}").where("parties_security_roles.security_role_id IS NULL")
   end
 
+  def to_data_hash
+    to_hash(:only => [:description, :internal_identifier])
+  end
+
 end

@@ -30,7 +30,7 @@ class Capability < ActiveRecord::Base
       when ScopeType.find_by_internal_identifier('class')
         self.description = "#{desc}"
       when ScopeType.find_by_internal_identifier('instance')
-        self.description = "#{desc} Instance"
+        self.description = "#{desc} #{capability_resource.to_s} Instance"
       when ScopeType.find_by_internal_identifier('query')
         self.description = "#{desc} Scope"
       end

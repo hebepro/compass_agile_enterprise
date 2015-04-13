@@ -642,6 +642,10 @@ String.prototype.upcase = function () {
     return this.toUpperCase();
 };
 
+String.prototype.capitalize = function () {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+};
+
 //Function Extensions
 
 Function.prototype.bindToEventHandler = function bindToEventHandler() {
