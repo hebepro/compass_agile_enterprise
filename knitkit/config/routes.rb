@@ -25,7 +25,7 @@ Knitkit::Engine.routes.draw do
       resources :website_nav
       resources :website_nav_item do
         member do
-          post :update_security
+          put :update_security
         end
       end
       resources :website_host

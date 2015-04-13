@@ -16,7 +16,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.FileAssetsPanel", {
                 success: function (response) {
                     var obj = Ext.decode(response.responseText);
                     if (obj.success) {
-                        Ext.create('widget.knikit_selectroleswindow', {
+                        Ext.create('widget.selectroleswindow', {
                             baseParams: {
                                 path: node.get('id'),
                                 website_id: websiteId

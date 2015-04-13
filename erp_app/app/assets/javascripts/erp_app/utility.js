@@ -634,10 +634,6 @@ String.prototype.contains = function () {
     return String.prototype.indexOf.apply(this, arguments) !== -1;
 };
 
-String.prototype.underscore = function () {
-    return this.replace(/\s/g, "_");
-};
-
 String.prototype.downcase = function () {
     return this.toLowerCase();
 };
@@ -646,31 +642,6 @@ String.prototype.upcase = function () {
     return this.toUpperCase();
 };
 
-String.prototype.capitalize = function () {
-    return this.charAt(0).toUpperCase() + this.slice(1);
-};
-
-String.prototype.camelize = function () {
-    return this.replace(/(?:^|[-_])(\w)/g, function (_, c) {
-        return c ? c.toUpperCase() : '';
-    })
-};
-
-String.prototype.titleize = function () {
-    var str = this.toLowerCase();
-    str = str.replace(/_/g, ' ');
-    var str_arr = str.split(' ');
-    for (var x = 0; x < str_arr.length; x++) {
-        var d = str_arr[x].split('-');
-        for (var i = 0; i < d.length; i++) {
-            d[i] = d[i].capitalize();
-        }
-        str_arr[x] = d.join('-');
-    }
-    str = str_arr.join(' ');
-    str = str.substring(0, 1).toUpperCase() + str.substring(1);
-    return str;
-};
 //Function Extensions
 
 Function.prototype.bindToEventHandler = function bindToEventHandler() {

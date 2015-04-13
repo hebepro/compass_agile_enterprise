@@ -115,16 +115,9 @@ module Knitkit
           if current_user.has_capability?('secure', 'WebsiteNavItem') or current_user.has_capability?('unsecure', 'WebsiteNavItem')
             website_nav_item = WebsiteNavItem.find(params[:id])
 
-            roles = []
+            roles = params[:security]
 
-            #get roles
-            params.each do |k, v|
-              if v == 'on'
-                roles.push(k)
-              end
-            end
-
-            if roles.empty?
+            if roles.blank? || roles.empty?
               website_nav_item.remove_capability(:view)
             else
               capability = website_nav_item.add_capability(:view)

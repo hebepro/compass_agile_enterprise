@@ -19,13 +19,13 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
             success: function (response) {
                 var obj = Ext.decode(response.responseText);
                 if (obj.success) {
-                    Ext.create('widget.knikit_selectroleswindow', {
+                    Ext.create('widget.selectroleswindow', {
                         baseParams: {
                             id: id,
                             site_id: node.get('siteId')
                         },
                         url: updateUrl,
-                        currentRoles: node.get('roles'),
+                        currentSecurity: node.get('roles'),
                         availableRoles: obj.availableRoles,
                         listeners: {
                             success: function (window, response) {

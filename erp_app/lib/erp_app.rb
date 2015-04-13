@@ -5,6 +5,7 @@ require 'will_paginate'
 require 'uglifier'
 require 'friendly_id'
 require 'codemirror-rails'
+require 'inflection-js-rails'
 
 require "erp_app/version"
 require "erp_app/extensions"

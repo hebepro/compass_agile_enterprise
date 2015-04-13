@@ -17,7 +17,6 @@
 //= require ./inquiries_grid_panel
 //= require ./publish_window
 //= require ./published_grid_panel
-//= require ./select_roles_window
 //= require ./splash_screen
 //= require ./versions_grid_panel
 //= require_tree ./east_region
