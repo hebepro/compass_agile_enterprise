@@ -11,8 +11,12 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.FileAssetsPanel", {
         this.changeSecurityOnFile = function (node, secure, model, websiteId) {
             var updateUrl = '/knitkit/erp_app/desktop/file_assets/' + model + '/update_security';
             Ext.Ajax.request({
-                url: '/knitkit/erp_app/desktop/available_roles',
-                method: 'POST',
+                url: '/api/v1/security_roles',
+                method: 'GET',
+                params:{
+                    parent: 'website_builder',
+                    include_admin: true
+                },
                 success: function (response) {
                     var obj = Ext.decode(response.responseText);
                     if (obj.success) {

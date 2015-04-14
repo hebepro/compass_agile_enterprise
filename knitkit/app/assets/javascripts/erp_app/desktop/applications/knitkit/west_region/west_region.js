@@ -17,7 +17,8 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
             url: '/api/v1/security_roles',
             method: 'GET',
             params:{
-                parent: 'website_builder'
+                parent: 'website_builder',
+                include_admin: true
             },
             success: function (response) {
                 var obj = Ext.decode(response.responseText);

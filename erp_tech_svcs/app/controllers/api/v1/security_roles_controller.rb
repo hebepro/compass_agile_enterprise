@@ -5,6 +5,7 @@ module Api
       def index
         query = params[:query]
         parent_iids = params[:parent]
+        include_admin = params[:include_admin]
         sort_hash = params[:sort].blank? ? {} : Hash.symbolize_keys(JSON.parse(params[:sort]).first)
         sort = sort_hash[:property] || 'id'
         dir = sort_hash[:direction] || 'ASC'
@@ -38,6 +39,11 @@ module Api
         else
           total_count = security_roles.count
           security_roles = security_roles.order("#{sort} #{dir}").offset(start).limit(limit)
+        end
+
+        if include_admin
+          security_roles = security_roles.all
+          security_roles.unshift SecurityRole.iid('admin')
         end
 
         render :json => {success: true, total_count: total_count, security_roles: security_roles.collect(&:to_data_hash)}
