@@ -14,8 +14,11 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
 
     changeSecurity: function (node, updateUrl, id) {
         Ext.Ajax.request({
-            url: '/knitkit/erp_app/desktop/available_roles',
-            method: 'POST',
+            url: '/api/v1/security_roles',
+            method: 'GET',
+            params:{
+                parent: 'website_builder'
+            },
             success: function (response) {
                 var obj = Ext.decode(response.responseText);
                 if (obj.success) {
@@ -26,7 +29,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
                         },
                         url: updateUrl,
                         currentSecurity: node.get('roles'),
-                        availableRoles: obj.availableRoles,
+                        availableRoles: obj.security_roles,
                         listeners: {
                             success: function (window, response) {
                                 node.set('roles', response.roles);
