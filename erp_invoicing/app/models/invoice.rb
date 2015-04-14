@@ -284,6 +284,10 @@ class Invoice < ActiveRecord::Base
     end
   end
 
+  def dba_organization
+    find_parties_by_role_type('dba_org')
+  end
+
   private
 
   def convert_role_type(role_type)

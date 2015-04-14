@@ -12,6 +12,8 @@ class CandidateSubmission < ActiveRecord::Base
 
   attr_protected :created_at, :updated_at
 
+  has_tracked_status
+
   is_json :custom_fields
 
   #must be after is_json
