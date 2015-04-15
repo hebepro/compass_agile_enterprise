@@ -191,6 +191,15 @@ module ErpBaseErpSvcs
 
           end
 
+          def previous_status
+            result = self.status_applications.joins(:tracked_status_type).order("status_applications.id desc").limit(2).all
+            if result.count == 2
+              result[1].tracked_status_type.internal_identifier
+            else
+              nil
+            end
+          end
+
           # add_status aliases current_status= for legacy support
           def add_status(tracked_status_iid)
             self.current_status = tracked_status_iid
