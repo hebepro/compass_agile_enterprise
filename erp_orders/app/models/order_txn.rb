@@ -69,7 +69,7 @@ class OrderTxn < ActiveRecord::Base
 
   # get the total charges for an order.
   # The total will be returned as Money.
-  # There may be multiple Monies assocated with an order, such as points and
+  # There may be multiple Monies associated with an order, such as points and
   # dollars. To handle this, the method should return an array of Monies
   # if a currency is passed in return the amount for only that currency
   def total_amount(currency=nil)
@@ -80,7 +80,7 @@ class OrderTxn < ActiveRecord::Base
     charges = {}
 
     # get any charges directly on this order_txn or on order_line_items
-    all_charge_lines.each do |charge|
+    charge_lines.each do |charge|
       charge_money = charge.money
 
       total_by_currency = charges[charge_money.currency.internal_identifier]
@@ -95,12 +95,10 @@ class OrderTxn < ActiveRecord::Base
       charges[charge_money.currency.internal_identifier] = total_by_currency
     end
 
+    # TODO currency will eventually need to be accounted for here.
     line_items.each do |order_line_item|
-      if order_line_item.sold_price
-        charges["USD"] ||= {amount:0}
-        order_line_item_price = order_line_item.sold_price
-        charges["USD"][:amount] += (order_line_item.sold_price * order_line_item.quantity)
-      end
+      charges["USD"] ||= {amount: 0}
+      charges["USD"][:amount] += order_line_item.total_amount["USD"][:amount]
     end
 
     if charges.empty?
@@ -111,8 +109,6 @@ class OrderTxn < ActiveRecord::Base
       # if there is more than once currency return the hash
       if currency
         charges[currency.internal_identifier][:amount]
-      elsif charges.keys.count == 1
-        charges.values.first
       else
         charges
       end
@@ -121,7 +117,13 @@ class OrderTxn < ActiveRecord::Base
 
   # gets the total amount of payments made against this order via charge line payments
   def total_payment_amount
-    all_charge_lines.collect(&:total_payments).inject(:+)
+    amount = all_charge_lines.collect(&:total_payments).inject(:+)
+    if amount.nil?
+      0
+    else
+      amount
+    end
+
   end
 
   # gets total amount due (total_amount - total_payments)
@@ -147,19 +149,6 @@ class OrderTxn < ActiveRecord::Base
   # get the total quantity of this order
   def total_quantity
     order_line_items.pluck(:quantity).inject(:+)
-  end
-
-  # creates payment applications for each charge line
-  def apply_payment_to_all_charge_lines(financial_txn)
-    all_charge_lines.each do |charge_line|
-      payment_application = PaymentApplication.new
-      payment_application.money = Money.create(:description => charge_line.description + ' Payment',
-                                               :amount => charge_line.money.amount,
-                                               :currency => charge_line.money.currency)
-      payment_application.financial_txn = financial_txn
-      payment_application.payment_applied_to = charge_line
-      payment_application.save
-    end
   end
 
   def submit

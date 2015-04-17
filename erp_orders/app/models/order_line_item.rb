@@ -13,6 +13,8 @@
 #   t.integer     :sold_amount_uom
 #   t.integer     :quantity
 #   t.integer     :unit_of_measurement_id
+#   t.decimal     :unit_price, :precision => 8, :scale => 2
+#
 #   t.timestamps
 # end
 #
@@ -55,8 +57,16 @@ class OrderLineItem < ActiveRecord::Base
       currency = Currency.send(currency)
     end
 
-    # get all of the charge lines associated with the order_line
     charges = {}
+
+    # get sold price
+    # TODO currency will eventually need to be accounted for here.  Solid price should probably be a money record
+    if self.sold_price
+      charges["USD"] ||= {amount: 0}
+      charges["USD"][:amount] += (self.sold_price * (self.quantity || 1))
+    end
+
+    # get all of the charge lines associated with the order_line
     charge_lines.each do |charge|
       charge_money = charge.money
 
@@ -78,8 +88,6 @@ class OrderLineItem < ActiveRecord::Base
     if currency
       charges[currency.internal_identifier][:amount]
     elsif charges.keys.count == 1
-      charges.values.first
-    else
       charges
     end
   end

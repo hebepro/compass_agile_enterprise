@@ -88,6 +88,7 @@ class Invoice < ActiveRecord::Base
             charged_item = line_item.product_instance || line_item.product_offer ||line_item.product_type
             invoice_item.quantity = line_item.quantity
             invoice_item.unit_price = line_item.sold_price
+            invoice_item.amount = (line_item.quantity * line_item.sold_price)
             invoice_item.add_invoiced_record(charged_item)
 
             invoice_item.save
@@ -124,6 +125,7 @@ class Invoice < ActiveRecord::Base
             shipping_invoice_item.item_description = 'Shipping'
             shipping_invoice_item.invoice = invoice
             shipping_invoice_item.quantity = 1
+            shipping_invoice_item.amount = shipping_invoice_item.unit_price.nil? ? charge_line.money.amount : shipping_invoice_item.unit_price + charge_line.money.amount
             shipping_invoice_item.unit_price = shipping_invoice_item.unit_price.nil? ? charge_line.money.amount : shipping_invoice_item.unit_price + charge_line.money.amount
             shipping_invoice_item.add_invoiced_record(find_or_create_shipping_product_type)
           end
