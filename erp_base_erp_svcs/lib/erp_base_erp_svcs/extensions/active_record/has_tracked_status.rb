@@ -164,6 +164,7 @@ module ErpBaseErpSvcs
             if args.is_a?(Array)
               status = args[0]
               options = args[1]
+              party_id = args[2]
             else
               status = args
             end
@@ -183,12 +184,22 @@ module ErpBaseErpSvcs
               status_application = StatusApplication.new
               status_application.tracked_status_type = tracked_status_type
               status_application.from_date = options[:from_date].nil? ? Time.now : options[:from_date]
+              status_application.party_id = party_id
               status_application.save
 
               self.status_applications << status_application
               self.save
             end
 
+          end
+
+          def previous_status
+            result = self.status_applications.joins(:tracked_status_type).order("status_applications.id desc").limit(2).all
+            if result.count == 2
+              result[1].tracked_status_type.internal_identifier
+            else
+              nil
+            end
           end
 
           # add_status aliases current_status= for legacy support

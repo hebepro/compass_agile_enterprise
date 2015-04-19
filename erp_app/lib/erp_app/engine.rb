@@ -15,7 +15,7 @@ module ErpApp
     initializer :assets do |config|
       Rails.application.config.assets.paths << root.join("app", "assets", "images")
 
-      Rails.application.config.assets.precompile += ["codemirror_compassae.js", "codemirror_compassae.css"]
+      Rails.application.config.assets.precompile += ["codemirror_compassae.js", "codemirror_compassae.css", "inflection.js"]
 
       # include css files
       Rails.application.config.assets.precompile += %w{ erp_app/shared/erp_app_shared.css erp_app/shared/compass-ext-all.css jquery_plugins/jquery.loadmask.css }

@@ -1,3 +1,16 @@
+# create_table :capabilities do |t|
+#   t.string :description
+#   t.references :capability_type
+#   t.references :capability_resource, :polymorphic => true
+#   t.integer :scope_type_id
+#   t.text :scope_query
+#   t.timestamps
+# end
+#
+# add_index :capabilities, :capability_type_id
+# add_index :capabilities, :scope_type_id
+# add_index :capabilities, [:capability_resource_id, :capability_resource_type], :name => 'capability_resource_index'
+
 class Capability < ActiveRecord::Base
   attr_protected :created_at, :updated_at
   
@@ -17,7 +30,7 @@ class Capability < ActiveRecord::Base
       when ScopeType.find_by_internal_identifier('class')
         self.description = "#{desc}"
       when ScopeType.find_by_internal_identifier('instance')
-        self.description = "#{desc} Instance"
+        self.description = "#{desc} #{capability_resource.to_s} Instance"
       when ScopeType.find_by_internal_identifier('query')
         self.description = "#{desc} Scope"
       end
