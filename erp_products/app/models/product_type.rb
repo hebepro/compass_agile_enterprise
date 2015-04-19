@@ -41,6 +41,8 @@ class ProductType < ActiveRecord::Base
   has_many :simple_product_offers, dependent: :destroy
   has_many :product_feature_applicabilities, dependent: :destroy, as: :feature_of_record
 
+  validates :internal_identifier, :uniqueness => true, :allow_nil => true
+
   def prod_type_relns_to
     ProdTypeReln.where('prod_type_id_to = ?', id)
   end
