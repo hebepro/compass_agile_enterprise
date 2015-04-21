@@ -1,13 +1,5 @@
 class CandidateSubmission < ActiveRecord::Base
 
-  # create_table :candidate_submissions do |t|
-  #   t.integer :order_line_item_id
-  #   t.string  :description
-  #   t.string  :internal_identifier
-  #   t.string  :accepted
-  #   t.text    :custom_fields
-  #   t.timestamps
-
   belongs_to :order_line_item
 
   attr_protected :created_at, :updated_at
@@ -31,7 +23,6 @@ class CandidateSubmission < ActiveRecord::Base
     new_candidate_submission = CandidateSubmission.new
     new_candidate_submission.description = self.description
     new_candidate_submission.internal_identifier = self.internal_identifier
-    new_candidate_submission.accepted = self.accepted
     new_candidate_submission.custom_fields = self.custom_fields
     new_candidate_submission.save!
 
