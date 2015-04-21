@@ -187,6 +187,14 @@ class Invoice < ActiveRecord::Base
     end
   end
 
+  def total_amount
+    if items.empty?
+      self.balance_record.amount
+    else
+      self.items.all.sum(&:total_amount).round(2)
+    end
+  end
+
   def balance
     if items.empty?
       if self.balance_record
