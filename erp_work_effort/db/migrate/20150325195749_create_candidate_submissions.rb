@@ -7,7 +7,6 @@ class CreateCandidateSubmissions < ActiveRecord::Migration
         t.integer :order_line_item_id
         t.string  :description
         t.string  :internal_identifier
-        t.string  :accepted
         t.text    :custom_fields
         t.timestamps
       end
