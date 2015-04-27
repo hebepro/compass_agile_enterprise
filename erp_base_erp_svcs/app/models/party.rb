@@ -15,9 +15,6 @@ class Party < ActiveRecord::Base
   attr_reader :relationships
   attr_writer :create_relationship
 
-  # serialize ExtJs attributes
-  is_json :custom_fields
-
   # helper method to get dba_organization related to this party
   def dba_organization
     find_related_parties_with_role('dba_org').first
