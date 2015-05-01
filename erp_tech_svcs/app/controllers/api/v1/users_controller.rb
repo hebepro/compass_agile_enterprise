@@ -11,7 +11,6 @@ module Api
         start = params[:start] || 0
 
         # scope users by dba_organization and any of its children dba_orgs
-        dba_org_ids = []
         dba_organization = current_user.party.dba_organization
         dba_org_ids = dba_organization.child_dba_organizations.collect(&:id)
         dba_org_ids.push(dba_organization.id)

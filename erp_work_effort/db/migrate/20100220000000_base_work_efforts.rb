@@ -803,7 +803,13 @@ class BaseWorkEfforts < ActiveRecord::Migration
         :transportation_route_stops,
         :associated_transportation_routes,
 
-        :role_types_work_efforts
+        :role_types_work_efforts,
+
+        :position_types, :positions,
+        :position_fulfillments,
+        :time_sheet_entries,
+        :time_sheet_entry_party_roles,
+        :experiences
 
     ].each do |tbl|
       if table_exists?(tbl)

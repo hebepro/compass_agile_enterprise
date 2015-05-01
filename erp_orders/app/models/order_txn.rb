@@ -49,7 +49,7 @@ class OrderTxn < ActiveRecord::Base
 
   # validation
   validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, :on => :update, :allow_nil => true
-  validates :order_number, {uniqueness: true}
+  validates :order_number, {uniqueness: true, :allow_nil => true}
 
   class << self
     #find a order by given biz txn party role iid and party
