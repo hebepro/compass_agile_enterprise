@@ -600,4 +600,7 @@ class OrderTxn < ActiveRecord::Base
 
   end
 
+  def to_label
+    self.order_number
+  end
 end
