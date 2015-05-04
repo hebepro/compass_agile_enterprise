@@ -42,9 +42,15 @@ class OrderLineItem < ActiveRecord::Base
   ## Allow for polymorphic subtypes of this class
   belongs_to :order_line_record, :polymorphic => true
 
+  before_destroy :destroy_order_line_item_relationships
+
   # helper method to get dba_organization related to this order_line_item
   def dba_organization
     order_txn.find_party_by_role('dba_org')
+  end
+
+  def destroy_order_line_item_relationships
+    OrderLineItemRelationship.where("order_line_item_id_from = ? or order_line_item_id_to = ?", self.id, self.id).destroy_all
   end
 
   # get the total charges for a order_line_item.
