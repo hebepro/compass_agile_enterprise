@@ -40,10 +40,6 @@
   <!-- application resources -->
   <%= load_shared_application_resources(:stylesheets) %>
 
-  <% @user.get_application_resource_paths('organizer').each do |resource| %>
-    <%= stylesheet_link_tag(resource) %>
-  <% end %>
-
   <!-- end application resources -->
 
   <%= include_compass_ae_instance %>
