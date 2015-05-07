@@ -32,6 +32,18 @@ class Party < ActiveRecord::Base
     dba_orgs.uniq
   end
 
+  def parent_dba_organizations(dba_orgs=[])
+    PartyRelationship.
+        where('party_id_from = ?', id).
+        where('role_type_id_to' => RoleType.iid('dba_org')).each do |party_reln|
+
+      dba_orgs.push(party_reln.to_party)
+      party_reln.to_party.parent_dba_organizations(dba_orgs)
+    end
+
+    dba_orgs.uniq
+  end
+
   # Gathers all party relationships that contain this particular party id
   # in either the from or to side of the relationship.
   def relationships
