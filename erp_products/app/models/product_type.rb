@@ -99,10 +99,18 @@ class ProductType < ActiveRecord::Base
         where('role_type_id' => RoleType.iid('dba_org').id).each do |prod_party_reln|
 
       dba_orgs.push(prod_party_reln.party)
-      party.parent_dba_organizations(dba_orgs)
+      prod_party_reln.party.parent_dba_organizations(dba_orgs)
     end
 
     dba_orgs.uniq
+  end
+
+  def add_party_with_role_type(party, role_type)
+    if role_type.is_a?(String)
+      role_type = RoleType.iid(role_type)
+    end
+
+    ProductTypePtyRole.create(party: party, role_type: role_type, product_type: self)
   end
 end
 
