@@ -33,7 +33,7 @@ module Api
           users = users.order("#{sort} #{dir}").offset(start).limit(limit)
         end
 
-        render :json => {total_count: total_count, users: users.collect(&:to_data_hash)}
+        render :json => {total_count: total_count, users: users.uniq.collect(&:to_data_hash)}
       end
 
       def create
