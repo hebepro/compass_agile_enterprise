@@ -141,7 +141,7 @@ class Group < ActiveRecord::Base
 
   def role_class_capabilities
     scope_type = ScopeType.find_by_internal_identifier('class')
-    Capability.joins(:capability_type).joins(:capability_accessors).
+    Capability.includes(:capability_type).joins(:capability_type).joins(:capability_accessors).
           where(:capability_accessors => { :capability_accessor_record_type => "SecurityRole" }).
           where("capability_accessor_record_id IN (#{roles.select('security_roles.id').to_sql})").
           where(:scope_type_id => scope_type.id)
@@ -149,7 +149,7 @@ class Group < ActiveRecord::Base
 
   def all_class_capabilities
     scope_type = ScopeType.find_by_internal_identifier('class')
-    Capability.joins(:capability_type).joins(:capability_accessors).
+    Capability.includes(:capability_type).joins(:capability_type).joins(:capability_accessors).
           where("(capability_accessors.capability_accessor_record_type = 'Group' AND
                   capability_accessor_record_id = (#{self.id})) OR
                  (capability_accessors.capability_accessor_record_type = 'SecurityRole' AND
