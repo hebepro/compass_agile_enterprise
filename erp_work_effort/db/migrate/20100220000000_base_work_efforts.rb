@@ -672,7 +672,7 @@ class BaseWorkEfforts < ActiveRecord::Migration
       add_index :position_types, :rgt
     end
 
-    unless table_exists?(:position_types)
+    unless table_exists?(:positions)
       create_table :positions do |t|
 
         t.references    :party
