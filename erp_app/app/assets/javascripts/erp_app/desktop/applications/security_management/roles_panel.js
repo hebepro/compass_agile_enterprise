@@ -154,7 +154,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SecurityManagement.RolesPanel", 
                                                 },
                                                 success: function (form, action) {
                                                     var obj = Ext.decode(action.response.responseText);
-                                                    debugger;
+
                                                     if (obj.success) {
                                                         var all = self.down('#all_roles').down('shared_dynamiceditablegrid');
                                                         Ext.Msg.alert('Status', obj.message);
@@ -167,7 +167,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SecurityManagement.RolesPanel", 
                                                 },
                                                 failure: function (form, action) {
                                                     var obj = Ext.decode(action.response.responseText);
-                                                    debugger;
+                                                    
                                                     if (obj !== null) {
                                                         Ext.Msg.alert("Error", obj.message);
                                                     }
