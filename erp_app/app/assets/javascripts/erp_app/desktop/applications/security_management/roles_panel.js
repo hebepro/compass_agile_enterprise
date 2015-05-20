@@ -306,7 +306,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SecurityManagement.RolesPanel", 
                                         var json_response = Ext.decode(response.responseText);
                                         if (json_response.success) {
                                             self.unsetRole();
-                                            self.down('tabpanel').getActiveTab().refreshWidget();
+                                            var all_roles = self.down('#all_roles').down('shared_dynamiceditablegrid');
                                             all_roles.getStore().load();
                                         } else {
                                             Ext.Msg.alert('Error', Ext.decode(response.responseText).message);
