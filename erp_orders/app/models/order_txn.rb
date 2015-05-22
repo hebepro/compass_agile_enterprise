@@ -77,8 +77,8 @@ class OrderTxn < ActiveRecord::Base
       currency = Currency.send(currency)
     end
 
-    charges = {}
 
+    charges = {}
     # get any charges directly on this order_txn or on order_line_items
     charge_lines.each do |charge|
       charge_money = charge.money
@@ -182,13 +182,6 @@ class OrderTxn < ActiveRecord::Base
 
     if line_item
       ActiveRecord::Base.transaction do
-        if product_type.shipping_cost && product_type.shipping_cost.to_f > 0
-          shipping_charge = line_item.charge_lines.new(charge_type_id: ChargeType.find_by_description('shipping').id)
-          money = Money.new(amount: product_type.shipping_cost)
-          money.currency = Currency.find_by_internal_identifier('USD')
-          shipping_charge.money = money
-        end
-
         line_item.quantity += 1
         line_item.save
       end
@@ -199,17 +192,7 @@ class OrderTxn < ActiveRecord::Base
         line_item.product_offer = simple_product_offer.product_offer
         line_item.sold_price = simple_product_offer.get_current_simple_plan.money_amount
         line_item.quantity = 1
-
-        if product_type.shipping_cost && product_type.shipping_cost > 0
-          shipping_charge = line_item.charge_lines.new(charge_type_id: ChargeType.find_by_description('shipping').id)
-          money = Money.new(amount: product_type.shipping_cost)
-          money.currency = Currency.find_by_internal_identifier('USD')
-          shipping_charge.money = money
-        end
-
         line_item.save
-        money.save if money
-        shipping_charge.save if shipping_charge
         line_items << line_item
       end
     end
@@ -218,7 +201,6 @@ class OrderTxn < ActiveRecord::Base
   end
 
   def add_product_type_line_item(product_type, reln_type = nil, to_role = nil, from_role = nil)
-
     if (product_type.is_a?(Array))
       if (product_type.size == 0)
         return
@@ -251,13 +233,6 @@ class OrderTxn < ActiveRecord::Base
 
     if line_item
       ActiveRecord::Base.transaction do
-        if product_type.shipping_cost && product_type.shipping_cost.to_f > 0
-          shipping_charge = line_item.charge_lines.new(charge_type_id: ChargeType.find_by_description('shipping').id)
-          money = Money.new(amount: product_type.shipping_cost)
-          money.currency = Currency.find_by_internal_identifier('USD')
-          shipping_charge.money = money
-        end
-
         line_item.quantity += 1
         line_item.save
       end
@@ -267,17 +242,7 @@ class OrderTxn < ActiveRecord::Base
         line_item.product_type = product_type_for_line_item
         line_item.sold_price = product_type_for_line_item.get_current_simple_plan.money_amount
         line_item.quantity = 1
-
-        if product_type.shipping_cost && product_type.shipping_cost > 0
-          shipping_charge = line_item.charge_lines.new(charge_type_id: ChargeType.find_by_description('shipping').id)
-          money = Money.new(amount: product_type.shipping_cost)
-          money.currency = Currency.find_by_internal_identifier('USD')
-          shipping_charge.money = money
-        end
-
         line_item.save
-        money.save if money
-        shipping_charge.save if shipping_charge
         line_items << line_item
       end
     end
