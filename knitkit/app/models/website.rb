@@ -183,9 +183,18 @@ class Website < ActiveRecord::Base
     profile_page = nil
     widget_classes.each do |widget_class|
       website_section = WebsiteSection.new
-      website_section.title = widget_class.title
-      website_section.in_menu = true unless ["Login", "Sign Up", "Reset Password"].include?(widget_class.title)
-      website_section.layout = widget_class.base_layout
+
+      # AE-194: Inline Search is active, so no need for search page, take search layout
+      # but change section name for the Search Results page 
+      # and change layout so render widget to calls search action
+      website_section.in_menu = true unless ["Login", "Sign Up", "Reset Password","Search"].include?(widget_class.title)
+      if widget_class.title == 'Search'
+        website_section.title = 'Search Results'
+        website_section.layout = widget_class.base_layout.gsub(":search",":search, :action => 'search'")
+      else
+        website_section.title = widget_class.title
+        website_section.layout = widget_class.base_layout
+      end
       website_section.save
 
       profile_page = website_section if widget_class.title == 'Manage Profile'

@@ -368,8 +368,8 @@ class ErpCommerceBase < ActiveRecord::Migration
       add_column :order_txns, :ship_to_country, :string
     end
 
-    add_column :product_types, :available_on_web, :boolean
-    add_index :product_types, :available_on_web
+    add_column :product_types, :available_on_web, :boolean unless column_exists?(:product_types, :available_on_web)
+    add_index :product_types, :available_on_web unless index_exists?(:product_types, :available_on_web)
   end
 
   def self.down

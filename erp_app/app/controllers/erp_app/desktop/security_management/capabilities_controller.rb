@@ -6,7 +6,7 @@ module ErpApp
         def available_setup
           begin
             columns = []
-            columns << {header: 'Security Role Name', dataIndex: 'description', flex: 1}
+            columns << {header: 'Capability Name', dataIndex: 'description', flex: 1}
 
             definition = []
             definition << {fieldLabel: 'Description', name: 'description'}

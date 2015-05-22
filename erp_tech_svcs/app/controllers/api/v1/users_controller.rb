@@ -25,15 +25,15 @@ module Api
                           )")
 
         if username.blank?
-          total_count = users.count
+          total_count = users.uniq.count
           users = users.order("#{sort} #{dir}").offset(start).limit(limit)
         else
           users = users.where('username like ? or email like ?', "%#{username}%", "%#{username}%")
-          total_count = users.count
+          total_count = users.uniq.count
           users = users.order("#{sort} #{dir}").offset(start).limit(limit)
         end
 
-        render :json => {total_count: total_count, users: users.collect(&:to_data_hash)}
+        render :json => {total_count: total_count, users: users.uniq.collect(&:to_data_hash)}
       end
 
       def create

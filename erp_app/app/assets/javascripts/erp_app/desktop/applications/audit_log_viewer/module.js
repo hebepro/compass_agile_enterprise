@@ -3,7 +3,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.AuditLogViewer", {
     id: 'audit_log_viewer-win',
     init: function () {
         this.launcher = {
-            text: 'audit_log_viewer',
+            text: 'Audit Log Viewer',
             iconCls: 'icon-history',
             handler: this.createWindow,
             scope: this

@@ -63,10 +63,46 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SecurityManagement.RolesPanel", 
                                 frame: false,
                                 bodyStyle: 'padding:5px 5px 0',
                                 url: '/erp_app/desktop/security_management/roles/create',
+
                                 defaults: {
                                     width: 225
                                 },
                                 items: [
+                                    {
+                                        xtype: 'combobox',
+                                        submitValue: false,
+                                        store: {
+                                            fields: [
+                                                {name: "description", type: "string"},
+                                                {name: "internal_identifier", type: "string"}
+                                            ],
+                                            autoLoad: true,
+                                            proxy: {
+                                                url: '/erp_app/desktop/security_management/roles/security_role_roots',
+                                                method: 'get',
+                                                type: "ajax",
+                                                reader: {
+                                                    type: 'json',
+                                                    root: 'roots'
+                                                }
+                                            }
+                                        },
+                                        queryMode: 'local',
+                                        displayField: 'description',
+                                        valueField: 'internal_identifier',
+                                        forceSelection: true,
+                                        typeAhead: true,
+                                        minChars: 2,
+                                        fieldLabel: 'Parent Role',
+                                        allowBlank: false,
+                                        clearIcon: false,
+                                        afterLabelTextTpl: requiredStar,
+                                        listeners: {
+                                            render: function (field) {
+                                                field.getStore().load();
+                                            }
+                                        }
+                                    },
                                     {
                                         xtype: 'textfield',
                                         fieldLabel: 'Role Name',
@@ -105,14 +141,23 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SecurityManagement.RolesPanel", 
                                 {
                                     text: 'Submit',
                                     itemId: 'submitButton',
+
                                     listeners: {
                                         'click': function (button) {
                                             var formPanel = button.findParentByType('window').down('form');
+                                            var parent = formPanel.items.items[0].value;
+
                                             formPanel.getForm().submit({
+
+                                                params: {
+                                                    parent_iid: parent
+                                                },
                                                 success: function (form, action) {
                                                     var obj = Ext.decode(action.response.responseText);
+
                                                     if (obj.success) {
                                                         var all = self.down('#all_roles').down('shared_dynamiceditablegrid');
+                                                        Ext.Msg.alert('Status', obj.message);
                                                         all.getStore().load();
                                                         newWindow.close();
                                                     }
@@ -122,11 +167,12 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SecurityManagement.RolesPanel", 
                                                 },
                                                 failure: function (form, action) {
                                                     var obj = Ext.decode(action.response.responseText);
+                                                    
                                                     if (obj !== null) {
                                                         Ext.Msg.alert("Error", obj.message);
                                                     }
                                                     else {
-                                                        Ext.Msg.alert("Error", "Error importing website");
+                                                        Ext.Msg.alert("Error", "Error creating role");
                                                     }
                                                 }
                                             });
@@ -260,7 +306,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SecurityManagement.RolesPanel", 
                                         var json_response = Ext.decode(response.responseText);
                                         if (json_response.success) {
                                             self.unsetRole();
-                                            self.down('tabpanel').getActiveTab().refreshWidget();
+                                            var all_roles = self.down('#all_roles').down('shared_dynamiceditablegrid');
                                             all_roles.getStore().load();
                                         } else {
                                             Ext.Msg.alert('Error', Ext.decode(response.responseText).message);

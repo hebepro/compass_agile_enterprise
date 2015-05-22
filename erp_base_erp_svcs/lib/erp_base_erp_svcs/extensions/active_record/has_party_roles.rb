@@ -33,6 +33,20 @@ module ErpBaseErpSvcs
                                    role_type: role_type,
                                    entity_record: self)
           end
+
+          def find_party_with_role(role_type)
+            if role_type.is_a?(String)
+              role_type = RoleType.iid(role_type)
+            end
+
+            entity_party_role = entity_party_roles.where(role_type_id: role_type.id).first
+
+            if entity_party_role
+              entity_party_role.party
+            else
+              nil
+            end
+          end
         end
 
       end # HasPartyRoles

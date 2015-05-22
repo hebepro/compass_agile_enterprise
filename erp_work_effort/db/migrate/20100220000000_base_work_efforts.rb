@@ -647,103 +647,116 @@ class BaseWorkEfforts < ActiveRecord::Migration
     ##********************************************************************************************
     ## Positions
     ##********************************************************************************************
-    create_table :position_types do |t|
+    unless table_exists?(:position_types)
+      create_table :position_types do |t|
 
-      t.string :description
-      t.string :internal_identifier
-      t.string :external_identifier
-      t.string :external_identifer_source
+        t.string :description
+        t.string :internal_identifier
+        t.string :external_identifier
+        t.string :external_identifer_source
 
-      #these columns are required to support the behavior of the plugin 'awesome_nested_set'
-      t.integer :parent_id
-      t.integer :lft
-      t.integer :rgt
+        #these columns are required to support the behavior of the plugin 'awesome_nested_set'
+        t.integer :parent_id
+        t.integer :lft
+        t.integer :rgt
 
-      t.string :title
-      t.decimal :benefit_percent, :precision => 8, :scale => 2
+        t.string :title
+        t.decimal :benefit_percent, :precision => 8, :scale => 2
 
-      t.timestamps
+        t.timestamps
 
+      end
+
+      add_index :position_types, :parent_id
+      add_index :position_types, :lft
+      add_index :position_types, :rgt
     end
 
-    add_index :position_types, :parent_id
-    add_index :position_types, :lft
-    add_index :position_types, :rgt
+    unless table_exists?(:positions)
+      create_table :positions do |t|
 
-    create_table :positions do |t|
+        t.references    :party
+        t.references    :position_type
+        t.date          :estimated_from_date
+        t.date          :estimated_thru_date
+        t.boolean       :salary_flag
+        t.boolean       :exempt_flag
+        t.boolean       :full_time_flag
+        t.boolean       :temporary_flag
+        t.date          :actual_from_date
+        t.date          :actual_thru_date
 
-      t.references    :party
-      t.references    :position_type
-      t.date          :estimated_from_date
-      t.date          :estimated_thru_date
-      t.boolean       :salary_flag
-      t.boolean       :exempt_flag
-      t.boolean       :full_time_flag
-      t.boolean       :temporary_flag
-      t.date          :actual_from_date
-      t.date          :actual_thru_date
+        t.timestamps
 
-      t.timestamps
+      end
 
+      add_index :positions, :position_type_id
+      add_index :positions, :party_id
     end
 
-    add_index :positions, :position_type_id
-    add_index :positions, :party_id
+    unless table_exists?(:position_fulfillments)
+      create_table :position_fulfillments do |t|
+        t.string        :description
+        t.integer       :held_by_party_id
+        t.references    :position
+        t.date          :from_date
+        t.date          :thru_date
+        t.timestamps
+      end
 
-    create_table :position_fulfillments do |t|
-      t.string        :description
-      t.integer       :held_by_party_id
-      t.references    :position
-      t.date          :from_date
-      t.date          :thru_date
-      t.timestamps
+      add_index :position_fulfillments, :position_id
+      add_index :position_fulfillments, :held_by_party_id
     end
-
-    add_index :position_fulfillments, :position_id
-    add_index :position_fulfillments, :held_by_party_id
 
     ##********************************************************************************************
     ## Time Entry
     ##********************************************************************************************
-    create_table :time_sheet_entries do |t|
+    unless table_exists?(:time_sheet_entries)
+      create_table :time_sheet_entries do |t|
 
-      t.references  :work_effort
-      t.string      :description
-      t.date        :worked_date
-      t.datetime    :entered_date
-      t.decimal     :regular_hours_worked, :precision => 5, :scale => 2
-      t.decimal     :overtime_hours_worked, :precision => 5, :scale => 2
-      t.datetime    :start_time
-      t.datetime    :end_time
-      t.text        :comments
+        t.references  :work_effort
+        t.string      :description
+        t.date        :worked_date
+        t.datetime    :entered_date
+        t.decimal     :regular_hours_worked, :precision => 5, :scale => 2
+        t.decimal     :overtime_hours_worked, :precision => 5, :scale => 2
+        t.datetime    :start_time
+        t.datetime    :end_time
+        t.text        :comments
 
-      t.timestamps
+        t.timestamps
+      end
+
+      add_index :time_sheet_entries, :work_effort_id
     end
 
-    add_index :time_sheet_entries, :work_effort_id
+    unless table_exists?(:time_sheet_entry_party_roles)
+      create_table :time_sheet_entry_party_roles do |t|
 
-    create_table :time_sheet_entry_party_roles do |t|
+        t.references    :time_sheet_entry
+        t.references    :party
+        t.references    :role_type
 
-      t.references    :time_sheet_entry
-      t.references    :party
-      t.references    :role_type
+        t.date          :from_date
+        t.date          :thru_date
 
-      t.date          :from_date
-      t.date          :thru_date
+        t.timestamps
+      end
 
-      t.timestamps
+      add_index :time_sheet_entry_party_roles, :time_sheet_entry_id
+      add_index :time_sheet_entry_party_roles, :party_id
+      add_index :time_sheet_entry_party_roles, :role_type_id
     end
 
-    add_index :time_sheet_entry_party_roles, :time_sheet_entry_id
-    add_index :time_sheet_entry_party_roles, :party_id
-    add_index :time_sheet_entry_party_roles, :role_type_id
+    unless table_exists?(:experiences)
+      create_table :experiences do |t|
 
-    create_table :experiences do |t|
+        t.string :description
 
-      t.string :description
-
-      t.timestamps
+        t.timestamps
+      end
     end
+
   end
 
   def self.down
