@@ -220,7 +220,6 @@ class BaseTechServices < ActiveRecord::Migration
     end
 
     unless table_exists?(:capable_models)
-      # create the roles table
       create_table :capable_models do |t|
         t.references :capable_model_record, :polymorphic => true
 
@@ -231,7 +230,6 @@ class BaseTechServices < ActiveRecord::Migration
     end
 
     unless table_exists?(:capability_types)
-      # create the roles table
       create_table :capability_types do |t|
         t.string :internal_identifier
         t.string :description
@@ -242,7 +240,6 @@ class BaseTechServices < ActiveRecord::Migration
     end
 
     unless table_exists?(:capabilities)
-      # create the roles table
       create_table :capabilities do |t|
         t.string :description
         t.references :capability_type

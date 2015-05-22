@@ -152,7 +152,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
                 type: 'ajax',
                 url: '/api/v1/users/',
                 reader: {
-                    totalProperty: 'totalCount',
+                    totalProperty: 'total_count',
                     type: 'json',
                     root: 'users'
                 },
@@ -202,19 +202,19 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
             {
                 header: 'Username',
                 dataIndex: 'username',
-                width: 150
+                flex: 1
             },
             {
                 header: 'Email',
                 dataIndex: 'email',
-                width: 150
+                flex: 1
             },
             {
                 menuDisabled: true,
                 resizable: false,
                 xtype: 'actioncolumn',
                 align: 'center',
-                width: 45,
+                width: 135,
                 items: [
                     {
                         icon: '/assets/icons/person/person_16x16.png',
@@ -223,22 +223,11 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
                             var rec = grid.getStore().getAt(rowIndex);
                             me.viewUser(rec);
                         }
-                    }
-                ]
-            }
-        ];
-
-        if (currentUser.hasRole('admin')) {
-            columns.push({
-                menuDisabled: true,
-                resizable: false,
-                xtype: 'actioncolumn',
-                align: 'center',
-                width: 45,
-                items: [
+                    },
                     {
                         icon: '/assets/icons/secure/secure_16x16.png',
                         tooltip: 'Reset Password',
+                        hidden: !currentUser.hasRole('admin'),
                         handler: function (grid, rowIndex, colIndex) {
                             var rec = grid.getStore().getAt(rowIndex);
 
@@ -251,22 +240,11 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
                                 }
                             });
                         }
-                    }
-                ]
-            });
-        }
-
-        if (currentUser.hasCapability('delete', 'User')) {
-            columns.push({
-                menuDisabled: true,
-                resizable: false,
-                xtype: 'actioncolumn',
-                align: 'center',
-                width: 45,
-                items: [
+                    },
                     {
                         icon: '/assets/icons/delete/delete_16x16.png',
                         tooltip: 'Delete',
+                        hidden: !currentUser.hasCapability('delete', 'User'),
                         handler: function (grid, rowIndex, colIndex) {
                             var rec = grid.getStore().getAt(rowIndex);
 
@@ -282,8 +260,8 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
                         }
                     }
                 ]
-            });
-        }
+            }
+        ];
 
         var toolBarItems = [];
         if (currentUser.hasCapability('create', 'User')) {
@@ -425,13 +403,13 @@ Ext.define("Compass.ErpApp.Desktop.Applications.UserManagement.UsersGrid", {
             handler: function (button) {
                 var username = Ext.getCmp('user_search_field').getValue();
 
-                usersStore.getProxy.setExtraParam('username', username);
+                usersStore.getProxy().setExtraParam('username', username);
                 usersStore.loadPage(1);
             }
         });
 
         config = Ext.apply({
-            width: 430,
+            width: 475,
             region: 'west',
             split: true,
             collapsible: true,

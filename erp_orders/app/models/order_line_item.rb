@@ -13,6 +13,8 @@
 #   t.integer     :sold_amount_uom
 #   t.integer     :quantity
 #   t.integer     :unit_of_measurement_id
+#   t.decimal     :unit_price, :precision => 8, :scale => 2
+#
 #   t.timestamps
 # end
 #
@@ -40,9 +42,15 @@ class OrderLineItem < ActiveRecord::Base
   ## Allow for polymorphic subtypes of this class
   belongs_to :order_line_record, :polymorphic => true
 
+  before_destroy :destroy_order_line_item_relationships
+
   # helper method to get dba_organization related to this order_line_item
   def dba_organization
     order_txn.find_party_by_role('dba_org')
+  end
+
+  def destroy_order_line_item_relationships
+    OrderLineItemRelationship.where("order_line_item_id_from = ? or order_line_item_id_to = ?", self.id, self.id).destroy_all
   end
 
   # get the total charges for a order_line_item.
@@ -55,8 +63,16 @@ class OrderLineItem < ActiveRecord::Base
       currency = Currency.send(currency)
     end
 
-    # get all of the charge lines associated with the order_line
     charges = {}
+
+    # get sold price
+    # TODO currency will eventually need to be accounted for here.  Solid price should probably be a money record
+    if self.sold_price
+      charges["USD"] ||= {amount: 0}
+      charges["USD"][:amount] += (self.sold_price * (self.quantity || 1))
+    end
+
+    # get all of the charge lines associated with the order_line
     charge_lines.each do |charge|
       charge_money = charge.money
 
@@ -78,8 +94,6 @@ class OrderLineItem < ActiveRecord::Base
     if currency
       charges[currency.internal_identifier][:amount]
     elsif charges.keys.count == 1
-      charges.values.first
-    else
       charges
     end
   end

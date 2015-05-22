@@ -17,6 +17,8 @@ Rails.application.routes.draw do
           put :reset_password
         end
       end
+
+      resources :security_roles
     end
   end
 

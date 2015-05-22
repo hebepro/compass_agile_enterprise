@@ -27,7 +27,9 @@ class BizTxnEvent < ActiveRecord::Base
   has_many :base_txn_contexts, :dependent => :destroy
   has_many :biz_txn_agreement_roles
   has_many :agreements, :through => :biz_txn_agreement_roles
-  	
+
+  before_destroy :destroy_biz_txn_relationships
+
   #wrapper for...
   #belongs_to :biz_txn_type
   belongs_to_erp_type :biz_txn_type
@@ -43,8 +45,11 @@ class BizTxnEvent < ActiveRecord::Base
   # serialize ExtJs attributes
   is_json :custom_fields
 
-  
-	#helps when looping through transactions comparing types
+  def destroy_biz_txn_relationships
+    BizTxnRelationship.where("txn_event_id_from = ? or txn_event_id_to = ?", self.id, self.id).destroy_all
+  end
+
+  #helps when looping through transactions comparing types
 	def txn_type_iid
 		biz_txn_type.internal_identifier if biz_txn_type
 	end

@@ -31,29 +31,41 @@ class InvoiceItem < ActiveRecord::Base
 
   has_payment_applications
 
-  def sub_total
-    (self.unit_price * self.quantity).round(2)
+  def taxable?
+    taxable && !tax_rate.nil?
   end
 
   def total_amount
     if taxable?
-      ((self.unit_price * self.quantity) + self.sales_tax).round(2)
+      (sub_total + self.sales_tax).round(2)
     else
-      (self.unit_price * self.quantity).round(2)
+      sub_total
     end
+  end
+
+  def sub_total
+    _amount = self.amount
+
+    if _amount.blank?
+      _amount = (self.unit_price * self.quantity)
+    end
+
+    _amount.round(2)
   end
 
   def balance
     (self.total_amount - self.total_payments).round(2)
   end
 
-  def taxable?
-    taxable && !tax_rate.nil?
-  end
-
   def sales_tax
+    _amount = self.amount
+
+    if _amount.blank?
+      _amount = (self.unit_price * self.quantity)
+    end
+
     if taxable?
-      (tax_rate * unit_price).round(2)
+      (tax_rate * _amount).round(2)
     else
       'N/A'
     end

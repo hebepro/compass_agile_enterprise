@@ -145,19 +145,19 @@ class User < ActiveRecord::Base
   end
 
   def group_capabilities
-    Capability.joins(:capability_type).joins(:capability_accessors).
+    Capability.includes(:capability_type).joins(:capability_type).joins(:capability_accessors).
           where(:capability_accessors => { :capability_accessor_record_type => "Group" }).
           where("capability_accessor_record_id IN (#{groups.select('groups.id').to_sql})")
   end
 
   def role_capabilities
-    Capability.joins(:capability_type).joins(:capability_accessors).
+    Capability.includes(:capability_type).joins(:capability_type).joins(:capability_accessors).
           where(:capability_accessors => { :capability_accessor_record_type => "SecurityRole" }).
           where("capability_accessor_record_id IN (#{all_roles.select('security_roles.id').to_sql})")
   end
 
   def all_capabilities
-    Capability.joins(:capability_type).joins(:capability_accessors).
+    Capability.includes(:capability_type).joins(:capability_type).joins(:capability_accessors).
           where("(capability_accessors.capability_accessor_record_type = 'Group' AND
                   capability_accessor_record_id IN (#{groups.select('groups.id').to_sql})) OR
                  (capability_accessors.capability_accessor_record_type = 'SecurityRole' AND

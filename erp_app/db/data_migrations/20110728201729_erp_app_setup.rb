@@ -29,22 +29,22 @@ class ErpAppSetup
     #######################################
     # security roles
     #######################################
-    SecurityRole.create(:description => 'Admin', :internal_identifier => 'admin')
-    SecurityRole.create(:description => 'Employee', :internal_identifier => 'employee')
+    admin_security_role = SecurityRole.create(:description => 'Admin', :internal_identifier => 'admin')
+    employee_security_role = SecurityRole.create(:description => 'Employee', :internal_identifier => 'employee')
 
-    admin = SecurityRole.find_by_internal_identifier('admin')
-    employee = SecurityRole.find_by_internal_identifier('employee')
+    admin_security_role.add_capability('create', 'User')
+    admin_security_role.add_capability('delete', 'User')
 
-    admin.add_capability('create', 'User')
-    admin.add_capability('delete', 'User')
+    admin_security_role.add_capability('create', 'Note')
+    employee_security_role.add_capability('create', 'Note')
 
-    admin.add_capability('create', 'Note')
-    employee.add_capability('create', 'Note')
+    admin_security_role.add_capability('view', 'Note')
+    employee_security_role.add_capability('view', 'Note')
 
-    admin.add_capability('view', 'Note')
-    employee.add_capability('view', 'Note')
+    admin_security_role.add_capability('edit', 'Note')
+    employee_security_role.add_capability('edit', 'Note')
 
-    admin.add_capability('delete', 'Note')
+    admin_security_role.add_capability('delete', 'Note')
 
     #######################################
     # Role Types

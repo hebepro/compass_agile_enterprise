@@ -86,6 +86,20 @@ body {
     color: #fff;
 }
 
+.inline-search-header {
+    float: right;
+    margin-right: 20px;
+    margin-top: 14px;
+}
+
+.inline-search-header a span {
+    color: #aaa;
+}
+
+.inline-search-header a span:hover {
+    color: #fff;
+}
+
 .container > h1 {
     text-align: center;
 }

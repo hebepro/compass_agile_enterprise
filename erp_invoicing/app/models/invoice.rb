@@ -88,6 +88,7 @@ class Invoice < ActiveRecord::Base
             charged_item = line_item.product_instance || line_item.product_offer ||line_item.product_type
             invoice_item.quantity = line_item.quantity
             invoice_item.unit_price = line_item.sold_price
+            invoice_item.amount = (line_item.quantity * line_item.sold_price)
             invoice_item.add_invoiced_record(charged_item)
 
             invoice_item.save
@@ -124,6 +125,7 @@ class Invoice < ActiveRecord::Base
             shipping_invoice_item.item_description = 'Shipping'
             shipping_invoice_item.invoice = invoice
             shipping_invoice_item.quantity = 1
+            shipping_invoice_item.amount = shipping_invoice_item.unit_price.nil? ? charge_line.money.amount : shipping_invoice_item.unit_price + charge_line.money.amount
             shipping_invoice_item.unit_price = shipping_invoice_item.unit_price.nil? ? charge_line.money.amount : shipping_invoice_item.unit_price + charge_line.money.amount
             shipping_invoice_item.add_invoiced_record(find_or_create_shipping_product_type)
           end
@@ -139,7 +141,7 @@ class Invoice < ActiveRecord::Base
     def find_or_create_shipping_product_type
       product_type = ProductType.find_by_internal_identifier('shipping')
       unless product_type
-        product_type = ProductType.create(internal_identifier: 'shipping', description: 'Shipping', available_on_web: 'false', shipping_cost: 0)
+        product_type = ProductType.create(internal_identifier: 'shipping', description: 'Shipping', available_on_web: false, shipping_cost: 0)
         product_type.pricing_plans.new(money_amount: 0, is_simple_amount:true)
         product_type.save
       end
@@ -182,6 +184,14 @@ class Invoice < ActiveRecord::Base
       self.balance_record.amount
     else
       self.items.all.sum(&:sub_total).round(2)
+    end
+  end
+
+  def total_amount
+    if items.empty?
+      self.balance_record.amount
+    else
+      self.items.all.sum(&:total_amount).round(2)
     end
   end
 
@@ -282,6 +292,10 @@ class Invoice < ActiveRecord::Base
     unless parties.empty?
       parties.first
     end
+  end
+
+  def dba_organization
+    find_parties_by_role_type('dba_org')
   end
 
   private
