@@ -76,9 +76,14 @@ class Invoice < ActiveRecord::Base
 
         invoice.save
 
-        # add party relationship
+        # add customer relationship
         party = order_txn.find_party_by_role('customer')
         invoice.add_party_with_role_type(party, RoleType.customer)
+
+        # add dba_org relationship if present
+        if options[:dba_organization]
+          invoice.add_party_with_role_type(options[:dba_organization], RoleType.dba_org)
+        end
 
         order_txn.order_line_items.each do |line_item|
             invoice_item = InvoiceItem.new
@@ -95,7 +100,7 @@ class Invoice < ActiveRecord::Base
         end
 
         # handles everything but shipping charge lines, multiple invoice items created from all iterations
-        order_txn.all_charge_lines.select {|charge_line| charge_line.charge_type && charge_line.charge_type.description != 'shipping'}.each do |charge_line|
+        order_txn.all_charge_lines.select {|charge_line| charge_line.charge_type && charge_line.charge_type.internal_identifier != 'shipping'}.each do |charge_line|
             invoice_item = InvoiceItem.new
 
             invoice_item.invoice = invoice
@@ -118,11 +123,11 @@ class Invoice < ActiveRecord::Base
         end
 
         # handles shipping charge lines, one invoice item created from all iterations
-        shipping_charges = order_txn.all_charge_lines.select {|charge_line| charge_line.charge_type && charge_line.charge_type.description == 'shipping'}
+        shipping_charges = order_txn.all_charge_lines.select {|charge_line| charge_line.charge_type && charge_line.charge_type.internal_identifier == 'shipping'}
         if shipping_charges.length > 0
           shipping_invoice_item = InvoiceItem.new
           shipping_charges.each do |charge_line|
-            shipping_invoice_item.item_description = 'Shipping'
+            shipping_invoice_item.item_description = charge_line.description
             shipping_invoice_item.invoice = invoice
             shipping_invoice_item.quantity = 1
             shipping_invoice_item.amount = shipping_invoice_item.unit_price.nil? ? charge_line.money.amount : shipping_invoice_item.unit_price + charge_line.money.amount
