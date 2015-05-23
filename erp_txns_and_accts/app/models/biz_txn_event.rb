@@ -73,6 +73,16 @@ class BizTxnEvent < ActiveRecord::Base
 			"n/a"
 		end 
 	end
+
+	def find_party_by_role_type(role_type)
+		role_type = role_type.is_a?(String) ? BizTxnPartyRoleType.iid(role_type) : role_type
+
+		biz_txn_party_role = biz_txn_party_roles.where(:biz_txn_party_role_type_id => role_type.id).first
+
+		if biz_txn_party_role
+			biz_txn_party_role.party
+		end
+	end
 	
 	def create_dependent_txns
 	  #Template Method
