@@ -83,7 +83,7 @@ module Knitkit
                     file.destroy
                   end
                   messages << message
-                rescue Exception => ex
+                rescue StandardError => ex
                   Rails.logger.error ex.message
                   Rails.logger.error ex.backtrace.join("\n")
 
