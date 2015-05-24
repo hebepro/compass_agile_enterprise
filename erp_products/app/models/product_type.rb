@@ -19,6 +19,12 @@
 #   t.column 	:external_id_source, 	        :string
 #   t.column  :default_image_url,           :string
 #   t.column  :list_view_image_id,          :integer
+#   t.column  :product_types, :length,      :decimal
+#   t.column  :product_types, :width,       :decimal
+#   t.column  :product_types, :height,      :decimal
+#   t.column  :product_types, :weight,      :decimal
+#   t.column  :product_types, :cylindrical, :boolean
+#   remove_column :product_types, :shipping_cost#
 #   t.timestamps
 # end
 
@@ -111,6 +117,10 @@ class ProductType < ActiveRecord::Base
     end
 
     ProductTypePtyRole.create(party: party, role_type: role_type, product_type: self)
+  end
+
+  def has_dimensions?
+    (cylindrical && length && width && weight) or (length && width && height && weight)
   end
 end
 
