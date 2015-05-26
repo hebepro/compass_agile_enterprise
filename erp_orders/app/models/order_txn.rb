@@ -58,7 +58,16 @@ class OrderTxn < ActiveRecord::Base
     end
 
     def next_order_number
-      "Order-#{(maximum('id').nil? ? 1 : (maximum('id') + 1))}"
+      max_id = maximum('id')
+
+      current_order = where(OrderTxn.arel_table[:order_number].matches("%#{max_id}%")).first
+
+      while current_order
+        max_id = max_id + 1
+        current_order = where(OrderTxn.arel_table[:order_number].matches("%#{max_id}%")).first
+      end
+
+      "Order-#{max_id}"
     end
   end
 
