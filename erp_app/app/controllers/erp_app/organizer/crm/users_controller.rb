@@ -14,6 +14,20 @@ module ErpApp
 
           # determine sorting
           sort_hash = params[:sort].present? ? ActiveSupport::JSON.decode(params[:sort]).first : {}
+
+          #
+          # Convert sort parameters that are mapped Extjs fields
+          #
+          if sort_hash['property'] == 'createdAt'
+            sort_hash['property'] = 'created_at'
+          elsif sort_hash['property'] == 'updatedAt'
+            sort_hash['property'] = 'updated_at'
+          elsif sort_hash['property'] == 'status'
+            sort_hash['property'] = 'activation_state'
+          elsif sort_hash['property'] == 'lastLoginAt'
+            sort_hash['property'] = 'last_login_at'
+          end
+
           order_by = sort_hash['property'] || 'created_at'
           direction = sort_hash['direction'] || 'desc'
 
