@@ -19,6 +19,12 @@
 #   t.column 	:external_id_source, 	        :string
 #   t.column  :default_image_url,           :string
 #   t.column  :list_view_image_id,          :integer
+#   t.column  :product_types, :length,      :decimal
+#   t.column  :product_types, :width,       :decimal
+#   t.column  :product_types, :height,      :decimal
+#   t.column  :product_types, :weight,      :decimal
+#   t.column  :product_types, :cylindrical, :boolean
+#   remove_column :product_types, :shipping_cost#
 #   t.timestamps
 # end
 
@@ -99,10 +105,22 @@ class ProductType < ActiveRecord::Base
         where('role_type_id' => RoleType.iid('dba_org').id).each do |prod_party_reln|
 
       dba_orgs.push(prod_party_reln.party)
-      party.parent_dba_organizations(dba_orgs)
+      prod_party_reln.party.parent_dba_organizations(dba_orgs)
     end
 
     dba_orgs.uniq
+  end
+
+  def add_party_with_role_type(party, role_type)
+    if role_type.is_a?(String)
+      role_type = RoleType.iid(role_type)
+    end
+
+    ProductTypePtyRole.create(party: party, role_type: role_type, product_type: self)
+  end
+
+  def has_dimensions?
+    (cylindrical && length && width && weight) or (length && width && height && weight)
   end
 end
 

@@ -41,7 +41,22 @@ module ErpApp
           ar = (params[:query_filter].blank? ? ar : ar.where("UPPER(security_roles.description) LIKE UPPER('%#{query_filter}%')"))
           available = ar.paginate(:page => page, :per_page => per_page, :order => "#{sort} #{dir}")
 
+
+
+
           render :json => {:total => ar.count, :data => available.map { |x| {:description => x.description, :internal_identifier => x.internal_identifier, :id => x.id} }}
+        end
+
+        def security_role_roots
+          security_roots = []
+          SecurityRole.roots.each do |security_root|
+            security_roots_hash = {}
+            security_roots_hash[:description] = security_root.description
+            security_roots_hash[:internal_identifier] = security_root.internal_identifier
+            security_roots << security_roots_hash
+          end
+          render :json => {:roots => security_roots}
+
         end
 
         def selected
@@ -62,9 +77,14 @@ module ErpApp
           begin
             description = params[:description].strip
             iid = params[:internal_identifier].strip
+            parent_role = params[:parent_iid].strip
 
             unless description.blank?
-              SecurityRole.create(:description => description, :internal_identifier => iid)
+              security_role = SecurityRole.create(:description => description, :internal_identifier => iid)
+              security_role.save!
+              # if this is coming in from the security management application nest it
+              security_role.move_to_child_of(SecurityRole.iid(parent_role)) unless SecurityRole.iid(parent_role).nil?
+
               render :json => {:success => true, :message => 'Security Role created'}
             else
               raise "Role name blank"

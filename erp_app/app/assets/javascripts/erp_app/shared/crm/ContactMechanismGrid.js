@@ -99,7 +99,8 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
                     totalProperty: 'totalCount',
                     messageProperty: 'message'
                 }
-            }
+            },
+            remoteSort: true
         });
 
         this.store = store;
@@ -126,7 +127,8 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
             {
                 header: 'Contact Purposes',
                 dataIndex: 'contact_purposes',
-                flex: 1
+                flex: 1,
+                sortable: false
             },
             {
                 header: 'Created',
@@ -153,6 +155,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.ContactMechanismGrid", {
 
         config.columns.unshift({
             header: 'Primary',
+            sortable: false,
             flex: 0.5,
             dataIndex: 'is_primary',
             renderer: function (v) {
