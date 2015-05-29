@@ -15,9 +15,6 @@ class Party < ActiveRecord::Base
   attr_reader :relationships
   attr_writer :create_relationship
 
-  # serialize ExtJs attributes
-  is_json :custom_fields
-
   # helper method to get dba_organization related to this party
   def dba_organization
     find_related_parties_with_role('dba_org').first
@@ -30,6 +27,18 @@ class Party < ActiveRecord::Base
 
       dba_orgs.push(party_reln.from_party)
       party_reln.from_party.child_dba_organizations(dba_orgs)
+    end
+
+    dba_orgs.uniq
+  end
+
+  def parent_dba_organizations(dba_orgs=[])
+    PartyRelationship.
+        where('party_id_from = ?', id).
+        where('role_type_id_to' => RoleType.iid('dba_org')).each do |party_reln|
+
+      dba_orgs.push(party_reln.to_party)
+      party_reln.to_party.parent_dba_organizations(dba_orgs)
     end
 
     dba_orgs.uniq
@@ -374,7 +383,9 @@ class Party < ActiveRecord::Base
     contact_mechanism_args.delete_if { |k, v| ['created_at', 'updated_at', 'is_primary'].include? k.to_s }
     contact_mechanism = contact_mechanism_class.new(contact_mechanism_args)
     contact_mechanism.contact.party = self
-    contact_mechanism.contact.contact_purposes = contact_purposes
+    contact_purposes.each do |contact_purpose|
+      contact_mechanism.contact.contact_purposes << ContactPurpose.iid(contact_purpose)
+    end
     contact_mechanism.contact.save
     contact_mechanism.save
 
