@@ -565,11 +565,13 @@ Ext.define("Ext.ux.desktop.Desktop", {
             return
         }
         if (a) {
-            if (a.el.dom) {
-                a.addCls(b.inactiveWindowCls);
-                a.removeCls(b.activeWindowCls)
+            if (a.el !== undefined){
+                if (a.el.dom) {
+                    a.addCls(b.inactiveWindowCls);
+                    a.removeCls(b.activeWindowCls)
+                }
+                a.active = false
             }
-            a.active = false
         }
         b.lastActiveWindow = c;
         if (c) {

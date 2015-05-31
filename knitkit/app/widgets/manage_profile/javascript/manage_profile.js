@@ -10,5 +10,5 @@ Compass.ErpApp.Widgets.AvailableWidgets.push({
     name:'Manage Profile',
     iconUrl:'/assets/icons/manage_profile/manage_profile_48x48.png',
     onClick:Compass.ErpApp.Widgets.ManageProfile.addManageProfile,
-    about:'This widget allows users to manger thier user information, password and contact information.'
+    about:'This widget allows users to manage their user information, password and contact information.'
 });

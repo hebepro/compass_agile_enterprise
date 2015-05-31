@@ -19,6 +19,12 @@
 #   t.column 	:external_id_source, 	        :string
 #   t.column  :default_image_url,           :string
 #   t.column  :list_view_image_id,          :integer
+#   t.column  :product_types, :length,      :decimal
+#   t.column  :product_types, :width,       :decimal
+#   t.column  :product_types, :height,      :decimal
+#   t.column  :product_types, :weight,      :decimal
+#   t.column  :product_types, :cylindrical, :boolean
+#   remove_column :product_types, :shipping_cost#
 #   t.timestamps
 # end
 
@@ -39,8 +45,9 @@ class ProductType < ActiveRecord::Base
   belongs_to :unit_of_measurement
   has_many :product_type_pty_roles, dependent: :destroy
   has_many :simple_product_offers, dependent: :destroy
-  has_many :product_feature_applicabilities, as: :feature_of_record
+  has_many :product_feature_applicabilities, dependent: :destroy, as: :feature_of_record
 
+  validates :internal_identifier, :uniqueness => true, :allow_nil => true
 
   def prod_type_relns_to
     ProdTypeReln.where('prod_type_id_to = ?', id)
@@ -91,11 +98,35 @@ class ProductType < ActiveRecord::Base
         images: images.pluck(:id)
     }
   end
+
+  def parent_dba_organizations(dba_orgs=[])
+    ProductTypePtyRole.
+        where('product_type_id = ?', id).
+        where('role_type_id' => RoleType.iid('dba_org').id).each do |prod_party_reln|
+
+      dba_orgs.push(prod_party_reln.party)
+      prod_party_reln.party.parent_dba_organizations(dba_orgs)
+    end
+
+    dba_orgs.uniq
+  end
+
+  def add_party_with_role_type(party, role_type)
+    if role_type.is_a?(String)
+      role_type = RoleType.iid(role_type)
+    end
+
+    ProductTypePtyRole.create(party: party, role_type: role_type, product_type: self)
+  end
+
+  def has_dimensions?
+    (cylindrical && length && width && weight) or (length && width && height && weight)
+  end
 end
 
 module Arel
   class SelectManager
-    def polymorphic_join(hash={polytable:nil, table:nil, model: nil, polymodel:nil, record_type_name:nil, record_id_name:nil, table_model:nil})
+    def polymorphic_join(hash={polytable: nil, table: nil, model: nil, polymodel: nil, record_type_name: nil, record_id_name: nil, table_model: nil})
       # Left Outer Join with 2 possible hash argument sets:
       #   1) model (AR model), polymodel (AR model), record_type_name (symbol), record_id_name (symbol)
       #   2) polytable (arel_table), table (arel_table), record_type_name (symbol), record_id_name (symbol), table_model (string)

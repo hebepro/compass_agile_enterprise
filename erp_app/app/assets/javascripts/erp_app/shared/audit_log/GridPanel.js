@@ -93,7 +93,7 @@ Ext.define('Compass.ErpApp.Shared.AuditLog.GridPanel', {
             header: 'Created At',
             dataIndex: 'created_at',
             renderer: function (value) {
-                return Ext.Date.format(value, 'm-d-Y');
+                return Ext.Date.format(value, 'm-d-Y H:i:s');
             },
             flex: 2
         },

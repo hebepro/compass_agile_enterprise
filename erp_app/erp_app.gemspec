@@ -24,9 +24,10 @@ Gem::Specification.new do |s|
   s.add_dependency 'uglifier', '~> 1.3'
   s.add_dependency('friendly_id', '4.0.10.1')
   s.add_dependency('codemirror-rails', '4.8')
+  s.add_dependency('inflection-js-rails', '0.1.1')
 
   #compass dependencies
-  s.add_dependency 'compass_ae_sencha', "~> 2.0"
-  s.add_dependency 'erp_tech_svcs', "~> 4.0"
-  s.add_development_dependency 'erp_dev_svcs', "~> 4.0"
+  s.add_dependency 'compass_ae_sencha', "~> 2.1"
+  s.add_dependency 'erp_tech_svcs', "~> 4.1"
+  s.add_development_dependency 'erp_dev_svcs', "~> 4.1"
 end

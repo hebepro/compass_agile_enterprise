@@ -2,6 +2,7 @@ class Category < ActiveRecord::Base
   acts_as_nested_set
 
   include ErpTechSvcs::Utils::DefaultNestedSetMethods
+  acts_as_erp_type
 
   attr_protected :created_at, :updated_at
 
@@ -38,6 +39,17 @@ class Category < ActiveRecord::Base
       container_arr << {:id => o.id, :description => o.to_representation}
     end
     container_arr
+  end
+
+  def to_data_hash
+    {
+        server_id: id,
+        leaf: children.empty?,
+        description: description,
+        internal_identifier: internal_identifier,
+        created_at: created_at,
+        updated_at: updated_at
+    }
   end
 
   private

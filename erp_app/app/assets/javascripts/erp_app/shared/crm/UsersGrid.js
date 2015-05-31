@@ -386,6 +386,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
                 header: 'Edit',
                 align: 'center',
                 width: 75,
+                sortable: false,
                 items: [
                     {
                         icon: '/assets/icons/edit/edit_16x16.png',
@@ -437,6 +438,7 @@ Ext.define("Compass.ErpApp.Shared.Crm.UsersGrid", {
                 header: 'Delete',
                 align: 'center',
                 width: 75,
+                sortable: false,
                 items: [
                     {
                         icon: '/assets/icons/delete/delete_16x16.png',

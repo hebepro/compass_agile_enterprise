@@ -76,9 +76,14 @@ class Invoice < ActiveRecord::Base
 
         invoice.save
 
-        # add party relationship
+        # add customer relationship
         party = order_txn.find_party_by_role('customer')
         invoice.add_party_with_role_type(party, RoleType.customer)
+
+        # add dba_org relationship if present
+        if options[:dba_organization]
+          invoice.add_party_with_role_type(options[:dba_organization], RoleType.dba_org)
+        end
 
         order_txn.order_line_items.each do |line_item|
             invoice_item = InvoiceItem.new
@@ -88,13 +93,14 @@ class Invoice < ActiveRecord::Base
             charged_item = line_item.product_instance || line_item.product_offer ||line_item.product_type
             invoice_item.quantity = line_item.quantity
             invoice_item.unit_price = line_item.sold_price
+            invoice_item.amount = (line_item.quantity * line_item.sold_price)
             invoice_item.add_invoiced_record(charged_item)
 
             invoice_item.save
         end
 
         # handles everything but shipping charge lines, multiple invoice items created from all iterations
-        order_txn.all_charge_lines.select {|charge_line| charge_line.charge_type && charge_line.charge_type.description != 'shipping'}.each do |charge_line|
+        order_txn.all_charge_lines.select {|charge_line| charge_line.charge_type && charge_line.charge_type.internal_identifier != 'shipping'}.each do |charge_line|
             invoice_item = InvoiceItem.new
 
             invoice_item.invoice = invoice
@@ -117,13 +123,14 @@ class Invoice < ActiveRecord::Base
         end
 
         # handles shipping charge lines, one invoice item created from all iterations
-        shipping_charges = order_txn.all_charge_lines.select {|charge_line| charge_line.charge_type && charge_line.charge_type.description == 'shipping'}
+        shipping_charges = order_txn.all_charge_lines.select {|charge_line| charge_line.charge_type && charge_line.charge_type.internal_identifier == 'shipping'}
         if shipping_charges.length > 0
           shipping_invoice_item = InvoiceItem.new
           shipping_charges.each do |charge_line|
-            shipping_invoice_item.item_description = 'Shipping'
+            shipping_invoice_item.item_description = charge_line.description
             shipping_invoice_item.invoice = invoice
             shipping_invoice_item.quantity = 1
+            shipping_invoice_item.amount = shipping_invoice_item.unit_price.nil? ? charge_line.money.amount : shipping_invoice_item.unit_price + charge_line.money.amount
             shipping_invoice_item.unit_price = shipping_invoice_item.unit_price.nil? ? charge_line.money.amount : shipping_invoice_item.unit_price + charge_line.money.amount
             shipping_invoice_item.add_invoiced_record(find_or_create_shipping_product_type)
           end
@@ -139,7 +146,7 @@ class Invoice < ActiveRecord::Base
     def find_or_create_shipping_product_type
       product_type = ProductType.find_by_internal_identifier('shipping')
       unless product_type
-        product_type = ProductType.create(internal_identifier: 'shipping', description: 'Shipping', available_on_web: 'false', shipping_cost: 0)
+        product_type = ProductType.create(internal_identifier: 'shipping', description: 'Shipping', available_on_web: false, shipping_cost: 0)
         product_type.pricing_plans.new(money_amount: 0, is_simple_amount:true)
         product_type.save
       end
@@ -182,6 +189,14 @@ class Invoice < ActiveRecord::Base
       self.balance_record.amount
     else
       self.items.all.sum(&:sub_total).round(2)
+    end
+  end
+
+  def total_amount
+    if items.empty?
+      self.balance_record.amount
+    else
+      self.items.all.sum(&:total_amount).round(2)
     end
   end
 
@@ -282,6 +297,10 @@ class Invoice < ActiveRecord::Base
     unless parties.empty?
       parties.first
     end
+  end
+
+  def dba_organization
+    find_parties_by_role_type('dba_org')
   end
 
   private

@@ -1,3 +1,5 @@
+Version 4.1.0 - 3-30-2015
+- SaaS Release
 Version 4.0.0 - 11-19-2014
 - Updated major version of CompassAE Platform release
 - Changed middleware to insert_before Rack::Runtime instead of Rack::Lock to allow for config.threadsafe!

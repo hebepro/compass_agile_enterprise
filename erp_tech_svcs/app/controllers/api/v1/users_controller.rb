@@ -11,7 +11,6 @@ module Api
         start = params[:start] || 0
 
         # scope users by dba_organization and any of its children dba_orgs
-        dba_org_ids = []
         dba_organization = current_user.party.dba_organization
         dba_org_ids = dba_organization.child_dba_organizations.collect(&:id)
         dba_org_ids.push(dba_organization.id)
@@ -26,15 +25,15 @@ module Api
                           )")
 
         if username.blank?
-          total_count = users.count
+          total_count = users.uniq.count
           users = users.order("#{sort} #{dir}").offset(start).limit(limit)
         else
           users = users.where('username like ? or email like ?', "%#{username}%", "%#{username}%")
-          total_count = users.count
+          total_count = users.uniq.count
           users = users.order("#{sort} #{dir}").offset(start).limit(limit)
         end
 
-        render :json => {total_count: total_count, users: users.collect(&:to_data_hash)}
+        render :json => {total_count: total_count, users: users.uniq.collect(&:to_data_hash)}
       end
 
       def create
@@ -69,7 +68,8 @@ module Api
                 party.add_role_type('employee')
 
                 # associate the new party to the dba_organization of the user creating this user
-                relationship_type = RelationshipType.find_or_create(RoleType.iid('dba_org'), RoleType.iid('employee'))
+                relationship_type = RelationshipType.find_or_create(RoleType.find_or_create('dba_org', 'Doing Business As Organization'),
+                                                                    RoleType.find_or_create('employee', 'Employee'))
                 party.create_relationship(relationship_type.description,
                                           current_user.party.dba_organization.id,
                                           relationship_type)

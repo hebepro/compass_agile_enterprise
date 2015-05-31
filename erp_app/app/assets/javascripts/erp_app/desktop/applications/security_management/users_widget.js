@@ -100,7 +100,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.SecurityManagement.UserGrid", {
                 type: 'ajax',
                 url: '/api/v1/users/',
                 reader: {
-                    totalProperty: 'totalCount',
+                    totalProperty: 'total_count',
                     type: 'json',
                     root: 'users'
                 },

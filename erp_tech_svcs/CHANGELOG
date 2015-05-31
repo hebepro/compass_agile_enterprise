@@ -1,3 +1,9 @@
+Version 4.1.2 - 4-01-2015
+- Fixed bug in is_json
+Version 4.1.1 - 3-31-2015
+- Fixed bug in Users API
+Version 4.1.0 - 3-30-2015
+- SaaS Release
 Version 4.0.0 - 11-19-2014
 - Updated major version of CompassAE Platform release
 - Updated party model to allow parties to have multiple users

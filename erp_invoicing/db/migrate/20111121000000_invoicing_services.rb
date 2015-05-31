@@ -87,15 +87,19 @@ class InvoicingServices < ActiveRecord::Migration
       add_index :invoice_items, :invoice_item_type_id, :name => 'invoice_item_type_id_idx'
     end
 
-    create_table :invoiced_records do |t|
-      t.references :invoice_item
-      t.references :invoiceable_item, :polymorphic => true
 
-      t.timestamps
+    # Create invoiced records
+    unless table_exists?(:invoiced_records)
+      create_table :invoiced_records do |t|
+        t.references :invoice_item
+        t.references :invoiceable_item, :polymorphic => true
+
+        t.timestamps
+      end
+
+      add_index :invoiced_records, [:invoiceable_item_id, :invoiceable_item_type], :name => 'invoiced_records_invoiceable_item_idx'
     end
 
-    add_index :invoiced_records, [:invoiceable_item_id, :invoiceable_item_type], :name => 'invoiced_records_invoiceable_item_idx'
-    
     # Create invoice item types
     unless table_exists?(:invoice_item_types)
       create_table :invoice_item_types do |t|

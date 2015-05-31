@@ -756,7 +756,7 @@ Compass.ErpApp.Desktop.Applications.Knitkit.addSectionOptions = function (self, 
                                                 }, this, true);
                                             }
 
-                                            if (parentNode && parentNode != record.getOwnerTree().getRootNode()) {
+                                            if (parentNode && parentNode != record.getOwnerTree().getRootNode() && parentNode.isExpanded()) {
                                                 record.getOwnerTree().getStore().load({node: parentNode});
                                             }
 

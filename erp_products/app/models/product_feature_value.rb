@@ -5,4 +5,24 @@ class ProductFeatureValue < ActiveRecord::Base
   has_many :product_feature_types, through: :product_feature_type_product_feature_values
 
   has_many :product_features, dependent: :destroy
+
+  def self.find_or_create(internal_identifier, description, product_feature_type=nil)
+    product_feature_value = ProductFeatureValue.joins(:product_feature_type_product_feature_values)
+                                .where(internal_identifier: internal_identifier).readonly(false).first
+
+    unless product_feature_value
+      product_feature_value = ProductFeatureValue.create(description: description,
+                                                         internal_identifier: internal_identifier)
+
+    end
+
+    if product_feature_type
+      unless product_feature_value.product_feature_types.collect(&:id).include?(product_feature_type.id)
+        product_feature_value.product_feature_types << product_feature_type
+        product_feature_value.save
+      end
+    end
+
+    product_feature_value
+  end
 end

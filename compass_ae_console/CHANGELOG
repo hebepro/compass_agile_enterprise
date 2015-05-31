@@ -1,4 +1,4 @@
-Version 3.0.1
+Version 3.1.0 - 3-30-2015
 - Fixed bug where string.startsWith was moved to Ext.String
 Version 3.0.0 - 11-19-2014
 - Update major version for CompassAE platform release

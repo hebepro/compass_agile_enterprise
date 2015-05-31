@@ -179,13 +179,21 @@ class Party < ActiveRecord::Base
   #** Contact Methods
   #************************************************************************************************
 
-  def self.find_by_email_contact(contact_purpose, value)
-    self.joins(:contacts => [:contact_purposes])
-        .joins("INNER JOIN email_addresses on email_addresses.id = contacts.contact_mechanism_id
+  def self.find_by_email(email, contact_purpose=nil)
+    if contact_purpose
+      self.joins(:contacts => [:contact_purposes])
+          .joins("INNER JOIN email_addresses on email_addresses.id = contacts.contact_mechanism_id
                 and contacts.contact_mechanism_type = 'EmailAddress'")
-        .where('contact_mechanism_type = ?', 'EmailAddress')
-        .where('contact_purposes.internal_identifier = ?', contact_purpose)
-        .where('email_address = ?', value).readonly(false).first
+          .where('contact_mechanism_type = ?', 'EmailAddress')
+          .where('contact_purposes.internal_identifier = ?', contact_purpose)
+          .where('email_address = ?', email).readonly(false).first
+    else
+      self.joins(:contacts)
+          .joins("INNER JOIN email_addresses on email_addresses.id = contacts.contact_mechanism_id
+                and contacts.contact_mechanism_type = 'EmailAddress'")
+          .where('contact_mechanism_type = ?', 'EmailAddress')
+          .where('email_address = ?', email).readonly(false).first
+    end
   end
 
   # check if party has contact with purpose

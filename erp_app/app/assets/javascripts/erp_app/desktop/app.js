@@ -10,4 +10,6 @@
 // WARNING: THE FIRST BLANK LINE MARKS THE END OF WHAT'S TO BE PROCESSED, ANY BLANK LINE SHOULD
 // GO AFTER THE REQUIRES BELOW.
 //
+//= require inflection
+//= require ./select_roles_window
 //= require ./ext_ux_desktop_module

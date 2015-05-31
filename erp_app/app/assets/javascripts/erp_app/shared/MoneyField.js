@@ -4,7 +4,7 @@
  *
  * http://www.gnu.org/licenses/lgpl.html
  *
- * @description: This class provide aditional format to numbers by extending Ext.form.field.Number
+ * @description: This class provide additional format to numbers by extending Ext.form.field.Number
  *
  * @author: Greivin Britton
  * @email: brittongr@gmail.com
@@ -26,6 +26,7 @@ Ext.define('Ext.ux.form.MoneyField',
 
             this.callParent(arguments);
         },
+
         setValue: function (value) {
             this.superclass.setValue.call(this, value != null ? value.toString().replace('.', this.decimalSeparator) : value);
 

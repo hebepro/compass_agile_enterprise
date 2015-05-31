@@ -4,10 +4,6 @@ module Knitkit
       class AppController < ::ErpApp::Desktop::BaseController
         KNIT_KIT_ROOT = Knitkit::Engine.root.to_s
 
-        def available_roles
-          render :json => {:success => true, :availableRoles => SecurityRole.order('description ASC').all.collect { |role| role.to_hash(:only => [:internal_identifier, :description]) }}
-        end
-
         protected
 
         def set_website

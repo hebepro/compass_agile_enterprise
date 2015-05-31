@@ -14,19 +14,23 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.WestRegion", {
 
     changeSecurity: function (node, updateUrl, id) {
         Ext.Ajax.request({
-            url: '/knitkit/erp_app/desktop/available_roles',
-            method: 'POST',
+            url: '/api/v1/security_roles',
+            method: 'GET',
+            params:{
+                parent: 'website_builder',
+                include_admin: true
+            },
             success: function (response) {
                 var obj = Ext.decode(response.responseText);
                 if (obj.success) {
-                    Ext.create('widget.knikit_selectroleswindow', {
+                    Ext.create('widget.selectroleswindow', {
                         baseParams: {
                             id: id,
                             site_id: node.get('siteId')
                         },
                         url: updateUrl,
-                        currentRoles: node.get('roles'),
-                        availableRoles: obj.availableRoles,
+                        currentSecurity: node.get('roles'),
+                        availableRoles: obj.security_roles,
                         listeners: {
                             success: function (window, response) {
                                 node.set('roles', response.roles);

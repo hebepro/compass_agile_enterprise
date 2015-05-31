@@ -5,7 +5,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SplashScreen", {
     closable: true,
     items: [
         {
-            html: "<div style='margin: 15px 50px 5px 50px;'><h2 style='margin: 3px 0px 10px 0px; color: #2fb3d4; text-align: center'>Website Builder Home</h2></div>"
+            html: "<div style='margin: 15px 50px 5px 50px;'><h2 style='margin: 3px 0 10px 0; color: #2fb3d4; text-align: center'>Website Builder Home</h2></div>"
         },
 
         {
@@ -15,7 +15,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SplashScreen", {
         },
 
         {
-            html: "<div style='margin: 15px 50px 5px 50px;'><p style='margin: 0px; color: #222; text-align: center; font-size: 16px; font-weight: 300;'>Click on the shortcuts below to get started.</p></div>"
+            html: "<div style='margin: 15px 50px 5px 50px;'><p style='margin: 0; color: #222; text-align: center; font-size: 16px; font-weight: 300;'>Click on the shortcuts below to get started.</p></div>"
         },
 
         {
@@ -66,15 +66,13 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SplashScreen", {
                                                         xtype: 'textfield',
                                                         fieldLabel: 'Name *',
                                                         allowBlank: false,
-                                                        name: 'name',
-                                                        //plugins: [new helpQtip("This is required and must be unique. Spaces are OK.")]
+                                                        name: 'name'
                                                     },
                                                     {
                                                         xtype: 'textfield',
                                                         fieldLabel: 'Host *',
                                                         allowBlank: false,
-                                                        name: 'host',
-                                                        //plugins: [new helpQtip("If you are running locally, this will probably be localhost:3000.<br> Otherwise, it is the domain or subdomain for this CompassAE instance")]
+                                                        name: 'host'
                                                     },
                                                     {
                                                         xtype: 'textfield',
@@ -183,7 +181,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SplashScreen", {
                                     component.getEl().on('click', function (e) {
 
                                         var cr = this.findParentByType('knitkit_centerregion');
-                                        cr.openIframeInTab('Themes and Widgets', 'http://localhost:3000/template/widgets.html');
+                                        cr.openIframeInTab('Themes and Widgets', 'https://themes.mycompassagile.com');
 
 
                                     }, component);
@@ -229,7 +227,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.Knitkit.SplashScreen", {
                                     component.getEl().on('click', function (e) {
 
                                         var cr = this.findParentByType('knitkit_centerregion');
-                                        cr.openIframeInTab('Building Websites', 'http://localhost:3000/template/pages-search-results.html');
+                                        cr.openIframeInTab('Building Websites', 'https://docs.mycompassagile.com');
 
                                     }, component);
 

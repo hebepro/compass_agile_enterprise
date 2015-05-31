@@ -144,7 +144,12 @@ class Website < ActiveRecord::Base
 
   def setup_website
     PublishedWebsite.create(:website => self, :version => 0, :active => true, :comment => 'New Site Created')
-    SecurityRole.create(:description => "Website #{self.title}", :internal_identifier => website_role_iid) if self.role.nil?
+
+    if self.role.nil?
+      website_role = SecurityRole.create(:description => "Website #{self.title}", :internal_identifier => website_role_iid)
+      website_role.move_to_child_of(SecurityRole.iid('website_builder'))
+    end
+
     configuration = ::Configuration.find_template('default_website_configuration').clone(true, "Website #{self.title} Configuration", "Website #{self.title} Configuration".underscore)
     configuration.update_configuration_item(ConfigurationItemType.find_by_internal_identifier('login_url'), '/login')
     configuration.update_configuration_item(ConfigurationItemType.find_by_internal_identifier('homepage_url'), '/home')
@@ -178,9 +183,18 @@ class Website < ActiveRecord::Base
     profile_page = nil
     widget_classes.each do |widget_class|
       website_section = WebsiteSection.new
-      website_section.title = widget_class.title
-      website_section.in_menu = true unless ["Login", "Sign Up", "Reset Password"].include?(widget_class.title)
-      website_section.layout = widget_class.base_layout
+
+      # AE-194: Inline Search is active, so no need for search page, take search layout
+      # but change section name for the Search Results page 
+      # and change layout so render widget to calls search action
+      website_section.in_menu = true unless ["Login", "Sign Up", "Reset Password","Search"].include?(widget_class.title)
+      if widget_class.title == 'Search'
+        website_section.title = 'Search Results'
+        website_section.layout = widget_class.base_layout.gsub(":search",":search, :action => 'search'")
+      else
+        website_section.title = widget_class.title
+        website_section.layout = widget_class.base_layout
+      end
       website_section.save
 
       profile_page = website_section if widget_class.title == 'Manage Profile'

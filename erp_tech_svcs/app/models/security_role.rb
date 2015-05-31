@@ -1,4 +1,7 @@
 class SecurityRole < ActiveRecord::Base
+
+  acts_as_nested_set
+  include ErpTechSvcs::Utils::DefaultNestedSetMethods
   acts_as_erp_type
   has_capability_accessors
   has_and_belongs_to_many :parties
@@ -43,6 +46,10 @@ class SecurityRole < ActiveRecord::Base
   # groups without this role
   def groups_not
     Group.joins(:party).joins("LEFT JOIN #{join_parties_security_roles}").where("parties_security_roles.security_role_id IS NULL")
+  end
+
+  def to_data_hash
+    to_hash(:only => [:description, :internal_identifier])
   end
 
 end

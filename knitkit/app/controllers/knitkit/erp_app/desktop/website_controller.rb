@@ -190,7 +190,7 @@ module Knitkit
           zip_path = @website.export
           begin
             send_file(zip_path.to_s, :stream => false)
-          rescue Exception => ex
+          rescue StandardError => ex
             raise "Error sending #{zip_path} file"
           end
         end
@@ -200,7 +200,7 @@ module Knitkit
           if zip_path
             begin
               send_file(zip_path, :stream => false)
-            rescue Exception => ex
+            rescue StandardError => ex
               raise "Error sending file. Make sure you have a website and an active theme."
             end
           else

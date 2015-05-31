@@ -130,7 +130,7 @@ module Knitkit
                     file.destroy
                   end
                   messages << message
-                rescue Exception => ex
+                rescue StandardError => ex
                   Rails.logger.error ex.message
                   Rails.logger.error ex.backtrace.join("\n")
 
@@ -210,7 +210,8 @@ module Knitkit
                                    @assets_model.iid)
           else
             @root_node = File.join(ErpTechSvcs::Config.file_assets_location,
-                                   "dba_organization_#{current_user.party.dba_organization.id.to_s}",
+                                   "dba_organizations",
+                                   current_user.party.dba_organization.id.to_s,
                                    "shared_site_files")
           end
 

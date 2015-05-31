@@ -91,7 +91,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.SplashScreen", {
                                     component.getEl().on('click', function (e) {
 
                                         var module = compassDesktop.getModule('rails_db_admin-win');
-                                        module.openIframeInTab('CompassAE Documentation - Data Models', 'http://www.truenorthtechnology.com/coming-soon');
+                                        module.openIframeInTab('CompassAE Documentation - Data Models', 'https://docs.mycompassagile.com');
 
                                     }, component);
 
@@ -135,7 +135,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.SplashScreen", {
                                     component.getEl().on('click', function (e) {
 
                                         var module = compassDesktop.getModule('rails_db_admin-win');
-                                        module.openIframeInTab('CompassAE Documentation - Data Models', 'http://www.truenorthtechnology.com/coming-soon');
+                                        module.openIframeInTab('CompassAE Documentation - Data Models', 'https://docs.mycompassagile.com');
 
                                     }, component);
 

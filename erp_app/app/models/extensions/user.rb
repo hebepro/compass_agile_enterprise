@@ -46,13 +46,13 @@ User.class_eval do
     if application_type == :desktop
       desktop_applications.collect do |app|
         if Rails.application.assets.find_asset File.join('erp_app', 'desktop', 'applications', app.internal_identifier, "app.#{type.to_s}")
-          File.join(config.assets.prefix, 'erp_app', 'desktop', 'applications', app.internal_identifier, "app")
+          File.join('erp_app', 'desktop', 'applications', app.internal_identifier, "app")
         end
       end.flatten.compact
     else
       apps.collect do |app|
         if Rails.application.assets.find_asset File.join('erp_app', 'organizer', 'applications', app.internal_identifier, "app.#{type.to_s}")
-          File.join(config.assets.prefix, 'erp_app', 'organizer', 'applications', app.internal_identifier, "app")
+          File.join('erp_app', 'organizer', 'applications', app.internal_identifier, "app")
         end
       end.flatten.compact
     end
