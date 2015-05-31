@@ -31,7 +31,7 @@ module Widgets
             if @user.save
 
               # check if there is already a party with that email if there is tie the party to the user
-              party = Party.find_by_email_contact('billing', @email)
+              party = Party.find_by_email(@email, 'billing')
               if party
                 @user.party = party
               else
