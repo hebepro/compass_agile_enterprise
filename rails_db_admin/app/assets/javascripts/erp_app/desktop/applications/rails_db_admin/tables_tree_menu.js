@@ -20,11 +20,13 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.TablesMenuTreePanel
                                 change: function (comp, newValue, oldValue) {
                                     var store = comp.up('treepanel').getStore();
 
-                                    setTimeout(function(){
-                                        if(!store.loading){
-                                            store.reload({params: {name: newValue}});
+                                    setTimeout(function () {
+                                        if (!store.loading) {
+                                            store.load({params: {name: newValue}});
                                         }
                                     }, 500);
+
+                                    comp.up('treepanel').getRootNode().collapseChildren();
 
                                 }
                             }

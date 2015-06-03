@@ -5,15 +5,24 @@ module ErpTechSvcs
       # pass in (capability_type_iid, class name) or (capability_type_iid, any class instance)
       # Example: can user upload files? user.has_capability?('upload', 'FileAsset')
       # Example: can download this file? user.has_capability?('download', file_asset)
-      def has_capability?(capability_type_iid, klass)
+      def has_capability?(capability_type_iid, klass, instance_id = nil)
         capability_type_iid = capability_type_iid.to_s if capability_type_iid.is_a?(Symbol)
-        if klass.is_a?(String)
+        if klass.is_a?(String) and instance_id.nil?
           scope_type = ScopeType.find_by_internal_identifier('class')
           capability = Capability.joins(:capability_type).
                                   where(:capability_resource_type => klass).
                                   where(:scope_type_id => scope_type.id).
                                   where(:capability_types => {:internal_identifier => capability_type_iid}).first
           return nil if capability.nil? # capability not found so return nil
+        elsif klass.is_a?(String)
+          scope_type = ScopeType.find_by_internal_identifier('instance')
+
+          capability = Capability.joins(:capability_type).
+              where(:capability_resource_type => klass).
+              where(:capability_resource_id => instance_id).
+              where(:scope_type_id => scope_type.id).
+              where(:capability_types => {:internal_identifier => capability_type_iid}).first
+          return !klass.constantize.protect_all_instances if capability.nil?
         else
           scope_type = ScopeType.find_by_internal_identifier('instance')
           capability = klass.capabilities.joins(:capability_type).

@@ -146,7 +146,6 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin", {
         });
     },
 
-
     addConsolePanel: function () {
         this.container.add({
             xtype: 'compass_ae_console_panel',
@@ -164,7 +163,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin", {
         this.container.setActiveTab(this.container.items.length - 1);
     },
 
-    connectToDatatbase: function () {
+    connectToDatabase: function () {
         var database = this.getDatabase();
         var tablestreePanelStore = this.accordion.down('.railsdbadmin_tablestreemenu').store;
         var queriesTreePanelStore = this.accordion.down('.railsdbadmin_queriestreemenu').store;
@@ -376,7 +375,6 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin", {
         });
     },
 
-
     openIframeInTab: function (title, url) {
         var self = this;
 
@@ -393,7 +391,6 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin", {
     },
 
     createWindow: function () {
-
         var self = this;
         var desktop = this.app.getDesktop();
         var win = desktop.getWindow('rails_db_admin');
