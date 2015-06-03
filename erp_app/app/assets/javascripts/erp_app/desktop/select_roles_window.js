@@ -17,6 +17,13 @@ Ext.define("Compass.ErpApp.Desktop.SelectRolesWindow", {
     url: null,
 
     /*
+     * @param enableSecurity
+     * Boolean
+     * Describes whether security is enabled
+     */
+    enableSecurity: true,
+
+    /*
      * @param availableRoles
      * Array
      * Array of available roles
@@ -69,18 +76,21 @@ Ext.define("Compass.ErpApp.Desktop.SelectRolesWindow", {
     },
 
     constructor: function (config) {
-        var currentSecurity = config['currentSecurity'] || [],
+        var enableSecurity = config['enableSecurity'],
+            currentSecurity = config['currentSecurity'] || [],
             capabilities = config['capabilities'] || [],
             availableRoles = config['availableRoles'],
             baseParams = config['baseParams'] || {},
             url = config['url'],
             checkBoxes = [],
+            securityConfigPanel = null,
             panel = [];
 
         Ext.each(availableRoles, function (role) {
             checkBoxes.push({
                 name: role['internal_identifier'],
-                boxLabel: role['description']
+                boxLabel: role['description'],
+                disabled: !enableSecurity
             })
         });
 
@@ -153,8 +163,38 @@ Ext.define("Compass.ErpApp.Desktop.SelectRolesWindow", {
             });
         }
 
+        securityConfigPanel = Ext.create('widget.panel', {
+            itemId: 'securityConfigPanel',
+            items: [
+                {
+                    xtype: 'checkbox',
+                    itemId: 'enableSecurity',
+                    boxLabel: 'Enable Security',
+                    style: 'margin:5px 0px 5px 60px;',
+                    checked: enableSecurity,
+                    listeners: {
+                        change: function (checkBox) {
+                            var win = checkBox.up('selectroleswindow');
+                            var securityPanel = win.down('#securityPanel');
+                            checkboxes = securityPanel.query('checkbox');
+                            if (checkBox.getValue() == true) {
+                                Ext.each(checkboxes, function (checkbox) {
+                                    checkbox.enable();
+                                });
+                            } else {
+                                Ext.each(checkboxes, function (checkbox) {
+                                    checkbox.setValue(false);
+                                    checkbox.disable();
+                                });
+                            }
+                        }
+                    }
+                }
+            ]
+        });
+
         config = Ext.apply({
-            layout: 'fit',
+            layout: 'vbox',
             modal: true,
             title: 'Secure',
             iconCls: 'icon-document_lock',
@@ -162,15 +202,17 @@ Ext.define("Compass.ErpApp.Desktop.SelectRolesWindow", {
             height: 600,
             buttonAlign: 'center',
             plain: true,
-            items: panel,
+            items: securityConfigPanel == null ? panel : [securityConfigPanel, panel],
             buttons: [
                 {
                     text: 'Submit',
+                    itemId: 'submitButton',
                     listeners: {
                         'click': function (button) {
                             var win = button.up('selectroleswindow');
                             var securityPanel = win.down('#securityPanel');
                             var security = null;
+                            var enableSecurity = win.down('#enableSecurity').getValue();
 
                             if (capabilities.length > 0) {
                                 security = {};
@@ -196,6 +238,7 @@ Ext.define("Compass.ErpApp.Desktop.SelectRolesWindow", {
                             }
 
                             var jsonData = Ext.apply({
+                                enable_security: enableSecurity,
                                 security: security
                             }, baseParams);
 
