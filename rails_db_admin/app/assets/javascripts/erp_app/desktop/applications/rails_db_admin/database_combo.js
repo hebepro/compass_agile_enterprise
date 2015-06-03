@@ -43,7 +43,7 @@ Ext.define("Compass.ErpApp.Desktop.Applications.RailsDbAdmin.DatabaseComboBox", 
             listeners: {
                 'select': function (combo, record, index) {
                     // switch databases
-                    combo.initialConfig.module.connectToDatatbase();
+                    combo.initialConfig.module.connectToDatabase();
                 },
                 render: function (combo) {
                     combo.getStore().load();
