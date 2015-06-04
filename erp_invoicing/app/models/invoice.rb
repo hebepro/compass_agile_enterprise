@@ -154,7 +154,16 @@ class Invoice < ActiveRecord::Base
     end
 
     def next_invoice_number
-      "Inv-#{(maximum('id').nil? ? 1 : maximum('id'))}"
+      max_id = maximum('id')
+
+      current_invoice = where(Invoice.arel_table[:invoice_number].matches("%#{max_id}%")).first
+
+      while current_invoice
+        max_id = max_id + 1
+        current_invoice = where(Invoice.arel_table[:invoice_number].matches("%#{max_id}%")).first
+      end
+
+      "Inv-#{max_id}"
     end
 
   end
