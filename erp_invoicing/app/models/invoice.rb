@@ -164,7 +164,11 @@ class Invoice < ActiveRecord::Base
           current_invoice = where(Invoice.arel_table[:invoice_number].matches("%#{max_id}%")).first
         end
       else
-        max_id = 1
+        if max_id
+          max_id = max_id + 1
+        else
+          max_id = 1
+        end
       end
 
       "Inv-#{max_id}"

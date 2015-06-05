@@ -68,7 +68,11 @@ class OrderTxn < ActiveRecord::Base
           current_order = where(OrderTxn.arel_table[:order_number].matches("%#{max_id}%")).first
         end
       else
-        max_id = 1
+        if max_id
+          max_id = max_id + 1
+        else
+          max_id = 1
+        end
       end
 
       "Order-#{max_id}"
