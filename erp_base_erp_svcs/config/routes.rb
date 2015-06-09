@@ -2,7 +2,11 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :parties
+      resources :parties do
+        member do
+          put :update_roles
+        end
+      end
       resources :role_types
       resources :categories
     end
