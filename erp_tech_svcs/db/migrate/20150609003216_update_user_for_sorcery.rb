@@ -1,4 +1,4 @@
-class AddUnlockToken < ActiveRecord::Migration
+class UpdateUserForSorcery < ActiveRecord::Migration
   def up
 	add_column :users, :unlock_token, :string, :default => nil
 	add_column :users, :last_login_from_ip_address, :string, :default => nil
