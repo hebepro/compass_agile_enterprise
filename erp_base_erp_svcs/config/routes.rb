@@ -9,6 +9,7 @@ Rails.application.routes.draw do
       end
       resources :role_types
       resources :categories
+      resources :contact_purposes
     end
   end
 
