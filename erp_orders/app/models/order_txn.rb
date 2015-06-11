@@ -75,7 +75,7 @@ class OrderTxn < ActiveRecord::Base
         end
       end
 
-      "Order-#{max_id}"
+      "#{max_id}"
     end
   end
 
