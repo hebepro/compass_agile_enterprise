@@ -8,6 +8,7 @@ Rails.application.routes.draw do
         end
       end
       resources :role_types
+      resources :note_types
       resources :categories
       resources :contact_purposes
     end
